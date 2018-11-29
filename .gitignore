@@ -1,0 +1,11 @@
+*.mexa64
+*.mexmaci64
+*.autosave
+*.original
+*~
+.DS_Store
+build*
+*.bak
+*.old
+CMakeLists.txt.*
+Copy_of_*
