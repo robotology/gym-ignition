@@ -19,7 +19,7 @@ namespace gympp {
 using AType = size_t;
 using OType = double;
 
-class gympp::env::CartPole : public gympp::gyms::IgnitionGazebo<AType, OType>
+class gympp::env::CartPole final : public gympp::gyms::IgnitionGazebo<AType, OType>
 {
 private:
     class Impl;
