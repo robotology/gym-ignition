@@ -1,6 +1,7 @@
 find_package(sdformat8 REQUIRED)
 find_package(ignition-gazebo REQUIRED)
 find_package(ignition-common3 REQUIRED)
+find_package(ignition-physics1 REQUIRED)
 
 # =================
 # DataBridge PLUGIN
@@ -15,6 +16,22 @@ target_link_libraries(DataBridge
     ignition-gazebo::ignition-gazebo)
 
 target_include_directories(DataBridge PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR})
+
+# ===============
+# CartPole PLUGIN
+# ===============
+
+add_library(CartPolePlugin SHARED
+    CartPolePlugin.h
+    CartPolePlugin.cpp)
+
+target_link_libraries(CartPolePlugin
+    PUBLIC
+    gympp-ignition
+    ignition-gazebo::ignition-gazebo)
+
+target_include_directories(CartPolePlugin PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR})
 
 # ====================
