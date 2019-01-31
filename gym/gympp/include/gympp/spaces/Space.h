@@ -70,7 +70,7 @@ public:
 
 private:
     class Impl;
-    std::unique_ptr<Impl, void (*)(Impl*)> pImpl;
+    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
 };
 
 // TODO: export the symbol and instantiate in the cpp
@@ -94,7 +94,7 @@ public:
 
 private:
     class Impl;
-    std::unique_ptr<Impl, void (*)(Impl*)> pImpl;
+    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
 };
 
 #endif // GYMPP_SPACES_SPACE
