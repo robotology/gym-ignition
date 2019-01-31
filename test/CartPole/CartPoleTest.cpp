@@ -13,7 +13,6 @@
 
 int main(int /*argc*/, char* /*argv*/ [])
 {
-
     std::string sdfFile = "/home/dferigo/git/gym-ignition/models/CartPole/CartPoleWorld.sdf";
 
     auto cartPoleGym = gympp::env::CartPole(sdfFile, /*updateRate=*/10, /*iterations=*/10); // TODO
@@ -24,10 +23,10 @@ int main(int /*argc*/, char* /*argv*/ [])
 
     gympp::env::CartPole::State oldState;
 
-    //    if (!env->render(gympp::Environment::RenderMode::HUMAN)) {
-    //        gymppError << "Failed to render the environment" << std::endl;
-    //        return EXIT_FAILURE;
-    //    }
+    if (!env->render(gympp::Environment::RenderMode::HUMAN)) {
+        gymppError << "Failed to render the environment" << std::endl;
+        return EXIT_FAILURE;
+    }
 
     //    std::chrono::milliseconds period{100};
     //    std::cout << "Period " << period.count() << "ms" << std::endl;
