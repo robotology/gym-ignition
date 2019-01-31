@@ -4,7 +4,7 @@
 #include "gympp/Gympp.h"
 
 // TODO: fix forward decl
-//#include <ignition/gazebo/Server.hh>
+#include <ignition/gazebo/Server.hh>
 
 #include <memory>
 
@@ -12,29 +12,34 @@ namespace gympp {
     namespace gyms {
         template <typename AType, typename OType>
         class IgnitionGazebo;
+        //        template <typename AType, typename OType>
+        class EnvironmentBehavior;
     } // namespace gyms
 } // namespace gympp
 
 // TODO
-namespace ignition {
-    namespace gazebo {
-        inline namespace v0 {
-            class Server;
-        }
-    } // namespace gazebo
-} // namespace ignition
+// namespace ignition {
+//    namespace gazebo {
+//        inline namespace v0 {
+//            class Server;
+//        }
+//    } // namespace gazebo
+//} // namespace ignition
 
-template <typename ActionDataType, typename ObservationDataType>
-class EnvironmentBehavior
+// template <typename ActionDataType, typename ObservationDataType>
+class gympp::gyms::EnvironmentBehavior
 {
 public:
-    template <typename Type>
-    using Buffer = std::valarray<Type>;
+    //    template <typename Type>
+    //    using Buffer = std::valarray<Type>;
 
-    using Action = Buffer<ActionDataType>;
-    using Observation = Buffer<ObservationDataType>;
+    //    using Action = Buffer<ActionDataType>;
+    //    using Observation = Buffer<ObservationDataType>;
+    using Action = gympp::Environment::Action;
+    using Observation = gympp::Environment::Observation;
+    using Reward = gympp::Environment::Reward;
 
-    using Reward = float;
+    virtual ~EnvironmentBehavior() = default;
 
     virtual bool isDone() = 0;
     virtual bool setAction(const Action& action) = 0;
@@ -43,9 +48,9 @@ public:
 };
 
 template <typename AType, typename OType>
-class gympp::gyms::IgnitionGazebo
-    : public gympp::Environment
-    , EnvironmentBehavior<AType, OType>
+class gympp::gyms::IgnitionGazebo : public gympp::Environment
+//    , gympp::gyms::EnvironmentBehavior
+//    , gympp::gyms::EnvironmentBehavior<AType, OType>
 {
 private:
     class Impl;
@@ -57,20 +62,27 @@ protected:
 
 public:
     using Environment = gympp::Environment;
-    using State = typename Environment::State;
-    using Action = typename Environment::Action;
-    using Reward = typename Environment::Reward;
-    using Observation = typename Environment::Observation;
-    using RenderMode = typename Environment::RenderMode;
-    using ActionSpace = typename Environment::ActionSpace;
-    using ObservationSpace = typename Environment::ObservationSpace;
-    using ActionSpacePtr = typename Environment::ActionSpacePtr;
-    using ObservationSpacePtr = typename Environment::ObservationSpacePtr;
+    //    using State = typename Environment::State;
+    using Environment::Action;
+    using Environment::State;
+    //    using Action = typename Environment::Action;
+    //    using Reward = typename Environment::Reward;
+    using Environment::Reward;
+    //    using Observation = typename Environment::Observation;
+    using Environment::Observation;
+    using Environment::RenderMode;
+    //    using RenderMode = typename Environment::RenderMode;
+    //    using ActionSpace = typename Environment::ActionSpace;
+    //    using ObservationSpace = typename Environment::ObservationSpace;
+    //    using ActionSpacePtr = typename Environment::ActionSpacePtr;
+    //    using ObservationSpacePtr = typename Environment::ObservationSpacePtr;
 
-    using TypedEnvironmentBehavior = EnvironmentBehavior<AType, OType>;
+    //    using TypedEnvironmentBehavior = EnvironmentBehavior<AType, OType>;
 
     IgnitionGazebo() = delete;
-    IgnitionGazebo(const ActionSpacePtr aSpace,
+    IgnitionGazebo(const std::string libName,
+                   const std::string& pluginName,
+                   const ActionSpacePtr aSpace,
                    const ObservationSpacePtr oSpace,
                    const std::string& sdfFile,
                    double updateRate,
@@ -82,20 +94,9 @@ public:
     std::optional<State> step(const Action& action) override;
 
     // Public APIs
+    Environment* env();
     void setVerbosity(int level = 4);
     bool loadSDF(std::string& sdfFile);
-
-    Environment* env() override;
-    // TODO: const correctnessference to `gympp::gyms::IgnitionGazebo<unsigned long,
-    // float>::getEnvironment() const'
-
-    //    virtual State getState(const Action& action) = 0;
-
-    bool isDone() override = 0;
-    bool setAction(const typename TypedEnvironmentBehavior::Action& action) override = 0;
-    std::optional<typename TypedEnvironmentBehavior::Reward> computeReward() override = 0;
-    std::optional<typename TypedEnvironmentBehavior::Observation> getObservation() override = 0;
-    //    std::optional<std::valarray<OType>> getObservation() override = 0;
 };
 
 // Instantiate the template for canonical problems

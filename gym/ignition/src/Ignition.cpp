@@ -3,14 +3,14 @@
 
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
-#include <ignition/gazebo/gui/TmpIface.hh>
-#include <ignition/gui/Application.hh>
-#include <ignition/gui/MainWindow.hh>
+#include <ignition/gazebo/SystemLoader.hh>
+#include <ignition/plugin/SpecializedPluginPtr.hh>
 
 #include <condition_variable>
 #include <functional>
 #include <mutex>
 #include <thread>
+#include <unistd.h>
 
 using IgnitionServer = ignition::gazebo::v0::Server;
 
@@ -20,34 +20,14 @@ template class gympp::gyms::IgnitionGazebo<size_t, double>;
 
 using namespace gympp::gyms;
 
-struct GuiData
+struct IgnitionGuiData
 {
-    struct InputArgs
-    {
-        int argc = 0;
-        const char* argv[0];
-    } inputArgs;
-
     std::mutex mutex;
     std::condition_variable cv;
+    std::unique_ptr<std::thread> thread{nullptr};
 
-    std::unique_ptr<std::thread> thread = nullptr;
-    std::shared_ptr<ignition::gui::Application> app = nullptr;
-    std::unique_ptr<ignition::gazebo::TmpIface> transport = nullptr;
-
-    static void initializeAndRun(GuiData& gui)
+    static void spawnGui(IgnitionGuiData& gui)
     {
-        gymppDebug << "Creating the application" << std::endl << std::flush;
-
-        if (!GuiData::initializeApplication(gui)) {
-            gymppError << "Failed to initialize application" << std::endl;
-            return;
-        }
-        else {
-            gymppDebug << "Application created" << std::endl;
-        }
-
-        gymppError << "QUA" << std::endl << std::flush;
         {
             std::unique_lock lock(gui.mutex);
             gymppDebug << "Waiting that the server starts" << std::endl << std::flush;
@@ -56,58 +36,22 @@ struct GuiData
 
         // This blocks until the window is closed or we receive a SIGINT
         gymppDebug << "Executing the application" << std::endl;
-        gui.app->exec();
-    }
+        pid_t guiPid;
+        guiPid = fork();
+        if (guiPid == 0) {
+            // remove client from foreground process group
+            setpgid(guiPid, 0);
 
-    static bool initializeApplication(GuiData& gui);
+            // Spin up GUI process and block here
+            char** argvGui = new char*[2];
+            argvGui[0] = const_cast<char*>("ign-gazebo-gui");
+            argvGui[1] = nullptr;
+            execvp("ign-gazebo-gui", argvGui);
+            ignerr << "Failed to execute GUI";
+            exit(EXIT_FAILURE);
+        }
+    }
 };
-
-bool GuiData::initializeApplication(GuiData& gui)
-{
-    // Lock the mutex
-    std::lock_guard lock(gui.mutex);
-
-    // Temporary transport interface
-    gui.transport = std::make_unique<ignition::gazebo::TmpIface>();
-
-    // Initialize Qt app
-    gui.app = std::make_shared<ignition::gui::Application>(gui.inputArgs.argc,
-                                                           const_cast<char**>(gui.inputArgs.argv));
-
-    // Load configuration file
-    auto configPath = ignition::common::joinPaths(IGNITION_GAZEBO_GUI_CONFIG_PATH, "gui.config");
-
-    if (!gui.app->LoadConfig(configPath)) {
-        gymppError << "Failed to load Gazebo GUI configuration" << std::endl;
-        return false;
-    }
-
-    // Customize window
-    auto win = gui.app->findChild<ignition::gui::MainWindow*>()->QuickWindow();
-    win->setProperty("title", "Gazebo");
-
-    // Let QML files use TmpIface' functions and properties
-    auto context = new QQmlContext(gui.app->Engine()->rootContext());
-    context->setContextProperty("TmpIface", gui.transport.get());
-
-    // Instantiate GazeboDrawer.qml file into a component
-    QQmlComponent component(gui.app->Engine(), ":/Gazebo/GazeboDrawer.qml");
-    auto gzDrawerItem = qobject_cast<QQuickItem*>(component.create(context));
-    if (gzDrawerItem) {
-        // C++ ownership
-        QQmlEngine::setObjectOwnership(gzDrawerItem, QQmlEngine::CppOwnership);
-
-        // Add to main window
-        auto parentDrawerItem = win->findChild<QQuickItem*>("sideDrawer");
-        gzDrawerItem->setParentItem(parentDrawerItem);
-        gzDrawerItem->setParent(gui.app->Engine());
-    }
-    else {
-        gymppError << "Failed to instantiate custom drawer, drawer will be empty" << std::endl;
-    }
-
-    return true;
-}
 
 template <typename AType, typename OType>
 class IgnitionGazebo<AType, OType>::Impl
@@ -120,12 +64,55 @@ public:
     uint64_t numOfIterations = 0;
     ignition::gazebo::ServerConfig serverConfig;
 
-    GuiData gui;
-    bool initializeApplication();
+    IgnitionGuiData gui;
+
+    struct PluginData
+    {
+        std::string libName;
+        std::string pluginName;
+
+        EnvironmentBehavior* behavior = nullptr;
+        ignition::gazebo::SystemPluginPtr systemPluginPtr;
+    } pluginData;
+
+    bool loadPlugin(PluginData& pluginData);
 };
 
 template <typename AType, typename OType>
-IgnitionGazebo<AType, OType>::IgnitionGazebo(const ActionSpacePtr aSpace,
+bool IgnitionGazebo<AType, OType>::Impl::loadPlugin(PluginData& pluginData)
+{
+    // TODO
+    //    setenv("IGN_GAZEBO_SYSTEM_PLUGIN_PATH",
+    //           std::string("/home/dferigo/git/gym-ignition/build/lib").c_str(),
+    //           1);
+
+    ignition::gazebo::SystemLoader sl;
+    sl.AddSystemPluginPath("/home/dferigo/git/gym-ignition/build/lib"); // TODO
+    auto plugin = sl.LoadPlugin("libCartPolePlugin.so", "gympp::plugins::CartPole", nullptr);
+
+    if (!plugin.has_value()) {
+        gymppError << "Failed to load plugin";
+        return false;
+    }
+
+    pluginData.systemPluginPtr = plugin.value();
+
+    // Get the child classes out of it
+    pluginData.behavior =
+        pluginData.systemPluginPtr->template QueryInterface<gympp::gyms::EnvironmentBehavior>();
+
+    if (!pluginData.behavior) {
+        gymppError << "Failed to cast the plugin";
+        return false;
+    }
+
+    return true;
+}
+
+template <typename AType, typename OType>
+IgnitionGazebo<AType, OType>::IgnitionGazebo(const std::string libName,
+                                             const std::string& pluginName,
+                                             const ActionSpacePtr aSpace,
                                              const ObservationSpacePtr oSpace,
                                              const std::string& sdfFile,
                                              double updateRate,
@@ -135,6 +122,8 @@ IgnitionGazebo<AType, OType>::IgnitionGazebo(const ActionSpacePtr aSpace,
 {
     setVerbosity(4);
     pImpl->sdfFile = sdfFile;
+    pImpl->pluginData.libName = libName;
+    pImpl->pluginData.pluginName = pluginName;
     pImpl->numOfIterations = iterations;
     pImpl->serverConfig.SetUpdateRate(updateRate);
 }
@@ -156,17 +145,31 @@ IgnitionGazebo<AType, OType>::step(const Action& action)
             return {};
         }
 
+        // Load the plugin
+        if (!pImpl->loadPlugin(pImpl->pluginData)) {
+            gymppError << "Failed to load the gym plugin";
+            return {};
+        }
+
         // Create the server
         gymppDebug << "Creating the server" << std::endl << std::flush;
         std::unique_lock lock(pImpl->gui.mutex);
         m_server = std::make_unique<IgnitionServer>(pImpl->serverConfig);
+
+        // TODO: Configure the plugin. The server configures only plugins
+        //       loaded from the sdf file
+        //        pImpl->pluginData.systemPluginPtr->Configure();
+
+        // Add the plugin's system in the server
+        m_server->AddSystem(pImpl->pluginData.systemPluginPtr);
     }
 
     {
-        std::unique_lock lock(pImpl->gui.mutex);
-        if (pImpl->gui.thread && pImpl->gui.app) {
+        //        std::unique_lock lock(pImpl->gui.mutex);
+        //        if (pImpl->gui.thread && pImpl->gui.app) {
+        if (pImpl->gui.thread) {
             // TODO: improve
-            lock.unlock();
+            //            lock.unlock();
 
             // Run main window on a separate thread
             pImpl->gui.cv.notify_all();
@@ -175,7 +178,8 @@ IgnitionGazebo<AType, OType>::step(const Action& action)
 
     // Set the action to the environment
     if (!(this->action_space->contains(action) && action.get<AType>()
-          && this->setAction(*action.get<AType>()))) {
+          && pImpl->pluginData.behavior->setAction(action))) {
+        //          && pImpl->pluginData.behavior->setAction(*action.get<AType>()))) {
         gymppError << "Failed to set the action" << std::endl;
         return {};
     }
@@ -187,23 +191,22 @@ IgnitionGazebo<AType, OType>::step(const Action& action)
     }
 
     // Get the observation from the environment
-    std::optional<typename TypedEnvironmentBehavior::Observation> observation = getObservation();
+    std::optional<Observation> observation = pImpl->pluginData.behavior->getObservation();
 
-    if (!(observation && this->observation_space->contains(Observation(observation.value())))) {
+    if (!(observation && this->observation_space->contains(observation.value()))) {
         gymppError << "Failed to get the observation" << std::endl;
         return {};
     }
 
     // Get the reward from the environment
-    std::optional<Reward> reward = computeReward();
+    std::optional<Reward> reward = pImpl->pluginData.behavior->computeReward();
 
     if (!(reward && this->reward_range.contains(reward.value()))) {
         gymppError << "Failed to compute reward" << std::endl;
         return {};
     }
 
-    State state = {isDone(), {}, reward.value(), GenericBuffer{observation.value()}};
-    return state;
+    return {pImpl->pluginData.behavior->isDone(), {}, reward.value(), observation.value()};
 }
 
 template <typename AType, typename OType>
@@ -249,10 +252,7 @@ bool IgnitionGazebo<AType, OType>::render(IgnitionGazebo::RenderMode mode)
 {
     if (mode == IgnitionGazebo::RenderMode::HUMAN) {
         pImpl->gui.thread =
-            //            std::make_unique<std::thread>(std::bind(&GuiData::initializeAndRun,
-            //            pImpl->gui));
-            //            std::make_unique<std::thread>(&GuiData::initializeAndRun, pImpl->gui);
-            std::make_unique<std::thread>(GuiData::initializeAndRun, std::ref(pImpl->gui));
+            std::make_unique<std::thread>(&IgnitionGuiData::spawnGui, std::ref(pImpl->gui));
         return true;
     }
 
