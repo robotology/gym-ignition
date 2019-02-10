@@ -31,6 +31,7 @@ public:
     virtual ~EnvironmentBehavior() = default;
 
     virtual bool isDone() = 0;
+    virtual bool reset() = 0;
     virtual bool setAction(const Action& action) = 0;
     virtual std::optional<Reward> computeReward() = 0;
     virtual std::optional<Observation> getObservation() = 0;

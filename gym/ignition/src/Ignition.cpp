@@ -240,7 +240,15 @@ gympp::EnvironmentPtr IgnitionGazebo::env()
 
 std::optional<IgnitionGazebo::Observation> IgnitionGazebo::reset()
 {
-    return {};
+    if (!pImpl->pluginData.behavior) {
+        return {};
+    }
+
+    if (!pImpl->pluginData.behavior->reset()) {
+        return {};
+    }
+
+    return pImpl->pluginData.behavior->getObservation();
 }
 
 bool IgnitionGazebo::render(IgnitionGazebo::RenderMode mode)
