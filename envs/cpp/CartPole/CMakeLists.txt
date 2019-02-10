@@ -21,18 +21,19 @@ target_include_directories(DataBridge PRIVATE
 # CartPole ENVIRONMENT
 # ====================
 
-add_library(CartPole
-    CartPole.h
-    CartPole.cpp)
+#add_library(CartPole
+#    CartPole.h
+#    CartPole.cpp)
 
-target_link_libraries(CartPole
-    PUBLIC
-    gympp
-    gympp-ignition
-    PRIVATE
-    sdformat8::sdformat8
-    ignition-gazebo::ignition-gazebo
-    ignition-common3::ignition-common3)
+#target_link_libraries(CartPole
+#    PUBLIC
+#    gympp
+#    gympp-ignition
+#    PRIVATE
+#    ignition-physics1::ignition-physics1
+#    sdformat8::sdformat8
+#    ignition-gazebo::ignition-gazebo
+#    ignition-common3::ignition-common3)
 
-target_include_directories(CartPole PUBLIC
-    ${CMAKE_CURRENT_SOURCE_DIR})
+#target_include_directories(CartPole PUBLIC
+#    ${CMAKE_CURRENT_SOURCE_DIR})
