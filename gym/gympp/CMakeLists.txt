@@ -23,8 +23,10 @@ add_library(gympp
     include/gympp/Gympp.h
     include/gympp/common.h
     include/gympp/Log.h
+    include/gympp/Random.h
     include/gympp/spaces/Space.h
-    src/Space.cpp)
+    src/Space.cpp
+    src/Random.cpp)
 
 target_link_libraries(gympp PUBLIC
     ignition-common3::ignition-common3)
