@@ -14,10 +14,6 @@
 
 using IgnitionServer = ignition::gazebo::v0::Server;
 
-template class gympp::gyms::IgnitionGazebo<size_t, double>;
-// template class gympp::gyms::IgnitionGazebo<double, double>;
-// template class gympp::gyms::IgnitionGazebo<int, float>;
-
 using namespace gympp::gyms;
 
 struct IgnitionGuiData
@@ -53,8 +49,7 @@ struct IgnitionGuiData
     }
 };
 
-template <typename AType, typename OType>
-class IgnitionGazebo<AType, OType>::Impl
+class IgnitionGazebo::Impl
 {
 public:
     bool firstRun = true;
@@ -78,8 +73,7 @@ public:
     bool loadPlugin(PluginData& pluginData);
 };
 
-template <typename AType, typename OType>
-bool IgnitionGazebo<AType, OType>::Impl::loadPlugin(PluginData& pluginData)
+bool IgnitionGazebo::Impl::loadPlugin(PluginData& pluginData)
 {
     // TODO
     //    setenv("IGN_GAZEBO_SYSTEM_PLUGIN_PATH",
@@ -109,16 +103,15 @@ bool IgnitionGazebo<AType, OType>::Impl::loadPlugin(PluginData& pluginData)
     return true;
 }
 
-template <typename AType, typename OType>
-IgnitionGazebo<AType, OType>::IgnitionGazebo(const std::string libName,
-                                             const std::string& pluginName,
-                                             const ActionSpacePtr aSpace,
-                                             const ObservationSpacePtr oSpace,
-                                             const std::string& sdfFile,
-                                             double updateRate,
-                                             uint64_t iterations)
+IgnitionGazebo::IgnitionGazebo(const std::string libName,
+                               const std::string& pluginName,
+                               const ActionSpacePtr aSpace,
+                               const ObservationSpacePtr oSpace,
+                               const std::string& sdfFile,
+                               double updateRate,
+                               uint64_t iterations)
     : Environment(aSpace, oSpace)
-    , pImpl{new IgnitionGazebo::Impl}
+    , pImpl{new IgnitionGazebo::Impl, [](Impl* impl) { delete impl; }}
 {
     setVerbosity(4);
     pImpl->sdfFile = sdfFile;
@@ -128,12 +121,9 @@ IgnitionGazebo<AType, OType>::IgnitionGazebo(const std::string libName,
     pImpl->serverConfig.SetUpdateRate(updateRate);
 }
 
-template <typename AType, typename OType>
-gympp::gyms::IgnitionGazebo<AType, OType>::~IgnitionGazebo() = default;
+gympp::gyms::IgnitionGazebo::~IgnitionGazebo() = default;
 
-template <typename AType, typename OType>
-std::optional<typename IgnitionGazebo<AType, OType>::State>
-IgnitionGazebo<AType, OType>::step(const Action& action)
+std::optional<IgnitionGazebo::State> IgnitionGazebo::step(const Action& action)
 {
     if (pImpl->firstRun) {
         pImpl->firstRun = false;
@@ -156,30 +146,22 @@ IgnitionGazebo<AType, OType>::step(const Action& action)
         std::unique_lock lock(pImpl->gui.mutex);
         m_server = std::make_unique<IgnitionServer>(pImpl->serverConfig);
 
-        // TODO: Configure the plugin. The server configures only plugins
-        //       loaded from the sdf file
-        //        pImpl->pluginData.systemPluginPtr->Configure();
-
-        // Add the plugin's system in the server
+        // Add the plugin system in the server
         m_server->AddSystem(pImpl->pluginData.systemPluginPtr);
     }
 
-    {
-        //        std::unique_lock lock(pImpl->gui.mutex);
-        //        if (pImpl->gui.thread && pImpl->gui.app) {
-        if (pImpl->gui.thread) {
-            // TODO: improve
-            //            lock.unlock();
+    if (pImpl->gui.thread) {
+        // Run main window on a separate thread
+        pImpl->gui.cv.notify_all();
+    }
 
-            // Run main window on a separate thread
-            pImpl->gui.cv.notify_all();
-        }
+    if (!this->action_space->contains(action)) {
+        gymppError << "The input action does not belong to the action space" << std::endl;
+        return {};
     }
 
     // Set the action to the environment
-    if (!(this->action_space->contains(action) && action.get<AType>()
-          && pImpl->pluginData.behavior->setAction(action))) {
-        //          && pImpl->pluginData.behavior->setAction(*action.get<AType>()))) {
+    if (!pImpl->pluginData.behavior->setAction(action)) {
         gymppError << "Failed to set the action" << std::endl;
         return {};
     }
@@ -193,30 +175,41 @@ IgnitionGazebo<AType, OType>::step(const Action& action)
     // Get the observation from the environment
     std::optional<Observation> observation = pImpl->pluginData.behavior->getObservation();
 
-    if (!(observation && this->observation_space->contains(observation.value()))) {
-        gymppError << "Failed to get the observation" << std::endl;
+    if (!observation) {
+        gymppError << "The gympp plugin didn't return the observation" << std::endl;
+        return {};
+    }
+
+    if (!this->observation_space->contains(observation.value())) {
+        gymppError << "The returned observation does not belong to the observation space"
+                   << std::endl;
         return {};
     }
 
     // Get the reward from the environment
     std::optional<Reward> reward = pImpl->pluginData.behavior->computeReward();
 
-    if (!(reward && this->reward_range.contains(reward.value()))) {
-        gymppError << "Failed to compute reward" << std::endl;
+    if (!reward) {
+        gymppError << "The gympp plugin didn't return the reward" << std::endl;
         return {};
     }
 
-    return {pImpl->pluginData.behavior->isDone(), {}, reward.value(), observation.value()};
+    if (!this->reward_range.contains(reward.value())) {
+        gymppError << "The returned reward (" << reward.value()
+                   << ") does not belong to the reward space" << std::endl;
+        return {};
+    }
+
+    return IgnitionGazebo::State{
+        pImpl->pluginData.behavior->isDone(), {}, reward.value(), observation.value()};
 }
 
-template <typename AType, typename OType>
-void IgnitionGazebo<AType, OType>::setVerbosity(int level)
+void IgnitionGazebo::setVerbosity(int level)
 {
     ignition::common::Console::SetVerbosity(level);
 }
 
-template <typename AType, typename OType>
-bool IgnitionGazebo<AType, OType>::loadSDF(std::string& sdfFile)
+bool IgnitionGazebo::loadSDF(std::string& sdfFile)
 {
     if (sdfFile.empty()) {
         gymppError << "Passed SDF file is an empty string" << std::endl;
@@ -231,8 +224,7 @@ bool IgnitionGazebo<AType, OType>::loadSDF(std::string& sdfFile)
     return true;
 }
 
-template <typename AType, typename OType>
-typename IgnitionGazebo<AType, OType>::Environment* IgnitionGazebo<AType, OType>::env()
+IgnitionGazebo::Environment* IgnitionGazebo::env()
 {
     // TODO return a share pointer to itself. There is a pattern for sharing the memory
     // by inheriting from a shared ptr particular class
@@ -240,15 +232,12 @@ typename IgnitionGazebo<AType, OType>::Environment* IgnitionGazebo<AType, OType>
     return static_cast<Environment*>(this);
 }
 
-template <typename AType, typename OType>
-std::optional<typename IgnitionGazebo<AType, OType>::Observation>
-IgnitionGazebo<AType, OType>::reset()
+std::optional<IgnitionGazebo::Observation> IgnitionGazebo::reset()
 {
     return {};
 }
 
-template <typename AType, typename OType>
-bool IgnitionGazebo<AType, OType>::render(IgnitionGazebo::RenderMode mode)
+bool IgnitionGazebo::render(IgnitionGazebo::RenderMode mode)
 {
     if (mode == IgnitionGazebo::RenderMode::HUMAN) {
         pImpl->gui.thread =
