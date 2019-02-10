@@ -23,7 +23,7 @@ class gympp::env::CartPole final : public gympp::gyms::IgnitionGazebo<AType, OTy
 {
 private:
     class Impl;
-    std::unique_ptr<Impl, void (*)(Impl*)> pImpl;
+    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
 
 public:
     CartPole() = delete;

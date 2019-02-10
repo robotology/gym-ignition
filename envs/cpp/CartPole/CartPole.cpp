@@ -1,15 +1,19 @@
 #include "CartPole.h"
+#include "DataBridge.h"
 
 #include "gympp/Log.h"
 #include "gympp/spaces/Space.h"
 
-#include "ignition/gazebo/components/Joint.hh"
-#include "ignition/gazebo/components/Link.hh"
-#include "ignition/gazebo/components/Name.hh"
-#include "ignition/gazebo/components/Pose.hh"
+#include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/System.hh>
-#include <ignition/gazebo/SystemManager.hh>
+#include <ignition/gazebo/SystemLoader.hh>
+#include <ignition/gazebo/components/Joint.hh>
+#include <ignition/gazebo/components/Link.hh>
+#include <ignition/gazebo/components/Name.hh>
+#include <ignition/gazebo/components/Pose.hh>
+#include <ignition/physics/FrameSemantics.hh>
+//#include <ignition/physics/Joint.hh>
 #include <ignition/plugin/SpecializedPluginPtr.hh> // TODO: cmake find_package
 #include <sdf/Joint.hh>
 #include <sdf/Model.hh>
@@ -68,6 +72,16 @@ public:
     //    CallbackType postUpdateCallback;
     gympp::plugins::DataBridge* dataBridge;
     ignition::gazebo::SystemPluginPtr systemPluginPtr;
+
+    ignition::gazebo::Model model;
+
+    //    using LinkPtrType = ignition::physics::LinkPtr<ignition::physics::FeaturePolicy3d,
+    //                                                   ignition::physics::LinkFrameSemantics>;
+    //    using JointPtrType = ignition::physics::JointPtr<ignition::physics::FeaturePolicy3d,
+    //                                                     ignition::physics::SetBasicJointState>;
+
+    //    LinkPtrType link;
+    //    JointPtrType joint;
 };
 
 using OSpace = gympp::spaces::Box;
@@ -76,6 +90,7 @@ using ASpace = gympp::spaces::Discrete;
 CartPole::CartPole(const std::string& sdfFile, double updateRate, uint64_t iterations)
     //    : gyms::IgnitionGazebo(
     : gyms::IgnitionGazebo<AType, OType>(
+          "CartPolePlugin",
           std::make_shared<ASpace>(2),
           std::make_shared<OSpace>(OSpace::Limit{-90, -20}, OSpace::Limit{90, 20}), // TODO
           sdfFile,
@@ -121,9 +136,10 @@ bool CartPole::Impl::getPoleAngle()
     }
 
     // Load the plugin
-    ignition::gazebo::SystemManager sm;
-    sm.AddSystemPluginPath("/home/dferigo/git/gym-ignition/build2/lib"); // TODO
-    auto plugin = sm.LoadPlugin("libDataBridge.so", "gympp::plugins::DataBridge", nullptr);
+    //    ignition::gazebo::SystemManager sm;
+    ignition::gazebo::SystemLoader sl;
+    sl.AddSystemPluginPath("/home/dferigo/git/gym-ignition/build2/lib"); // TODO
+    auto plugin = sl.LoadPlugin("libDataBridge.so", "gympp::plugins::DataBridge", nullptr);
     assert(plugin.has_value());
     systemPluginPtr = plugin.value();
 
@@ -142,6 +158,7 @@ bool CartPole::Impl::getPoleAngle()
         //            std::cout << _joint << std::endl;
         //            return true;
         //        };
+
         auto testLink = [&](const ignition::gazebo::EntityId&,
                             const components::Link* _link,
                             const components::Name* _name,
@@ -185,5 +202,5 @@ std::optional<CartPole::TypedEnvironmentBehavior::Observation> CartPole::getObse
 {
     pImpl->getPoleAngle();
     auto obs = CartPole::TypedEnvironmentBehavior::Observation{20, 9};
-    return obs;
+    return std::move(obs);
 }
