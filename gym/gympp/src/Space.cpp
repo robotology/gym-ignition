@@ -1,5 +1,6 @@
 #include "gympp/spaces/Space.h"
 #include "gympp/Log.h"
+#include "gympp/Random.h"
 
 #include <cassert>
 #include <random>
@@ -57,10 +58,6 @@ typename TBox<DataType>::Sample TBox<DataType>::TBox::sample()
 {
     Space::Sample randomSample;
 
-    std::random_device rd; // Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
-    std::uniform_real_distribution<> distr(0.0, 1.0); // TODO: always double
-
     // Create the buffer
     // TODO: 1D
     assert(pImpl->shape.size() == 1);
@@ -73,7 +70,7 @@ typename TBox<DataType>::Sample TBox<DataType>::TBox::sample()
         auto max = pImpl->high[i];
 
         std::uniform_real_distribution<> distr(min, max);
-        data[i] = distr(gen);
+        data[i] = distr(Random::engine());
     }
 
     // Create a Sample containing the buffer
@@ -153,9 +150,6 @@ Discrete::Discrete(size_t n)
 Discrete::Sample Discrete::sample()
 {
     Space::Sample randomSample;
-
-    std::random_device rd; // Will be used to obtain a seed for the random number engine
-    std::mt19937 gen(rd()); // Standard mersenne_twister_engine seeded with rd()
     std::uniform_int_distribution<> distr(0, pImpl->n - 1);
 
     // Create the buffer
@@ -163,7 +157,7 @@ Discrete::Sample Discrete::sample()
 
     // Fill it with data
     for (auto& element : buffer) {
-        element = distr(gen);
+        element = distr(Random::engine());
     }
 
     // Create a Sample containing the buffer
