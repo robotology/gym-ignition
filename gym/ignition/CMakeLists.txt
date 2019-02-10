@@ -1,5 +1,4 @@
 find_package(ignition-gazebo COMPONENTS all REQUIRED)
-find_package(ignition-gui1 REQUIRED)
 
 add_library(gympp-ignition
     include/gympp/gyms/Ignition.h
@@ -9,9 +8,7 @@ target_link_libraries(gympp-ignition
     PUBLIC
     gympp
     PRIVATE
-    #ignition-gazebo::ign-gazebo-gui
-    ignition-gazebo::ignition-gazebo
-    ignition-gui1::ignition-gui1)
+    ignition-gazebo::ignition-gazebo)
 
 target_include_directories(gympp-ignition PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
