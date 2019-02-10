@@ -8,9 +8,9 @@ add_library(gympp-ignition
 target_link_libraries(gympp-ignition
     PUBLIC
     gympp
-    ignition-gazebo::ignition-gazebo # TODO: private
     PRIVATE
     #ignition-gazebo::ign-gazebo-gui
+    ignition-gazebo::ignition-gazebo
     ignition-gui1::ignition-gui1)
 
 target_include_directories(gympp-ignition PUBLIC

@@ -3,9 +3,6 @@
 
 #include "gympp/Gympp.h"
 
-// TODO: fix forward decl
-#include <ignition/gazebo/Server.hh>
-
 #include <memory>
 
 namespace gympp {
@@ -16,13 +13,13 @@ namespace gympp {
 } // namespace gympp
 
 // TODO
-// namespace ignition {
-//    namespace gazebo {
-//        inline namespace v0 {
-//            class Server;
-//        }
-//    } // namespace gazebo
-//} // namespace ignition
+namespace ignition {
+    namespace gazebo {
+        inline namespace v0 {
+            class Server;
+        } // namespace v0
+    } // namespace gazebo
+} // namespace ignition
 
 class gympp::gyms::EnvironmentBehavior
 {
@@ -48,7 +45,8 @@ private:
     std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl = nullptr;
 
 protected:
-    std::unique_ptr<ignition::gazebo::Server> m_server = nullptr;
+    using GazeboServer = ignition::gazebo::Server;
+    std::unique_ptr<GazeboServer, std::function<void(GazeboServer*)>> m_server = nullptr;
 
 public:
     using Environment = gympp::Environment;

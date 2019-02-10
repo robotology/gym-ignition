@@ -13,8 +13,6 @@
 #include <thread>
 #include <unistd.h>
 
-using IgnitionServer = ignition::gazebo::v0::Server;
-
 using namespace gympp::gyms;
 
 struct IgnitionGuiData
@@ -145,7 +143,8 @@ std::optional<IgnitionGazebo::State> IgnitionGazebo::step(const Action& action)
         // Create the server
         gymppDebug << "Creating the server" << std::endl << std::flush;
         std::unique_lock lock(pImpl->gui.mutex);
-        m_server = std::make_unique<IgnitionServer>(pImpl->serverConfig);
+        m_server = decltype(m_server)(new GazeboServer(pImpl->serverConfig),
+                                      [](GazeboServer* gz) { delete gz; });
 
         // Add the plugin system in the server
         m_server->AddSystem(pImpl->pluginData.systemPluginPtr);
