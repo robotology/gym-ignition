@@ -69,6 +69,7 @@ public:
     bool render(RenderMode mode) override;
     std::optional<Observation> reset() override;
     std::optional<State> step(const Action& action) override;
+    std::vector<unsigned> seed(unsigned seed = 0) override;
 
     // Public APIs
     Environment* env();

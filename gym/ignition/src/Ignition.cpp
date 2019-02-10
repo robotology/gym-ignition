@@ -1,5 +1,6 @@
 #include "gympp/gyms/Ignition.h"
 #include "gympp/Log.h"
+#include "gympp/Random.h"
 
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
@@ -202,6 +203,15 @@ std::optional<IgnitionGazebo::State> IgnitionGazebo::step(const Action& action)
 
     return IgnitionGazebo::State{
         pImpl->pluginData.behavior->isDone(), {}, reward.value(), observation.value()};
+}
+
+std::vector<unsigned> IgnitionGazebo::seed(unsigned seed)
+{
+    if (seed != 0) {
+        gympp::Random::setSeed(seed);
+    }
+
+    return {seed};
 }
 
 void IgnitionGazebo::setVerbosity(int level)
