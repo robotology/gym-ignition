@@ -39,7 +39,9 @@ public:
     virtual std::optional<Observation> getObservation() = 0;
 };
 
-class gympp::gyms::IgnitionGazebo : public gympp::Environment
+class gympp::gyms::IgnitionGazebo
+    : public gympp::Environment
+    , public std::enable_shared_from_this<gympp::Environment>
 {
 private:
     class Impl;
@@ -72,7 +74,7 @@ public:
     std::vector<unsigned> seed(unsigned seed = 0) override;
 
     // Public APIs
-    Environment* env();
+    EnvironmentPtr env();
     void setVerbosity(int level = 4);
     bool loadSDF(std::string& sdfFile);
 };

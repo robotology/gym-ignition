@@ -13,6 +13,7 @@
 namespace gympp {
     class Environment;
     using EnvironmentName = std::string;
+    using EnvironmentPtr = std::shared_ptr<gympp::Environment>;
 } // namespace gympp
 
 // TODO: https://hub.packtpub.com/openai-gym-environments-wrappers-and-monitors-tutorial/

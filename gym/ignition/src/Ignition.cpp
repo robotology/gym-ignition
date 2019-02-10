@@ -234,12 +234,9 @@ bool IgnitionGazebo::loadSDF(std::string& sdfFile)
     return true;
 }
 
-IgnitionGazebo::Environment* IgnitionGazebo::env()
+gympp::EnvironmentPtr IgnitionGazebo::env()
 {
-    // TODO return a share pointer to itself. There is a pattern for sharing the memory
-    // by inheriting from a shared ptr particular class
-    //    return static_cast<IgnitionGazebo<AType, OType>>(this);
-    return static_cast<Environment*>(this);
+    return shared_from_this();
 }
 
 std::optional<IgnitionGazebo::Observation> IgnitionGazebo::reset()
