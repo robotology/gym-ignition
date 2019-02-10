@@ -34,6 +34,11 @@ target_link_libraries(CartPolePlugin
 target_include_directories(CartPolePlugin PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR})
 
+if(MSVC)
+    # Import math symbols from standard cmath
+    target_compile_definitions(CartPolePlugin PRIVATE "_USE_MATH_DEFINES")
+endif()
+
 # ====================
 # CartPole ENVIRONMENT
 # ====================
