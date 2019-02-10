@@ -10,7 +10,7 @@
 
 namespace gympp {
 
-    using DataSupport = float;
+    using DataSupport = double;
 
     template <typename DataSupport>
     struct Range;
@@ -92,7 +92,7 @@ struct gympp::data::Sample
 template <typename DataSupport>
 struct gympp::Range
 {
-    Range(DataSupport minValue = std::numeric_limits<DataSupport>::min(),
+    Range(DataSupport minValue = std::numeric_limits<DataSupport>::lowest(),
           DataSupport maxValue = std::numeric_limits<DataSupport>::max())
         : min(minValue)
         , max(maxValue)

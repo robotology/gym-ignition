@@ -24,7 +24,7 @@ class gympp::Environment
 {
 public:
     using Action = data::Sample;
-    using Reward = float;
+    using Reward = DataSupport;
     using Observation = data::Sample;
 
     struct State
@@ -46,7 +46,7 @@ public:
     using ObservationSpace = gympp::spaces::Space;
     using ActionSpacePtr = std::shared_ptr<ActionSpace>;
     using ObservationSpacePtr = std::shared_ptr<ObservationSpace>;
-    using RewardRange = gympp::Range<float>;
+    using RewardRange = gympp::Range<DataSupport>;
 
 public:
     ActionSpacePtr action_space;
