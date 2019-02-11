@@ -18,6 +18,16 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${GYMPP_BUILD_TYPES})
 endif()
 
+# Tweak linker flags in Linux
+if(UNIX AND NOT APPLE)
+    if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        get_filename_component(LINKER_BIN ${CMAKE_LINKER} NAME)
+            if("${LINKER_BIN}" STREQUAL "ld")
+                set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--unresolved-symbols=report-all")
+            endif()
+    endif()
+endif()
+
 # Control where binaries and libraries are placed in the build folder.
 # This simplifies tests running in Windows.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
