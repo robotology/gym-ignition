@@ -8,6 +8,7 @@ target_link_libraries(gympp-ignition
     PUBLIC
     gympp
     PRIVATE
+    tiny-process-library
     ignition-gazebo::ignition-gazebo)
 
 target_include_directories(gympp-ignition PUBLIC

@@ -12,15 +12,6 @@ namespace gympp {
     } // namespace gyms
 } // namespace gympp
 
-// TODO
-namespace ignition {
-    namespace gazebo {
-        inline namespace v0 {
-            class Server;
-        } // namespace v0
-    } // namespace gazebo
-} // namespace ignition
-
 class gympp::gyms::EnvironmentBehavior
 {
 public:
@@ -46,9 +37,6 @@ private:
     std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl = nullptr;
 
 protected:
-    using GazeboServer = ignition::gazebo::Server;
-    std::unique_ptr<GazeboServer, std::function<void(GazeboServer*)>> m_server = nullptr;
-
 public:
     using Environment = gympp::Environment;
     using Environment::Action;
@@ -58,14 +46,14 @@ public:
     using Environment::State;
 
     IgnitionGazebo() = delete;
-    IgnitionGazebo(const std::string libName,
-                   const std::string& pluginName,
-                   const ActionSpacePtr aSpace,
+    IgnitionGazebo(const ActionSpacePtr aSpace,
                    const ObservationSpacePtr oSpace,
                    const std::string& sdfFile,
                    double updateRate,
                    uint64_t iterations = 1);
     ~IgnitionGazebo() override;
+
+    void setupIgnitionPlugin(const std::string& libName, const std::string& pluginName);
 
     bool render(RenderMode mode) override;
     std::optional<Observation> reset() override;
@@ -75,7 +63,6 @@ public:
     // Public APIs
     EnvironmentPtr env();
     void setVerbosity(int level = 4);
-    bool loadSDF(std::string& sdfFile);
 };
 
 #endif // GYMPP_GYMS_IGNITION

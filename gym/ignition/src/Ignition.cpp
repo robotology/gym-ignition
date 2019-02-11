@@ -1,12 +1,14 @@
 #include "gympp/gyms/Ignition.h"
 #include "gympp/Log.h"
 #include "gympp/Random.h"
+#include "process.hpp"
 
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
 #include <ignition/gazebo/SystemLoader.hh>
 #include <ignition/plugin/SpecializedPluginPtr.hh>
 
+#include <chrono>
 #include <condition_variable>
 #include <functional>
 #include <mutex>
@@ -17,74 +19,46 @@ using namespace gympp::gyms;
 
 struct IgnitionGuiData
 {
-    std::mutex mutex;
-    std::condition_variable cv;
-    std::unique_ptr<std::thread> thread{nullptr};
+    bool render = false;
+    std::unique_ptr<TinyProcessLib::Process> ignitionGui{nullptr};
+};
 
-    static void spawnGui(IgnitionGuiData& gui)
-    {
-        {
-            std::unique_lock lock(gui.mutex);
-            gymppDebug << "Waiting that the server starts" << std::endl << std::flush;
-            gui.cv.wait(lock);
-        }
+struct PluginData
+{
+    std::string libName;
+    std::string pluginName;
 
-        // This blocks until the window is closed or we receive a SIGINT
-        gymppDebug << "Executing the application" << std::endl;
-        pid_t guiPid;
-        guiPid = fork();
-        if (guiPid == 0) {
-            // remove client from foreground process group
-            setpgid(guiPid, 0);
-
-            // Spin up GUI process and block here
-            char** argvGui = new char*[2];
-            argvGui[0] = const_cast<char*>("ign-gazebo-gui");
-            argvGui[1] = nullptr;
-            execvp("ign-gazebo-gui", argvGui);
-            ignerr << "Failed to execute GUI";
-            exit(EXIT_FAILURE);
-        }
-    }
+    EnvironmentBehavior* behavior = nullptr;
+    ignition::gazebo::SystemPluginPtr systemPluginPtr;
 };
 
 class IgnitionGazebo::Impl
 {
 public:
     bool firstRun = true;
-
     std::string sdfFile;
-
     uint64_t numOfIterations = 0;
-    ignition::gazebo::ServerConfig serverConfig;
 
     IgnitionGuiData gui;
+    PluginData pluginData;
 
-    struct PluginData
-    {
-        std::string libName;
-        std::string pluginName;
+    ignition::gazebo::ServerConfig serverConfig;
+    std::unique_ptr<ignition::gazebo::Server> server = nullptr;
 
-        EnvironmentBehavior* behavior = nullptr;
-        ignition::gazebo::SystemPluginPtr systemPluginPtr;
-    } pluginData;
-
+    bool initializeFirstRun();
+    bool loadSDF(std::string& sdfFile);
     bool loadPlugin(PluginData& pluginData);
 };
 
 bool IgnitionGazebo::Impl::loadPlugin(PluginData& pluginData)
 {
-    // TODO
-    //    setenv("IGN_GAZEBO_SYSTEM_PLUGIN_PATH",
-    //           std::string("/home/dferigo/git/gym-ignition/build/lib").c_str(),
-    //           1);
-
     ignition::gazebo::SystemLoader sl;
-    sl.AddSystemPluginPath("/home/dferigo/git/gym-ignition/build/lib"); // TODO
-    auto plugin = sl.LoadPlugin("libCartPolePlugin.so", "gympp::plugins::CartPole", nullptr);
+    auto plugin = sl.LoadPlugin(pluginData.libName, pluginData.pluginName, nullptr);
 
     if (!plugin.has_value()) {
-        gymppError << "Failed to load plugin";
+        gymppError << "Failed to load plugin '" << pluginData.pluginName << "'" << std::endl;
+        gymppError << "Make sure that the IGN_GAZEBO_SYSTEM_PLUGIN_PATH environment variable "
+                   << "contains the path to the plugin '" << pluginData.libName << "'" << std::endl;
         return false;
     }
 
@@ -102,9 +76,51 @@ bool IgnitionGazebo::Impl::loadPlugin(PluginData& pluginData)
     return true;
 }
 
-IgnitionGazebo::IgnitionGazebo(const std::string libName,
-                               const std::string& pluginName,
-                               const ActionSpacePtr aSpace,
+bool IgnitionGazebo::Impl::initializeFirstRun()
+{
+    firstRun = false;
+
+    // Load the sdf file from the filesystem
+    // TODO: get the absolute path with Ignition::Filesystem?
+    if (!loadSDF(sdfFile)) {
+        gymppError << "Failed to load the SDF";
+        return false;
+    }
+
+    // Load the plugin
+    if (!loadPlugin(pluginData)) {
+        gymppError << "Failed to load the gym plugin";
+        return false;
+    }
+
+    // Create the server
+    gymppDebug << "Creating the server" << std::endl << std::flush;
+    server = std::make_unique<ignition::gazebo::Server>(serverConfig);
+
+    // Add the plugin system in the server
+    auto ok = server->AddSystem(pluginData.systemPluginPtr);
+
+    if (!(ok && ok.value())) {
+        gymppError << "Failed to add the system in the gazebo server" << std::endl;
+        return false;
+    }
+
+    // Initialize the server by running 1 iteration. The GUI needs the server already up.
+    if (!server->Run(/*_blocking=*/true, 1, /*_paused=*/false)) {
+        gymppError << "The gazebo server failed to run the first iteration" << std::endl;
+        return false;
+    }
+
+    if (gui.render) {
+        gui.ignitionGui = std::make_unique<TinyProcessLib::Process>("ign-gazebo-gui");
+        // TODO: find a best way to wait that the gui is open
+        std::this_thread::sleep_for(std::chrono::seconds(2));
+    }
+
+    return true;
+}
+
+IgnitionGazebo::IgnitionGazebo(const ActionSpacePtr aSpace,
                                const ObservationSpacePtr oSpace,
                                const std::string& sdfFile,
                                double updateRate,
@@ -114,45 +130,38 @@ IgnitionGazebo::IgnitionGazebo(const std::string libName,
 {
     setVerbosity(4);
     pImpl->sdfFile = sdfFile;
-    pImpl->pluginData.libName = libName;
-    pImpl->pluginData.pluginName = pluginName;
     pImpl->numOfIterations = iterations;
     pImpl->serverConfig.SetUpdateRate(updateRate);
 }
 
-gympp::gyms::IgnitionGazebo::~IgnitionGazebo() = default;
+void IgnitionGazebo::setupIgnitionPlugin(const std::string& libName, const std::string& pluginName)
+{
+    pImpl->pluginData.libName = libName;
+    pImpl->pluginData.pluginName = pluginName;
+}
+
+gympp::gyms::IgnitionGazebo::~IgnitionGazebo()
+{
+    if (pImpl->gui.ignitionGui) {
+#if defined(WIN32) || defined(_WIN32)
+        bool force = false;
+#else
+        bool force = true;
+#endif
+        pImpl->gui.ignitionGui->kill(force);
+    }
+
+    // TODO: for some reason when the main process is terminated after a SIGTERM,
+    //       the server hangs forever during its destruction.
+}
 
 std::optional<IgnitionGazebo::State> IgnitionGazebo::step(const Action& action)
 {
     if (pImpl->firstRun) {
-        pImpl->firstRun = false;
-
-        // Load the sdf file from the filesystem
-        // TODO: get the absolute path with Ignition::Filesystem?
-        if (!loadSDF(pImpl->sdfFile)) {
-            gymppError << "Failed to load the SDF";
+        if (!pImpl->initializeFirstRun()) {
+            gymppError << "Failed to initialize ignition gazebo" << std::endl;
             return {};
         }
-
-        // Load the plugin
-        if (!pImpl->loadPlugin(pImpl->pluginData)) {
-            gymppError << "Failed to load the gym plugin";
-            return {};
-        }
-
-        // Create the server
-        gymppDebug << "Creating the server" << std::endl << std::flush;
-        std::unique_lock lock(pImpl->gui.mutex);
-        m_server = decltype(m_server)(new GazeboServer(pImpl->serverConfig),
-                                      [](GazeboServer* gz) { delete gz; });
-
-        // Add the plugin system in the server
-        m_server->AddSystem(pImpl->pluginData.systemPluginPtr);
-    }
-
-    if (pImpl->gui.thread) {
-        // Run main window on a separate thread
-        pImpl->gui.cv.notify_all();
     }
 
     if (!this->action_space->contains(action)) {
@@ -166,8 +175,7 @@ std::optional<IgnitionGazebo::State> IgnitionGazebo::step(const Action& action)
         return {};
     }
 
-    // Run the server synchronously
-    if (!m_server->Run(/*_blocking=*/true, pImpl->numOfIterations, /*_paused=*/false)) {
+    if (!pImpl->server->Run(/*_blocking=*/true, pImpl->numOfIterations, /*_paused=*/false)) {
         gymppError << "The server couldn't execute the step" << std::endl;
         return {};
     }
@@ -218,14 +226,14 @@ void IgnitionGazebo::setVerbosity(int level)
     ignition::common::Console::SetVerbosity(level);
 }
 
-bool IgnitionGazebo::loadSDF(std::string& sdfFile)
+bool IgnitionGazebo::Impl::loadSDF(std::string& sdfFile)
 {
     if (sdfFile.empty()) {
         gymppError << "Passed SDF file is an empty string" << std::endl;
         return false;
     }
 
-    if (!pImpl->serverConfig.SetSdfFile(sdfFile)) {
+    if (!serverConfig.SetSdfFile(sdfFile)) {
         std::cout << "Failed to set the SDF file " << sdfFile << std::endl;
         return false;
     }
@@ -254,8 +262,7 @@ std::optional<IgnitionGazebo::Observation> IgnitionGazebo::reset()
 bool IgnitionGazebo::render(IgnitionGazebo::RenderMode mode)
 {
     if (mode == IgnitionGazebo::RenderMode::HUMAN) {
-        pImpl->gui.thread =
-            std::make_unique<std::thread>(&IgnitionGuiData::spawnGui, std::ref(pImpl->gui));
+        pImpl->gui.render = true;
         return true;
     }
 
