@@ -5,6 +5,8 @@
 #include "gympp/gyms/Ignition.h"
 #include "gympp/spaces/Space.h"
 
+#include <ignition/common/SignalHandler.hh>
+
 #include <iostream>
 
 using namespace gympp;
@@ -12,6 +14,18 @@ using namespace gympp;
 int main(int /*argc*/, char* /*argv*/[])
 {
     auto env = GymFactory::make("CartPole");
+
+    if (!env) {
+        ignerr << "Failed to load the CartPole environment" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    ignition::common::SignalHandler sigHandler;
+    assert(sigHandler.Initialized());
+    sigHandler.AddCallback([&](const int /*_sig*/) {
+        env.reset();
+        exit(EXIT_FAILURE);
+    });
 
     auto observation = env->reset();
     auto reward = Environment::Reward(0);
