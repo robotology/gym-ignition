@@ -38,7 +38,12 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # Add the C++ sources subdirectory
-add_subdirectory(deps)
-add_subdirectory(gym)
-add_subdirectory(envs/cpp)
-add_subdirectory(test)
+add_subdirectory(gym/gympp)
+
+find_package(ignition-gazebo COMPONENTS all)
+if(ignition-gazebo_FOUND)
+    add_subdirectory(gym/ignition)
+    add_subdirectory(deps)
+    add_subdirectory(envs/cpp)
+    add_subdirectory(test)
+endif()

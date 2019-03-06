@@ -1,5 +1,3 @@
-find_package(ignition-gazebo REQUIRED)
-
 # ===============
 # CartPole PLUGIN
 # ===============

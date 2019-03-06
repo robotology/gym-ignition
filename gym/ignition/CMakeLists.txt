@@ -1,5 +1,3 @@
-find_package(ignition-gazebo COMPONENTS all REQUIRED)
-
 add_library(gympp-ignition
     include/gympp/gyms/Ignition.h
     src/Ignition.cpp)

@@ -1,5 +1,3 @@
-find_package(ignition-gazebo COMPONENTS all REQUIRED)
-
 add_library(GymFactory
     include/gympp/GymFactory.h
     src/GymFactory.cpp)
