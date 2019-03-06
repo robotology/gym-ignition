@@ -18,3 +18,9 @@ if(MSVC)
     # Import math symbols from standard cmath
     target_compile_definitions(CartPolePlugin PRIVATE "_USE_MATH_DEFINES")
 endif()
+
+install(
+    TARGETS CartPolePlugin
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp)
