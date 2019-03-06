@@ -1,21 +1,3 @@
-#add_library(Gympp INTERFACE)
-
-#target_sources(Gympp INTERFACE
-#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/Gympp.h>
-#    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/gympp/Gympp.h>)
-
-#target_include_directories(Gympp INTERFACE
-#    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-#    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
-#install(
-#    TARGETS Gympp
-#    EXPORT Gympp)
-
-#install(
-#    FILES include/gympp/Gympp.h
-#    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/Gympp)
-
 # TODO: only required for logging messages
 find_package(ignition-common3 REQUIRED)
 
