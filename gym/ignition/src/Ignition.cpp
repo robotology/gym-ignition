@@ -259,9 +259,9 @@ std::optional<IgnitionGazebo::Observation> IgnitionGazebo::reset()
     return pImpl->pluginData.behavior->getObservation();
 }
 
-bool IgnitionGazebo::render(IgnitionGazebo::RenderMode mode)
+bool IgnitionGazebo::render(RenderMode mode)
 {
-    if (mode == IgnitionGazebo::RenderMode::HUMAN) {
+    if (mode == RenderMode::HUMAN) {
         pImpl->gui.render = true;
         return true;
     }
