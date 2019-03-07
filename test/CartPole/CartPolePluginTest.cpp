@@ -56,7 +56,7 @@ int main(int /*argc*/, char* /*argv*/[])
         // Simulate the system with the given action
         auto state = env->step(actionSample);
 
-        if (!state.has_value()) {
+        if (!state) {
             gymppError << "The environment didn't return the state" << std::endl;
             return EXIT_FAILURE;
         }

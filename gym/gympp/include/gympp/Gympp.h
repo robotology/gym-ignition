@@ -32,7 +32,6 @@ struct gympp::State
 //       These C++ and their mapping to python / julia should allow using the Wrapper method
 
 // From https://github.com/openai/gym/blob/master/gym/core.py
-// template <typename AType, typename OType>
 class gympp::Environment
 {
 public:
