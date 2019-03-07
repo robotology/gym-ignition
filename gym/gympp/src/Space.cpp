@@ -150,15 +150,13 @@ Discrete::Discrete(size_t n)
 Discrete::Sample Discrete::sample()
 {
     Space::Sample randomSample;
-    std::uniform_int_distribution<> distr(0, pImpl->n - 1);
+    std::uniform_int_distribution<> distr(0, static_cast<int>(pImpl->n) - 1);
 
     // Create the buffer
     auto buffer = gympp::BufferContainer<Type>::type(1, Type{});
 
     // Fill it with data
-    for (auto& element : buffer) {
-        element = distr(Random::engine());
-    }
+    buffer[0] = distr(Random::engine());
 
     // Create a Sample containing the buffer
     randomSample.buffer = std::move(buffer);
