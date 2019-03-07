@@ -4,7 +4,6 @@
 #include <any>
 #include <memory>
 #include <typeinfo>
-#include <valarray>
 #include <variant>
 #include <vector>
 
@@ -16,12 +15,15 @@ namespace gympp {
     struct Range;
 
     template <typename Type>
-    using BufferContainer = std::valarray<Type>;
+    struct BufferContainer
+    {
+        typedef std::vector<Type> type;
+    };
 
-    using BufferInt = BufferContainer<int>;
-    using BufferLong = BufferContainer<size_t>;
-    using BufferFloat = BufferContainer<float>;
-    using BufferDouble = BufferContainer<double>;
+    using BufferInt = BufferContainer<int>::type;
+    using BufferLong = BufferContainer<size_t>::type;
+    using BufferFloat = BufferContainer<float>::type;
+    using BufferDouble = BufferContainer<double>::type;
     using GenericBuffer = std::variant<BufferInt, BufferLong, BufferFloat, BufferDouble>;
 
     namespace data {
@@ -42,9 +44,9 @@ struct gympp::data::Sample
     // TODO: others
 
     template <typename T>
-    auto* get() const
+    std::vector<T>* getBuffer()
     {
-        return std::get_if<std::valarray<T>>(&buffer);
+        return std::get_if<typename BufferContainer<T>::type>(&buffer);
     }
 };
 

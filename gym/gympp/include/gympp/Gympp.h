@@ -4,7 +4,6 @@
 #include <memory>
 #include <optional>
 #include <string>
-#include <valarray>
 #include <vector>
 
 #include "gympp/Space.h"

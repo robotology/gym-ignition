@@ -52,7 +52,7 @@ class gympp::spaces::details::TBox : public gympp::spaces::Space
 {
 public:
     using Shape = gympp::data::Shape;
-    using Buffer = gympp::BufferContainer<DataType>;
+    using Buffer = typename gympp::BufferContainer<DataType>::type;
     using Limit = Buffer;
     using Sample = gympp::data::Sample;
 

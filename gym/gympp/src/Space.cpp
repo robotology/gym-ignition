@@ -153,7 +153,7 @@ Discrete::Sample Discrete::sample()
     std::uniform_int_distribution<> distr(0, pImpl->n - 1);
 
     // Create the buffer
-    auto buffer = gympp::BufferContainer<Type>(Type{}, pImpl->n);
+    auto buffer = gympp::BufferContainer<Type>::type(1, Type{});
 
     // Fill it with data
     for (auto& element : buffer) {
