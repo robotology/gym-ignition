@@ -82,7 +82,7 @@ typename TBox<DataType>::Sample TBox<DataType>::TBox::sample()
 template <typename DataType>
 bool TBox<DataType>::contains(const Space::Sample& data) const
 {
-    auto* bufferPtr = data.get<DataType>();
+    auto* bufferPtr = data.getBuffer<DataType>();
 
     // Check the type
     if (!bufferPtr) {

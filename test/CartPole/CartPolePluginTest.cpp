@@ -62,7 +62,7 @@ int main(int /*argc*/, char* /*argv*/[])
         }
 
         // Print the observation
-        if (auto* o = state->observation.get<double>(); o) {
+        if (auto* o = state->observation.getBuffer<double>(); o) {
             for (const auto el : *o) {
                 std::cout << el << " ";
             }
