@@ -70,6 +70,9 @@ SWIG_Python_RaiseOrModifyTypeError(const char *message)
 
 %include "optional.i"
 %template(Optional_i) std::optional<int>;
+%template(Optional_u) std::optional<size_t>;
+%template(Optional_f) std::optional<float>;
+%template(Optional_d) std::optional<double>;
 %template(Optional_state) std::optional<gympp::State>;
 %template(Optional_sample) std::optional<gympp::data::Sample>;
 
