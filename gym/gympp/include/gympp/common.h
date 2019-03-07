@@ -38,7 +38,17 @@ struct gympp::data::Sample
     GenericBuffer buffer;
 
     Sample() = default;
-    Sample(const GenericBuffer& buf)
+
+    Sample(const BufferInt& buf)
+        : buffer(buf)
+    {}
+    Sample(const BufferLong& buf)
+        : buffer(buf)
+    {}
+    Sample(const BufferFloat& buf)
+        : buffer(buf)
+    {}
+    Sample(const BufferDouble& buf)
         : buffer(buf)
     {}
     // TODO: others
