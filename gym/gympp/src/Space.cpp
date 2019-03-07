@@ -29,11 +29,11 @@ TBox<DataType>::TBox(const DataType low, const DataType high, const Shape& shape
 {
     // TODO
     size_t size = shape.size();
-    assert(size < 2);
+    assert(size == 1);
 
     pImpl->shape = shape;
-    pImpl->low = Limit(low, size);
-    pImpl->high = Limit(high, size);
+    pImpl->low = Limit(shape[0], low);
+    pImpl->high = Limit(shape[0], high);
 }
 
 template <typename DataType>
@@ -45,7 +45,7 @@ TBox<DataType>::TBox(const Limit& low, const Limit& high)
 
     // TODO
     size_t size = pImpl->shape.size();
-    assert(size < 2);
+    assert(size == 1);
 
     pImpl->low = low;
     pImpl->high = high;
@@ -62,7 +62,7 @@ typename TBox<DataType>::Sample TBox<DataType>::TBox::sample()
     // TODO: 1D
     assert(pImpl->shape.size() == 1);
     assert(pImpl->shape[0] != 0);
-    auto data = Buffer(DataType{}, pImpl->shape[0]);
+    auto data = Buffer(pImpl->shape[0], DataType{});
 
     // Fill it with random data within the bounds
     for (unsigned i = 0; i < data.size(); ++i) {
@@ -166,7 +166,7 @@ Discrete::Sample Discrete::sample()
 
 bool Discrete::contains(const Space::Sample& data) const
 {
-    auto* bufferPtr = data.get<Type>();
+    auto* bufferPtr = data.getBuffer<Type>();
 
     // Check the type
     if (!bufferPtr) {
@@ -176,9 +176,9 @@ bool Discrete::contains(const Space::Sample& data) const
 
     // TODO: only 1D
     assert(pImpl->shape.size() == 1);
-    if (bufferPtr->size() != pImpl->shape[0]) {
+    if (bufferPtr->size() != pImpl->shape.size()) {
         gymppError << "The size of the buffer (" << bufferPtr->size()
-                   << ") does not match with the shape of the space (" << pImpl->shape[0] << ")"
+                   << ") does not match with the shape of the space (" << pImpl->shape.size() << ")"
                    << std::endl;
         return false;
     }
