@@ -70,6 +70,12 @@ struct gympp::data::Sample
     }
 
     template <typename T>
+    const std::vector<T>* getBuffer() const
+    {
+        return std::get_if<typename BufferContainer<T>::type>(&buffer);
+    }
+
+    template <typename T>
     std::vector<T>* getBuffer()
     {
         return std::get_if<typename BufferContainer<T>::type>(&buffer);
