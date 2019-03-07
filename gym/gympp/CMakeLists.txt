@@ -13,9 +13,7 @@ add_library(gympp
 target_link_libraries(gympp PUBLIC
     ignition-common3::ignition-common3)
 
-file(GLOB_RECURSE GYMPP_HEADERS_INSTALL
-#    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/include
-    include/*.h)
+file(GLOB_RECURSE GYMPP_HEADERS_INSTALL include/*.h)
 
 set_target_properties(gympp PROPERTIES
     PUBLIC_HEADER "${GYMPP_HEADERS_INSTALL}"
