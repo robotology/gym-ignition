@@ -72,7 +72,7 @@ extern template class gympp::spaces::details::TBox<double>;
 class gympp::spaces::Discrete : public gympp::spaces::Space
 {
 public:
-    using Type = size_t;
+    using Type = int;
     using Shape = gympp::data::Shape;
 
     Discrete() = delete;
