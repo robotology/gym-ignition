@@ -1,4 +1,4 @@
-#include "gympp/spaces/Space.h"
+#include "gympp/Space.h"
 #include "gympp/Log.h"
 #include "gympp/Random.h"
 

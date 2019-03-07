@@ -1,9 +1,9 @@
 #include "gympp/GymFactory.h"
 #include "gympp/Gympp.h"
 #include "gympp/Log.h"
+#include "gympp/Space.h"
 #include "gympp/common.h"
 #include "gympp/gyms/Ignition.h"
-#include "gympp/spaces/Space.h"
 
 #include <ignition/common/SignalHandler.hh>
 

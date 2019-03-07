@@ -7,8 +7,8 @@
 #include <valarray>
 #include <vector>
 
+#include "gympp/Space.h"
 #include "gympp/common.h"
-#include "gympp/spaces/Space.h"
 
 namespace gympp {
     class Environment;
