@@ -3,6 +3,7 @@
 
 #include <any>
 #include <memory>
+#include <optional>
 #include <typeinfo>
 #include <variant>
 #include <vector>
@@ -52,6 +53,21 @@ struct gympp::data::Sample
         : buffer(buf)
     {}
     // TODO: others
+    template <typename T>
+    std::optional<T> get(const size_t i) const
+    {
+        auto bufferPtr = std::get_if<typename BufferContainer<T>::type>(&buffer);
+
+        if (!bufferPtr) {
+            return {};
+        }
+
+        if (i >= bufferPtr->size()) {
+            return {};
+        }
+
+        return bufferPtr->at(i);
+    }
 
     template <typename T>
     std::vector<T>* getBuffer()
