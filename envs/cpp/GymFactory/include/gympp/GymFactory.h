@@ -1,7 +1,7 @@
 #ifndef GYMPP_GYMFACTORY
 #define GYMPP_GYMFACTORY
 
-#include "gympp/Gympp.h"
+#include "gympp/Environment.h"
 
 namespace gympp {
     class GymFactory;

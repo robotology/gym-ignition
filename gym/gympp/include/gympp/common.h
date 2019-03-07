@@ -3,8 +3,8 @@
 
 #include <any>
 #include <memory>
+#include <optional>
 #include <typeinfo>
-#include <valarray>
 #include <variant>
 #include <vector>
 
@@ -16,12 +16,15 @@ namespace gympp {
     struct Range;
 
     template <typename Type>
-    using BufferContainer = std::valarray<Type>;
+    struct BufferContainer
+    {
+        typedef std::vector<Type> type;
+    };
 
-    using BufferInt = BufferContainer<int>;
-    using BufferLong = BufferContainer<size_t>;
-    using BufferFloat = BufferContainer<float>;
-    using BufferDouble = BufferContainer<double>;
+    using BufferInt = BufferContainer<int>::type;
+    using BufferLong = BufferContainer<size_t>::type;
+    using BufferFloat = BufferContainer<float>::type;
+    using BufferDouble = BufferContainer<double>::type;
     using GenericBuffer = std::variant<BufferInt, BufferLong, BufferFloat, BufferDouble>;
 
     namespace data {
@@ -36,58 +39,48 @@ struct gympp::data::Sample
     GenericBuffer buffer;
 
     Sample() = default;
-    Sample(const GenericBuffer& buf)
+
+    Sample(const BufferInt& buf)
         : buffer(buf)
     {}
-    // TODO: others
+    Sample(const BufferLong& buf)
+        : buffer(buf)
+    {}
+    Sample(const BufferFloat& buf)
+        : buffer(buf)
+    {}
+    Sample(const BufferDouble& buf)
+        : buffer(buf)
+    {}
 
     template <typename T>
-    auto* get() const
+    std::optional<T> get(const size_t i) const
     {
-        return std::get_if<std::valarray<T>>(&buffer);
+        auto bufferPtr = std::get_if<typename BufferContainer<T>::type>(&buffer);
+
+        if (!bufferPtr) {
+            return {};
+        }
+
+        if (i >= bufferPtr->size()) {
+            return {};
+        }
+
+        return bufferPtr->at(i);
+    }
+
+    template <typename T>
+    const std::vector<T>* getBuffer() const
+    {
+        return std::get_if<typename BufferContainer<T>::type>(&buffer);
+    }
+
+    template <typename T>
+    std::vector<T>* getBuffer()
+    {
+        return std::get_if<typename BufferContainer<T>::type>(&buffer);
     }
 };
-
-// TODO: for improving performances of the type check:
-// https://cpptruths.blogspot.com/2018/11/non-colliding-efficient.html
-// TODO: supported type only DOUBLE for the time being
-// template <typename DataType>
-// class gympp::data::Sample
-//{
-// private:
-//    std::vector<std::any> buffer;
-//    std::unique_ptr<std::type_info> typeInfo;
-
-//    std::variant<SampleInt, SampleFloat, SampleDouble> buffer2;
-
-// public:
-//    Sample(std::type_info type)
-//        : typeInfo(std::make_unique<std::type_info>(type))
-//    {}
-//    ~Sample();
-
-//    std::valarray<int> get() {
-
-//    }
-
-//    template <typename DataType>
-//    DataType& operator[](size_t idx);
-//};
-
-// namespace gympp {
-//    namespace data {
-//        extern template float& Sample::operator[]<float>(size_t idx);
-//        extern template double& Sample::operator[]<double>(size_t idx);
-//    } // namespace data
-//} // namespace gympp
-
-// TODO Move to the cpp
-// template <typename DataType>
-// DataType& gympp::data::Sample::operator[](size_t idx)
-//{
-//    std::any e = buffer[idx];
-//    return std::any_cast<DataType>(e);
-//}
 
 template <typename DataSupport>
 struct gympp::Range

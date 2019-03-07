@@ -4,7 +4,6 @@
 #include <memory>
 #include <optional>
 #include <string>
-#include <valarray>
 #include <vector>
 
 #include "gympp/Space.h"
@@ -14,27 +13,32 @@ namespace gympp {
     class Environment;
     using EnvironmentName = std::string;
     using EnvironmentPtr = std::shared_ptr<gympp::Environment>;
+
+    struct State;
+    using Action = data::Sample;
+    using Reward = DataSupport;
+    using Observation = data::Sample;
 } // namespace gympp
+
+struct gympp::State
+{
+    bool done;
+    std::string info;
+    gympp::Reward reward;
+    gympp::Observation observation;
+};
 
 // TODO: https://hub.packtpub.com/openai-gym-environments-wrappers-and-monitors-tutorial/
 //       These C++ and their mapping to python / julia should allow using the Wrapper method
 
 // From https://github.com/openai/gym/blob/master/gym/core.py
-// template <typename AType, typename OType>
 class gympp::Environment
 {
 public:
-    using Action = data::Sample;
-    using Reward = DataSupport;
-    using Observation = data::Sample;
-
-    struct State
-    {
-        bool done;
-        std::string info;
-        Reward reward;
-        Observation observation;
-    };
+    using Action = gympp::Action;
+    using Reward = gympp::Reward;
+    using Observation = gympp::Observation;
+    using State = gympp::State;
 
     enum class RenderMode
     {

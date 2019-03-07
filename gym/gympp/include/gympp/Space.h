@@ -21,17 +21,10 @@ namespace gympp {
     } // namespace spaces
 } // namespace gympp
 
-// TODO: make this a template?
-// https://github.com/openai/gym/blob/master/gym/core.py#L195
-// template <typename DataType>
 class gympp::spaces::Space
 {
 public:
     using Sample = gympp::data::Sample;
-    //    using Sample = gympp::data::Sample<DataType>;
-    //    using Sample = gympp::data::Sample<std::any>;
-
-    // TODO: define Type here so it can embed both the space type and the support??
 
     Space() = default;
     virtual ~Space() = default;
@@ -52,7 +45,7 @@ class gympp::spaces::details::TBox : public gympp::spaces::Space
 {
 public:
     using Shape = gympp::data::Shape;
-    using Buffer = gympp::BufferContainer<DataType>;
+    using Buffer = typename gympp::BufferContainer<DataType>::type;
     using Limit = Buffer;
     using Sample = gympp::data::Sample;
 
@@ -76,10 +69,10 @@ private:
 // TODO: export the symbol and instantiate in the cpp
 extern template class gympp::spaces::details::TBox<double>;
 
-class gympp::spaces::Discrete final : public gympp::spaces::Space
+class gympp::spaces::Discrete : public gympp::spaces::Space
 {
 public:
-    using Type = size_t;
+    using Type = int;
     using Shape = gympp::data::Shape;
 
     Discrete() = delete;

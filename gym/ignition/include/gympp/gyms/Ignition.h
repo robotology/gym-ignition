@@ -1,7 +1,7 @@
 #ifndef GYMPP_GYMS_IGNITION
 #define GYMPP_GYMS_IGNITION
 
-#include "gympp/Gympp.h"
+#include "gympp/Environment.h"
 
 #include <memory>
 

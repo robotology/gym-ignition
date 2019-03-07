@@ -1,5 +1,5 @@
+#include "gympp/Environment.h"
 #include "gympp/GymFactory.h"
-#include "gympp/Gympp.h"
 #include "gympp/Log.h"
 #include "gympp/Space.h"
 #include "gympp/common.h"
@@ -56,13 +56,13 @@ int main(int /*argc*/, char* /*argv*/[])
         // Simulate the system with the given action
         auto state = env->step(actionSample);
 
-        if (!state.has_value()) {
+        if (!state) {
             gymppError << "The environment didn't return the state" << std::endl;
             return EXIT_FAILURE;
         }
 
         // Print the observation
-        if (auto* o = state->observation.get<double>(); o) {
+        if (auto* o = state->observation.getBuffer<double>(); o) {
             for (const auto el : *o) {
                 std::cout << el << " ";
             }
