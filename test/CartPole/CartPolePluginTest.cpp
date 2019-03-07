@@ -1,5 +1,5 @@
+#include "gympp/Environment.h"
 #include "gympp/GymFactory.h"
-#include "gympp/Gympp.h"
 #include "gympp/Log.h"
 #include "gympp/Space.h"
 #include "gympp/common.h"

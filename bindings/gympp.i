@@ -2,7 +2,7 @@
 
 %{
 #define SWIG_FILE_WITH_INIT
-#include "gympp/Gympp.h"
+#include "gympp/Environment.h"
 #include "gympp/common.h"
 #include "gympp/GymFactory.h"
 #include "gympp/gyms/Ignition.h"
@@ -82,5 +82,5 @@ SWIG_Python_RaiseOrModifyTypeError(const char *message)
 %template(Box_d) gympp::spaces::details::TBox<double>;
 
 %shared_ptr(gympp::Environment)
-%include "gympp/Gympp.h"
+%include "gympp/Environment.h"
 %include "gympp/GymFactory.h"
