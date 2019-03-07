@@ -76,7 +76,7 @@ private:
 // TODO: export the symbol and instantiate in the cpp
 extern template class gympp::spaces::details::TBox<double>;
 
-class gympp::spaces::Discrete final : public gympp::spaces::Space
+class gympp::spaces::Discrete : public gympp::spaces::Space
 {
 public:
     using Type = size_t;
