@@ -17,12 +17,6 @@
 
 using namespace gympp::gyms;
 
-struct IgnitionGuiData
-{
-    bool render = false;
-    std::unique_ptr<TinyProcessLib::Process> ignitionGui{nullptr};
-};
-
 struct PluginData
 {
     std::string libName;
@@ -35,20 +29,62 @@ struct PluginData
 class IgnitionGazebo::Impl
 {
 public:
-    bool firstRun = true;
     std::string sdfFile;
     uint64_t numOfIterations = 0;
 
-    IgnitionGuiData gui;
+    std::unique_ptr<TinyProcessLib::Process> ignitionGui;
     PluginData pluginData;
 
     ignition::gazebo::ServerConfig serverConfig;
-    std::unique_ptr<ignition::gazebo::Server> server = nullptr;
+    std::shared_ptr<ignition::gazebo::Server> server;
+    std::shared_ptr<ignition::gazebo::Server> getServer();
 
-    bool initializeFirstRun();
     bool loadSDF(std::string& sdfFile);
     bool loadPlugin(PluginData& pluginData);
 };
+
+std::shared_ptr<ignition::gazebo::Server> IgnitionGazebo::Impl::getServer()
+{
+    // Lazy initialization of the server
+    if (!server) {
+        // Load the sdf file from the filesystem
+        // TODO: get the absolute path with Ignition::Filesystem?
+        if (!loadSDF(sdfFile)) {
+            gymppError << "Failed to load the SDF";
+            return nullptr;
+        }
+
+        // Load the plugin
+        gymppDebug << "Loading the plugin with the environment behavior" << std::endl;
+        if (!loadPlugin(pluginData)) {
+            gymppError << "Failed to load the gym plugin";
+            return nullptr;
+        }
+
+        // Create the server
+        gymppDebug << "Creating the server" << std::endl << std::flush;
+        server = std::make_unique<ignition::gazebo::Server>(serverConfig);
+        assert(server);
+
+        // Add the plugin system in the server
+        auto ok = server->AddSystem(pluginData.systemPluginPtr);
+
+        if (!(ok && ok.value())) {
+            gymppError << "Failed to add the system in the gazebo server" << std::endl;
+            return {};
+        }
+
+        // The GUI needs the server already up. Warming up the first iteration and pausing the
+        // server. It will be unpaused at the step() call.
+        gymppDebug << "Starting the server as paused" << std::endl;
+        if (!server->Run(/*blocking=*/false, 1, /*paused=*/true)) {
+            gymppError << "Failed to warm up the gazebo server in paused state" << std::endl;
+            return nullptr;
+        }
+    }
+
+    return server;
+}
 
 bool IgnitionGazebo::Impl::loadPlugin(PluginData& pluginData)
 {
@@ -76,50 +112,6 @@ bool IgnitionGazebo::Impl::loadPlugin(PluginData& pluginData)
     return true;
 }
 
-bool IgnitionGazebo::Impl::initializeFirstRun()
-{
-    firstRun = false;
-
-    // Load the sdf file from the filesystem
-    // TODO: get the absolute path with Ignition::Filesystem?
-    if (!loadSDF(sdfFile)) {
-        gymppError << "Failed to load the SDF";
-        return false;
-    }
-
-    // Load the plugin
-    if (!loadPlugin(pluginData)) {
-        gymppError << "Failed to load the gym plugin";
-        return false;
-    }
-
-    // Create the server
-    gymppDebug << "Creating the server" << std::endl << std::flush;
-    server = std::make_unique<ignition::gazebo::Server>(serverConfig);
-
-    // Add the plugin system in the server
-    auto ok = server->AddSystem(pluginData.systemPluginPtr);
-
-    if (!(ok && ok.value())) {
-        gymppError << "Failed to add the system in the gazebo server" << std::endl;
-        return false;
-    }
-
-    // Initialize the server by running 1 iteration. The GUI needs the server already up.
-    if (!server->Run(/*_blocking=*/true, 1, /*_paused=*/false)) {
-        gymppError << "The gazebo server failed to run the first iteration" << std::endl;
-        return false;
-    }
-
-    if (gui.render) {
-        gui.ignitionGui = std::make_unique<TinyProcessLib::Process>("ign-gazebo-gui");
-        // TODO: find a best way to wait that the gui is open
-        std::this_thread::sleep_for(std::chrono::seconds(2));
-    }
-
-    return true;
-}
-
 IgnitionGazebo::IgnitionGazebo(const ActionSpacePtr aSpace,
                                const ObservationSpacePtr oSpace,
                                const std::string& sdfFile,
@@ -142,27 +134,28 @@ void IgnitionGazebo::setupIgnitionPlugin(const std::string& libName, const std::
 
 gympp::gyms::IgnitionGazebo::~IgnitionGazebo()
 {
-    if (pImpl->gui.ignitionGui) {
+    if (pImpl->ignitionGui) {
 #if defined(WIN32) || defined(_WIN32)
         bool force = false;
 #else
         bool force = true;
 #endif
-        pImpl->gui.ignitionGui->kill(force);
+        pImpl->ignitionGui->kill(force);
     }
-
-    // TODO: for some reason when the main process is terminated after a SIGTERM,
-    //       the server hangs forever during its destruction.
 }
 
 std::optional<IgnitionGazebo::State> IgnitionGazebo::step(const Action& action)
 {
-    if (pImpl->firstRun) {
-        if (!pImpl->initializeFirstRun()) {
-            gymppError << "Failed to initialize ignition gazebo" << std::endl;
-            return {};
-        }
+    auto server = pImpl->getServer();
+    if (!server) {
+        gymppError << "Failed to get the ignition server" << std::endl;
+        return {};
     }
+
+    assert(pImpl->server);
+    assert(action_space);
+    assert(observation_space);
+    assert(pImpl->pluginData.behavior);
 
     if (!this->action_space->contains(action)) {
         gymppError << "The input action does not belong to the action space" << std::endl;
@@ -175,9 +168,21 @@ std::optional<IgnitionGazebo::State> IgnitionGazebo::step(const Action& action)
         return {};
     }
 
-    if (!pImpl->server->Run(/*_blocking=*/true, pImpl->numOfIterations, /*_paused=*/false)) {
-        gymppError << "The server couldn't execute the step" << std::endl;
-        return {};
+    if (server->Running()) {
+        gymppDebug << "Unpausing the server. Running the first simulation run." << std::endl;
+        server->SetPaused(false);
+
+        // Since the server was started in non-blocking mode, we have to wait that this first
+        // iteration finishes
+        while (server->Running()) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+    }
+    else {
+        if (!server->Run(/*_blocking=*/true, pImpl->numOfIterations, /*_paused=*/false)) {
+            gymppError << "The server couldn't execute the step" << std::endl;
+            return {};
+        }
     }
 
     // Get the observation from the environment
@@ -262,7 +267,15 @@ std::optional<IgnitionGazebo::Observation> IgnitionGazebo::reset()
 bool IgnitionGazebo::render(RenderMode mode)
 {
     if (mode == RenderMode::HUMAN) {
-        pImpl->gui.render = true;
+        // The GUI needs the ignition server running. Initialize it.
+        if (!pImpl->getServer()) {
+            gymppError << "Failed to get the ignition server" << std::endl;
+            return false;
+        }
+
+        // Spawn a new process with the GUI
+        pImpl->ignitionGui = std::make_unique<TinyProcessLib::Process>("ign-gazebo-gui");
+
         return true;
     }
 
