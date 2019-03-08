@@ -9,3 +9,4 @@ build*
 *.old
 CMakeLists.txt.*
 Copy_of_*
+__pycache__
