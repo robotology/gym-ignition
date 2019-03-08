@@ -8,11 +8,9 @@
 #include <memory>
 
 namespace gympp {
-    //    namespace ignition {
     namespace plugins {
         class CartPole;
     } // namespace plugins
-    //    } // namespace ignition
 } // namespace gympp
 
 class gympp::plugins::CartPole final
@@ -30,10 +28,10 @@ public:
     CartPole();
     ~CartPole() override = default;
 
-    void Configure(const ignition::gazebo::Entity& _id,
-                   const std::shared_ptr<const sdf::Element>& _sdf,
-                   ignition::gazebo::EntityComponentManager& _ecm,
-                   ignition::gazebo::EventManager& _eventMgr) override;
+    void Configure(const ignition::gazebo::Entity& id,
+                   const std::shared_ptr<const sdf::Element>& sdf,
+                   ignition::gazebo::EntityComponentManager& ecm,
+                   ignition::gazebo::EventManager& eventMgr) override;
 
     void PreUpdate(const ignition::gazebo::UpdateInfo& info,
                    ignition::gazebo::EntityComponentManager& manager) override;
