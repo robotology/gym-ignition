@@ -9,7 +9,7 @@ add_library(CartPolePlugin SHARED
 target_link_libraries(CartPolePlugin
     PUBLIC
     gympp-ignition
-    ignition-gazebo::ignition-gazebo)
+    ignition-gazebo1::core)
 
 target_include_directories(CartPolePlugin PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR})

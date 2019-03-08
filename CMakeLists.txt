@@ -40,8 +40,8 @@ list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # Add the C++ sources subdirectory
 add_subdirectory(gym/gympp)
 
-find_package(ignition-gazebo COMPONENTS all)
-if(ignition-gazebo_FOUND)
+find_package(ignition-gazebo1 COMPONENTS all)
+if(ignition-gazebo1_FOUND)
     add_subdirectory(gym/ignition)
     add_subdirectory(deps)
     add_subdirectory(envs/cpp)

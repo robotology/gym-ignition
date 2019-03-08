@@ -7,7 +7,7 @@ target_link_libraries(gympp-ignition
     gympp
     PRIVATE
     tiny-process-library
-    ignition-gazebo::ignition-gazebo)
+    ignition-gazebo1::core)
 
 set_target_properties(gympp-ignition PROPERTIES
     PUBLIC_HEADER include/gympp/gyms/Ignition.h)
