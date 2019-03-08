@@ -3,7 +3,7 @@ find_package(ignition-common3 REQUIRED)
 
 add_library(gympp
     include/gympp/Environment.h
-    include/gympp/common.h
+    include/gympp/Common.h
     include/gympp/Log.h
     include/gympp/Random.h
     include/gympp/Space.h

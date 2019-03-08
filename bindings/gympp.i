@@ -2,8 +2,8 @@
 
 %{
 #define SWIG_FILE_WITH_INIT
+#include "gympp/Common.h"
 #include "gympp/Environment.h"
-#include "gympp/common.h"
 #include "gympp/GymFactory.h"
 #include "gympp/gyms/Ignition.h"
 #include "gympp/Space.h"
@@ -52,7 +52,7 @@ SWIG_Python_RaiseOrModifyTypeError(const char *message)
 %template(Vector_f) std::vector<float>;
 %template(Vector_d) std::vector<double>;
 
-%include "gympp/common.h"
+%include "gympp/Common.h"
 %template(BufferContainer_i) gympp::BufferContainer<int>;
 %template(BufferContainer_u) gympp::BufferContainer<size_t>;
 %template(BufferContainer_f) gympp::BufferContainer<float>;

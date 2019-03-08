@@ -6,8 +6,8 @@
 #include <string>
 #include <vector>
 
+#include "gympp/Common.h"
 #include "gympp/Space.h"
-#include "gympp/common.h"
 
 namespace gympp {
     class Environment;

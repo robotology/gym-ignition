@@ -1,7 +1,7 @@
 #ifndef GYMPP_SPACES_SPACE
 #define GYMPP_SPACES_SPACE
 
-#include "gympp/common.h"
+#include "gympp/Common.h"
 
 #include <any>
 #include <functional>
