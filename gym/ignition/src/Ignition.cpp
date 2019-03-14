@@ -48,7 +48,6 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionGazebo::Impl::getServer()
     // Lazy initialization of the server
     if (!server) {
         // Load the sdf file from the filesystem
-        // TODO: get the absolute path with Ignition::Filesystem?
         if (!loadSDF(sdfFile)) {
             gymppError << "Failed to load the SDF";
             return nullptr;
@@ -67,6 +66,7 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionGazebo::Impl::getServer()
         assert(server);
 
         // Add the plugin system in the server
+        // TODO: Configure() is not called in this way
         auto ok = server->AddSystem(pluginData.systemPluginPtr);
 
         if (!(ok && ok.value())) {
@@ -100,7 +100,7 @@ bool IgnitionGazebo::Impl::loadPlugin(PluginData& pluginData)
 
     pluginData.systemPluginPtr = plugin.value();
 
-    // Get the child classes out of it
+    // Get the environment behavior interface out of it
     pluginData.behavior =
         pluginData.systemPluginPtr->template QueryInterface<gympp::gyms::EnvironmentBehavior>();
 
@@ -239,7 +239,7 @@ bool IgnitionGazebo::Impl::loadSDF(std::string& sdfFile)
     }
 
     if (!serverConfig.SetSdfFile(sdfFile)) {
-        std::cout << "Failed to set the SDF file " << sdfFile << std::endl;
+        gymppError << "Failed to set the SDF file " << sdfFile << std::endl;
         return false;
     }
 
@@ -254,10 +254,12 @@ gympp::EnvironmentPtr IgnitionGazebo::env()
 std::optional<IgnitionGazebo::Observation> IgnitionGazebo::reset()
 {
     if (!pImpl->pluginData.behavior) {
+        gymppError << "The plugin has not been initialized" << std::endl;
         return {};
     }
 
     if (!pImpl->pluginData.behavior->reset()) {
+        gymppError << "Failed to reset plugin" << std::endl;
         return {};
     }
 
