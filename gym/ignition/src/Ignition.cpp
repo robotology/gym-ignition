@@ -3,6 +3,7 @@
 #include "gympp/Random.h"
 #include "process.hpp"
 
+#include <ignition/common/SystemPaths.hh>
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
 #include <ignition/gazebo/SystemLoader.hh>
@@ -235,6 +236,21 @@ bool IgnitionGazebo::Impl::loadSDF(std::string& sdfFile)
 {
     if (sdfFile.empty()) {
         gymppError << "Passed SDF file is an empty string" << std::endl;
+        return false;
+    }
+
+    // Find the file
+    // TODO: add install directory of our world files
+    ignition::common::SystemPaths systemPaths;
+    systemPaths.SetFilePathEnv("IGN_GAZEBO_RESOURCE_PATH");
+    systemPaths.AddFilePaths(IGN_GAZEBO_WORLD_INSTALL_DIR);
+    std::string filePath = systemPaths.FindFile(sdfFile);
+
+    if (filePath.empty()) {
+        gymppError << "Failed to find '" << sdfFile << "'. "
+                   << "Check that it's contained in the paths defined in IGN_GAZEBO_RESOURCE_PATH. "
+                   << "If you use the <include> element, make sure to add the parent folder of the "
+                   << "<uri> in the SDF_PATH variable." << std::endl;
         return false;
     }
 

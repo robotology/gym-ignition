@@ -1,19 +1,10 @@
 #include "gympp/GymFactory.h"
 #include "gympp/gyms/Ignition.h"
 
-#include <ignition/common/Filesystem.hh>
-#include <ignition/gazebo/SystemLoader.hh>
-
 gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envName)
 {
-    ignition::gazebo::SystemLoader sl;
-
     if (envName == "CartPole") {
-        // Add the plugin folder to the system search path
-        sl.AddSystemPluginPath(CARTPOLE_PLUGIN_PATH);
-
-        // TODO: find file in the fs
-        std::string sdfFile = "/home/dferigo/git/gym-ignition/models/CartPole/CartPoleWorld.sdf";
+        std::string sdfFile = "CartPoleWorld.sdf";
 
         using OSpace = gympp::spaces::Box;
         using ASpace = gympp::spaces::Discrete;
