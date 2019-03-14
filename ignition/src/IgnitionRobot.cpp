@@ -31,7 +31,6 @@ class IgnitionRobot::Impl
 {
 public:
     ignition::gazebo::EntityComponentManager* ecm = nullptr;
-
     ignition::gazebo::Model model;
     std::chrono::duration<double> dt;
 

@@ -3,10 +3,6 @@
 
 #include "gympp/Robot.h"
 
-#include <ignition/gazebo/EntityComponentManager.hh>
-#include <ignition/gazebo/Model.hh>
-#include <sdf/Model.hh>
-
 #include <memory>
 
 namespace gympp {
