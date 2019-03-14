@@ -8,6 +8,7 @@
 #include <ignition/gazebo/ServerConfig.hh>
 #include <ignition/gazebo/SystemLoader.hh>
 #include <ignition/plugin/SpecializedPluginPtr.hh>
+#include <sdf/Element.hh>
 
 #include <chrono>
 #include <condition_variable>
@@ -15,6 +16,7 @@
 #include <mutex>
 #include <thread>
 #include <unistd.h>
+#include <vector>
 
 using namespace gympp::gyms;
 
@@ -263,6 +265,32 @@ bool IgnitionGazebo::setupSdf(const std::string& sdfFile,
     if (!pImpl->serverConfig.SetSdfFile(filePath)) {
         gymppError << "Failed to set the SDF file " << sdfFile << std::endl;
         return false;
+    }
+
+    // ======================================
+    // LOAD A ROBOT PLUGIN FOR EACH SDF MODEL
+    // ======================================
+
+    // TODO: In the future we might want to parse here the sdf file and get automatically
+    //       all the names of the contained models. Right now we could make it work only
+    //       if models are not included externally using <include><uri> sdf elements.
+    //       Using the passed vector of names waiting this support.
+    if (modelNames.empty()) {
+        gymppError << "The sdf world must contain at least one model" << std::endl;
+        return false;
+    }
+
+    // Add an IgnitionRobot plugin for each model in the sdf file
+    // TODO: the lib name works only in linux!
+    for (const auto& modelName : modelNames) {
+        sdf::ElementPtr sdf(new sdf::Element);
+        sdf->SetName("plugin");
+        sdf->AddAttribute("name", "string", "gympp::robot::IgnitionRobot", true);
+        sdf->AddAttribute("filename", "string", "libIgnitionRobot.so", true);
+
+        ignition::gazebo::ServerConfig::PluginInfo pluginInfo{
+            modelName, "model", "libIgnitionRobot.so", "gympp::robot::IgnitionRobot", sdf};
+        pImpl->serverConfig.AddPlugin(pluginInfo);
     }
 
     return true;
