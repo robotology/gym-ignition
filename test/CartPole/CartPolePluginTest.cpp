@@ -6,6 +6,7 @@
 
 #include <ignition/common/SignalHandler.hh>
 
+#include <cassert>
 #include <iostream>
 
 using namespace gympp;
@@ -15,7 +16,7 @@ int main(int /*argc*/, char* /*argv*/[])
     auto env = GymFactory::make("CartPole");
 
     if (!env) {
-        ignerr << "Failed to load the CartPole environment" << std::endl;
+        gymppError << "Failed to load the CartPole environment" << std::endl;
         return EXIT_FAILURE;
     }
 

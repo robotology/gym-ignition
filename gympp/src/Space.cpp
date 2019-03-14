@@ -102,8 +102,7 @@ bool TBox<DataType>::contains(const Space::Sample& data) const
 
     for (unsigned i = 0; i < bufferPtr->size(); ++i) {
         if (((*bufferPtr)[i] > pImpl->high[i]) || ((*bufferPtr)[i] < pImpl->low[i])) {
-            gymppError() << "The sample does not comply to the limits set for its space"
-                         << std::endl;
+            gymppError << "The sample does not comply to the limits set for its space" << std::endl;
             return false;
         }
     }
@@ -184,7 +183,7 @@ bool Discrete::contains(const Space::Sample& data) const
     }
 
     if ((*bufferPtr)[0] < 0 || (*bufferPtr)[0] >= pImpl->n) {
-        gymppError() << "The sample does not comply to the limits set for its space" << std::endl;
+        gymppError << "The sample does not comply to the limits set for its space" << std::endl;
         return false;
     }
 

@@ -1,6 +1,3 @@
-# TODO: only required for logging messages
-find_package(ignition-common3 REQUIRED)
-
 add_library(gympp
     include/gympp/Environment.h
     include/gympp/Common.h
@@ -11,8 +8,13 @@ add_library(gympp
     src/Space.cpp
     src/Random.cpp)
 
-target_link_libraries(gympp PUBLIC
-    ignition-common3::ignition-common3)
+find_package(ignition-common3 QUIET)
+
+if(ignition-common3_FOUND)
+    target_compile_definitions(gympp PUBLIC USE_IGNITION_LOGS)
+    target_link_libraries(gympp PUBLIC
+        ignition-common3::ignition-common3)
+endif()
 
 file(GLOB_RECURSE GYMPP_HEADERS_INSTALL include/*.h)
 
