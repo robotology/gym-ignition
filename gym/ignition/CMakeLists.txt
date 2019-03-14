@@ -9,8 +9,8 @@ add_library(gympp-ignition
 target_link_libraries(gympp-ignition
     PUBLIC
     gympp
-    ignition-gazebo1::core
     PRIVATE
+    ignition-gazebo1::core
     tiny-process-library)
 
 set_target_properties(gympp-ignition PROPERTIES
