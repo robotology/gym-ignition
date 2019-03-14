@@ -16,7 +16,10 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envNam
             /*iterations=*/1);
 
         // Setup the CartPolePlugin
-        ignGym->setupIgnitionPlugin("CartPolePlugin", "gympp::plugins::CartPole");
+        if (!ignGym->setupIgnitionPlugin("CartPolePlugin", "gympp::plugins::CartPole")) {
+            gymppError << "Failed to setup the ignition plugin" << std::endl;
+            return nullptr;
+        }
 
         // Setup the SDF file
         if (!ignGym->setupSdf("CartPoleWorld.sdf", {"cartpole_xacro"})) {

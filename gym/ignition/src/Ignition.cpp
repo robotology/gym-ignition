@@ -42,7 +42,6 @@ public:
     std::shared_ptr<ignition::gazebo::Server> getServer();
 
     std::vector<std::string> modelsNamesInSdf;
-    bool loadPlugin(PluginData& pluginData);
 };
 
 std::shared_ptr<ignition::gazebo::Server> IgnitionGazebo::Impl::getServer()
@@ -55,10 +54,9 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionGazebo::Impl::getServer()
             return nullptr;
         }
 
-        // Load the plugin
-        gymppDebug << "Loading the plugin with the environment behavior" << std::endl;
-        if (!loadPlugin(pluginData)) {
-            gymppError << "Failed to load the gym plugin";
+        // Check that the ignition plugin was configured and loaded
+        if (!pluginData.behavior || !pluginData.systemPluginPtr) {
+            gymppError << "The ignition plugin has not been correctly loaded" << std::endl;
             return nullptr;
         }
 
@@ -107,8 +105,13 @@ IgnitionGazebo::IgnitionGazebo(const ActionSpacePtr aSpace,
     pImpl->serverConfig.SetUpdateRate(updateRate);
 }
 
-bool IgnitionGazebo::Impl::loadPlugin(PluginData& pluginData)
+bool IgnitionGazebo::setupIgnitionPlugin(const std::string& libName, const std::string& pluginName)
 {
+    pImpl->pluginData.libName = libName;
+    pImpl->pluginData.pluginName = pluginName;
+
+    auto& pluginData = pImpl->pluginData;
+
     ignition::gazebo::SystemLoader sl;
     auto plugin = sl.LoadPlugin(pluginData.libName, pluginData.pluginName, nullptr);
 
@@ -126,7 +129,8 @@ bool IgnitionGazebo::Impl::loadPlugin(PluginData& pluginData)
         pluginData.systemPluginPtr->template QueryInterface<gympp::gyms::EnvironmentBehavior>();
 
     if (!pluginData.behavior) {
-        gymppError << "Failed to cast the plugin";
+        gymppError << "Failed to cast the plugin '" << pluginName
+                   << "'to get the environment behavior interface" << std::endl;
         return false;
     }
 
@@ -303,6 +307,12 @@ gympp::EnvironmentPtr IgnitionGazebo::env()
 
 std::optional<IgnitionGazebo::Observation> IgnitionGazebo::reset()
 {
+    // The plugin must be loaded in order to call its reset() method
+    if (!pImpl->getServer()) {
+        gymppError << "Failed to get the ignition server" << std::endl;
+        return {};
+    }
+
     if (!pImpl->pluginData.behavior) {
         gymppError << "The plugin has not been initialized" << std::endl;
         return {};

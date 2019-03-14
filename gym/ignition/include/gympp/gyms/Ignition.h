@@ -52,8 +52,6 @@ public:
                    uint64_t iterations = 1);
     ~IgnitionGazebo() override;
 
-    void setupIgnitionPlugin(const std::string& libName, const std::string& pluginName);
-
     bool render(RenderMode mode) override;
     std::optional<Observation> reset() override;
     std::optional<State> step(const Action& action) override;
@@ -61,8 +59,9 @@ public:
 
     // Public APIs
     EnvironmentPtr env();
-    bool setupSdf(const std::string& sdfFile, const std::vector<std::string>& modelNames);
     void setVerbosity(int level = 4);
+    bool setupSdf(const std::string& sdfFile, const std::vector<std::string>& modelNames);
+    bool setupIgnitionPlugin(const std::string& libName, const std::string& pluginName);
 };
 
 #endif // GYMPP_GYMS_IGNITION
