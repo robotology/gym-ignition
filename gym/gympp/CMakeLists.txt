@@ -7,6 +7,7 @@ add_library(gympp
     include/gympp/Log.h
     include/gympp/Random.h
     include/gympp/Space.h
+    include/gympp/Robot.h
     src/Space.cpp
     src/Random.cpp)
 
