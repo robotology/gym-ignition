@@ -63,6 +63,7 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionGazebo::Impl::getServer()
 
         // Create the server
         gymppDebug << "Creating the server" << std::endl << std::flush;
+        serverConfig.SetUseLevels(false);
         server = std::make_unique<ignition::gazebo::Server>(serverConfig);
         assert(server);
 
