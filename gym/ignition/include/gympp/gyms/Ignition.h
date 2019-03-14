@@ -48,7 +48,6 @@ public:
     IgnitionGazebo() = delete;
     IgnitionGazebo(const ActionSpacePtr aSpace,
                    const ObservationSpacePtr oSpace,
-                   const std::string& sdfFile,
                    double updateRate,
                    uint64_t iterations = 1);
     ~IgnitionGazebo() override;
@@ -62,6 +61,7 @@ public:
 
     // Public APIs
     EnvironmentPtr env();
+    bool setupSdf(const std::string& sdfFile, const std::vector<std::string>& modelNames);
     void setVerbosity(int level = 4);
 };
 

@@ -30,7 +30,6 @@ struct PluginData
 class IgnitionGazebo::Impl
 {
 public:
-    std::string sdfFile;
     uint64_t numOfIterations = 0;
 
     std::unique_ptr<TinyProcessLib::Process> ignitionGui;
@@ -40,7 +39,7 @@ public:
     std::shared_ptr<ignition::gazebo::Server> server;
     std::shared_ptr<ignition::gazebo::Server> getServer();
 
-    bool loadSDF(std::string& sdfFile);
+    std::vector<std::string> modelsNamesInSdf;
     bool loadPlugin(PluginData& pluginData);
 };
 
@@ -48,9 +47,9 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionGazebo::Impl::getServer()
 {
     // Lazy initialization of the server
     if (!server) {
-        // Load the sdf file from the filesystem
-        if (!loadSDF(sdfFile)) {
-            gymppError << "Failed to load the SDF";
+
+        if (serverConfig.SdfFile().empty() && serverConfig.SdfString().empty()) {
+            gymppError << "The sdf file was not configured" << std::endl;
             return nullptr;
         }
 
@@ -88,6 +87,24 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionGazebo::Impl::getServer()
     return server;
 }
 
+// ===============
+// IGNITION GAZEBO
+// ===============
+
+IgnitionGazebo::IgnitionGazebo(const ActionSpacePtr aSpace,
+                               const ObservationSpacePtr oSpace,
+                               //                               const std::string& sdfFile,
+                               double updateRate,
+                               uint64_t iterations)
+    : Environment(aSpace, oSpace)
+    , pImpl{new IgnitionGazebo::Impl, [](Impl* impl) { delete impl; }}
+{
+    setVerbosity(4);
+    //    pImpl->sdfFile = sdfFile;
+    pImpl->numOfIterations = iterations;
+    pImpl->serverConfig.SetUpdateRate(updateRate);
+}
+
 bool IgnitionGazebo::Impl::loadPlugin(PluginData& pluginData)
 {
     ignition::gazebo::SystemLoader sl;
@@ -112,26 +129,6 @@ bool IgnitionGazebo::Impl::loadPlugin(PluginData& pluginData)
     }
 
     return true;
-}
-
-IgnitionGazebo::IgnitionGazebo(const ActionSpacePtr aSpace,
-                               const ObservationSpacePtr oSpace,
-                               const std::string& sdfFile,
-                               double updateRate,
-                               uint64_t iterations)
-    : Environment(aSpace, oSpace)
-    , pImpl{new IgnitionGazebo::Impl, [](Impl* impl) { delete impl; }}
-{
-    setVerbosity(4);
-    pImpl->sdfFile = sdfFile;
-    pImpl->numOfIterations = iterations;
-    pImpl->serverConfig.SetUpdateRate(updateRate);
-}
-
-void IgnitionGazebo::setupIgnitionPlugin(const std::string& libName, const std::string& pluginName)
-{
-    pImpl->pluginData.libName = libName;
-    pImpl->pluginData.pluginName = pluginName;
 }
 
 gympp::gyms::IgnitionGazebo::~IgnitionGazebo()
@@ -233,10 +230,17 @@ void IgnitionGazebo::setVerbosity(int level)
     ignition::common::Console::SetVerbosity(level);
 }
 
-bool IgnitionGazebo::Impl::loadSDF(std::string& sdfFile)
+bool IgnitionGazebo::setupSdf(const std::string& sdfFile,
+                              const std::vector<std::string>& modelNames)
 {
+    gymppMessage << "setupSdf" << std::endl;
+
+    // =================
+    // LOAD THE SDF FILE
+    // =================
+
     if (sdfFile.empty()) {
-        gymppError << "Passed SDF file is an empty string" << std::endl;
+        gymppError << "Passed SDF file argument is an empty string" << std::endl;
         return false;
     }
 
@@ -249,13 +253,14 @@ bool IgnitionGazebo::Impl::loadSDF(std::string& sdfFile)
 
     if (filePath.empty()) {
         gymppError << "Failed to find '" << sdfFile << "'. "
-                   << "Check that it's contained in the paths defined in IGN_GAZEBO_RESOURCE_PATH. "
-                   << "If you use the <include> element, make sure to add the parent folder of the "
+                   << "Check that it's contained in the paths defined in IGN_GAZEBO_RESOURCE_PATH."
+                   << std::endl;
+        gymppError << "If you use the <include> element, make sure to add the parent folder of the "
                    << "<uri> in the SDF_PATH variable." << std::endl;
         return false;
     }
 
-    if (!serverConfig.SetSdfFile(sdfFile)) {
+    if (!pImpl->serverConfig.SetSdfFile(filePath)) {
         gymppError << "Failed to set the SDF file " << sdfFile << std::endl;
         return false;
     }
