@@ -16,8 +16,31 @@ target_include_directories(gympp-ignition PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
+# ========================
+# IGNITION ROBOT SINGLETON
+# ========================
+
+# This class must be shared, otherwise plugins do not share static objects like singletons
+# with the memory of the program that loaded them
+
+add_library(RobotSingleton SHARED
+    include/gympp/robot/RobotSingleton.h
+    src/RobotSingleton.cpp)
+
+target_link_libraries(RobotSingleton
+    PUBLIC
+    gympp
+    ignition-gazebo1::core)
+
+set_target_properties(RobotSingleton PROPERTIES
+    PUBLIC_HEADER include/gympp/robot/RobotSingleton.h)
+
+target_include_directories(RobotSingleton PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
 install(
-    TARGETS gympp-ignition
+    TARGETS gympp-ignition RobotSingleton
     EXPORT gympp
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
