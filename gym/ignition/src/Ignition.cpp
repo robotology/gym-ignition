@@ -29,7 +29,7 @@ struct PluginData
     ignition::gazebo::SystemPluginPtr systemPluginPtr;
 };
 
-class IgnitionGazebo::Impl
+class IgnitionEnvironment::Impl
 {
 public:
     uint64_t numOfIterations = 0;
@@ -44,7 +44,7 @@ public:
     std::vector<std::string> modelsNamesInSdf;
 };
 
-std::shared_ptr<ignition::gazebo::Server> IgnitionGazebo::Impl::getServer()
+std::shared_ptr<ignition::gazebo::Server> IgnitionEnvironment::Impl::getServer()
 {
     // Lazy initialization of the server
     if (!server) {
@@ -91,13 +91,12 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionGazebo::Impl::getServer()
 // IGNITION GAZEBO
 // ===============
 
-IgnitionGazebo::IgnitionGazebo(const ActionSpacePtr aSpace,
-                               const ObservationSpacePtr oSpace,
-                               //                               const std::string& sdfFile,
-                               double updateRate,
-                               uint64_t iterations)
+IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
+                                         const ObservationSpacePtr oSpace,
+                                         double updateRate,
+                                         uint64_t iterations)
     : Environment(aSpace, oSpace)
-    , pImpl{new IgnitionGazebo::Impl, [](Impl* impl) { delete impl; }}
+    , pImpl{new IgnitionEnvironment::Impl, [](Impl* impl) { delete impl; }}
 {
     setVerbosity(4);
     //    pImpl->sdfFile = sdfFile;
@@ -105,7 +104,8 @@ IgnitionGazebo::IgnitionGazebo(const ActionSpacePtr aSpace,
     pImpl->serverConfig.SetUpdateRate(updateRate);
 }
 
-bool IgnitionGazebo::setupIgnitionPlugin(const std::string& libName, const std::string& pluginName)
+bool IgnitionEnvironment::setupIgnitionPlugin(const std::string& libName,
+                                              const std::string& pluginName)
 {
     pImpl->pluginData.libName = libName;
     pImpl->pluginData.pluginName = pluginName;
@@ -137,7 +137,7 @@ bool IgnitionGazebo::setupIgnitionPlugin(const std::string& libName, const std::
     return true;
 }
 
-gympp::gyms::IgnitionGazebo::~IgnitionGazebo()
+gympp::gyms::IgnitionEnvironment::~IgnitionEnvironment()
 {
     if (pImpl->ignitionGui) {
 #if defined(WIN32) || defined(_WIN32)
@@ -149,7 +149,7 @@ gympp::gyms::IgnitionGazebo::~IgnitionGazebo()
     }
 }
 
-std::optional<IgnitionGazebo::State> IgnitionGazebo::step(const Action& action)
+std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action& action)
 {
     auto server = pImpl->getServer();
     if (!server) {
@@ -218,11 +218,11 @@ std::optional<IgnitionGazebo::State> IgnitionGazebo::step(const Action& action)
         return {};
     }
 
-    return IgnitionGazebo::State{
+    return IgnitionEnvironment::State{
         pImpl->pluginData.behavior->isDone(), {}, reward.value(), observation.value()};
 }
 
-std::vector<unsigned> IgnitionGazebo::seed(unsigned seed)
+std::vector<unsigned> IgnitionEnvironment::seed(unsigned seed)
 {
     if (seed != 0) {
         gympp::Random::setSeed(seed);
@@ -231,13 +231,13 @@ std::vector<unsigned> IgnitionGazebo::seed(unsigned seed)
     return {seed};
 }
 
-void IgnitionGazebo::setVerbosity(int level)
+void IgnitionEnvironment::setVerbosity(int level)
 {
     ignition::common::Console::SetVerbosity(level);
 }
 
-bool IgnitionGazebo::setupSdf(const std::string& sdfFile,
-                              const std::vector<std::string>& modelNames)
+bool IgnitionEnvironment::setupSdf(const std::string& sdfFile,
+                                   const std::vector<std::string>& modelNames)
 {
     gymppMessage << "setupSdf" << std::endl;
 
@@ -300,12 +300,12 @@ bool IgnitionGazebo::setupSdf(const std::string& sdfFile,
     return true;
 }
 
-gympp::EnvironmentPtr IgnitionGazebo::env()
+gympp::EnvironmentPtr IgnitionEnvironment::env()
 {
     return shared_from_this();
 }
 
-std::optional<IgnitionGazebo::Observation> IgnitionGazebo::reset()
+std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
 {
     // The plugin must be loaded in order to call its reset() method
     if (!pImpl->getServer()) {
@@ -326,7 +326,7 @@ std::optional<IgnitionGazebo::Observation> IgnitionGazebo::reset()
     return pImpl->pluginData.behavior->getObservation();
 }
 
-bool IgnitionGazebo::render(RenderMode mode)
+bool IgnitionEnvironment::render(RenderMode mode)
 {
     if (mode == RenderMode::HUMAN) {
         // The GUI needs the ignition server running. Initialize it.

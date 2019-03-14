@@ -7,7 +7,7 @@
 
 namespace gympp {
     namespace gyms {
-        class IgnitionGazebo;
+        class IgnitionEnvironment;
         class EnvironmentBehavior;
     } // namespace gyms
 } // namespace gympp
@@ -28,7 +28,7 @@ public:
     virtual std::optional<Observation> getObservation() = 0;
 };
 
-class gympp::gyms::IgnitionGazebo
+class gympp::gyms::IgnitionEnvironment
     : public gympp::Environment
     , public std::enable_shared_from_this<gympp::Environment>
 {
@@ -45,12 +45,12 @@ public:
     using Environment::Reward;
     using Environment::State;
 
-    IgnitionGazebo() = delete;
-    IgnitionGazebo(const ActionSpacePtr aSpace,
-                   const ObservationSpacePtr oSpace,
-                   double updateRate,
-                   uint64_t iterations = 1);
-    ~IgnitionGazebo() override;
+    IgnitionEnvironment() = delete;
+    IgnitionEnvironment(const ActionSpacePtr aSpace,
+                        const ObservationSpacePtr oSpace,
+                        double updateRate,
+                        uint64_t iterations = 1);
+    ~IgnitionEnvironment() override;
 
     bool render(RenderMode mode) override;
     std::optional<Observation> reset() override;

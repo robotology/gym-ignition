@@ -9,7 +9,7 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envNam
         using ASpace = gympp::spaces::Discrete;
 
         // Create the gym environment
-        auto ignGym = std::make_shared<gympp::gyms::IgnitionGazebo>(
+        auto ignGym = std::make_shared<gympp::gyms::IgnitionEnvironment>(
             std::make_shared<ASpace>(3),
             std::make_shared<OSpace>(OSpace::Limit{-90, -1}, OSpace::Limit{90, 1}),
             /*updateRate=*/1000,
