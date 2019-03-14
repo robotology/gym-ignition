@@ -92,13 +92,10 @@
       </link>
     </model>
 
-  <model name="cartpole_xacro">
     <include>
       <pose>0 0 0 0 0 0</pose>
-      <uri>/home/dferigo/git/gym-ignition/models/CartPole</uri>
+      <uri>CartPole</uri>
     </include>
-  </model>
-
 
   </world>
 </sdf>
