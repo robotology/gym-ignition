@@ -3,7 +3,7 @@
 # ====================
 
 add_library(IgnitionEnvironment
-    include/gympp/gyms/IgnitionEnvironment.h
+    include/gympp/gazebo/IgnitionEnvironment.h
     src/IgnitionEnvironment.cpp)
 
 target_link_libraries(IgnitionEnvironment
@@ -14,7 +14,7 @@ target_link_libraries(IgnitionEnvironment
     tiny-process-library)
 
 set_target_properties(IgnitionEnvironment PROPERTIES
-    PUBLIC_HEADER include/gympp/gyms/IgnitionEnvironment.h)
+    PUBLIC_HEADER include/gympp/gazebo/IgnitionEnvironment.h)
 
 target_include_directories(IgnitionEnvironment PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -28,7 +28,7 @@ target_include_directories(IgnitionEnvironment PUBLIC
 # with the memory of the program that loaded them
 
 add_library(RobotSingleton SHARED
-    include/gympp/robot/RobotSingleton.h
+    include/gympp/gazebo/RobotSingleton.h
     src/RobotSingleton.cpp)
 
 target_link_libraries(RobotSingleton
@@ -37,7 +37,7 @@ target_link_libraries(RobotSingleton
     ignition-gazebo1::core)
 
 set_target_properties(RobotSingleton PROPERTIES
-    PUBLIC_HEADER include/gympp/robot/RobotSingleton.h)
+    PUBLIC_HEADER include/gympp/gazebo/RobotSingleton.h)
 
 target_include_directories(RobotSingleton PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -49,14 +49,14 @@ install(
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp/gyms)
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp/gazebo)
 
 # ====================
 # IgnitionRobot PLUGIN
 # ====================
 
 add_library(IgnitionRobot SHARED
-    include/gympp/robot/IgnitionRobot.h
+    include/gympp/gazebo/IgnitionRobot.h
     src/IgnitionRobot.cpp)
 
 target_link_libraries(IgnitionRobot

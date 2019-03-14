@@ -1,7 +1,7 @@
 #ifndef GYMPP_PLUGINS_CARTPOLE
 #define GYMPP_PLUGINS_CARTPOLE
 
-#include "gympp/gyms/IgnitionEnvironment.h"
+#include "gympp/gazebo/IgnitionEnvironment.h"
 
 #include <ignition/gazebo/System.hh>
 
@@ -19,7 +19,7 @@ class gympp::plugins::CartPole final
     , public ignition::gazebo::ISystemConfigure
     , public ignition::gazebo::ISystemPreUpdate
     , public ignition::gazebo::ISystemPostUpdate
-    , public gympp::gyms::EnvironmentBehavior
+    , public gympp::gazebo::EnvironmentBehavior
 {
 private:
     class Impl;

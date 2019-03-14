@@ -3,7 +3,7 @@
 #include "gympp/Log.h"
 #include "gympp/Random.h"
 #include "gympp/Robot.h"
-#include "gympp/robot/RobotSingleton.h"
+#include "gympp/gazebo/RobotSingleton.h"
 
 #include <ignition/plugin/Register.hh>
 
@@ -51,7 +51,7 @@ public:
     gympp::RobotPtr getRobot()
     {
         if (!robot) {
-            auto& robotSingleton = gympp::robot::RobotSingleton::get();
+            auto& robotSingleton = gympp::gazebo::RobotSingleton::get();
             robot = robotSingleton.getRobot("cartpole_xacro");
         }
 
@@ -212,7 +212,7 @@ bool CartPole::reset()
     return true;
 }
 
-bool CartPole::setAction(const gympp::gyms::EnvironmentBehavior::Action& action)
+bool CartPole::setAction(const EnvironmentBehavior::Action& action)
 {
     std::lock_guard lock(pImpl->mutex);
 
@@ -235,13 +235,13 @@ bool CartPole::setAction(const gympp::gyms::EnvironmentBehavior::Action& action)
     return true;
 }
 
-std::optional<gympp::gyms::EnvironmentBehavior::Reward> CartPole::computeReward()
+std::optional<gympp::gazebo::EnvironmentBehavior::Reward> CartPole::computeReward()
 {
     std::lock_guard lock(pImpl->mutex);
     return 1.0; // TODO
 }
 
-std::optional<gympp::gyms::EnvironmentBehavior::Observation> CartPole::getObservation()
+std::optional<gympp::gazebo::EnvironmentBehavior::Observation> CartPole::getObservation()
 {
     std::lock_guard lock(pImpl->mutex);
     return Observation(pImpl->observationBuffer);
@@ -252,4 +252,4 @@ IGNITION_ADD_PLUGIN(gympp::plugins::CartPole,
                     gympp::plugins::CartPole::ISystemConfigure,
                     gympp::plugins::CartPole::ISystemPreUpdate,
                     gympp::plugins::CartPole::ISystemPostUpdate,
-                    gympp::gyms::EnvironmentBehavior)
+                    gympp::gazebo::EnvironmentBehavior)

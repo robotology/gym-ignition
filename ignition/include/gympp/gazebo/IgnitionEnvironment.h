@@ -6,13 +6,13 @@
 #include <memory>
 
 namespace gympp {
-    namespace gyms {
+    namespace gazebo {
         class IgnitionEnvironment;
         class EnvironmentBehavior;
-    } // namespace gyms
+    } // namespace gazebo
 } // namespace gympp
 
-class gympp::gyms::EnvironmentBehavior
+class gympp::gazebo::EnvironmentBehavior
 {
 public:
     using Action = gympp::Environment::Action;
@@ -28,7 +28,7 @@ public:
     virtual std::optional<Observation> getObservation() = 0;
 };
 
-class gympp::gyms::IgnitionEnvironment
+class gympp::gazebo::IgnitionEnvironment
     : public gympp::Environment
     , public std::enable_shared_from_this<gympp::Environment>
 {

@@ -1,10 +1,9 @@
-#include "gympp/robot/RobotSingleton.h"
+#include "gympp/gazebo/RobotSingleton.h"
 #include "gympp/Log.h"
 
 #include <unordered_map>
 
-using namespace gympp::robot;
-
+using namespace gympp::gazebo;
 using RobotName = std::string;
 
 class RobotSingleton::Impl

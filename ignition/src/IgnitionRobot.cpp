@@ -1,6 +1,6 @@
-#include "gympp/robot/IgnitionRobot.h"
+#include "gympp/gazebo/IgnitionRobot.h"
 #include "gympp/Log.h"
-#include "gympp/robot/RobotSingleton.h"
+#include "gympp/gazebo/RobotSingleton.h"
 
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/components/Joint.hh>
@@ -18,7 +18,8 @@
 #include <optional>
 #include <unordered_map>
 
-using namespace gympp::robot;
+using namespace gympp::gazebo;
+
 using LinkName = std::string;
 using JointName = std::string;
 using LinkEntity = ignition::gazebo::Entity;
@@ -215,7 +216,7 @@ void IgnitionRobot::Configure(const ignition::gazebo::Entity& entity,
     }
 
     // Store the pointer of the exposed interface into the singleton
-    if (!robot::RobotSingleton::get().storeRobot(this)) {
+    if (!RobotSingleton::get().storeRobot(this)) {
         gymppError << "Failed to store the robot in the RobotSingleton" << std::endl;
         return;
     }
@@ -422,7 +423,7 @@ bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName, const d
 // OTHER METHODS
 // =============
 
-IGNITION_ADD_PLUGIN(gympp::robot::IgnitionRobot,
-                    gympp::robot::IgnitionRobot::System,
-                    gympp::robot::IgnitionRobot::ISystemConfigure,
+IGNITION_ADD_PLUGIN(gympp::gazebo::IgnitionRobot,
+                    gympp::gazebo::IgnitionRobot::System,
+                    gympp::gazebo::IgnitionRobot::ISystemConfigure,
                     gympp::Robot)

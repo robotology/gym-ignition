@@ -11,12 +11,12 @@
 
 namespace gympp {
     class Robot;
-    namespace robot {
+    namespace gazebo {
         class RobotSingleton;
-    } // namespace robot
+    } // namespace gazebo
 } // namespace gympp
 
-class gympp::robot::RobotSingleton
+class gympp::gazebo::RobotSingleton
 {
 private:
     class Impl;

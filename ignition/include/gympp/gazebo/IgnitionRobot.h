@@ -9,12 +9,12 @@
 #include <memory>
 
 namespace gympp {
-    namespace robot {
+    namespace gazebo {
         class IgnitionRobot;
-    } // namespace robot
+    } // namespace gazebo
 } // namespace gympp
 
-class gympp::robot::IgnitionRobot final
+class gympp::gazebo::IgnitionRobot final
     : public gympp::Robot
     , public ignition::gazebo::System
     , public ignition::gazebo::ISystemConfigure

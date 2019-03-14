@@ -1,6 +1,6 @@
 #include "gympp/GymFactory.h"
 #include "gympp/Log.h"
-#include "gympp/gyms/IgnitionEnvironment.h"
+#include "gympp/gazebo/IgnitionEnvironment.h"
 
 gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envName)
 {
@@ -9,7 +9,7 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envNam
         using ASpace = gympp::spaces::Discrete;
 
         // Create the gym environment
-        auto ignGym = std::make_shared<gympp::gyms::IgnitionEnvironment>(
+        auto ignGym = std::make_shared<gympp::gazebo::IgnitionEnvironment>(
             std::make_shared<ASpace>(3),
             std::make_shared<OSpace>(OSpace::Limit{-90, -1}, OSpace::Limit{90, 1}),
             /*updateRate=*/1000,

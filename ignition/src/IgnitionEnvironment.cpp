@@ -1,4 +1,4 @@
-#include "gympp/gyms/IgnitionEnvironment.h"
+#include "gympp/gazebo/IgnitionEnvironment.h"
 #include "gympp/Log.h"
 #include "gympp/Random.h"
 #include "process.hpp"
@@ -19,7 +19,7 @@
 #include <unistd.h>
 #include <vector>
 
-using namespace gympp::gyms;
+using namespace gympp::gazebo;
 
 struct PluginData
 {
@@ -127,7 +127,7 @@ bool IgnitionEnvironment::setupIgnitionPlugin(const std::string& libName,
 
     // Get the environment behavior interface out of it
     pluginData.behavior =
-        pluginData.systemPluginPtr->template QueryInterface<gympp::gyms::EnvironmentBehavior>();
+        pluginData.systemPluginPtr->template QueryInterface<EnvironmentBehavior>();
 
     if (!pluginData.behavior) {
         gymppError << "Failed to cast the plugin '" << pluginName
@@ -138,7 +138,7 @@ bool IgnitionEnvironment::setupIgnitionPlugin(const std::string& libName,
     return true;
 }
 
-gympp::gyms::IgnitionEnvironment::~IgnitionEnvironment()
+IgnitionEnvironment::~IgnitionEnvironment()
 {
     if (pImpl->ignitionGui) {
 #if defined(WIN32) || defined(_WIN32)
