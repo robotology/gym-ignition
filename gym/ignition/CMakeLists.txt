@@ -1,3 +1,7 @@
+# ====================
+# IGNITION ENVIRONMENT
+# ====================
+
 add_library(gympp-ignition
     include/gympp/gyms/Ignition.h
     src/Ignition.cpp)
@@ -5,9 +9,9 @@ add_library(gympp-ignition
 target_link_libraries(gympp-ignition
     PUBLIC
     gympp
+    ignition-gazebo1::core
     PRIVATE
-    tiny-process-library
-    ignition-gazebo1::core)
+    tiny-process-library)
 
 set_target_properties(gympp-ignition PROPERTIES
     PUBLIC_HEADER include/gympp/gyms/Ignition.h)
