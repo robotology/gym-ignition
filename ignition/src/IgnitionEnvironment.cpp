@@ -290,11 +290,11 @@ bool IgnitionEnvironment::setupSdf(const std::string& sdfFile,
     for (const auto& modelName : modelNames) {
         sdf::ElementPtr sdf(new sdf::Element);
         sdf->SetName("plugin");
-        sdf->AddAttribute("name", "string", "gympp::robot::IgnitionRobot", true);
+        sdf->AddAttribute("name", "string", "gympp::gazebo::IgnitionRobot", true);
         sdf->AddAttribute("filename", "string", "libIgnitionRobot.so", true);
 
         ignition::gazebo::ServerConfig::PluginInfo pluginInfo{
-            modelName, "model", "libIgnitionRobot.so", "gympp::robot::IgnitionRobot", sdf};
+            modelName, "model", "libIgnitionRobot.so", "gympp::gazebo::IgnitionRobot", sdf};
         pImpl->serverConfig.AddPlugin(pluginInfo);
     }
 
