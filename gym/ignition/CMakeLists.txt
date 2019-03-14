@@ -46,3 +46,29 @@ install(
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp/gyms)
+
+# ====================
+# IgnitionRobot PLUGIN
+# ====================
+
+add_library(IgnitionRobot SHARED
+    include/gympp/robot/IgnitionRobot.h
+    src/IgnitionRobot.cpp)
+
+target_link_libraries(IgnitionRobot
+    PUBLIC
+    gympp
+    gympp-ignition
+    RobotSingleton
+    ignition-gazebo1::core)
+
+target_include_directories(IgnitionRobot PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+install(
+    TARGETS IgnitionRobot
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp)
+
