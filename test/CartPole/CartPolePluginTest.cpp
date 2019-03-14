@@ -3,7 +3,6 @@
 #include "gympp/GymFactory.h"
 #include "gympp/Log.h"
 #include "gympp/Space.h"
-#include "gympp/gyms/Ignition.h"
 
 #include <ignition/common/SignalHandler.hh>
 

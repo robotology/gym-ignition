@@ -1,6 +1,6 @@
 #include "gympp/GymFactory.h"
 #include "gympp/Log.h"
-#include "gympp/gyms/Ignition.h"
+#include "gympp/gyms/IgnitionEnvironment.h"
 
 gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envName)
 {

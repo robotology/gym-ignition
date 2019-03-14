@@ -81,7 +81,7 @@ void CartPole::Configure(const ignition::gazebo::Entity& /*entity*/,
     // For now this callback is a no-op.
 
     // In any case, for how it works the inclusion of plugins implementing the EnvironmentBehavior
-    // interface by the IgnitionGazebo class, this method is not currently called.
+    // interface by the IgnitionEnvironment class, this method is not currently called.
 }
 
 void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,

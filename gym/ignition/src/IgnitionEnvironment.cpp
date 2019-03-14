@@ -1,4 +1,4 @@
-#include "gympp/gyms/Ignition.h"
+#include "gympp/gyms/IgnitionEnvironment.h"
 #include "gympp/Log.h"
 #include "gympp/Random.h"
 #include "process.hpp"
@@ -9,6 +9,7 @@
 #include <ignition/gazebo/SystemLoader.hh>
 #include <ignition/plugin/SpecializedPluginPtr.hh>
 #include <sdf/Element.hh>
+//#include <sdf/Root.hh>
 
 #include <chrono>
 #include <condition_variable>
@@ -34,8 +35,8 @@ class IgnitionEnvironment::Impl
 public:
     uint64_t numOfIterations = 0;
 
-    std::unique_ptr<TinyProcessLib::Process> ignitionGui;
     PluginData pluginData;
+    std::unique_ptr<TinyProcessLib::Process> ignitionGui;
 
     ignition::gazebo::ServerConfig serverConfig;
     std::shared_ptr<ignition::gazebo::Server> server;
@@ -296,6 +297,24 @@ bool IgnitionEnvironment::setupSdf(const std::string& sdfFile,
             modelName, "model", "libIgnitionRobot.so", "gympp::robot::IgnitionRobot", sdf};
         pImpl->serverConfig.AddPlugin(pluginInfo);
     }
+
+    //    // Get the models names included in the sdf file
+    //    sdf::Root root;
+    //    auto errors = root.Load(pImpl->serverConfig.SdfFile());
+
+    //    if (!errors.empty()) {
+    //        gymppError << "Failed to load sdf file '" << sdfFile << "." << std::endl;
+    //        for (const auto& error : errors) {
+    //            gymppError << error << std::endl;
+    //        }
+    //        return false;
+    //    }
+
+    //    for (unsigned i = 0; i < root.ModelCount(); ++i) {
+    //        std::string modelName = root.ModelByIndex(i)->Name();
+    //        gymppDebug << "Found model '" << modelName << "' in the sdf file" << std::endl;
+    //        pImpl->modelsNamesInSdf.push_back(modelName);
+    //    }
 
     return true;
 }

@@ -12,7 +12,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
 set_property(SOURCE gympp.i PROPERTY CPLUSPLUS ON)
 swig_add_library(gympp LANGUAGE python SOURCES gympp.i)
-swig_link_libraries(gympp gympp-ignition GymFactory)
+swig_link_libraries(gympp GymFactory)
 
 set(target ${SWIG_MODULE_gympp_REAL_NAME})
 

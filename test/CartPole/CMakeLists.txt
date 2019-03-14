@@ -1,3 +1,2 @@
 add_executable(CartPolePluginTest CartPolePluginTest.cpp)
-target_link_libraries(CartPolePluginTest
-    PRIVATE gympp-ignition GymFactory)
+target_link_libraries(CartPolePluginTest PRIVATE GymFactory)

@@ -2,21 +2,21 @@
 # IGNITION ENVIRONMENT
 # ====================
 
-add_library(gympp-ignition
-    include/gympp/gyms/Ignition.h
-    src/Ignition.cpp)
+add_library(IgnitionEnvironment
+    include/gympp/gyms/IgnitionEnvironment.h
+    src/IgnitionEnvironment.cpp)
 
-target_link_libraries(gympp-ignition
+target_link_libraries(IgnitionEnvironment
     PUBLIC
     gympp
     PRIVATE
     ignition-gazebo1::core
     tiny-process-library)
 
-set_target_properties(gympp-ignition PROPERTIES
-    PUBLIC_HEADER include/gympp/gyms/Ignition.h)
+set_target_properties(IgnitionEnvironment PROPERTIES
+    PUBLIC_HEADER include/gympp/gyms/IgnitionEnvironment.h)
 
-target_include_directories(gympp-ignition PUBLIC
+target_include_directories(IgnitionEnvironment PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
@@ -44,7 +44,7 @@ target_include_directories(RobotSingleton PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 install(
-    TARGETS gympp-ignition RobotSingleton
+    TARGETS IgnitionEnvironment RobotSingleton
     EXPORT gympp
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
@@ -62,7 +62,7 @@ add_library(IgnitionRobot SHARED
 target_link_libraries(IgnitionRobot
     PUBLIC
     gympp
-    gympp-ignition
+    IgnitionEnvironment
     RobotSingleton
     ignition-gazebo1::core)
 

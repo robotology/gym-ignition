@@ -5,7 +5,6 @@
 #include "gympp/Common.h"
 #include "gympp/Environment.h"
 #include "gympp/GymFactory.h"
-#include "gympp/gyms/Ignition.h"
 #include "gympp/Space.h"
 %}
 

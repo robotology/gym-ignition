@@ -1,7 +1,7 @@
 #ifndef GYMPP_PLUGINS_CARTPOLE
 #define GYMPP_PLUGINS_CARTPOLE
 
-#include "gympp/gyms/Ignition.h"
+#include "gympp/gyms/IgnitionEnvironment.h"
 
 #include <ignition/gazebo/System.hh>
 

@@ -4,7 +4,7 @@ add_library(GymFactory
 
 target_link_libraries(GymFactory
     PUBLIC gympp
-    PRIVATE gympp-ignition ignition-gazebo1::core)
+    PRIVATE IgnitionEnvironment ignition-gazebo1::core)
 
 target_include_directories(GymFactory PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
