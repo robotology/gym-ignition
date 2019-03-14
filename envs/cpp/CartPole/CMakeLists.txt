@@ -9,6 +9,7 @@ add_library(CartPolePlugin SHARED
 target_link_libraries(CartPolePlugin
     PUBLIC
     gympp-ignition
+    RobotSingleton
     ignition-gazebo1::core)
 
 target_include_directories(CartPolePlugin PRIVATE

@@ -1,21 +1,25 @@
 #include "CartPolePlugin.h"
+#include "gympp/Common.h"
+#include "gympp/Log.h"
 #include "gympp/Random.h"
+#include "gympp/Robot.h"
+#include "gympp/robot/RobotSingleton.h"
 
-#include <ignition/gazebo/Model.hh>
 #include <ignition/plugin/Register.hh>
 
-#include <ignition/gazebo/components/Joint.hh>
-#include <ignition/gazebo/components/JointPosition.hh>
-#include <ignition/gazebo/components/Link.hh>
-#include <ignition/gazebo/components/Model.hh>
-#include <ignition/gazebo/components/Name.hh>
-#include <ignition/gazebo/components/Pose.hh>
-
 #include <cmath>
-#include <memory>
+#include <mutex>
 
 using namespace gympp::plugins;
-using namespace ignition::gazebo::components;
+
+using ActionDataType = int;
+using ActionSample = gympp::BufferContainer<ActionDataType>::type;
+
+using ObservationDataType = double;
+using ObservationSample = gympp::BufferContainer<ObservationDataType>::type;
+
+const unsigned PolePositionObservationIndex = 0;
+const unsigned CartPositionObservationIndex = 1;
 
 enum CartPoleAction
 {
@@ -26,157 +30,131 @@ enum CartPoleAction
 
 class CartPole::Impl
 {
+private:
+    gympp::RobotPtr robot = nullptr;
+
 public:
     unsigned seed;
     bool firstRun = true;
     mutable std::mutex mutex;
-    ignition::gazebo::Model model;
 
-    CartPoleAction action;
-    BufferDouble observationBuffer;
+    double cartPositionReference;
+    ObservationSample observationBuffer;
+    std::optional<CartPoleAction> action;
 
-    ignition::gazebo::EntityComponentManager* manager = nullptr;
+    double getRandomThetaInRad()
+    {
+        std::uniform_real_distribution<> distr(-25.0 * (M_PI / 180.0), 25.0 * (M_PI / 180.0));
+        return distr(gympp::Random::engine());
+    }
 
-    double getRandomTheta();
+    gympp::RobotPtr getRobot()
+    {
+        if (!robot) {
+            auto& robotSingleton = gympp::robot::RobotSingleton::get();
+            robot = robotSingleton.getRobot("cartpole_xacro");
+        }
+
+        assert(robot);
+        assert(robot->valid());
+        return robot;
+    }
 };
 
-double CartPole::Impl::getRandomTheta()
-{
-    std::uniform_real_distribution<> distr(-25.0 * (M_PI / 180.0), 25.0 * (M_PI / 180.0));
-    return distr(gympp::Random::engine());
-}
-
 CartPole::CartPole()
-    : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
+    : System()
+    , pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {
     // - Pole angular position [deg]
     // - Cart linear position [m]
     pImpl->observationBuffer.resize(2);
 }
 
-// TODO: this is not called if the plugin is not put in the sdf.
-//       Probably this action will be supported in the future.
 void CartPole::Configure(const ignition::gazebo::Entity& /*entity*/,
-                         const std::shared_ptr<const sdf::Element>& /*_sdf*/,
-                         ignition::gazebo::EntityComponentManager& manager,
-                         ignition::gazebo::EventManager& /*_eventMgr*/)
+                         const std::shared_ptr<const sdf::Element>& /*sdf*/,
+                         ignition::gazebo::EntityComponentManager& /*manager*/,
+                         ignition::gazebo::EventManager& /*eventMgr*/)
 {
-    // Save the manager. It is used in reset().
-    pImpl->manager = &manager;
+    // It would be ideal acquiring the gympp::RobotPtr at this stage, and using it
+    // set the initial state of the model. However, at this stage the ECM still doesn't
+    // have a lot of information about the model.
+    // For now this callback is a no-op.
 
-    // Get the model from the entity manager
-    auto id = manager.EntityByComponents(ignition::gazebo::components::Model(),
-                                         ignition::gazebo::components::Name("cartpole_xacro"));
-    this->pImpl->model = ignition::gazebo::Model(id);
-
-    // Get the links from the model
-    auto pole = this->pImpl->model.LinkByName(manager, "cartpole_xacro::pole");
-    auto cart = this->pImpl->model.LinkByName(manager, "cartpole_xacro::cart");
-    auto rail = this->pImpl->model.LinkByName(manager, "cartpole_xacro::rail");
-
-    // Get the joints
-    auto pivot = this->pImpl->model.JointByName(manager, "cartpole_xacro::pivot");
-    auto linear = this->pImpl->model.JointByName(manager, "cartpole_xacro::linear");
-
-    // Check that all link exist
-    if (pole == ignition::gazebo::kNullEntity) {
-        ignerr << "Failed to find 'pole' link" << std::endl;
-        return;
-    }
-    if (cart == ignition::gazebo::kNullEntity) {
-        ignerr << "Failed to find 'cart' link" << std::endl;
-        return;
-    }
-    if (rail == ignition::gazebo::kNullEntity) {
-        ignerr << "Failed to find 'rail' link" << std::endl;
-        return;
-    }
-
-    // Check that all joint exist
-    if (pivot == ignition::gazebo::kNullEntity) {
-        ignerr << "Failed to find 'pivot' joint" << std::endl;
-        return;
-    }
-    if (linear == ignition::gazebo::kNullEntity) {
-        ignerr << "Failed to find 'linear' joint" << std::endl;
-        return;
-    }
-
-    // Generate a random initial angle
-    auto theta0 = pImpl->getRandomTheta();
-
-    // Get the joint position component
-    auto poleJoint = this->pImpl->model.JointByName(manager, "cartpole_xacro::pivot");
-    auto polePos = manager.Component<JointPosition>(poleJoint);
-
-    // Set the random initial angle of the pole
-    if (!polePos) {
-        manager.CreateComponent(poleJoint, JointPosition(theta0));
-    }
-    else {
-        *polePos = JointPosition(theta0);
-    }
+    // In any case, for how it works the inclusion of plugins implementing the EnvironmentBehavior
+    // interface by the IgnitionGazebo class, this method is not currently called.
 }
 
-void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& /*info*/,
-                         ignition::gazebo::EntityComponentManager& manager)
+void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
+                         ignition::gazebo::EntityComponentManager& /*manager*/)
 {
-    // TODO: the Configure method is called only if this plugin is added
-    //       in the sdf file. Right now gym-ignition loads the plugin internally.
+    // Get the pointer to the Robot interface
+    gympp::RobotPtr robot = pImpl->getRobot();
+    assert(robot);
+
     if (pImpl->firstRun) {
-        ignition::gazebo::EventManager eventManager;
-        Configure(0, nullptr, manager, eventManager);
         pImpl->firstRun = false;
-    }
 
-    // Get the cart joint position
-    auto cartJoint = this->pImpl->model.JointByName(manager, "cartpole_xacro::linear");
-    auto cartPos = manager.Component<JointPosition>(cartJoint);
+        // Initialize the PID
+        if (!robot->setJointPID("linear", {10000, 50, 200})) {
+            gymppError << "Failed to set the PID of joint 'linear'" << std::endl;
+            return;
+        }
 
-    if (!cartPos) {
-        igndbg << "Cart position not yet initialized. Skipping PreUpdate." << std::endl;
+        // Stop here and run the first simulation step
         return;
     }
 
-    // Set the action
-    // TODO
-    switch (pImpl->action) {
-        case MOVE_LEFT:
-            *cartPos = JointPosition(cartPos->Data() + 0.02);
-            break;
-        case MOVE_RIGHT:
-            *cartPos = JointPosition(cartPos->Data() - 0.02);
-            break;
-        case DONT_MOVE:
-            break;
+    // Set the step size
+    if (!robot->setdt(info.dt)) {
+        gymppError << "Failed to set the step size" << std::endl;
+        return;
+    }
+
+    // Actuate the action
+    // ==================
+
+    {
+        double appliedForce = 0;
+        std::lock_guard lock(pImpl->mutex);
+
+        if (pImpl->action) {
+            switch (*pImpl->action) {
+                case MOVE_LEFT:
+                    appliedForce = 10;
+                    break;
+                case MOVE_RIGHT:
+                    appliedForce = -10;
+                    break;
+                case DONT_MOVE:
+                    break;
+            }
+
+            // Reset the action. This allows to perform multiple simulator iterations for each
+            // environment step.
+            pImpl->action.reset();
+
+            if (!robot->setJointForce("linear", -20)) {
+                gymppError << "Failed to set the force to joint 'linear'" << std::endl;
+                return;
+            }
+        }
     }
 }
 
 void CartPole::PostUpdate(const ignition::gazebo::UpdateInfo& /*info*/,
-                          const ignition::gazebo::EntityComponentManager& manager)
+                          const ignition::gazebo::EntityComponentManager& /*manager*/)
 {
-    auto cartJoint = this->pImpl->model.JointByName(manager, "cartpole_xacro::linear");
-    auto cartPos = manager.Component<JointPosition>(cartJoint);
-    // auto cartVel = manager.Component<components::JointVelocity>(cartJoint);
+    // Get the pointer to the Robot interface
+    gympp::RobotPtr robot = pImpl->getRobot();
+    assert(robot);
 
-    auto poleJoint = this->pImpl->model.JointByName(manager, "cartpole_xacro::pivot");
-    auto polePos = manager.Component<JointPosition>(poleJoint);
-    // auto poleVel = manager.Component<components::JointVelocity>(poleJoint);
-
-    if (!cartPos) {
-        igndbg << "Cart position not yet initialized. Skipping PostUpdate." << std::endl;
-        return;
-    }
-
-    if (!polePos) {
-        igndbg << "Pose position not yet initialized. Skipping PostUpdate." << std::endl;
-        return;
-    }
+    double poleJointPosition = robot->jointPosition("pivot");
+    double cartJointPosition = robot->jointPosition("linear");
 
     {
         std::lock_guard lock(pImpl->mutex);
-        pImpl->observationBuffer[0] = (180.0 / M_PI) * polePos->Data();
-        pImpl->observationBuffer[1] = cartPos->Data();
+        pImpl->observationBuffer[PolePositionObservationIndex] = (180.0 / M_PI) * poleJointPosition;
+        pImpl->observationBuffer[CartPositionObservationIndex] = cartJointPosition;
     }
 }
 
@@ -184,8 +162,8 @@ bool CartPole::isDone()
 {
     std::lock_guard lock(pImpl->mutex);
 
-    if (std::abs(pImpl->observationBuffer[0]) > 60.0
-        || std::abs(pImpl->observationBuffer[1]) > 0.98) {
+    if (std::abs(pImpl->observationBuffer[PolePositionObservationIndex]) > 60.0
+        || std::abs(pImpl->observationBuffer[CartPositionObservationIndex]) > 0.95) {
         return true;
     }
 
@@ -194,26 +172,41 @@ bool CartPole::isDone()
 
 bool CartPole::reset()
 {
-    assert(pImpl->manager);
+    // Get the pointer to the Robot interface
+    gympp::RobotPtr robot = pImpl->getRobot();
+    assert(robot);
 
-    // Reset the pole position
-    auto poleJoint = this->pImpl->model.JointByName(*pImpl->manager, "cartpole_xacro::pivot");
-    auto polePos = pImpl->manager->Component<JointPosition>(poleJoint);
-    assert(polePos);
-    auto theta0 = pImpl->getRandomTheta();
-    *polePos = JointPosition(theta0);
+    if (!robot) {
+        gymppError << "Failed to get pointer to the robot interface" << std::endl;
+        return false;
+    }
+
+    // Joint positions
+    auto x0 = 0.0;
+    auto theta0 = pImpl->getRandomThetaInRad();
+
+    // Set the random pole angle
+    if (!robot->resetJoint("pivot", theta0)) {
+        gymppError << "Failed to reset the position of joint 'pivot'" << std::endl;
+        return false;
+    }
 
     // Reset the cart position
-    auto cartJoint = this->pImpl->model.JointByName(*pImpl->manager, "cartpole_xacro::linear");
-    auto cartPos = pImpl->manager->Component<JointPosition>(cartJoint);
-    assert(cartPos);
-    *cartPos = JointPosition(0);
+    if (!robot->resetJoint("linear", x0)) {
+        gymppError << "Failed to reset the position of joint 'linear'" << std::endl;
+        return false;
+    }
+
+    // Notify that the next iteration is equivalent to the first run
+    pImpl->firstRun = true;
 
     {
-        // TODO: store the entities and access them direcly in getObservation?
+        // Update the observation. This is required because the Environment::reset()
+        // method returns the new observation.
         std::lock_guard lock(pImpl->mutex);
-        pImpl->observationBuffer[0] = (180.0 / M_PI) * polePos->Data();
-        pImpl->observationBuffer[1] = cartPos->Data();
+
+        pImpl->observationBuffer[PolePositionObservationIndex] = (180.0 / M_PI) * theta0;
+        pImpl->observationBuffer[CartPositionObservationIndex] = x0;
     }
 
     return true;
@@ -222,8 +215,9 @@ bool CartPole::reset()
 bool CartPole::setAction(const gympp::gyms::EnvironmentBehavior::Action& action)
 {
     std::lock_guard lock(pImpl->mutex);
-    assert(action.get<size_t>());
-    auto actionValue = (*action.get<size_t>())[0];
+
+    assert(action.get<ActionDataType>(0));
+    ActionDataType actionValue = action.get<ActionDataType>(0).value();
 
     if (actionValue == 0) {
         pImpl->action = MOVE_LEFT;
@@ -254,9 +248,8 @@ std::optional<gympp::gyms::EnvironmentBehavior::Observation> CartPole::getObserv
 }
 
 IGNITION_ADD_PLUGIN(gympp::plugins::CartPole,
-                    gympp::plugins::CartPole::System, // TODO: check
+                    gympp::plugins::CartPole::System,
                     gympp::plugins::CartPole::ISystemConfigure,
                     gympp::plugins::CartPole::ISystemPreUpdate,
-                    // gympp::plugins::CartPole::ISystemUpdate,
                     gympp::plugins::CartPole::ISystemPostUpdate,
                     gympp::gyms::EnvironmentBehavior)

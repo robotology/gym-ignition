@@ -6,6 +6,7 @@
 #include <ignition/gazebo/System.hh>
 
 #include <memory>
+#include <optional>
 
 namespace gympp {
     namespace plugins {
