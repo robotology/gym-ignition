@@ -8,6 +8,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <thread>
 
 using namespace gympp;
 
@@ -27,8 +28,13 @@ int main(int /*argc*/, char* /*argv*/[])
         exit(EXIT_FAILURE);
     });
 
-    auto observation = env->reset();
     auto reward = Environment::Reward(0);
+    auto observation = env->reset();
+
+    if (!observation) {
+        gymppError << "Failed to retrieve the initial observation" << std::endl;
+        return EXIT_FAILURE;
+    }
 
     Environment::State oldState;
 
@@ -43,11 +49,11 @@ int main(int /*argc*/, char* /*argv*/[])
     env->seed();
     // env->seed(42);
 
-    size_t epoch = 0;
-    size_t iteration = 1;
+    size_t epoch = 1;
+    size_t iteration = 0;
 
     while (true) {
-        std::cout << "#" << epoch << "." << iteration++ << " " << std::flush;
+        iteration++;
 
         // Process oldState to obtain the action.
         // Here we use a random action to bypass it.
@@ -63,8 +69,9 @@ int main(int /*argc*/, char* /*argv*/[])
 
         // Print the observation
         if (auto* o = state->observation.getBuffer<double>(); o) {
+            std::cout << "#" << epoch << "." << iteration << "\t";
             for (const auto el : *o) {
-                std::cout << el << " ";
+                std::cout << el << "\t";
             }
             std::cout << std::endl << std::flush;
         }
@@ -82,8 +89,11 @@ int main(int /*argc*/, char* /*argv*/[])
         // Handle termination
         if (state->done) {
             gymppDebug << "The environment reached the terminal state" << std::endl;
-            //            break;
+            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+
+            // Reset the environment
             auto newObservation = env->reset();
+
             if (!newObservation) {
                 gymppError << "Failed to reset the environment" << std::endl;
                 return EXIT_FAILURE;
