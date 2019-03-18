@@ -19,7 +19,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_root_link_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_root_link_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -36,7 +36,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_root_link_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_root_link_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -80,7 +80,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -89,7 +89,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -143,7 +143,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -152,7 +152,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -206,7 +206,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_thigh_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -215,7 +215,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_thigh_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -253,7 +253,7 @@
           <measure_direction>child_to_parent</measure_direction>
         </force_torque>
         <plugin name='left_leg_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>model://iCub/conf/FT/gazebo_icub_left_leg_ft.ini</yarpConfigurationFile>
+          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_left_leg_ft.ini</yarpConfigurationFile>
         </plugin>
       </sensor>
     </joint>
@@ -276,7 +276,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_thigh_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -293,7 +293,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_thigh_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -429,7 +429,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_shank_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shank_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -446,7 +446,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_shank_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shank_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -548,7 +548,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_ankle_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_ankle_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -557,7 +557,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_ankle_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_ankle_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -611,7 +611,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_foot_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_foot_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -620,7 +620,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_foot_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_foot_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -704,7 +704,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_sole_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_sole_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -764,7 +764,7 @@
           <measure_direction>child_to_parent</measure_direction>
         </force_torque>
         <plugin name='left_foot_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>model://iCub/conf/FT/gazebo_icub_left_foot_ft.ini</yarpConfigurationFile>
+          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_left_foot_ft.ini</yarpConfigurationFile>
         </plugin>
       </sensor>
     </joint>
@@ -787,7 +787,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -796,7 +796,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -850,7 +850,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -859,7 +859,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -913,7 +913,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_thigh_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -922,7 +922,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_thigh_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -960,7 +960,7 @@
           <measure_direction>child_to_parent</measure_direction>
         </force_torque>
         <plugin name='right_leg_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>model://iCub/conf/FT/gazebo_icub_right_leg_ft.ini</yarpConfigurationFile>
+          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_right_leg_ft.ini</yarpConfigurationFile>
         </plugin>
       </sensor>
     </joint>
@@ -983,7 +983,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_thigh_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -1000,7 +1000,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_thigh_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -1136,7 +1136,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_shank_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shank_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -1153,7 +1153,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_shank_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shank_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -1255,7 +1255,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_ankle_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_ankle_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -1264,7 +1264,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_ankle_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_ankle_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -1318,7 +1318,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_foot_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_foot_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -1327,7 +1327,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_foot_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_foot_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -1411,7 +1411,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_sole_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_sole_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -1471,7 +1471,7 @@
           <measure_direction>child_to_parent</measure_direction>
         </force_torque>
         <plugin name='right_foot_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>model://iCub/conf/FT/gazebo_icub_right_foot_ft.ini</yarpConfigurationFile>
+          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_right_foot_ft.ini</yarpConfigurationFile>
         </plugin>
       </sensor>
     </joint>
@@ -1494,7 +1494,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -1503,7 +1503,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -1557,7 +1557,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -1566,7 +1566,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -1620,7 +1620,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_chest_bb_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_chest_bb_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -1637,7 +1637,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_chest_bb_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_chest_bb_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -1778,7 +1778,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -1787,7 +1787,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -1841,7 +1841,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -1850,7 +1850,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -1904,7 +1904,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_arm_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_arm_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -1913,7 +1913,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_arm_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_arm_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -1967,7 +1967,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -1984,7 +1984,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -2057,7 +2057,7 @@
           <measure_direction>child_to_parent</measure_direction>
         </force_torque>
         <plugin name='left_arm_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>model://iCub/conf/FT/gazebo_icub_left_arm_ft.ini</yarpConfigurationFile>
+          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_left_arm_ft.ini</yarpConfigurationFile>
         </plugin>
       </sensor>
     </joint>
@@ -2080,7 +2080,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prosup_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prosup_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -2089,7 +2089,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prosup_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prosup_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -2143,7 +2143,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_forearm_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_forearm_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -2160,7 +2160,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_forearm_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_forearm_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -2242,7 +2242,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_wrist_pitch_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_wrist_pitch_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -2251,7 +2251,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_wrist_pitch_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_wrist_pitch_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -2305,7 +2305,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_hand_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hand_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -2314,7 +2314,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_hand_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hand_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -2368,7 +2368,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_neck_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_neck_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -2377,7 +2377,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_neck_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_neck_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -2431,7 +2431,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_neck_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_neck_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -2440,7 +2440,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_neck_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_neck_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -2494,7 +2494,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_head_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_head_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -2511,7 +2511,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_head_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_head_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -2528,7 +2528,7 @@
         <update_rate>100</update_rate>
         <pose frame=''>0.0095 0.133444 0.0093 -1.5708 1.5708 0</pose>
         <plugin name='iCub_yarp_gazebo_plugin_IMU' filename='libgazebo_yarp_imu.so'>
-          <yarpConfigurationFile>model://iCub/conf/gazebo_icub_inertial.ini</yarpConfigurationFile>
+          <yarpConfigurationFile>file://iCub/conf/gazebo_icub_inertial.ini</yarpConfigurationFile>
         </plugin>
       </sensor>
     </link>
@@ -2581,7 +2581,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -2590,7 +2590,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_1_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -2644,7 +2644,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -2653,7 +2653,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_2_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -2707,7 +2707,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_arm_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_arm_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -2716,7 +2716,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_arm_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_arm_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -2770,7 +2770,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -2787,7 +2787,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -2860,7 +2860,7 @@
           <measure_direction>child_to_parent</measure_direction>
         </force_torque>
         <plugin name='right_arm_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>model://iCub/conf/FT/gazebo_icub_right_arm_ft.ini</yarpConfigurationFile>
+          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_right_arm_ft.ini</yarpConfigurationFile>
         </plugin>
       </sensor>
     </joint>
@@ -2883,7 +2883,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prosup_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prosup_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -2892,7 +2892,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prosup_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prosup_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -2946,7 +2946,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_forearm_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_forearm_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <surface>
@@ -2963,7 +2963,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_forearm_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_forearm_prt-binary.stl</uri>
           </mesh>
         </geometry>
         <!-- <material>
@@ -3045,7 +3045,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_wrist_pitch_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_wrist_pitch_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -3054,7 +3054,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_wrist_pitch_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_wrist_pitch_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -3108,7 +3108,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_hand_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hand_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </collision>
@@ -3117,7 +3117,7 @@
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
-            <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_hand_prt-binary.stl</uri>
+            <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hand_prt-binary.stl</uri>
           </mesh>
         </geometry>
       </visual>
@@ -3153,42 +3153,42 @@
       </physics>
     </joint>
     <plugin name='iCub_yarp_gazebo_plugin_ACCpart' filename='libgazebo_yarp_distributedinertials.so'>
-      <yarpConfigurationFile>model://iCub/conf/MTB/gazebo_icub_left_leg_mtb.ini</yarpConfigurationFile>
+      <yarpConfigurationFile>file://iCub/conf/MTB/gazebo_icub_left_leg_mtb.ini</yarpConfigurationFile>
     </plugin>
     <plugin name='iCub_yarp_gazebo_plugin_ACCpart' filename='libgazebo_yarp_distributedinertials.so'>
-      <yarpConfigurationFile>model://iCub/conf/MTB/gazebo_icub_right_leg_mtb.ini</yarpConfigurationFile>
+      <yarpConfigurationFile>file://iCub/conf/MTB/gazebo_icub_right_leg_mtb.ini</yarpConfigurationFile>
     </plugin>
     <plugin name='iCub_yarp_gazebo_plugin_ACCpart' filename='libgazebo_yarp_distributedinertials.so'>
-      <yarpConfigurationFile>model://iCub/conf/MTB/gazebo_icub_left_arm_mtb.ini</yarpConfigurationFile>
+      <yarpConfigurationFile>file://iCub/conf/MTB/gazebo_icub_left_arm_mtb.ini</yarpConfigurationFile>
     </plugin>
     <plugin name='iCub_yarp_gazebo_plugin_ACCpart' filename='libgazebo_yarp_distributedinertials.so'>
-      <yarpConfigurationFile>model://iCub/conf/MTB/gazebo_icub_right_arm_mtb.ini</yarpConfigurationFile>
+      <yarpConfigurationFile>file://iCub/conf/MTB/gazebo_icub_right_arm_mtb.ini</yarpConfigurationFile>
     </plugin>
     <plugin name='iCub_yarp_gazebo_plugin_ACCpart' filename='libgazebo_yarp_distributedinertials.so'>
-      <yarpConfigurationFile>model://iCub/conf/MTB/gazebo_icub_torso_mtb.ini</yarpConfigurationFile>
+      <yarpConfigurationFile>file://iCub/conf/MTB/gazebo_icub_torso_mtb.ini</yarpConfigurationFile>
     </plugin>
     <plugin name='controlboard_torso' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>model://iCub/conf/gazebo_icub_torso.ini</yarpConfigurationFile>
+      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_torso.ini</yarpConfigurationFile>
     </plugin>
     <plugin name='controlboard_head_without_eyes' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>model://iCub/conf/gazebo_icub_head_without_eyes.ini</yarpConfigurationFile>
+      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_head_without_eyes.ini</yarpConfigurationFile>
     </plugin>
     <plugin name='controlboard_left_arm_no_hand' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>model://iCub/conf/gazebo_icub_left_arm_no_hand_for_no_hand_model.ini</yarpConfigurationFile>
+      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_left_arm_no_hand_for_no_hand_model.ini</yarpConfigurationFile>
       <initialConfiguration>-0.52 0.52 0 0.785 0 0 0.0</initialConfiguration>
     </plugin>
     <plugin name='controlboard_right_arm_no_hand' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>model://iCub/conf/gazebo_icub_right_arm_no_hand_for_no_hand_model.ini</yarpConfigurationFile>
+      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_right_arm_no_hand_for_no_hand_model.ini</yarpConfigurationFile>
       <initialConfiguration>-0.52 0.52 0 0.785 0 0 0.0</initialConfiguration>
     </plugin>
     <plugin name='controlboard_right_leg' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>model://iCub/conf/gazebo_icub_right_leg.ini</yarpConfigurationFile>
+      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_right_leg.ini</yarpConfigurationFile>
     </plugin>
     <plugin name='controlboard_left_leg' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>model://iCub/conf/gazebo_icub_left_leg.ini</yarpConfigurationFile>
+      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_left_leg.ini</yarpConfigurationFile>
     </plugin>
     <plugin name='apply_external_wrench' filename='libgazebo_yarp_externalwrench.so'>
-      <robotNamefromConfigFile>model://iCub/conf/gazebo_icub_robotname.ini</robotNamefromConfigFile>
+      <robotNamefromConfigFile>file://iCub/conf/gazebo_icub_robotname.ini</robotNamefromConfigFile>
     </plugin>
     <static>0</static>
     <pose frame=''>0 0 0.63 0 -0 3.14</pose>
