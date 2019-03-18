@@ -1,9 +1,26 @@
-install(
-    FILES CartPole/CartPole.sdf
-          CartPole/CartPoleWorld.sdf
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/ignition/gym-ignition)
+# ===========
+# WORLD FILES
+# ===========
 
 install(
-    FILES icubIgnition/IcubIgnition.sdf
-          icubIgnition/IcubWorld.sdf
-    DESTINATION ${CMAKE_INSTALL_DATADIR}/ignition/gym-ignition)
+    DIRECTORY worlds
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/gympp/gazebo)
+
+# ==========
+# SDF MODELS
+# ==========
+
+install(
+    DIRECTORY CartPole
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/gympp/models
+    FILES_MATCHING PATTERN "*.sdf" PATTERN "*.config")
+
+install(
+    DIRECTORY iCubGazebo
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/gympp/models
+    FILES_MATCHING PATTERN "*.sdf" PATTERN "*.config")
+
+install(
+    DIRECTORY iCubGazeboV2_5
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/gympp/models
+    FILES_MATCHING PATTERN "*.sdf" PATTERN "*.config")
