@@ -39,12 +39,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_root_link_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <sensor name='root_link_ems_acc_eb5' type='imu'>
@@ -296,12 +296,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <sensor name='l_upper_leg_ems_acc_eb6' type='imu'>
@@ -449,12 +449,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_shank_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <sensor name='l_lower_leg_ems_acc_eb7' type='imu'>
@@ -707,12 +707,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_sole_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <velocity_decay/>
@@ -1003,12 +1003,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <sensor name='r_upper_leg_ems_acc_eb8' type='imu'>
@@ -1156,12 +1156,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_shank_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <sensor name='r_lower_leg_ems_acc_eb9' type='imu'>
@@ -1414,12 +1414,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_sole_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <velocity_decay/>
@@ -1640,12 +1640,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_chest_bb_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <sensor name='chest_ems_acc_eb1' type='imu'>
@@ -1987,12 +1987,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <sensor name='l_upper_arm_mtb_acc_1b10' type='imu'>
@@ -2163,12 +2163,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_l_forearm_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <sensor name='l_forearm_mtb_acc_1b7' type='imu'>
@@ -2514,12 +2514,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_head_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <gravity>1</gravity>
       <velocity_decay/>
@@ -2790,12 +2790,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <sensor name='r_upper_arm_mtb_acc_2b10' type='imu'>
@@ -2966,12 +2966,12 @@
             <uri>model://iCub/meshes/simmechanics/sim_sea_2-5_r_forearm_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <material>
+        <!-- <material>
           <script>
             <uri>__default__</uri>
             <name>__default__</name>
           </script>
-        </material>
+        </material> -->
       </visual>
       <velocity_decay/>
       <sensor name='r_forearm_mtb_acc_2b7' type='imu'>
