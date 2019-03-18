@@ -84,7 +84,7 @@
     </model>
 
     <include>
-      <pose>0 0 1.0 0 0 3.14</pose>
+      <pose>0 0 1.0 0 0 0</pose>
       <uri>iCubGazeboV2_5</uri>
     </include>
 
