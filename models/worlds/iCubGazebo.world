@@ -83,14 +83,10 @@
       </link>
     </model>
 
-  <model name="iCub_ignition">
     <include>
-      <!--      <uri>icubIgnition</uri>-->
-      <uri>/home/dferigo/git/gym-ignition/models/IcubIgnition</uri>
-      <!--<uri>model://icubIgnition</uri>-->
-      <pose>0.0 0 1.0 0 0 3.14</pose>
+      <pose>0 0 1.0 0 0 0</pose>
+      <uri>iCubGazebo</uri>
     </include>
-  </model>
 
   </world>
 </sdf>
