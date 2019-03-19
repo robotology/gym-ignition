@@ -22,7 +22,7 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envNam
         }
 
         // Setup the SDF file
-        if (!ignGym->setupSdf("CartPoleWorld.sdf", {"cartpole_xacro"})) {
+        if (!ignGym->setupSdf("CartPole.world", {"cartpole_xacro"})) {
             gymppError << "Failed to setup SDF file";
             return nullptr;
         }
