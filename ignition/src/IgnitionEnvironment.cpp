@@ -240,8 +240,6 @@ void IgnitionEnvironment::setVerbosity(int level)
 bool IgnitionEnvironment::setupSdf(const std::string& sdfFile,
                                    const std::vector<std::string>& modelNames)
 {
-    gymppMessage << "setupSdf" << std::endl;
-
     // =================
     // LOAD THE SDF FILE
     // =================
