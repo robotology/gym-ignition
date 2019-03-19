@@ -91,6 +91,8 @@ Ignition Robotics needs to find in the system four types of files. Depending on 
 | `SDF_PATH`                      | `<installprefix>/share/gympp/gazebo/models`     | Folders containing `sdf` models            |
 | `IGN_FILE_PATH`                 | Location of mesh files - model dependent        | Folders searched to resolve `file://` URIs |
 
+Furthermore, in order to use the python bindings you should export `PYTHONPATH=<installprefix>/lib/gympp/bindings`.
+
 ---
 
 **Disclaimer:** `gym-ignition` is an independent project and is not related by any means to OpenAI and Open Robotics

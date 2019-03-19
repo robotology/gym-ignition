@@ -21,3 +21,14 @@ set_property(TARGET ${target} PROPERTY
 
 target_include_directories(${target} PRIVATE
     ${PYTHON_INCLUDE_PATH})
+
+install(
+    TARGETS ${target}
+    EXPORT gympp
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp/bindings)
+
+install(
+    FILES ${CMAKE_CURRENT_BINARY_DIR}/gympp.py
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings)
