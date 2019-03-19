@@ -84,12 +84,12 @@ cmake --build . --target install
 
 Ignition Robotics needs to find in the system four types of files. Depending on your install prefix, export the following environment varables:
 
-| Environment Variable            | Value                                    | Description                                |
-| ------------------------------- | ---------------------------------------- | ------------------------------------------ |
-| `IGN_GAZEBO_SYSTEM_PLUGIN_PATH` | `<installprefix>/lib/gympp`              | Folder containing plugins                  |
-| `IGN_GAZEBO_RESOURCE_PATH`      | `<installprefix>/share/gympp/worlds`     | Folder containing `.world` files           |
-| `SDF_PATH`                      | `<installprefix>/share/gympp/models`     | Folders containing `sdf` models            |
-| `IGN_FILE_PATH`                 | Location of mesh files - model dependent | Folders searched to resolve `file://` URIs |
+| Environment Variable            | Value                                           | Description                                |
+| ------------------------------- | ----------------------------------------------- | ------------------------------------------ |
+| `IGN_GAZEBO_SYSTEM_PLUGIN_PATH` | `<installprefix>/lib/gympp`                     | Folder containing plugins                  |
+| `IGN_GAZEBO_RESOURCE_PATH`      | `<installprefix>/share/gympp/gazebo/worlds`     | Folder containing `.world` files           |
+| `SDF_PATH`                      | `<installprefix>/share/gympp/gazebo/models`     | Folders containing `sdf` models            |
+| `IGN_FILE_PATH`                 | Location of mesh files - model dependent        | Folders searched to resolve `file://` URIs |
 
 ---
 
