@@ -18,6 +18,10 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${GYMPP_BUILD_TYPES})
 endif()
 
+# Build all libraries as shared. Plugins and singleton do not play well
+# together if libraries are static.
+set(BUILD_SHARED_LIBS ON)
+
 # Tweak linker flags in Linux
 if(UNIX AND NOT APPLE)
     if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
