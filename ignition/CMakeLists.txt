@@ -43,6 +43,10 @@ target_include_directories(RobotSingleton PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
+# ===================
+# INSTALL THE TARGETS
+# ===================
+
 install(
     TARGETS IgnitionEnvironment RobotSingleton
     EXPORT gympp
@@ -72,7 +76,7 @@ target_include_directories(IgnitionRobot PUBLIC
 
 install(
     TARGETS IgnitionRobot
+    EXPORT gympp
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp)
-
