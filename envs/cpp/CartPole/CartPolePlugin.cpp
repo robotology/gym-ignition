@@ -73,6 +73,10 @@ CartPole::CartPole()
 void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
                          ignition::gazebo::EntityComponentManager& /*manager*/)
 {
+    if (info.paused) {
+        return;
+    }
+
     // Get the pointer to the Robot interface
     gympp::RobotPtr robot = pImpl->getRobot();
     assert(robot);
@@ -127,9 +131,13 @@ void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
     }
 }
 
-void CartPole::PostUpdate(const ignition::gazebo::UpdateInfo& /*info*/,
+void CartPole::PostUpdate(const ignition::gazebo::UpdateInfo& info,
                           const ignition::gazebo::EntityComponentManager& /*manager*/)
 {
+    if (info.paused) {
+        return;
+    }
+
     // Get the pointer to the Robot interface
     gympp::RobotPtr robot = pImpl->getRobot();
     assert(robot);
