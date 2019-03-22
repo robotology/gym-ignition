@@ -6,9 +6,20 @@ target_link_libraries(GymFactory
     PUBLIC gympp
     PRIVATE IgnitionEnvironment ignition-gazebo1::core)
 
+set_target_properties(GymFactory PROPERTIES
+    PUBLIC_HEADER include/gympp/GymFactory.h)
+
 target_include_directories(GymFactory PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_compile_definitions(GymFactory PRIVATE
     CARTPOLE_PLUGIN_PATH="$<TARGET_FILE_DIR:CartPolePlugin>")
+
+install(
+    TARGETS GymFactory
+    EXPORT gympp
+    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp)
