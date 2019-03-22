@@ -70,20 +70,6 @@ CartPole::CartPole()
     pImpl->observationBuffer.resize(2);
 }
 
-void CartPole::Configure(const ignition::gazebo::Entity& /*entity*/,
-                         const std::shared_ptr<const sdf::Element>& /*sdf*/,
-                         ignition::gazebo::EntityComponentManager& /*manager*/,
-                         ignition::gazebo::EventManager& /*eventMgr*/)
-{
-    // It would be ideal acquiring the gympp::RobotPtr at this stage, and using it
-    // set the initial state of the model. However, at this stage the ECM still doesn't
-    // have a lot of information about the model.
-    // For now this callback is a no-op.
-
-    // In any case, for how it works the inclusion of plugins implementing the EnvironmentBehavior
-    // interface by the IgnitionEnvironment class, this method is not currently called.
-}
-
 void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
                          ignition::gazebo::EntityComponentManager& /*manager*/)
 {
@@ -249,7 +235,6 @@ std::optional<gympp::gazebo::EnvironmentBehavior::Observation> CartPole::getObse
 
 IGNITION_ADD_PLUGIN(gympp::plugins::CartPole,
                     gympp::plugins::CartPole::System,
-                    gympp::plugins::CartPole::ISystemConfigure,
                     gympp::plugins::CartPole::ISystemPreUpdate,
                     gympp::plugins::CartPole::ISystemPostUpdate,
                     gympp::gazebo::EnvironmentBehavior)
