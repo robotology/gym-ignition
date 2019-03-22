@@ -4,7 +4,6 @@
 #include "gympp/Robot.h"
 
 #include <ignition/gazebo/System.hh>
-#include <sdf/Model.hh>
 
 #include <memory>
 
@@ -18,7 +17,6 @@ class gympp::gazebo::IgnitionRobot final
     : public gympp::Robot
     , public ignition::gazebo::System
     , public ignition::gazebo::ISystemConfigure
-//    , public std::enable_shared_from_this<gympp::Robot>
 {
 private:
     class Impl;

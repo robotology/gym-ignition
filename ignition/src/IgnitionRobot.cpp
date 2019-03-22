@@ -2,6 +2,9 @@
 #include "gympp/Log.h"
 #include "gympp/gazebo/RobotSingleton.h"
 
+#include <ignition/gazebo/EntityComponentManager.hh>
+#include <ignition/plugin/Register.hh>
+
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/JointForce.hh>
@@ -13,7 +16,6 @@
 #include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/math/PID.hh>
-#include <ignition/plugin/Register.hh>
 
 #include <optional>
 #include <unordered_map>
@@ -40,24 +42,24 @@ public:
 
     inline bool jointExists(const JointName& jointName) const
     {
-        return joints.find(jointName) != joints.end() ? true : false;
+        return joints.find(jointName) != joints.end();
     }
 
     inline bool pidExists(const JointName& jointName) const
     {
-        return pids.find(jointName) != pids.end() ? true : false;
+        return pids.find(jointName) != pids.end();
     }
 
     inline bool linkExists(const LinkName& linkName) const
     {
-        return links.find(linkName) != links.end() ? true : false;
+        return links.find(linkName) != links.end();
     }
 
     JointEntity getLinkEntity(const LinkName& linkName);
     JointEntity getJointEntity(const JointName& jointName);
 
     template <typename ComponentType>
-    ComponentType& getOrCreateComponent(ignition::gazebo::Entity entity);
+    ComponentType& getOrCreateComponent(const ignition::gazebo::Entity entity);
 };
 
 LinkEntity IgnitionRobot::Impl::getLinkEntity(const LinkName& linkName)
@@ -104,14 +106,14 @@ JointEntity IgnitionRobot::Impl::getJointEntity(const JointName& jointName)
     return joints[jointName];
 }
 
-template <typename ComponentType>
-ComponentType& IgnitionRobot::Impl::getOrCreateComponent(ignition::gazebo::Entity entity)
+template <typename ComponentTypeT>
+ComponentTypeT& IgnitionRobot::Impl::getOrCreateComponent(const ignition::gazebo::Entity entity)
 {
-    auto component = ecm->Component<ComponentType>(entity);
+    auto component = ecm->Component<ComponentTypeT>(entity);
 
     if (!component) {
-        ecm->CreateComponent<ComponentType>(entity, ComponentType());
-        component = ecm->Component<ComponentType>(entity);
+        ecm->CreateComponent(entity, ComponentTypeT());
+        component = ecm->Component<ComponentTypeT>(entity);
     }
 
     return *component;
