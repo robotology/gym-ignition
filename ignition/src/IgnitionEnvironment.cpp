@@ -79,7 +79,7 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionEnvironment::Impl::getServer()
         // The GUI needs the server already up. Warming up the first iteration and pausing the
         // server. It will be unpaused at the step() call.
         gymppDebug << "Starting the server as paused" << std::endl;
-        if (!server->Run(/*blocking=*/false, 1, /*paused=*/true)) {
+        if (!server->Run(/*blocking=*/false, numOfIterations, /*paused=*/true)) {
             gymppError << "Failed to warm up the gazebo server in paused state" << std::endl;
             return nullptr;
         }
