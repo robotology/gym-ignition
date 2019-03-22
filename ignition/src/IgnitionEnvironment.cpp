@@ -324,6 +324,8 @@ gympp::EnvironmentPtr IgnitionEnvironment::env()
 
 std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
 {
+    gymppDebug << "Resetting the environment" << std::endl;
+
     // The plugin must be loaded in order to call its reset() method
     if (!pImpl->getServer()) {
         gymppError << "Failed to get the ignition server" << std::endl;
@@ -340,11 +342,14 @@ std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
         return {};
     }
 
+    gymppDebug << "Retrieving the initial observation after reset" << std::endl;
     return pImpl->pluginData.behavior->getObservation();
 }
 
 bool IgnitionEnvironment::render(RenderMode mode)
 {
+    gymppDebug << "Rendering the environment" << std::endl;
+
     if (mode == RenderMode::HUMAN) {
         // The GUI needs the ignition server running. Initialize it.
         if (!pImpl->getServer()) {

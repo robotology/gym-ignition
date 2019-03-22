@@ -24,6 +24,7 @@ int main(int /*argc*/, char* /*argv*/[])
     ignition::common::SignalHandler sigHandler;
     assert(sigHandler.Initialized());
     sigHandler.AddCallback([&](const int /*_sig*/) {
+        gymppDebug << "Shutting down gracefully" << std::endl;
         env.reset();
         exit(EXIT_FAILURE);
     });
