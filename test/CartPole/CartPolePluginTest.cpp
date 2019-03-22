@@ -28,6 +28,11 @@ int main(int /*argc*/, char* /*argv*/[])
         exit(EXIT_FAILURE);
     });
 
+    // Initialize the seed
+    // TODO: command line option for reproducible simulation
+    //    env->seed();
+    env->seed(42);
+
     auto reward = Environment::Reward(0);
     auto observation = env->reset();
 
@@ -43,11 +48,6 @@ int main(int /*argc*/, char* /*argv*/[])
         gymppError << "Failed to render the environment" << std::endl;
         return EXIT_FAILURE;
     }
-
-    // Initialize the seed
-    // TODO: command line option for reproducible simulation
-    env->seed();
-    // env->seed(42);
 
     size_t epoch = 1;
     size_t iteration = 0;
