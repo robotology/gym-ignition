@@ -12,6 +12,15 @@
 <b><a href="https://github.com/robotology/gym-ignition#setup">Setup</a></b>
 </p>
 
+<p align="center">
+    <a href="https://www.codacy.com/app/diegoferigo/gym-ignition?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=diegoferigo/gym-ignition&amp;utm_campaign=Badge_Grade">
+    <img src="https://api.codacy.com/project/badge/Grade/899a7c8304e14ed9b2330eb309cdad15" alt="Codacy Badge" />
+    </a>
+    <a href="https://github.com/robotology/gym-ignition/blob/master/LICENSE">
+    <img src="https://img.shields.io/badge/license-LGPL-19c2d8.svg" alt="License" />
+    </a>
+</p>
+
 <p align="center">⚠️ Warning, <a href="https://en.wikipedia.org/wiki/Here_be_dragons">Here be Dragons</a> ⚠️</p>
 <p align="center">You just reached a very unstable corner. The status of this project is pre-alpha, and is based on other projects in alpha status.<br/>Welcome, but mind the step. </p>
 
