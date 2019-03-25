@@ -9,6 +9,9 @@ project(Gympp VERSION 0.1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+# Add custom functions / macros
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
 # Include useful features
 include(GNUInstallDirs)
 
@@ -63,3 +66,6 @@ if(ignition-gazebo1_FOUND)
 else()
     message(STATUS "Ignition Gazebo not found. Enabled only the gympp interface and classes.")
 endif()
+
+# Add unistall target
+include(AddUninstallTarget)
