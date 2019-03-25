@@ -25,7 +25,6 @@
 #include <functional>
 #include <mutex>
 #include <thread>
-#include <unistd.h>
 #include <vector>
 
 using namespace gympp::gazebo;
