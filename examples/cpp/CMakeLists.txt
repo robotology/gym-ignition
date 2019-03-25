@@ -1,0 +1,2 @@
+add_executable(LaunchCartPole LaunchCartPole.cpp)
+target_link_libraries(LaunchCartPole PRIVATE GymFactory Clara)

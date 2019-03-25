@@ -50,7 +50,7 @@ if(ignition-gazebo1_FOUND)
     add_subdirectory(deps)
     add_subdirectory(envs/cpp)
     add_subdirectory(models)
-    add_subdirectory(examples)
+    add_subdirectory(examples/cpp)
 
     option(ENABLE_BINDINGS "Enable swig bindings" ON)
     if(ENABLE_BINDINGS)
