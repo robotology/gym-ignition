@@ -73,7 +73,7 @@ public:
     virtual std::optional<State> step(const Action& action) = 0;
     virtual std::optional<Observation> reset() = 0;
     virtual bool render(RenderMode mode) = 0;
-    virtual std::vector<unsigned> seed(unsigned seed = 0) = 0;
+    virtual std::vector<size_t> seed(size_t seed = 0) = 0;
     // TODO: close()
 };
 

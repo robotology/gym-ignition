@@ -223,7 +223,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
         pImpl->pluginData.behavior->isDone(), {}, reward.value(), observation.value()};
 }
 
-std::vector<unsigned> IgnitionEnvironment::seed(unsigned seed)
+std::vector<size_t> IgnitionEnvironment::seed(size_t seed)
 {
     if (seed != 0) {
         gympp::Random::setSeed(seed);

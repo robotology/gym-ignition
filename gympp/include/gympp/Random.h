@@ -14,9 +14,9 @@ public:
     ~Random() = default;
 
     static Random& instance();
-    static unsigned seed();
+    static size_t seed();
     static std::default_random_engine& engine();
-    static void setSeed(unsigned seed);
+    static void setSeed(size_t seed);
 };
 
 #endif // GYMPP_RANDOM
