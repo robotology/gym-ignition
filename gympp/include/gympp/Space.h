@@ -17,6 +17,7 @@ namespace gympp {
 
         class Space;
         class Discrete;
+        using SpacePtr = std::shared_ptr<Space>;
         using Box = gympp::spaces::details::TBox<double>;
     } // namespace spaces
 } // namespace gympp

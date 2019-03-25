@@ -2,33 +2,106 @@
 #include "gympp/Log.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
 
-gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envName)
+using namespace gympp;
+
+class GymFactory::Impl
 {
-    if (envName == "CartPole") {
-        using OSpace = gympp::spaces::Box;
-        using ASpace = gympp::spaces::Discrete;
+public:
+    inline bool exists(const EnvironmentName& name) const
+    {
+        return plugins.find(name) != plugins.end();
+    }
+    spaces::SpacePtr makeSpace(const SpaceMetadata& md);
+    std::unordered_map<EnvironmentName, const PluginMetadata> plugins;
+};
 
-        // Create the gym environment
-        auto ignGym = std::make_shared<gympp::gazebo::IgnitionEnvironment>(
-            std::make_shared<ASpace>(3),
-            std::make_shared<OSpace>(OSpace::Limit{-90, -1}, OSpace::Limit{90, 1}),
-            /*updateRate=*/1000,
-            /*iterations=*/1);
+gympp::spaces::SpacePtr gympp::GymFactory::Impl::makeSpace(const SpaceMetadata& md)
+{
+    gympp::spaces::SpacePtr space;
 
-        // Setup the CartPolePlugin
-        if (!ignGym->setupIgnitionPlugin("CartPolePlugin", "gympp::plugins::CartPole")) {
-            gymppError << "Failed to setup the ignition plugin" << std::endl;
-            return nullptr;
+    switch (md.type) {
+        case gympp::SpaceType::Box: {
+            if (md.dims.empty()) {
+                if (md.low.size() != md.high.size()) {
+                    gymppError << "The size of the space limits is not valid" << std::endl;
+                    return nullptr;
+                }
+                space = std::make_shared<gympp::spaces::Box>(md.low, md.high);
+            }
+            else {
+                if (md.low.size() != 1 && md.high.size() != 1) {
+                    gymppError << "The size of the space limits is not valid" << std::endl;
+                    return nullptr;
+                }
+                space = std::make_shared<gympp::spaces::Box>(md.low[0], md.high[0], md.dims);
+            }
+            break;
         }
+        case gympp::SpaceType::Discrete: {
+            if (md.dims.size() != 1) {
+                gymppError << "The specified space dimension is not valid" << std::endl;
+                return nullptr;
+            }
 
-        // Setup the SDF file
-        if (!ignGym->setupSdf("CartPole.world", {"cartpole_xacro"})) {
-            gymppError << "Failed to setup SDF file";
-            return nullptr;
+            space = std::make_shared<gympp::spaces::Discrete>(md.dims[0]);
+            break;
         }
-
-        return ignGym->env();
     }
 
-    return nullptr;
+    return space;
+}
+
+gympp::GymFactory::GymFactory()
+    : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
+{}
+
+gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envName)
+{
+    if (!pImpl->exists(envName)) {
+        gymppError << "Environment '" << envName << "' has never been registered" << std::endl;
+        return nullptr;
+    }
+
+    auto& md = pImpl->plugins[envName];
+
+    auto actionSpace = pImpl->makeSpace(md.actionSpace);
+    auto observationSpace = pImpl->makeSpace(md.observationSpace);
+
+    if (!actionSpace || !observationSpace) {
+        gymppError << "Failed to create spaces" << std::endl;
+        return nullptr;
+    }
+
+    auto ignGym = std::make_shared<gazebo::IgnitionEnvironment>(actionSpace,
+                                                                observationSpace,
+                                                                /*updateRate=*/50,
+                                                                /*iterations=*/10);
+
+    // Setup the CartPolePlugin
+    if (!ignGym->setupIgnitionPlugin(md.libraryName, md.className)) {
+        gymppError << "Failed to setup the ignition plugin" << std::endl;
+        return nullptr;
+    }
+
+    // Setup the SDF file
+    if (!ignGym->setupSdf(md.worldFileName, md.modelNames)) {
+        gymppError << "Failed to setup SDF file";
+        return nullptr;
+    }
+
+    return ignGym->env();
+}
+
+bool gympp::GymFactory::registerPlugin(const PluginMetadata& md)
+{
+    // TODO md.isValid()
+
+    if (pImpl->exists(md.environmentName)) {
+        gymppError << "Environment '" << md.environmentName << "' has been already registered"
+                   << std::endl;
+        return false;
+    }
+
+    pImpl->plugins.insert({md.environmentName, md});
+    return true;
 }

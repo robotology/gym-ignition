@@ -1,5 +1,10 @@
-add_library(GymFactory
+set(GYMFACTORY_PUBLIC_HEADERS
     include/gympp/GymFactory.h
+    include/gympp/Metadata.h
+    include/gympp/PluginDatabase.h)
+
+add_library(GymFactory
+    ${GYMFACTORY_PUBLIC_HEADERS}
     src/GymFactory.cpp)
 
 target_link_libraries(GymFactory
@@ -7,7 +12,8 @@ target_link_libraries(GymFactory
     PRIVATE IgnitionEnvironment ignition-gazebo1::core)
 
 set_target_properties(GymFactory PROPERTIES
-    PUBLIC_HEADER include/gympp/GymFactory.h)
+    PUBLIC_HEADER
+    "${GYMFACTORY_PUBLIC_HEADERS}")
 
 target_include_directories(GymFactory PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

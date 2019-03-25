@@ -18,6 +18,7 @@
 %template(Vector_u) std::vector<size_t>;
 %template(Vector_f) std::vector<float>;
 %template(Vector_d) std::vector<double>;
+%template(Vector_s) std::vector<std::string>;
 
 %include "gympp/Common.h"
 %template(BufferContainer_i) gympp::BufferContainer<int>;
@@ -52,5 +53,8 @@
 %template(Box_d) gympp::spaces::details::TBox<double>;
 
 %shared_ptr(gympp::Environment)
+%include "ignition/common/SingletonT.hh"
+%template(GymFactorySingleton) ignition::common::SingletonT<gympp::GymFactory>;
 %include "gympp/Environment.h"
+%include "gympp/Metadata.h"
 %include "gympp/GymFactory.h"
