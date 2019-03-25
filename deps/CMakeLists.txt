@@ -1,5 +1,9 @@
 include(FetchContent)
 
+# ====================
+# TINY-PROCESS-LIBRARY
+# ====================
+
 find_package(tiny-process-library QUIET)
 
 if(NOT tiny-process-library_FOUND)
@@ -7,8 +11,7 @@ if(NOT tiny-process-library_FOUND)
 
     FetchContent_Declare(
         TinyProcessLibrary
-        GIT_REPOSITORY https://gitlab.com/eidheim/tiny-process-library.git
-        )
+        GIT_REPOSITORY https://gitlab.com/eidheim/tiny-process-library.git)
 
     FetchContent_GetProperties(TinyProcessLibrary)
     if(NOT TinyProcessLibrary_POPULATED)
