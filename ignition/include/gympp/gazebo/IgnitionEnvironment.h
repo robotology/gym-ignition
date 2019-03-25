@@ -65,7 +65,7 @@ public:
 
     // Public APIs
     EnvironmentPtr env();
-    void setVerbosity(int level = DEFAULT_VERBOSITY);
+    static void setVerbosity(int level = DEFAULT_VERBOSITY);
     bool setupSdf(const std::string& sdfFile, const std::vector<std::string>& modelNames);
     bool setupIgnitionPlugin(const std::string& libName, const std::string& pluginName);
 };
