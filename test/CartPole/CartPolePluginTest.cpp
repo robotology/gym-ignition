@@ -5,16 +5,54 @@
 #include "gympp/PluginDatabase.h"
 #include "gympp/Space.h"
 
+#include "clara.hpp"
+
 #include <ignition/common/SignalHandler.hh>
 
 #include <cassert>
+#include <cstdlib>
 #include <iostream>
+#include <optional>
 #include <thread>
 
 using namespace gympp;
+using namespace clara;
 
-int main(int /*argc*/, char* /*argv*/[])
+struct Config
 {
+    bool help = false;
+    bool gui = false;
+    std::optional<size_t> seed;
+};
+
+int main(int argc, char* argv[])
+{
+    // ==================
+    // PARSE COMMAND LINE
+    // ==================
+
+    Config config;
+
+    // Create the command line parser
+    auto cli = Help(config.help) | Opt(config.gui)["-g"]["--gui"]("render the environment")
+               | Opt([&](unsigned value) { config.seed = value; },
+                     "seed")["-s"]["--seed"]("use a specific seed for randomness");
+
+    // Parse the command line
+    if (auto result = cli.parse(Args(argc, argv)); !result) {
+        gymppError << "Error in command line: " << result.errorMessage() << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    if (config.help) {
+        std::cout << cli;
+        exit(EXIT_SUCCESS);
+    }
+
+    // ==========================
+    // INITIALIZE THE ENVIRONMENT
+    // ==========================
+
     // Create the environment
     auto env = GymFactory::Instance()->make("CartPole");
 
@@ -23,6 +61,7 @@ int main(int /*argc*/, char* /*argv*/[])
         return EXIT_FAILURE;
     }
 
+    // Initialize the signal handler
     ignition::common::SignalHandler sigHandler;
     assert(sigHandler.Initialized());
     sigHandler.AddCallback([&](const int /*_sig*/) {
@@ -32,10 +71,11 @@ int main(int /*argc*/, char* /*argv*/[])
     });
 
     // Initialize the seed
-    // TODO: command line option for reproducible simulation
-    //    env->seed();
-    env->seed(42);
+    if (config.seed) {
+        env->seed(config.seed.value());
+    }
 
+    // Reset the environment
     auto reward = Environment::Reward(0);
     auto observation = env->reset();
 
@@ -44,13 +84,20 @@ int main(int /*argc*/, char* /*argv*/[])
         return EXIT_FAILURE;
     }
 
+    // Create the initial state object
     Environment::State oldState;
+    oldState.done = false;
+    oldState.observation = observation.value();
 
-    // TODO: command line option for setting the render mode
-    if (!env->render(Environment::RenderMode::HUMAN)) {
+    // Render the environment
+    if (config.gui && !env->render(Environment::RenderMode::HUMAN)) {
         gymppError << "Failed to render the environment" << std::endl;
         return EXIT_FAILURE;
     }
+
+    // ===============
+    // SIMULATION LOOP
+    // ===============
 
     size_t epoch = 1;
     size_t iteration = 0;
