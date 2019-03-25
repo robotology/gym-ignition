@@ -2,6 +2,7 @@
 #include "gympp/Environment.h"
 #include "gympp/GymFactory.h"
 #include "gympp/Log.h"
+#include "gympp/PluginDatabase.h"
 #include "gympp/Space.h"
 
 #include <ignition/common/SignalHandler.hh>
@@ -14,7 +15,8 @@ using namespace gympp;
 
 int main(int /*argc*/, char* /*argv*/[])
 {
-    auto env = GymFactory::make("CartPole");
+    // Create the environment
+    auto env = GymFactory::Instance()->make("CartPole");
 
     if (!env) {
         gymppError << "Failed to load the CartPole environment" << std::endl;
