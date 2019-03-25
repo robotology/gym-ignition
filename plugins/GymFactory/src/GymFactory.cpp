@@ -84,7 +84,7 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envNam
     }
 
     // Setup the SDF file
-    if (!ignGym->setupSdf(md.worldFileName, md.modelNames)) {
+    if (!ignGym->setupGazeboWorld(md.worldFileName, md.modelNames)) {
         gymppError << "Failed to setup SDF file";
         return nullptr;
     }

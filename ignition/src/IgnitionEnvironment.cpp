@@ -237,14 +237,14 @@ void IgnitionEnvironment::setVerbosity(int level)
     ignition::common::Console::SetVerbosity(level);
 }
 
-bool IgnitionEnvironment::setupSdf(const std::string& sdfFile,
-                                   const std::vector<std::string>& modelNames)
+bool IgnitionEnvironment::setupGazeboWorld(const std::string& worldFile,
+                                           const std::vector<std::string>& modelNames)
 {
     // =================
     // LOAD THE SDF FILE
     // =================
 
-    if (sdfFile.empty()) {
+    if (worldFile.empty()) {
         gymppError << "Passed SDF file argument is an empty string" << std::endl;
         return false;
     }
@@ -254,10 +254,10 @@ bool IgnitionEnvironment::setupSdf(const std::string& sdfFile,
     ignition::common::SystemPaths systemPaths;
     systemPaths.SetFilePathEnv("IGN_GAZEBO_RESOURCE_PATH");
     systemPaths.AddFilePaths(IGN_GAZEBO_WORLD_INSTALL_DIR);
-    std::string filePath = systemPaths.FindFile(sdfFile);
+    std::string filePath = systemPaths.FindFile(worldFile);
 
     if (filePath.empty()) {
-        gymppError << "Failed to find '" << sdfFile << "'. "
+        gymppError << "Failed to find '" << worldFile << "'. "
                    << "Check that it's contained in the paths defined in IGN_GAZEBO_RESOURCE_PATH."
                    << std::endl;
         gymppError << "If you use the <include> element, make sure to add the parent folder of the "
@@ -266,7 +266,7 @@ bool IgnitionEnvironment::setupSdf(const std::string& sdfFile,
     }
 
     if (!pImpl->serverConfig.SetSdfFile(filePath)) {
-        gymppError << "Failed to set the SDF file " << sdfFile << std::endl;
+        gymppError << "Failed to set the SDF file " << worldFile << std::endl;
         return false;
     }
 
