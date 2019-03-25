@@ -214,7 +214,7 @@ bool CartPole::reset()
     return true;
 }
 
-bool CartPole::setAction(const EnvironmentBehavior::Action& action)
+bool CartPole::setAction(const EnvironmentCallbacks::Action& action)
 {
     std::lock_guard lock(pImpl->mutex);
 
@@ -237,13 +237,13 @@ bool CartPole::setAction(const EnvironmentBehavior::Action& action)
     return true;
 }
 
-std::optional<gympp::gazebo::EnvironmentBehavior::Reward> CartPole::computeReward()
+std::optional<gympp::gazebo::EnvironmentCallbacks::Reward> CartPole::computeReward()
 {
     std::lock_guard lock(pImpl->mutex);
     return 1.0; // TODO
 }
 
-std::optional<gympp::gazebo::EnvironmentBehavior::Observation> CartPole::getObservation()
+std::optional<gympp::gazebo::EnvironmentCallbacks::Observation> CartPole::getObservation()
 {
     std::lock_guard lock(pImpl->mutex);
     return Observation(pImpl->observationBuffer);
@@ -253,4 +253,4 @@ IGNITION_ADD_PLUGIN(gympp::plugins::CartPole,
                     gympp::plugins::CartPole::System,
                     gympp::plugins::CartPole::ISystemPreUpdate,
                     gympp::plugins::CartPole::ISystemPostUpdate,
-                    gympp::gazebo::EnvironmentBehavior)
+                    gympp::gazebo::EnvironmentCallbacks)

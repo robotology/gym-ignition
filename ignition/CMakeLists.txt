@@ -24,6 +24,24 @@ target_include_directories(IgnitionEnvironment PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
+# ==============================
+# IGNITION ENVIRONMENT CALLBACKS
+# ==============================
+
+add_library(EnvironmentCallbacks INTERFACE)
+target_sources(EnvironmentCallbacks INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/EnvironmentCallbacks.h)
+
+target_include_directories(EnvironmentCallbacks INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_link_libraries(EnvironmentCallbacks INTERFACE gympp)
+
+install(
+    FILES include/gympp/gazebo/EnvironmentCallbacks.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp/gazebo)
+
 # ========================
 # IGNITION ROBOT SINGLETON
 # ========================
@@ -52,7 +70,7 @@ target_include_directories(RobotSingleton PUBLIC
 # ===================
 
 install(
-    TARGETS IgnitionEnvironment RobotSingleton
+    TARGETS IgnitionEnvironment RobotSingleton EnvironmentCallbacks
     EXPORT gympp
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}

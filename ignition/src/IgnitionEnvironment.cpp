@@ -9,6 +9,7 @@
 #include "gympp/gazebo/IgnitionEnvironment.h"
 #include "gympp/Log.h"
 #include "gympp/Random.h"
+#include "gympp/gazebo/EnvironmentCallbacks.h"
 #include "process.hpp"
 
 #include <ignition/common/SystemPaths.hh>
@@ -34,7 +35,7 @@ struct PluginData
     std::string libName;
     std::string pluginName;
 
-    EnvironmentBehavior* behavior = nullptr;
+    EnvironmentCallbacks* environmentCallbacks = nullptr;
     ignition::gazebo::SystemPluginPtr systemPluginPtr;
 };
 
@@ -64,7 +65,7 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionEnvironment::Impl::getServer()
         }
 
         // Check that the ignition plugin was configured and loaded
-        if (!pluginData.behavior || !pluginData.systemPluginPtr) {
+        if (!pluginData.environmentCallbacks || !pluginData.systemPluginPtr) {
             gymppError << "The ignition plugin has not been correctly loaded" << std::endl;
             return nullptr;
         }
@@ -134,10 +135,10 @@ bool IgnitionEnvironment::setupIgnitionPlugin(const std::string& libName,
     pluginData.systemPluginPtr = plugin.value();
 
     // Get the environment behavior interface out of it
-    pluginData.behavior =
-        pluginData.systemPluginPtr->template QueryInterface<EnvironmentBehavior>();
+    pluginData.environmentCallbacks =
+        pluginData.systemPluginPtr->template QueryInterface<EnvironmentCallbacks>();
 
-    if (!pluginData.behavior) {
+    if (!pluginData.environmentCallbacks) {
         gymppError << "Failed to cast the plugin '" << pluginName
                    << "'to get the environment behavior interface" << std::endl;
         return false;
@@ -169,7 +170,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     assert(pImpl->server);
     assert(action_space);
     assert(observation_space);
-    assert(pImpl->pluginData.behavior);
+    assert(pImpl->pluginData.environmentCallbacks);
 
     if (!this->action_space->contains(action)) {
         gymppError << "The input action does not belong to the action space" << std::endl;
@@ -177,7 +178,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Set the action to the environment
-    if (!pImpl->pluginData.behavior->setAction(action)) {
+    if (!pImpl->pluginData.environmentCallbacks->setAction(action)) {
         gymppError << "Failed to set the action" << std::endl;
         return {};
     }
@@ -200,7 +201,8 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Get the observation from the environment
-    std::optional<Observation> observation = pImpl->pluginData.behavior->getObservation();
+    std::optional<Observation> observation =
+        pImpl->pluginData.environmentCallbacks->getObservation();
 
     if (!observation) {
         gymppError << "The gympp plugin didn't return the observation" << std::endl;
@@ -214,7 +216,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Get the reward from the environment
-    std::optional<Reward> reward = pImpl->pluginData.behavior->computeReward();
+    std::optional<Reward> reward = pImpl->pluginData.environmentCallbacks->computeReward();
 
     if (!reward) {
         gymppError << "The gympp plugin didn't return the reward" << std::endl;
@@ -228,7 +230,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     return IgnitionEnvironment::State{
-        pImpl->pluginData.behavior->isDone(), {}, reward.value(), observation.value()};
+        pImpl->pluginData.environmentCallbacks->isDone(), {}, reward.value(), observation.value()};
 }
 
 std::vector<size_t> IgnitionEnvironment::seed(size_t seed)
@@ -340,18 +342,18 @@ std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
         return {};
     }
 
-    if (!pImpl->pluginData.behavior) {
+    if (!pImpl->pluginData.environmentCallbacks) {
         gymppError << "The plugin has not been initialized" << std::endl;
         return {};
     }
 
-    if (!pImpl->pluginData.behavior->reset()) {
+    if (!pImpl->pluginData.environmentCallbacks->reset()) {
         gymppError << "Failed to reset plugin" << std::endl;
         return {};
     }
 
     gymppDebug << "Retrieving the initial observation after reset" << std::endl;
-    return pImpl->pluginData.behavior->getObservation();
+    return pImpl->pluginData.environmentCallbacks->getObservation();
 }
 
 bool IgnitionEnvironment::render(RenderMode mode)

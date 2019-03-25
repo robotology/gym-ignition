@@ -12,8 +12,9 @@ add_library(CartPolePlugin SHARED
 
 target_link_libraries(CartPolePlugin
     PUBLIC
-    IgnitionEnvironment
+    EnvironmentCallbacks
     RobotSingleton
+    PRIVATE
     ignition-gazebo1::core)
 
 target_include_directories(CartPolePlugin PRIVATE

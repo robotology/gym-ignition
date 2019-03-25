@@ -22,25 +22,8 @@
 namespace gympp {
     namespace gazebo {
         class IgnitionEnvironment;
-        class EnvironmentBehavior;
     } // namespace gazebo
 } // namespace gympp
-
-class gympp::gazebo::EnvironmentBehavior
-{
-public:
-    using Action = gympp::Environment::Action;
-    using Observation = gympp::Environment::Observation;
-    using Reward = gympp::Environment::Reward;
-
-    virtual ~EnvironmentBehavior() = default;
-
-    virtual bool isDone() = 0;
-    virtual bool reset() = 0;
-    virtual bool setAction(const Action& action) = 0;
-    virtual std::optional<Reward> computeReward() = 0;
-    virtual std::optional<Observation> getObservation() = 0;
-};
 
 class gympp::gazebo::IgnitionEnvironment
     : public gympp::Environment
