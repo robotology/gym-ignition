@@ -28,3 +28,12 @@ if(NOT tiny-process-library_FOUND)
             PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
     endif()
 endif()
+
+# =====
+# CLARA
+# =====
+
+add_library(Clara INTERFACE)
+target_sources(Clara INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}/clara/clara.hpp)
+target_include_directories(Clara INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/clara>)
