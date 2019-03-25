@@ -28,12 +28,12 @@
 
 `gym-ignition` provides the capability of creating **reproducible robotics environments** for reinforcement learning research. The project is composed of the following components:
 
-| Component                                   | Description                                                  |
-| ------------------------------------------- | ------------------------------------------------------------ |
-| [**`gympp`**](gympp/)                       | A C++ port of the OpenAI [Gym interfaces](https://github.com/openai/gym/tree/master/gym) |
-| [**`ignition`**](ignition/)                 | A set of classes to interface `gympp` with the libraries that form new generation of Gazebo: [Ignition Robotics](http://ignitionrobotics.org) |
-| [**`gym_ignition`**](gym_ignition/)         | A python package that wraps the environments implemented with `gympp` with the python OpenAI Gym interfaces |
-| [**`envs`**](envs/) [**`models`**](models/) | Demo environments                                            |
+| Component                                         | Description                                                  |
+| ------------------------------------------------- | ------------------------------------------------------------ |
+| [**`gympp`**](gympp/)                             | A C++ port of the OpenAI [Gym interfaces](https://github.com/openai/gym/tree/master/gym) |
+| [**`ignition`**](ignition/)                       | A set of classes to interface `gympp` with the libraries that form new generation of Gazebo: [Ignition Robotics](http://ignitionrobotics.org) |
+| [**`gym_ignition`**](gym_ignition/)               | A python package that wraps the environments implemented with `gympp` with the python OpenAI Gym interfaces |
+| [**`plugins`**](plugins/) [**`models`**](models/) | Demo environments                                            |
 
 ## Why
 

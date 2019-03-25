@@ -48,7 +48,7 @@ find_package(ignition-gazebo1 COMPONENTS all)
 if(ignition-gazebo1_FOUND)
     add_subdirectory(ignition)
     add_subdirectory(deps)
-    add_subdirectory(envs/cpp)
+    add_subdirectory(plugins)
     add_subdirectory(models)
     add_subdirectory(examples/cpp)
 
