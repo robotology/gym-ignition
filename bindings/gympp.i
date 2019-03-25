@@ -6,6 +6,7 @@
 #include "gympp/Environment.h"
 #include "gympp/GymFactory.h"
 #include "gympp/Space.h"
+#include "gympp/gazebo/IgnitionEnvironment.h"
 %}
 
 %naturalvar;
@@ -53,8 +54,10 @@
 %template(Box_d) gympp::spaces::details::TBox<double>;
 
 %shared_ptr(gympp::Environment)
+%shared_ptr(gympp::gazebo::IgnitionEnvironment)
 %include "ignition/common/SingletonT.hh"
 %template(GymFactorySingleton) ignition::common::SingletonT<gympp::GymFactory>;
 %include "gympp/Environment.h"
+%include "gympp/gazebo/IgnitionEnvironment.h"
 %include "gympp/Metadata.h"
 %include "gympp/GymFactory.h"
