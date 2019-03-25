@@ -9,6 +9,7 @@
 #ifndef GYMPP_METADATA
 #define GYMPP_METADATA
 
+#include "gympp/Log.h"
 #include "gympp/Space.h"
 
 #include <string>
@@ -37,6 +38,38 @@ private:
     gympp::spaces::Box::Limit low;
     gympp::spaces::Box::Limit high;
 
+    bool boxSpaceValid() const
+    {
+        if (low.size() != high.size()) {
+            gymppError << "The size of the limits do not match" << std::endl;
+            return false;
+        }
+
+        if (dims.empty()) {
+            if (low.empty()) {
+                gymppError << "The limits do not contain any data" << std::endl;
+                return false;
+            }
+        }
+        else {
+            if (low.size() != 1) {
+                gymppError << "The limits must be scalar values" << std::endl;
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    bool discreteSpaceValid() const
+    {
+        if (dims.size() != 1 && dims[0] <= 0) {
+            return false;
+        }
+
+        return true;
+    }
+
 public:
     inline SpaceType getType() const { return type; }
     inline std::vector<size_t> getDimensions() const { return dims; }
@@ -47,6 +80,18 @@ public:
     inline void setDimensions(const std::vector<size_t>& dims) { this->dims = dims; }
     inline void setLowLimit(const gympp::spaces::Box::Limit& limit) { this->low = limit; }
     inline void setHighLimit(const gympp::spaces::Box::Limit& limit) { this->high = limit; }
+
+    bool isValid() const
+    {
+        switch (type) {
+            case SpaceType::Box:
+                return boxSpaceValid();
+            case SpaceType::Discrete:
+                return discreteSpaceValid();
+        }
+
+        return true;
+    }
 };
 
 class gympp::PluginMetadata
@@ -96,6 +141,19 @@ public:
     inline void setWorldFileName(const std::string& worldFileName)
     {
         this->worldFileName = worldFileName;
+    }
+
+    bool isValid() const
+    {
+        bool ok = true;
+        ok = ok && !environmentName.empty();
+        ok = ok && !libraryName.empty();
+        ok = ok && !className.empty();
+        ok = ok && !worldFileName.empty();
+        ok = ok && !modelNames.empty();
+        ok = ok && actionSpace.isValid();
+        ok = ok && observationSpace.isValid();
+        return ok;
     }
 };
 

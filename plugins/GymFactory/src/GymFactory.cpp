@@ -10,6 +10,8 @@
 #include "gympp/Log.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
 
+#include <cassert>
+
 using namespace gympp;
 
 class GymFactory::Impl
@@ -25,32 +27,20 @@ public:
 
 gympp::spaces::SpacePtr gympp::GymFactory::Impl::makeSpace(const SpaceMetadata& md)
 {
+    assert(md.isValid());
     gympp::spaces::SpacePtr space;
 
     switch (md.type) {
         case gympp::SpaceType::Box: {
             if (md.dims.empty()) {
-                if (md.low.size() != md.high.size()) {
-                    gymppError << "The size of the space limits is not valid" << std::endl;
-                    return nullptr;
-                }
                 space = std::make_shared<gympp::spaces::Box>(md.low, md.high);
             }
             else {
-                if (md.low.size() != 1 && md.high.size() != 1) {
-                    gymppError << "The size of the space limits is not valid" << std::endl;
-                    return nullptr;
-                }
                 space = std::make_shared<gympp::spaces::Box>(md.low[0], md.high[0], md.dims);
             }
             break;
         }
         case gympp::SpaceType::Discrete: {
-            if (md.dims.size() != 1) {
-                gymppError << "The specified space dimension is not valid" << std::endl;
-                return nullptr;
-            }
-
             space = std::make_shared<gympp::spaces::Discrete>(md.dims[0]);
             break;
         }
@@ -72,6 +62,7 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envNam
 
     auto& md = pImpl->plugins[envName];
 
+    assert(md.isValid());
     auto actionSpace = pImpl->makeSpace(md.actionSpace);
     auto observationSpace = pImpl->makeSpace(md.observationSpace);
 
@@ -102,7 +93,10 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envNam
 
 bool gympp::GymFactory::registerPlugin(const PluginMetadata& md)
 {
-    // TODO md.isValid()
+    if (!md.isValid()) {
+        gymppError << "The plugin metadata is not valid" << std::endl;
+        return false;
+    }
 
     if (pImpl->exists(md.environmentName)) {
         gymppError << "Environment '" << md.environmentName << "' has been already registered"
