@@ -51,7 +51,7 @@
 %shared_ptr(gympp::spaces::Discrete)
 
 %include "gympp/Space.h"
-%template(Box_d) gympp::spaces::details::TBox<double>;
+%template(Box) gympp::spaces::details::TBox<double>;
 
 %shared_ptr(gympp::Environment)
 %shared_ptr(gympp::gazebo::IgnitionEnvironment)
