@@ -294,15 +294,14 @@ bool IgnitionEnvironment::setupGazeboWorld(const std::string& worldFile,
     }
 
     // Add an IgnitionRobot plugin for each model in the sdf file
-    // TODO: the lib name works only in linux!
     for (const auto& modelName : modelNames) {
         sdf::ElementPtr sdf(new sdf::Element);
         sdf->SetName("plugin");
         sdf->AddAttribute("name", "string", "gympp::gazebo::IgnitionRobot", true);
-        sdf->AddAttribute("filename", "string", "libIgnitionRobot.so", true);
+        sdf->AddAttribute("filename", "string", "IgnitionRobot", true);
 
         ignition::gazebo::ServerConfig::PluginInfo pluginInfo{
-            modelName, "model", "libIgnitionRobot.so", "gympp::gazebo::IgnitionRobot", sdf};
+            modelName, "model", "IgnitionRobot", "gympp::gazebo::IgnitionRobot", sdf};
         pImpl->serverConfig.AddPlugin(pluginInfo);
     }
 
