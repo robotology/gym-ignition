@@ -71,6 +71,7 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envNam
         return nullptr;
     }
 
+    // Create the environment
     auto ignGym = std::make_shared<gazebo::IgnitionEnvironment>(actionSpace,
                                                                 observationSpace,
                                                                 /*updateRate=*/50,
@@ -82,7 +83,7 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envNam
         return nullptr;
     }
 
-    // Setup the SDF file
+    // Setup the world
     if (!ignGym->setupGazeboWorld(md.worldFileName, md.modelNames)) {
         gymppError << "Failed to setup SDF file";
         return nullptr;
