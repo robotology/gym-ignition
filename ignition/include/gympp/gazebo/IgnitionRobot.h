@@ -69,7 +69,9 @@ public:
 
     bool setJointPID(const JointName& jointName, const PID& pid) override;
 
-    bool resetJoint(const JointName& jointName, const double jointPosition) override;
+    bool resetJoint(const JointName& jointName,
+                    const double jointPosition = 0,
+                    const double jointVelocity = 0) override;
 };
 
 #endif // GYMPP_ROBOT_IGNITIONROBOT_H

@@ -399,7 +399,9 @@ bool IgnitionRobot::setJointPID(const gympp::Robot::JointName& jointName, const 
     return true;
 }
 
-bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName, const double jointPosition)
+bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName,
+                               const double jointPosition,
+                               const double jointVelocity)
 {
     // Reset the joint
     // ===============
@@ -417,7 +419,7 @@ bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName, const d
     auto& jointVelocity =
         pImpl->getOrCreateComponent<ignition::gazebo::components::JointVelocity>(jointEntity);
 
-    jointVelocity = ignition::gazebo::components::JointVelocity(0);
+    jointVelComponent = ignition::gazebo::components::JointVelocity(jointVelocity);
 
     // Reset the PID
     // =============

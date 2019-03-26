@@ -85,7 +85,9 @@ public:
 
     virtual bool setJointPID(const JointName& jointName, const PID& pid) = 0;
 
-    virtual bool resetJoint(const JointName& jointName, const double jointPosition) = 0;
+    virtual bool resetJoint(const JointName& jointName,
+                            const double jointPosition = 0,
+                            const double jointVelocity = 0) = 0;
 };
 
 #endif // GYMPP_ROBOT_H
