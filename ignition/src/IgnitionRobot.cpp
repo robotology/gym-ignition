@@ -295,10 +295,24 @@ double IgnitionRobot::jointPosition(const gympp::Robot::JointName& jointName) co
     return jointPositionComponent->Data();
 }
 
-double IgnitionRobot::jointVelocity(const gympp::Robot::JointName& /*jointName*/) const
+double IgnitionRobot::jointVelocity(const gympp::Robot::JointName& jointName) const
 {
-    // TODO
-    return {};
+    JointEntity jointEntity = pImpl->getJointEntity(jointName);
+    if (jointEntity == ignition::gazebo::kNullEntity) {
+        // TODO
+        return {};
+    }
+
+    // Get the joint velocity component
+    auto jointVelocityComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::JointVelocity>(jointEntity);
+
+    if (!jointVelocityComponent) {
+        gymppError << "Velocity for joint '" << jointName << "' not found in the ecm" << std::endl;
+        return {};
+    }
+
+    return jointVelocityComponent->Data();
 }
 
 gympp::Robot::JointPositions IgnitionRobot::jointPositions() const
