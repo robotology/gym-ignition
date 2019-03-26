@@ -71,7 +71,7 @@
     </inertial>
     <visual>
       <geometry>
-        <cylinder length="2" radius="0.005"/>
+        <cylinder length="5" radius="0.005"/>
       </geometry>
       <origin rpy="1.57079632679 0 0" xyz="0 0 0"/>
       <material name="black">
@@ -82,8 +82,8 @@
   <link name="cart">
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
-      <mass value="3"/>
-      <inertia ixx="0.010625" ixy="0" ixz="0" iyy="0.0125" iyz="0" izz="0.003125"/>
+      <mass value="1.0"/>
+      <inertia ixx="0.00354166666667" ixy="0" ixz="0" iyy="0.00416666666667" iyz="0" izz="0.00104166666667"/>
     </inertial>
     <visual>
       <geometry>
@@ -97,15 +97,15 @@
   </link>
   <link name="pole">
     <inertial>
-      <origin rpy="0 0 0" xyz="0 0 0.25"/>
-      <mass value="1"/>
-      <inertia ixx="1e-09" ixy="0" ixz="0" iyy="0.0833333333333" iyz="0" izz="0.0833333333333"/>
+      <origin rpy="0 0 0" xyz="0 0 0.5"/>
+      <mass value="0.1"/>
+      <inertia ixx="1e-09" ixy="0" ixz="0" iyy="0.0333333333333" iyz="0" izz="0.0333333333333"/>
     </inertial>
     <visual>
       <geometry>
-        <cylinder length="0.5" radius="0.005"/>
+        <cylinder length="1.0" radius="0.005"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 0.25"/>
+      <origin rpy="0 0 0" xyz="0 0 0.5"/>
       <material name="red">
         <color rgba="1 0 0 0.8"/>
       </material>
@@ -125,7 +125,7 @@
     <child link="cart"/>
     <axis xyz="0 1 0"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
-    <limit effort="500" lower="-0.9" upper="0.9" velocity="10"/>
+    <limit effort="500" lower="-2.4" upper="2.4" velocity="10"/>
   </joint>
   <joint name="pivot" type="continuous">
     <parent link="cart"/>

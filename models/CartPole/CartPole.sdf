@@ -18,7 +18,7 @@
         <pose frame=''>0 0 0 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
-            <length>2</length>
+            <length>5</length>
             <radius>0.005</radius>
           </cylinder>
         </geometry>
@@ -44,14 +44,14 @@
       <pose frame=''>0 0 0.5 0 -0 0</pose>
       <inertial>
         <pose frame=''>0 0 0 0 -0 0</pose>
-        <mass>3</mass>
+        <mass>1</mass>
         <inertia>
-          <ixx>0.010625</ixx>
+          <ixx>0.00354167</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.0125</iyy>
+          <iyy>0.00416667</iyy>
           <iyz>0</iyz>
-          <izz>0.003125</izz>
+          <izz>0.00104167</izz>
         </inertia>
       </inertial>
       <visual name='cart_visual'>
@@ -81,8 +81,8 @@
       <axis>
         <xyz>0 1 0</xyz>
         <limit>
-          <lower>-0.9</lower>
-          <upper>0.9</upper>
+          <lower>-2.4</lower>
+          <upper>2.4</upper>
           <effort>500</effort>
           <velocity>10</velocity>
         </limit>
@@ -96,22 +96,22 @@
     <link name='pole'>
       <pose frame=''>0 0 0.525 0 -0 0</pose>
       <inertial>
-        <pose frame=''>0 0 0.25 0 -0 0</pose>
-        <mass>1</mass>
+        <pose frame=''>0 0 0.5 0 -0 0</pose>
+        <mass>0.1</mass>
         <inertia>
           <ixx>1e-09</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.0833333</iyy>
+          <iyy>0.0333333</iyy>
           <iyz>0</iyz>
-          <izz>0.0833333</izz>
+          <izz>0.0333333</izz>
         </inertia>
       </inertial>
       <visual name='pole_visual'>
-        <pose frame=''>0 0 0.25 0 -0 0</pose>
+        <pose frame=''>0 0 0.5 0 -0 0</pose>
         <geometry>
           <cylinder>
-            <length>0.5</length>
+            <length>1</length>
             <radius>0.005</radius>
           </cylinder>
         </geometry>

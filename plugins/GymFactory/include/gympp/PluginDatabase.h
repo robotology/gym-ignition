@@ -34,8 +34,11 @@ public:
 
         gympp::SpaceMetadata observationSpaceMetadata;
         observationSpaceMetadata.setType(gympp::SpaceType::Box);
-        observationSpaceMetadata.setLowLimit(gympp::spaces::Box::Limit{-360, -1});
-        observationSpaceMetadata.setHighLimit(gympp::spaces::Box::Limit{360, 1});
+        double maxDouble = std::numeric_limits<double>::max();
+        observationSpaceMetadata.setLowLimit(
+            gympp::spaces::Box::Limit{-2.4, -maxDouble, -12 * 2, -maxDouble});
+        observationSpaceMetadata.setHighLimit(
+            gympp::spaces::Box::Limit{2.4, maxDouble, 12 * 2, maxDouble});
 
         cartPoleMetadata.setActionSpaceMetadata(actionSpaceMetadata);
         cartPoleMetadata.setObservationSpaceMetadata(observationSpaceMetadata);

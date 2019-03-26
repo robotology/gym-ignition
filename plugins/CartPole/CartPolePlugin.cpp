@@ -26,8 +26,14 @@ using ActionSample = gympp::BufferContainer<ActionDataType>::type;
 using ObservationDataType = double;
 using ObservationSample = gympp::BufferContainer<ObservationDataType>::type;
 
-const unsigned PolePositionObservationIndex = 0;
-const unsigned CartPositionObservationIndex = 1;
+const unsigned CartPositionObservationIndex = 0;
+const unsigned CartVelocityObservationIndex = 1;
+const unsigned PolePositionObservationIndex = 2;
+const unsigned PoleVelocityObservationIndex = 3;
+
+const size_t MaxEpisodeLength = 200;
+const double XThreshold = 2.4;
+const double ThetaThresholdDeg = 12;
 
 enum CartPoleAction
 {
@@ -46,13 +52,15 @@ public:
     bool firstRun = true;
     mutable std::mutex mutex;
 
+    size_t iterations;
     double cartPositionReference;
     ObservationSample observationBuffer;
     std::optional<CartPoleAction> action;
 
     double getRandomThetaInRad()
     {
-        std::uniform_real_distribution<> distr(-25.0 * (M_PI / 180.0), 25.0 * (M_PI / 180.0));
+        double thetaMax = 0.05;
+        std::uniform_real_distribution<> distr(-thetaMax, thetaMax);
         return distr(gympp::Random::engine());
     }
 
@@ -73,9 +81,11 @@ CartPole::CartPole()
     : System()
     , pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {
-    // - Pole angular position [deg]
     // - Cart linear position [m]
-    pImpl->observationBuffer.resize(2);
+    // - Cart linear velocity [m/s]
+    // - Pole angular position [deg]
+    // - Pole angular velocity [deg/s]
+    pImpl->observationBuffer.resize(4);
 }
 
 void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
@@ -130,11 +140,11 @@ void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
             // Reset the action. This allows to perform multiple simulator iterations for each
             // environment step.
             pImpl->action.reset();
+        }
 
-            if (!robot->setJointForce("linear", -20)) {
-                gymppError << "Failed to set the force to joint 'linear'" << std::endl;
-                return;
-            }
+        if (!robot->setJointForce("linear", appliedForce)) {
+            gymppError << "Failed to set the force to joint 'linear'" << std::endl;
+            return;
         }
     }
 }
@@ -150,13 +160,18 @@ void CartPole::PostUpdate(const ignition::gazebo::UpdateInfo& info,
     gympp::RobotPtr robot = pImpl->getRobot();
     assert(robot);
 
-    double poleJointPosition = robot->jointPosition("pivot");
     double cartJointPosition = robot->jointPosition("linear");
+    double poleJointPosition = robot->jointPosition("pivot");
+
+    double cartJointVelocity = robot->jointVelocity("linear");
+    double poleJointVelocity = robot->jointVelocity("pivot");
 
     {
         std::lock_guard lock(pImpl->mutex);
-        pImpl->observationBuffer[PolePositionObservationIndex] = (180.0 / M_PI) * poleJointPosition;
         pImpl->observationBuffer[CartPositionObservationIndex] = cartJointPosition;
+        pImpl->observationBuffer[CartVelocityObservationIndex] = cartJointVelocity;
+        pImpl->observationBuffer[PolePositionObservationIndex] = (180.0 / M_PI) * poleJointPosition;
+        pImpl->observationBuffer[PoleVelocityObservationIndex] = (180.0 / M_PI) * poleJointVelocity;
     }
 }
 
@@ -164,8 +179,9 @@ bool CartPole::isDone()
 {
     std::lock_guard lock(pImpl->mutex);
 
-    if (std::abs(pImpl->observationBuffer[PolePositionObservationIndex]) > 60.0
-        || std::abs(pImpl->observationBuffer[CartPositionObservationIndex]) > 0.95) {
+    if (pImpl->iterations >= MaxEpisodeLength
+        || std::abs(pImpl->observationBuffer[PolePositionObservationIndex]) > ThetaThresholdDeg
+        || std::abs(pImpl->observationBuffer[CartPositionObservationIndex]) > XThreshold) {
         return true;
     }
 
@@ -183,18 +199,22 @@ bool CartPole::reset()
         return false;
     }
 
+    // Reset the number of iterations
+    pImpl->iterations = 0;
+
     // Joint positions
     auto x0 = 0.0;
+    auto v0 = 0.0;
     auto theta0 = pImpl->getRandomThetaInRad();
 
     // Set the random pole angle
-    if (!robot->resetJoint("pivot", theta0)) {
+    if (!robot->resetJoint("pivot", theta0, v0)) {
         gymppError << "Failed to reset the position of joint 'pivot'" << std::endl;
         return false;
     }
 
     // Reset the cart position
-    if (!robot->resetJoint("linear", x0)) {
+    if (!robot->resetJoint("linear", x0, v0)) {
         gymppError << "Failed to reset the position of joint 'linear'" << std::endl;
         return false;
     }
@@ -207,8 +227,10 @@ bool CartPole::reset()
         // method returns the new observation.
         std::lock_guard lock(pImpl->mutex);
 
-        pImpl->observationBuffer[PolePositionObservationIndex] = (180.0 / M_PI) * theta0;
         pImpl->observationBuffer[CartPositionObservationIndex] = x0;
+        pImpl->observationBuffer[CartVelocityObservationIndex] = v0;
+        pImpl->observationBuffer[PolePositionObservationIndex] = (180.0 / M_PI) * theta0;
+        pImpl->observationBuffer[PoleVelocityObservationIndex] = v0;
     }
 
     return true;
@@ -217,6 +239,10 @@ bool CartPole::reset()
 bool CartPole::setAction(const EnvironmentCallbacks::Action& action)
 {
     std::lock_guard lock(pImpl->mutex);
+
+    // This method is called only once every iteration.
+    // It is the right place where to increase the counter.
+    pImpl->iterations++;
 
     assert(action.get<ActionDataType>(0));
     ActionDataType actionValue = action.get<ActionDataType>(0).value();
@@ -240,7 +266,7 @@ bool CartPole::setAction(const EnvironmentCallbacks::Action& action)
 std::optional<gympp::gazebo::EnvironmentCallbacks::Reward> CartPole::computeReward()
 {
     std::lock_guard lock(pImpl->mutex);
-    return 1.0; // TODO
+    return 1.0;
 }
 
 std::optional<gympp::gazebo::EnvironmentCallbacks::Observation> CartPole::getObservation()
