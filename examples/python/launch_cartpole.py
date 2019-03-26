@@ -30,6 +30,9 @@ for _ in range(10):
         observation, reward, done, _ = env.step(action)
 
         totalReward += reward
-        print(observation)
+        
+        for value in observation:
+            print("%.6f\t" % value, end='')
+        print()
 
     print(totalReward)

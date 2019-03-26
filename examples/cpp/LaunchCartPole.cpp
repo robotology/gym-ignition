@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include <cstdlib>
+#include <iomanip>
 #include <iostream>
 #include <optional>
 #include <thread>
@@ -129,6 +130,8 @@ int main(int argc, char* argv[])
         if (auto* o = state->observation.getBuffer<double>(); o) {
             std::cout << "#" << epoch << "." << iteration << "\t";
             for (const auto el : *o) {
+                std::cout.setf(std::ios::fixed);
+                std::cout.precision(6);
                 std::cout << el << "\t";
             }
             std::cout << std::endl << std::flush;
