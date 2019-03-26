@@ -97,9 +97,20 @@ class IgnitionEnv(gym.Env):
             assert isinstance(seed, int), "The seed must be a positive integer"
             assert seed > 0, "The seed must be a positive integer"
         else:
-            seed = 0
+            seed = np.random.randint(low=1, high=1000)
 
+        # TODO: it would be nice having the same behavior of the environment
+        #       if executed from cpp and python. However, the spaces are
+        #       different. We can obtain this only if we manage to map
+        #       gym.Space objects out of gympp::Space objects.
+
+        # Seed the environment
         vector_seeds = self.ignenv.seed(seed)
+        
+        # Seed the spaces
+        self.action_space.seed(seed)
+        self.observation_space.seed(seed)
+        
         return list(vector_seeds)
 
     def _plugin_metadata(self):
