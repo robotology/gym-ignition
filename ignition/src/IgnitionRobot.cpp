@@ -17,7 +17,7 @@
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/JointForce.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
-#include <ignition/gazebo/components/JointPositionDirect.hh>
+//#include <ignition/gazebo/components/JointPositionDirect.hh>
 #include <ignition/gazebo/components/JointVelocity.hh>
 #include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Name.hh>
@@ -411,12 +411,14 @@ bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName,
         return false;
     }
 
-    auto& jointPositionDirect =
-        pImpl->getOrCreateComponent<ignition::gazebo::components::JointPositionDirect>(jointEntity);
+    // Reset the position
+    auto& jointPosComponent =
+        pImpl->getOrCreateComponent<ignition::gazebo::components::JointPosition>(jointEntity);
 
-    jointPositionDirect = ignition::gazebo::components::JointPositionDirect(jointPosition);
+    jointPosComponent = ignition::gazebo::components::JointPosition(jointPosition);
 
-    auto& jointVelocity =
+    // Reset the velocity
+    auto& jointVelComponent =
         pImpl->getOrCreateComponent<ignition::gazebo::components::JointVelocity>(jointEntity);
 
     jointVelComponent = ignition::gazebo::components::JointVelocity(jointVelocity);
