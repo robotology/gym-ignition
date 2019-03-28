@@ -6,5 +6,13 @@ from setuptools import setup
 
 setup(name='gym_ignition',
       version='0.1',
+      author="Diego Ferigo",
+      author_email="diego.ferigo@iit.it",
+      description="Gym Ignition: A toolkit for developing OpenAI Gym environments "
+                  "running in Ignition Gazebo.",
+      url='https://github.com/robotology/gym-ignition',
+      keywords="openai gym reinforcement learning environment gazebo robotics ignition",
+      license="LGPL",
+      platforms='any',
       python_requires='>=3.6',
       install_requires=['gym'])
