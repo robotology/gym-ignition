@@ -20,6 +20,15 @@ Observation = NewType('Observation', np.array)
 Reward = NewType('Reward', float)
 
 class IgnitionEnv(gym.Env):
+    """The main gym_ignition class. It encapsulates environments created in c++ with
+    gympp and hides the swig bindings from the gym user, exposing only a regular
+    OpenAI Gym interface.
+
+    The environments that inherit from this class must implement the _plugin_metadata
+    method. The information that it provides are then enough to load the ignition
+    plugin and insert it in a Gazebo environment.
+    """
+
     metadata = {'render.modes': ['human']}
 
     def __init__(self) -> None:
@@ -84,7 +93,8 @@ class IgnitionEnv(gym.Env):
 
         # Convert it to a numpy array (this is the only required copy)
         observation = np.array(observation_vector)
-        assert self.observation_space.contains(observation), "The returned observation does not belong to the space"
+        assert self.observation_space.contains(observation),\
+            "The returned observation does not belong to the space"
 
         # Return the list
         return observation
@@ -119,11 +129,25 @@ class IgnitionEnv(gym.Env):
         return list(vector_seeds)
 
     def _plugin_metadata(self) -> gympp.PluginMetadata:
+        """Return metadata of the gympp plugin
+
+        Loading an environment created with gympp in python requires the knowledge of
+        the plugin metadata that implements it. Every environment should implement this
+        method.
+        """
         raise NotImplementedError
         return gympp.PluginMetadata()
 
     def _create_space(self, md: gympp.SpaceMetadata = None) \
             -> Union[Tuple[gympp.Box, str], Tuple[gympp.Discrete, str]]:
+        """Create an object of the gym.space package from gympp space metadata
+
+        Note: In order to map the dynamically typed nature of python to C++, this class
+              must know the data type of the gympp buffers to call the right C++ template
+              instance stored in the swig bindings. For this reason, this method returns
+              also a method suffix string (such as "_d" for double) that is appended to
+              the calls of the swig bindings methods (e.g. obs.getBuffer_d()).
+        """
         assert isinstance(md, gympp.SpaceMetadata), "Wrong type for method argument"
 
         space_type = md.getType()
