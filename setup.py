@@ -6,4 +6,5 @@ from setuptools import setup
 
 setup(name='gym_ignition',
       version='0.1',
+      python_requires='>=3.6',
       install_requires=['gym'])

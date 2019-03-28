@@ -6,6 +6,7 @@ import sys
 import gym
 from gym import spaces
 import numpy as np
+from typing import List, Tuple, Union, NewType
 
 # Import gympp bindings
 # See https://github.com/robotology/gym-ignition/issues/7
@@ -14,10 +15,14 @@ if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
     sys.setdlopenflags(sys.getdlopenflags() | os.RTLD_GLOBAL)
 import gympp
 
+Action = NewType('Action', Union[float, np.array])
+Observation = NewType('Observation', np.array)
+Reward = NewType('Reward', float)
+
 class IgnitionEnv(gym.Env):
     metadata = {'render.modes': ['human']}
 
-    def __init__(self):
+    def __init__(self) -> None:
 
         # Get the plugin metadata
         self.md = self._plugin_metadata()
@@ -35,7 +40,7 @@ class IgnitionEnv(gym.Env):
         self.ignenv = factory.make(self.md.getEnvironmentName())
         assert self.ignenv, "Failed to create environment " + self.md.getEnvironmentName()
 
-    def step(self, action):
+    def step(self, action: Action) -> Tuple[Observation, Reward, bool, str]:
         assert self.action_space.contains(action), "The action does not belong to the action space"
 
         if not isinstance(action, list):
@@ -64,7 +69,7 @@ class IgnitionEnv(gym.Env):
         # Return the tuple
         return (observation, state.reward, state.done, state.info)
 
-    def reset(self):
+    def reset(self) -> Observation:
         # Get std::optional<gympp::Observation>
         obs_optional = self.ignenv.reset()
         assert obs_optional.has_value(), "The environment didn't return the observation"
@@ -84,15 +89,15 @@ class IgnitionEnv(gym.Env):
         # Return the list
         return observation
 
-    def render(self, mode='human'):
+    def render(self, mode: str = 'human') -> None:
         rendermode = {'human': gympp.Environment.RenderMode_HUMAN}
         ok = self.ignenv.render(rendermode[mode])
         assert ok, "Failed to render environment"
 
-    def close(self):
+    def close(self) -> None:
         return
 
-    def seed(self, seed=None):
+    def seed(self, seed: int = None) -> List[int]:
         if seed:
             assert isinstance(seed, int), "The seed must be a positive integer"
             assert seed > 0, "The seed must be a positive integer"
@@ -113,10 +118,12 @@ class IgnitionEnv(gym.Env):
         
         return list(vector_seeds)
 
-    def _plugin_metadata(self):
+    def _plugin_metadata(self) -> gympp.PluginMetadata:
         raise NotImplementedError
+        return gympp.PluginMetadata()
 
-    def _create_space(self, md=None):
+    def _create_space(self, md: gympp.SpaceMetadata = None) \
+            -> Union[Tuple[gympp.Box, str], Tuple[gympp.Discrete, str]]:
         assert isinstance(md, gympp.SpaceMetadata), "Wrong type for method argument"
 
         space_type = md.getType()
