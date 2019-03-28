@@ -76,7 +76,7 @@ class IgnitionEnv(gym.Env):
         assert self.observation_space.contains(observation), "The returned observation does not belong to the space"
 
         # Return the tuple
-        return (observation, state.reward, state.done, state.info)
+        return observation, state.reward, state.done, state.info
 
     def reset(self) -> Observation:
         # Get std::optional<gympp::Observation>
