@@ -34,6 +34,8 @@ const unsigned PoleVelocityObservationIndex = 3;
 const size_t MaxEpisodeLength = 200;
 const double XThreshold = 2.4;
 const double ThetaThresholdDeg = 12;
+const double AppliedForce = 10;
+const double MaxTheta0Rad = 10 * (M_PI / 180.0);
 
 enum CartPoleAction
 {
@@ -59,8 +61,7 @@ public:
 
     double getRandomThetaInRad()
     {
-        double thetaMax = 0.05;
-        std::uniform_real_distribution<> distr(-thetaMax, thetaMax);
+        std::uniform_real_distribution<> distr(-MaxTheta0Rad, MaxTheta0Rad);
         return distr(gympp::Random::engine());
     }
 
@@ -128,10 +129,10 @@ void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
         if (pImpl->action) {
             switch (*pImpl->action) {
                 case MOVE_LEFT:
-                    appliedForce = 10;
+                    appliedForce = AppliedForce;
                     break;
                 case MOVE_RIGHT:
-                    appliedForce = -10;
+                    appliedForce = -AppliedForce;
                     break;
                 case DONT_MOVE:
                     break;
