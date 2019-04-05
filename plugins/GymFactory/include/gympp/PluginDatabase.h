@@ -32,13 +32,16 @@ public:
         actionSpaceMetadata.setDimensions({3});
         actionSpaceMetadata.setType(gympp::SpaceType::Discrete);
 
+        const double xThreshold = 2.5;
+        const double thetaThreshold = 24;
+
         gympp::SpaceMetadata observationSpaceMetadata;
         observationSpaceMetadata.setType(gympp::SpaceType::Box);
         double maxDouble = std::numeric_limits<double>::max();
         observationSpaceMetadata.setLowLimit(
-            gympp::spaces::Box::Limit{-2.4, -maxDouble, -12 * 2, -maxDouble});
+            gympp::spaces::Box::Limit{-xThreshold, -maxDouble, -thetaThreshold, -maxDouble});
         observationSpaceMetadata.setHighLimit(
-            gympp::spaces::Box::Limit{2.4, maxDouble, 12 * 2, maxDouble});
+            gympp::spaces::Box::Limit{xThreshold, maxDouble, thetaThreshold, maxDouble});
 
         cartPoleMetadata.setActionSpaceMetadata(actionSpaceMetadata);
         cartPoleMetadata.setObservationSpaceMetadata(observationSpaceMetadata);
