@@ -26,8 +26,8 @@ class CartPoleEnv(IgnitionEnv):
         observation_space_md = SpaceMetadata()
         observation_space_md.setType(SpaceType_Box)
         max_float = float(np.finfo(np.float32).max)
-        observation_space_md.setLowLimit([-2.4, -max_float, -24, -max_float])
-        observation_space_md.setHighLimit([2.4, max_float, 24, max_float])
+        observation_space_md.setLowLimit([-2.5, -max_float, -24, -max_float])
+        observation_space_md.setHighLimit([2.5, max_float, 24, max_float])
 
         md.setActionSpaceMetadata(action_space_md)
         md.setObservationSpaceMetadata(observation_space_md)
