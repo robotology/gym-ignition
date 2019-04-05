@@ -6,6 +6,7 @@ import sys
 import gym
 from gym import spaces
 import numpy as np
+from numbers import Number
 from typing import List, Tuple, Union, NewType
 
 # Import gympp bindings
@@ -15,9 +16,10 @@ if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
     sys.setdlopenflags(sys.getdlopenflags() | os.RTLD_GLOBAL)
 import gympp
 
-Action = NewType('Action', Union[float, np.array])
+Action = NewType('Action', Union[float, np.ndarray, np.number])
 Observation = NewType('Observation', np.array)
 Reward = NewType('Reward', float)
+
 
 class IgnitionEnv(gym.Env):
     """The main gym_ignition class. It encapsulates environments created in c++ with
@@ -54,8 +56,26 @@ class IgnitionEnv(gym.Env):
     def step(self, action: Action) -> Tuple[Observation, Reward, bool, str]:
         assert self.action_space.contains(action), "The action does not belong to the action space"
 
-        if not isinstance(action, list):
+        # The bindings do not accept yet numpy types as arguments. We need to covert
+        # numpy variables to the closer python type.
+
+        # Check if the input variable is a numpy type
+        is_numpy = type(action).__module__ == np.__name__
+
+        if is_numpy:
+            if isinstance(action, np.ndarray):
+                action = action.tolist()
+            elif isinstance(action, np.number):
+                action = action.item()
+            else:
+                assert False
+
+        # Actions must be std::vector objects, so if the passed action is a scalar
+        # we have to store it inside a list object before passing it to the bindings
+        if isinstance(action, Number):
             action_list = [action]
+        else:
+            action_list = list(action)
 
         # Create the gympp::Sample object
         action_buffer = getattr(gympp, 'Vector' + self.act_dt)(action_list)
