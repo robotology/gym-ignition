@@ -356,6 +356,12 @@ std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
 
 bool IgnitionEnvironment::render(RenderMode mode)
 {
+    // If ign-gazebo-gui is already running, return without doing anything.
+    int exit_status;
+    if (pImpl->ignitionGui && !pImpl->ignitionGui->try_get_exit_status(exit_status)) {
+        return true;
+    }
+
     gymppDebug << "Rendering the environment" << std::endl;
 
     if (mode == RenderMode::HUMAN) {
