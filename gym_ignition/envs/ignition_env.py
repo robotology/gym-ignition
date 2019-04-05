@@ -37,8 +37,10 @@ class IgnitionEnv(gym.Env):
         self.md = self._plugin_metadata()
 
         # Create the spaces
-        self.action_space, self.act_dt = self._create_space(self.md.getActionSpaceMetadata())
-        self.observation_space, self.obs_dt = self._create_space(self.md.getObservationSpaceMetadata())
+        self.action_space, self.act_dt = IgnitionEnv._create_space(
+            self.md.getActionSpaceMetadata())
+        self.observation_space, self.obs_dt = IgnitionEnv._create_space(
+            self.md.getObservationSpaceMetadata())
 
         # Register the environment
         factory = gympp.GymFactory.Instance()
@@ -138,7 +140,8 @@ class IgnitionEnv(gym.Env):
         raise NotImplementedError
         return gympp.PluginMetadata()
 
-    def _create_space(self, md: gympp.SpaceMetadata = None) \
+    @classmethod
+    def _create_space(cls, md: gympp.SpaceMetadata = None) \
             -> Union[Tuple[gympp.Box, str], Tuple[gympp.Discrete, str]]:
         """Create an object of the gym.space package from gympp space metadata
 
