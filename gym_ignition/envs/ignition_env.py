@@ -143,11 +143,14 @@ class IgnitionEnv(gym.Env):
 
         # Seed the environment
         vector_seeds = self.ignenv.seed(seed)
-        
+
+        # Seed numpy
+        np.random.seed(seed)
+
         # Seed the spaces
         self.action_space.seed(seed)
         self.observation_space.seed(seed)
-        
+
         return list(vector_seeds)
 
     def _plugin_metadata(self) -> gympp.PluginMetadata:
