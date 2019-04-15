@@ -10,6 +10,7 @@
 #include "gympp/Log.h"
 #include "gympp/Random.h"
 #include "gympp/gazebo/EnvironmentCallbacks.h"
+#include "gympp/gazebo/EnvironmentCallbacksSingleton.h"
 #include "process.hpp"
 
 #include <ignition/common/SystemPaths.hh>
@@ -29,27 +30,25 @@
 
 using namespace gympp::gazebo;
 
-struct PluginData
-{
-    std::string libName;
-    std::string pluginName;
-
-    EnvironmentCallbacks* environmentCallbacks = nullptr;
-    ignition::gazebo::SystemPluginPtr systemPluginPtr;
-};
-
 class IgnitionEnvironment::Impl
 {
 public:
-    uint64_t numOfIterations = 0;
-
-    PluginData pluginData;
     std::unique_ptr<TinyProcessLib::Process> ignitionGui;
 
+    uint64_t numOfIterations = 0;
     ignition::gazebo::ServerConfig serverConfig;
     std::shared_ptr<ignition::gazebo::Server> server;
     std::shared_ptr<ignition::gazebo::Server> getServer();
 
+    gympp::gazebo::EnvironmentCallbacks* envCallbacks()
+    {
+        auto ecSingleton = EnvironmentCallbacksSingleton::Instance();
+        auto* callbacks = ecSingleton->get(scopedModelName);
+        assert(callbacks);
+        return callbacks;
+    }
+
+    std::string scopedModelName;
     std::vector<std::string> modelsNamesInSdf;
 };
 
@@ -63,26 +62,11 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionEnvironment::Impl::getServer()
             return nullptr;
         }
 
-        // Check that the ignition plugin was configured and loaded
-        if (!pluginData.environmentCallbacks || !pluginData.systemPluginPtr) {
-            gymppError << "The ignition plugin has not been correctly loaded" << std::endl;
-            return nullptr;
-        }
-
         // Create the server
         gymppDebug << "Creating the server" << std::endl << std::flush;
         serverConfig.SetUseLevels(false);
         server = std::make_unique<ignition::gazebo::Server>(serverConfig);
         assert(server);
-
-        // Add the plugin system in the server
-        // TODO: Configure() is not called in this way
-        auto ok = server->AddSystem(pluginData.systemPluginPtr);
-
-        if (!(ok && ok.value())) {
-            gymppError << "Failed to add the system in the gazebo server" << std::endl;
-            return {};
-        }
 
         // The GUI needs the server already up. Warming up the first iteration and pausing the
         // server. It will be unpaused at the step() call.
@@ -113,35 +97,12 @@ IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
     pImpl->serverConfig.SetUpdateRate(updateRate);
 }
 
+static size_t counter = 0;
 bool IgnitionEnvironment::setupIgnitionPlugin(const std::string& libName,
-                                              const std::string& pluginName)
+                                              const std::string& className)
 {
-    pImpl->pluginData.libName = libName;
-    pImpl->pluginData.pluginName = pluginName;
-
-    auto& pluginData = pImpl->pluginData;
-
-    ignition::gazebo::SystemLoader sl;
-    auto plugin = sl.LoadPlugin(pluginData.libName, pluginData.pluginName, nullptr);
-
-    if (!plugin.has_value()) {
-        gymppError << "Failed to load plugin '" << pluginData.pluginName << "'" << std::endl;
-        gymppError << "Make sure that the IGN_GAZEBO_SYSTEM_PLUGIN_PATH environment variable "
-                   << "contains the path to the plugin '" << pluginData.libName << "'" << std::endl;
-        return false;
-    }
-
-    pluginData.systemPluginPtr = plugin.value();
-
-    // Get the environment behavior interface out of it
-    pluginData.environmentCallbacks =
-        pluginData.systemPluginPtr->template QueryInterface<EnvironmentCallbacks>();
-
-    if (!pluginData.environmentCallbacks) {
-        gymppError << "Failed to cast the plugin '" << pluginName
-                   << "'to get the environment behavior interface" << std::endl;
-        return false;
-    }
+    auto uniqueID = counter++;
+    pImpl->scopedModelName = pImpl->modelsNamesInSdf.front() + std::to_string(uniqueID);
 
     return true;
 }
@@ -160,6 +121,7 @@ IgnitionEnvironment::~IgnitionEnvironment()
 
 std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action& action)
 {
+    // Get the gazebo server
     auto server = pImpl->getServer();
     if (!server) {
         gymppError << "Failed to get the ignition server" << std::endl;
@@ -169,7 +131,13 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     assert(pImpl->server);
     assert(action_space);
     assert(observation_space);
-    assert(pImpl->pluginData.environmentCallbacks);
+
+    // Get the environment callbacks
+    auto* envCallbacks = pImpl->envCallbacks();
+    if (!envCallbacks) {
+        gymppError << "Failed to get the environment callbacks from the plugin" << std::endl;
+        return {};
+    }
 
     if (!this->action_space->contains(action)) {
         gymppError << "The input action does not belong to the action space" << std::endl;
@@ -177,7 +145,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Set the action to the environment
-    if (!pImpl->pluginData.environmentCallbacks->setAction(action)) {
+    if (!envCallbacks->setAction(action)) {
         gymppError << "Failed to set the action" << std::endl;
         return {};
     }
@@ -200,8 +168,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Get the observation from the environment
-    std::optional<Observation> observation =
-        pImpl->pluginData.environmentCallbacks->getObservation();
+    std::optional<Observation> observation = envCallbacks->getObservation();
 
     if (!observation) {
         gymppError << "The gympp plugin didn't return the observation" << std::endl;
@@ -215,7 +182,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Get the reward from the environment
-    std::optional<Reward> reward = pImpl->pluginData.environmentCallbacks->computeReward();
+    std::optional<Reward> reward = envCallbacks->computeReward();
 
     if (!reward) {
         gymppError << "The gympp plugin didn't return the reward" << std::endl;
@@ -229,7 +196,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     return IgnitionEnvironment::State{
-        pImpl->pluginData.environmentCallbacks->isDone(), {}, reward.value(), observation.value()};
+        envCallbacks->isDone(), {}, reward.value(), observation.value()};
 }
 
 std::vector<size_t> IgnitionEnvironment::seed(size_t seed)
@@ -283,44 +250,10 @@ bool IgnitionEnvironment::setupGazeboWorld(const std::string& worldFile,
     // LOAD A ROBOT PLUGIN FOR EACH SDF MODEL
     // ======================================
 
-    // TODO: In the future we might want to parse here the sdf file and get automatically
-    //       all the names of the contained models. Right now we could make it work only
-    //       if models are not included externally using <include><uri> sdf elements.
-    //       Using the passed vector of names waiting this support.
-    if (modelNames.empty()) {
-        gymppError << "The sdf world must contain at least one model" << std::endl;
-        return false;
-    }
-
-    // Add an IgnitionRobot plugin for each model in the sdf file
-    for (const auto& modelName : modelNames) {
-        sdf::ElementPtr sdf(new sdf::Element);
-        sdf->SetName("plugin");
-        sdf->AddAttribute("name", "string", "gympp::gazebo::IgnitionRobot", true);
-        sdf->AddAttribute("filename", "string", "IgnitionRobot", true);
-
-        ignition::gazebo::ServerConfig::PluginInfo pluginInfo{
-            modelName, "model", "IgnitionRobot", "gympp::gazebo::IgnitionRobot", sdf};
-        pImpl->serverConfig.AddPlugin(pluginInfo);
-    }
-
-    //    // Get the models names included in the sdf file
-    //    sdf::Root root;
-    //    auto errors = root.Load(pImpl->serverConfig.SdfFile());
-
-    //    if (!errors.empty()) {
-    //        gymppError << "Failed to load sdf file '" << sdfFile << "." << std::endl;
-    //        for (const auto& error : errors) {
-    //            gymppError << error << std::endl;
-    //        }
-    //        return false;
-    //    }
-
-    //    for (unsigned i = 0; i < root.ModelCount(); ++i) {
-    //        std::string modelName = root.ModelByIndex(i)->Name();
-    //        gymppDebug << "Found model '" << modelName << "' in the sdf file" << std::endl;
-    //        pImpl->modelsNamesInSdf.push_back(modelName);
-    //    }
+    // Store the model names
+    // TODO: We should separate robot and environment. In this way we would have an sdf file for
+    //       the robot that we can parse to get automatically the model names.
+    pImpl->modelsNamesInSdf = modelNames;
 
     return true;
 }
@@ -332,7 +265,7 @@ gympp::EnvironmentPtr IgnitionEnvironment::env()
 
 std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
 {
-    gymppDebug << "Resetting the environment" << std::endl;
+    gymppMessage << "Resetting the environment" << std::endl;
 
     // The plugin must be loaded in order to call its reset() method
     if (!pImpl->getServer()) {
@@ -340,18 +273,20 @@ std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
         return {};
     }
 
-    if (!pImpl->pluginData.environmentCallbacks) {
-        gymppError << "The plugin has not been initialized" << std::endl;
+    // Get the environment callbacks
+    auto* envCallbacks = pImpl->envCallbacks();
+    if (!envCallbacks) {
+        gymppError << "Failed to get the environment callbacks from the plugin" << std::endl;
         return {};
     }
 
-    if (!pImpl->pluginData.environmentCallbacks->reset()) {
+    if (!envCallbacks->reset()) {
         gymppError << "Failed to reset plugin" << std::endl;
         return {};
     }
 
     gymppDebug << "Retrieving the initial observation after reset" << std::endl;
-    return pImpl->pluginData.environmentCallbacks->getObservation();
+    return envCallbacks->getObservation();
 }
 
 bool IgnitionEnvironment::render(RenderMode mode)

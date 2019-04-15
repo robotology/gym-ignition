@@ -58,7 +58,7 @@ public:
     EnvironmentPtr env();
     static void setVerbosity(int level = DEFAULT_VERBOSITY);
     bool setupGazeboWorld(const std::string& worldFile, const std::vector<std::string>& modelNames);
-    bool setupIgnitionPlugin(const std::string& libName, const std::string& pluginName);
+    bool setupIgnitionPlugin(const std::string& libName, const std::string& className);
 };
 
 #endif // GYMPP_GYMS_IGNITION

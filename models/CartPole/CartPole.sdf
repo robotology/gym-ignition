@@ -1,5 +1,8 @@
 <sdf version='1.6'>
   <model name='cartpole_xacro'>
+    <plugin name="gympp::plugins::CartPole" filename="CartPolePlugin">
+      <scoped_name>cartpole_xacro0</scoped_name>
+    </plugin>
     <link name='rail'>
       <pose frame=''>0 0 0.5 0 -0 0</pose>
       <inertial>

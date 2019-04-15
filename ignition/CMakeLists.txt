@@ -33,6 +33,7 @@ target_link_libraries(IgnitionEnvironment
     PUBLIC
     gympp
     PRIVATE
+    EnvironmentCallbacksSingleton
     ignition-gazebo1::core
     tiny-process-library)
 
