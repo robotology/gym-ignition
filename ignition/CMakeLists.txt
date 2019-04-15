@@ -84,6 +84,27 @@ target_include_directories(RobotSingleton PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
+# ==============
+# IGNITION ROBOT
+# ==============
+
+add_library(IgnitionRobot SHARED
+    include/gympp/gazebo/IgnitionRobot.h
+    src/IgnitionRobot.cpp)
+
+target_link_libraries(IgnitionRobot
+    PUBLIC
+    gympp
+    RobotSingleton
+    ignition-gazebo1::core)
+
+set_target_properties(IgnitionRobot PROPERTIES
+    PUBLIC_HEADER include/gympp/gazebo/IgnitionRobot.h)
+
+target_include_directories(IgnitionRobot PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
 # ===================
 # INSTALL THE TARGETS
 # ===================
@@ -94,34 +115,9 @@ install(
     RobotSingleton
     EnvironmentCallbacks
     EnvironmentCallbacksSingleton
+    IgnitionRobot
     EXPORT gympp
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp/gazebo)
-
-# ====================
-# IgnitionRobot PLUGIN
-# ====================
-
-add_library(IgnitionRobot SHARED
-    include/gympp/gazebo/IgnitionRobot.h
-    src/IgnitionRobot.cpp)
-
-target_link_libraries(IgnitionRobot
-    PUBLIC
-    gympp
-    IgnitionEnvironment
-    RobotSingleton
-    ignition-gazebo1::core)
-
-target_include_directories(IgnitionRobot PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
-install(
-    TARGETS IgnitionRobot
-    EXPORT gympp
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp/plugins)
