@@ -2,6 +2,25 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+# =============================
+# EnvironmentCallbacksSingleton
+# =============================
+
+add_library(EnvironmentCallbacksSingleton SHARED
+    include/gympp/gazebo/EnvironmentCallbacksSingleton.h
+    src/EnvironmentCallbacksSingleton.cpp)
+
+target_include_directories(EnvironmentCallbacksSingleton PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_link_libraries(EnvironmentCallbacksSingleton PUBLIC
+    gympp
+    ignition-gazebo1::core)
+
+set_target_properties(EnvironmentCallbacksSingleton PROPERTIES
+    PUBLIC_HEADER include/gympp/gazebo/EnvironmentCallbacksSingleton.h)
+
 # ====================
 # IGNITION ENVIRONMENT
 # ====================
@@ -70,7 +89,11 @@ target_include_directories(RobotSingleton PUBLIC
 # ===================
 
 install(
-    TARGETS IgnitionEnvironment RobotSingleton EnvironmentCallbacks
+    TARGETS
+    IgnitionEnvironment
+    RobotSingleton
+    EnvironmentCallbacks
+    EnvironmentCallbacksSingleton
     EXPORT gympp
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
