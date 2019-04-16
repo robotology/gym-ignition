@@ -46,6 +46,7 @@
         <service>/world/default/control</service>
         <stats_topic>/world/default/stats</stats_topic>
       </plugin>
+
       <!-- Grid 3D -->
 <!--      <plugin filename='Grid3D' name='3D Grid'>
         <ignition-gui>
@@ -91,11 +92,6 @@
         </visual>
       </link>
     </model>
-
-    <include>
-      <pose>0 0 0 0 0 0</pose>
-      <uri>CartPole</uri>
-    </include>
 
   </world>
 </sdf>

@@ -42,6 +42,8 @@ public:
     using Environment::Reward;
     using Environment::State;
 
+    static size_t EnvironmentId;
+
     IgnitionEnvironment() = delete;
     IgnitionEnvironment(const ActionSpacePtr aSpace,
                         const ObservationSpacePtr oSpace,
@@ -57,7 +59,11 @@ public:
     // Public APIs
     EnvironmentPtr env();
     static void setVerbosity(int level = DEFAULT_VERBOSITY);
-    bool setupGazeboWorld(const std::string& worldFile, const std::vector<std::string>& modelNames);
+
+    bool setupGazeboModel(const std::string& modelFile,
+                          std::array<double, 6> pose = {0, 0, 0, 0, 0, 0});
+    bool setupGazeboWorld(const std::string& worldFile);
+
     bool setupIgnitionPlugin(const std::string& libName, const std::string& className);
 };
 

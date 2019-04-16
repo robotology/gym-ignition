@@ -19,7 +19,9 @@
 #include <ignition/gazebo/SystemLoader.hh>
 #include <ignition/plugin/SpecializedPluginPtr.hh>
 #include <sdf/Element.hh>
-//#include <sdf/Root.hh>
+#include <sdf/Model.hh>
+#include <sdf/Root.hh>
+#include <sdf/World.hh>
 
 #include <chrono>
 #include <condition_variable>
@@ -30,37 +32,56 @@
 
 using namespace gympp::gazebo;
 
+size_t IgnitionEnvironment::EnvironmentId = 0;
+
 class IgnitionEnvironment::Impl
 {
+private:
+    gympp::gazebo::EnvironmentCallbacks* cb = nullptr;
+
 public:
+    size_t id;
+
     std::unique_ptr<TinyProcessLib::Process> ignitionGui;
 
     uint64_t numOfIterations = 0;
     ignition::gazebo::ServerConfig serverConfig;
     std::shared_ptr<ignition::gazebo::Server> server;
+
+    gympp::gazebo::EnvironmentCallbacks* envCallbacks();
     std::shared_ptr<ignition::gazebo::Server> getServer();
 
-    gympp::gazebo::EnvironmentCallbacks* envCallbacks()
-    {
-        auto ecSingleton = EnvironmentCallbacksSingleton::Instance();
-        auto* callbacks = ecSingleton->get(scopedModelName);
-        assert(callbacks);
-        return callbacks;
-    }
+    sdf::Root sdf;
+    bool findAndLoadSdf(const std::string& sdfFileName, sdf::Root& sdfRoot);
+
+    ignition::common::SystemPaths systemPaths;
 
     std::string scopedModelName;
-    std::vector<std::string> modelsNamesInSdf;
 };
+
+gympp::gazebo::EnvironmentCallbacks* IgnitionEnvironment::Impl::envCallbacks()
+{
+    if (!cb) {
+        auto ecSingleton = EnvironmentCallbacksSingleton::Instance();
+        cb = ecSingleton->get(scopedModelName);
+        assert(cb);
+    }
+
+    return cb;
+}
 
 std::shared_ptr<ignition::gazebo::Server> IgnitionEnvironment::Impl::getServer()
 {
     // Lazy initialization of the server
     if (!server) {
 
-        if (serverConfig.SdfFile().empty() && serverConfig.SdfString().empty()) {
-            gymppError << "The sdf file was not configured" << std::endl;
-            return nullptr;
-        }
+        assert(sdf.Element());
+        assert(!sdf.Element()->ToString("").empty());
+        serverConfig.SetSdfString(sdf.Element()->ToString(""));
+
+        sdf::Root root;
+        auto errors = root.LoadSdfString(sdf.Element()->ToString(""));
+        assert(errors.empty()); // This should be already ok
 
         // Create the server
         gymppDebug << "Creating the server" << std::endl << std::flush;
@@ -80,6 +101,38 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionEnvironment::Impl::getServer()
     return server;
 }
 
+// TODO: there's a bug in the destructor of sdf::Physics that prevents returning std::optional
+bool IgnitionEnvironment::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Root& root)
+{
+    if (sdfFileName.empty()) {
+        gymppError << "The SDF file name of the gazebo model is empty" << std::endl;
+        return {};
+    }
+
+    // Find the file
+    // TODO: add install directory of our world and model files
+    std::string sdfFilePath = systemPaths.FindFile(sdfFileName);
+
+    if (sdfFilePath.empty()) {
+        gymppError << "Failed to find '" << sdfFileName << "'. "
+                   << "Check that it's contained in the paths defined in IGN_GAZEBO_RESOURCE_PATH."
+                   << std::endl;
+        return {};
+    }
+
+    // Load the sdf
+    auto errors = root.Load(sdfFilePath);
+
+    if (!errors.empty()) {
+        gymppError << "Failed to load sdf file '" << sdfFilePath << "." << std::endl;
+        for (const auto& error : errors) {
+            gymppError << error << std::endl;
+        }
+        return {};
+    }
+    return true;
+}
+
 // ===============
 // IGNITION GAZEBO
 // ===============
@@ -91,18 +144,34 @@ IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
     : Environment(aSpace, oSpace)
     , pImpl{new IgnitionEnvironment::Impl, [](Impl* impl) { delete impl; }}
 {
-    setVerbosity(4);
-    //    pImpl->sdfFile = sdfFile;
+    // Assign an unique id to the object
+    pImpl->id = EnvironmentId++;
+
     pImpl->numOfIterations = iterations;
     pImpl->serverConfig.SetUpdateRate(updateRate);
+
+    pImpl->systemPaths.SetFilePathEnv("IGN_GAZEBO_RESOURCE_PATH");
+    pImpl->systemPaths.AddFilePaths(IGN_GAZEBO_WORLD_INSTALL_DIR);
+    // TODO: add install world / models path
+
+    // Set default verbosity which is dependent on the compilation flags
+    setVerbosity();
 }
 
-static size_t counter = 0;
 bool IgnitionEnvironment::setupIgnitionPlugin(const std::string& libName,
                                               const std::string& className)
 {
-    auto uniqueID = counter++;
-    pImpl->scopedModelName = pImpl->modelsNamesInSdf.front() + std::to_string(uniqueID);
+    assert(!pImpl->scopedModelName.empty());
+
+    sdf::ElementPtr sdf(new sdf::Element);
+    sdf->SetName("plugin");
+    sdf->AddAttribute("name", "string", className, true);
+    sdf->AddAttribute("filename", "string", libName, true);
+
+    ignition::gazebo::ServerConfig::PluginInfo pluginInfo{
+        pImpl->scopedModelName, "model", libName, className, sdf};
+
+    pImpl->serverConfig.AddPlugin(pluginInfo);
 
     return true;
 }
@@ -213,47 +282,77 @@ void IgnitionEnvironment::setVerbosity(int level)
     ignition::common::Console::SetVerbosity(level);
 }
 
-bool IgnitionEnvironment::setupGazeboWorld(const std::string& worldFile,
-                                           const std::vector<std::string>& modelNames)
+bool IgnitionEnvironment::setupGazeboModel(const std::string& modelFile,
+                                           std::array<double, 6> /*pose*/)
 {
-    // =================
-    // LOAD THE SDF FILE
-    // =================
-
-    if (worldFile.empty()) {
-        gymppError << "Passed SDF file argument is an empty string" << std::endl;
+    if (!pImpl->scopedModelName.empty()) {
+        gymppError << "The model has been already configured previously" << std::endl;
         return false;
     }
 
-    // Find the file
-    // TODO: add install directory of our world files
-    ignition::common::SystemPaths systemPaths;
-    systemPaths.SetFilePathEnv("IGN_GAZEBO_RESOURCE_PATH");
-    systemPaths.AddFilePaths(IGN_GAZEBO_WORLD_INSTALL_DIR);
-    std::string filePath = systemPaths.FindFile(worldFile);
-
-    if (filePath.empty()) {
-        gymppError << "Failed to find '" << worldFile << "'. "
-                   << "Check that it's contained in the paths defined in IGN_GAZEBO_RESOURCE_PATH."
-                   << std::endl;
-        gymppError << "If you use the <include> element, make sure to add the parent folder of the "
-                   << "<uri> in the SDF_PATH variable." << std::endl;
+    if (pImpl->sdf.WorldCount() <= 0) {
+        gymppError << "The gazebo world was not properly configured" << std::endl;
         return false;
     }
 
-    if (!pImpl->serverConfig.SetSdfFile(filePath)) {
-        gymppError << "Failed to set the SDF file " << worldFile << std::endl;
+    // Find and load the sdf file that contains the model
+    sdf::Root sdfRoot;
+    if (!pImpl->findAndLoadSdf(modelFile, sdfRoot)) {
+        gymppError << "Failed to find and load sdf file '" << modelFile << "'" << std::endl;
         return false;
     }
 
-    // ======================================
-    // LOAD A ROBOT PLUGIN FOR EACH SDF MODEL
-    // ======================================
+    if (sdfRoot.ModelCount() == 0) {
+        gymppError << "Failed to find any model in '" << modelFile << "' sdf file" << std::endl;
+        return false;
+    }
 
-    // Store the model names
-    // TODO: We should separate robot and environment. In this way we would have an sdf file for
-    //       the robot that we can parse to get automatically the model names.
-    pImpl->modelsNamesInSdf = modelNames;
+    // Get the models names included in the sdf file.
+    // In order to allow multithreading, the name of the model contained in the sdf must be scoped.
+    // We use the id of the IgnitionEnvironment object as scope.
+    for (unsigned i = 0; i < sdfRoot.ModelCount(); ++i) {
+        // Get the model name
+        std::string modelName = sdfRoot.ModelByIndex(i)->Name();
+        gymppDebug << "Found model '" << modelName << "' in the sdf file" << std::endl;
+
+        // Create a scoped name
+        std::string scopedModelName = std::to_string(pImpl->id) + "::" + modelName;
+        gymppDebug << "Registering scoped '" << scopedModelName << "' model" << std::endl;
+
+        // Copy the content of the model in another sdf element.
+        // This has to be done because it is not possible to change in-place the name of the model,
+        // so we create a new element and we copy all the children.
+        sdf::ElementPtr renamedModel(new sdf::Element);
+        renamedModel->SetName("model");
+        renamedModel->AddAttribute("name", "string", scopedModelName, true);
+
+        sdf::ElementPtr child = sdfRoot.ModelByIndex(i)->Element()->GetFirstElement();
+
+        while (child) {
+            renamedModel->InsertElement(child);
+            child = child->GetNextElement();
+        }
+
+        // TODO: Temporarily support only one model, and it must be the one to which the gympp
+        //       plugin will be attached to.
+        assert(sdfRoot.ModelCount() == 1);
+        pImpl->scopedModelName = scopedModelName;
+
+        // Attach the model to the sdf world
+        assert(pImpl->sdf.WorldCount() == 1);
+        pImpl->sdf.WorldByIndex(0)->Element()->InsertElement(renamedModel);
+    }
+
+    return true;
+}
+
+bool IgnitionEnvironment::setupGazeboWorld(const std::string& worldFile)
+{
+    // Find and load the sdf file that contains the world
+    if (!pImpl->findAndLoadSdf(worldFile, pImpl->sdf)) {
+        gymppError << "Failed to find and load sdf file '" << worldFile << "'" << std::endl;
+        return false;
+    }
 
     return true;
 }
@@ -265,7 +364,7 @@ gympp::EnvironmentPtr IgnitionEnvironment::env()
 
 std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
 {
-    gymppMessage << "Resetting the environment" << std::endl;
+    gymppDebug << "Resetting the environment" << std::endl;
 
     // The plugin must be loaded in order to call its reset() method
     if (!pImpl->getServer()) {
