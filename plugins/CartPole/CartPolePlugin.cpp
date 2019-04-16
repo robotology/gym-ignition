@@ -82,27 +82,8 @@ CartPole::CartPole()
 void CartPole::Configure(const ignition::gazebo::Entity& entity,
                          const std::shared_ptr<const sdf::Element>& sdf,
                          ignition::gazebo::EntityComponentManager& ecm,
-                         ignition::gazebo::EventManager& eventMgr)
+                         ignition::gazebo::EventManager& /*eventMgr*/)
 {
-    // Get the sdf element that contains the scoped name of the model.
-    // It is used only for multiple environments running in seraparated threads.
-    std::string scopedModelName;
-    auto sdfClone = sdf->Clone();
-    sdf::ElementPtr element = sdfClone->GetElement("scoped_name");
-
-    if (!element) {
-        gymppError << "Failed to find 'scoped_name' sdf plugin element" << std::endl;
-        return;
-    }
-
-    // Get the scoped name of the model
-    scopedModelName = element->Get<std::string>();
-
-    // Auto-register the environment callbacks
-    auto ecSingleton = EnvironmentCallbacksSingleton::Instance();
-    bool registered = ecSingleton->storeEnvironmentCallback(scopedModelName, this);
-    assert(registered);
-
     // Create a gympp::IgnitionRobot object from the ecm
     auto ignRobot = std::make_shared<gympp::gazebo::IgnitionRobot>();
     if (!ignRobot->configureECM(entity, sdf, ecm)) {
@@ -122,6 +103,13 @@ void CartPole::Configure(const ignition::gazebo::Entity& entity,
     //       Since we want to expose the robot also to python (in order to read and
     //       modify the state) it can be registered in the RobotSingleton using the
     //       scoped name.
+
+    // Auto-register the environment callbacks
+    gymppDebug << "Registering environment callbacks for robot '" << ignRobot->name() << "'"
+               << std::endl;
+    auto ecSingleton = EnvironmentCallbacksSingleton::Instance();
+    bool registered = ecSingleton->storeEnvironmentCallback(ignRobot->name(), this);
+    assert(registered);
 }
 
 void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
