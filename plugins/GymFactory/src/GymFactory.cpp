@@ -77,12 +77,18 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envNam
                                                                 /*updateRate=*/50,
                                                                 /*iterations=*/10);
     // Setup the world
-    if (!ignGym->setupGazeboWorld(md.worldFileName, md.modelNames)) {
-        gymppError << "Failed to setup SDF file";
+    if (!ignGym->setupGazeboWorld(md.worldFileName)) {
+        gymppError << "Failed to setup gazebo world";
         return nullptr;
     }
 
-    // Setup the CartPolePlugin
+    // Setup the model
+    if (!ignGym->setupGazeboModel(md.modelFileName)) {
+        gymppError << "Failed to setup the gazebo model" << std::endl;
+        return nullptr;
+    }
+
+    // Setup the plugin
     if (!ignGym->setupIgnitionPlugin(md.libraryName, md.className)) {
         gymppError << "Failed to setup the ignition plugin" << std::endl;
         return nullptr;
