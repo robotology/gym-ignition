@@ -17,7 +17,7 @@ class CartPoleEnv(IgnitionEnv):
         md.setLibraryName("CartPolePlugin")
         md.setClassName("gympp::plugins::CartPole")
         md.setWorldFileName("CartPole.world")
-        md.setModelNames(["cartpole_xacro"])
+        md.setModelFileName("CartPole/CartPole.sdf")
 
         action_space_md = SpaceMetadata()
         action_space_md.setType(SpaceType_Discrete)

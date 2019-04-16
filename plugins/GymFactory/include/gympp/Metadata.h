@@ -101,8 +101,9 @@ private:
     std::string environmentName;
     std::string libraryName;
     std::string className;
+
+    std::string modelFileName;
     std::string worldFileName;
-    std::vector<std::string> modelNames;
 
     SpaceMetadata actionSpace;
     SpaceMetadata observationSpace;
@@ -111,19 +112,14 @@ public:
     inline std::string getEnvironmentName() const { return environmentName; }
     inline std::string getLibraryName() const { return libraryName; }
     inline std::string getClassName() const { return className; }
+    inline std::string getModelFileName() const { return modelFileName; }
     inline std::string getWorldFileName() const { return worldFileName; }
-    inline std::vector<std::string> getModelNames() const { return modelNames; }
     inline SpaceMetadata getActionSpaceMetadata() const { return actionSpace; }
     inline SpaceMetadata getObservationSpaceMetadata() const { return observationSpace; }
 
     inline void setEnvironmentName(const std::string& environmentName)
     {
         this->environmentName = environmentName;
-    }
-
-    inline void setModelNames(const std::vector<std::string>& modelNames)
-    {
-        this->modelNames = modelNames;
     }
 
     inline void setActionSpaceMetadata(const SpaceMetadata& actionSpaceMetadata)
@@ -138,6 +134,10 @@ public:
 
     inline void setLibraryName(const std::string& libraryName) { this->libraryName = libraryName; }
     inline void setClassName(const std::string& className) { this->className = className; }
+    inline void setModelFileName(const std::string& modelFileName)
+    {
+        this->modelFileName = modelFileName;
+    }
     inline void setWorldFileName(const std::string& worldFileName)
     {
         this->worldFileName = worldFileName;
@@ -149,8 +149,8 @@ public:
         ok = ok && !environmentName.empty();
         ok = ok && !libraryName.empty();
         ok = ok && !className.empty();
+        ok = ok && !modelFileName.empty();
         ok = ok && !worldFileName.empty();
-        ok = ok && !modelNames.empty();
         ok = ok && actionSpace.isValid();
         ok = ok && observationSpace.isValid();
         return ok;
