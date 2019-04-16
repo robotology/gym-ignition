@@ -74,8 +74,9 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envNam
     // Create the environment
     auto ignGym = std::make_shared<gazebo::IgnitionEnvironment>(actionSpace,
                                                                 observationSpace,
-                                                                /*updateRate=*/50,
-                                                                /*iterations=*/10);
+                                                                /*updateRate=*/10000000,
+                                                                /*iterations=*/1);
+
     // Setup the world
     if (!ignGym->setupGazeboWorld(md.worldFileName)) {
         gymppError << "Failed to setup gazebo world";
