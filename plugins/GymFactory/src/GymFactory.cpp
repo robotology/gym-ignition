@@ -108,7 +108,7 @@ bool gympp::GymFactory::registerPlugin(const PluginMetadata& md)
     if (pImpl->exists(md.environmentName)) {
         gymppError << "Environment '" << md.environmentName << "' has been already registered"
                    << std::endl;
-        return false;
+        return true;
     }
 
     pImpl->plugins.insert({md.environmentName, md});
