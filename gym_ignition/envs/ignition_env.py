@@ -114,7 +114,7 @@ class IgnitionEnv(gym.Env):
 
         # Convert it to a numpy array (this is the only required copy)
         observation = np.array(observation_vector)
-        assert self.observation_space.contains(observation),\
+        assert self.observation_space.contains(observation), \
             "The returned observation does not belong to the space"
 
         # Return the list
