@@ -89,7 +89,7 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionEnvironment::Impl::getServer()
         // Create the server
         gymppDebug << "Creating the server" << std::endl << std::flush;
         gazebo.config.SetUseLevels(false);
-        gazebo.server = std::make_unique<ignition::gazebo::Server>(gazebo.config);
+        gazebo.server = std::make_shared<ignition::gazebo::Server>(gazebo.config);
         assert(gazebo.server);
 
         // The GUI needs the server already up. Warming up the first iteration and pausing the
