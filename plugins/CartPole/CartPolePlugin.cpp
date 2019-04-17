@@ -11,6 +11,8 @@
 #include "gympp/Log.h"
 #include "gympp/Random.h"
 #include "gympp/Robot.h"
+#include "gympp/gazebo/EnvironmentCallbacksSingleton.h"
+#include "gympp/gazebo/IgnitionRobot.h"
 #include "gympp/gazebo/RobotSingleton.h"
 
 #include <ignition/plugin/Register.hh>
@@ -18,6 +20,7 @@
 #include <cmath>
 #include <mutex>
 
+using namespace gympp::gazebo;
 using namespace gympp::plugins;
 
 using ActionDataType = int;
@@ -46,9 +49,6 @@ enum CartPoleAction
 
 class CartPole::Impl
 {
-private:
-    gympp::RobotPtr robot = nullptr;
-
 public:
     unsigned seed;
     bool firstRun = true;
@@ -59,22 +59,12 @@ public:
     ObservationSample observationBuffer;
     std::optional<CartPoleAction> action;
 
+    std::shared_ptr<gympp::Robot> robot = nullptr;
+
     double getRandomThetaInRad()
     {
         std::uniform_real_distribution<> distr(-MaxTheta0Rad, MaxTheta0Rad);
         return distr(gympp::Random::engine());
-    }
-
-    gympp::RobotPtr getRobot()
-    {
-        if (!robot) {
-            auto& robotSingleton = gympp::gazebo::RobotSingleton::get();
-            robot = robotSingleton.getRobot("cartpole_xacro");
-        }
-
-        assert(robot);
-        assert(robot->valid());
-        return robot;
     }
 };
 
@@ -89,6 +79,39 @@ CartPole::CartPole()
     pImpl->observationBuffer.resize(4);
 }
 
+void CartPole::Configure(const ignition::gazebo::Entity& entity,
+                         const std::shared_ptr<const sdf::Element>& sdf,
+                         ignition::gazebo::EntityComponentManager& ecm,
+                         ignition::gazebo::EventManager& /*eventMgr*/)
+{
+    // Create a gympp::IgnitionRobot object from the ecm
+    auto ignRobot = std::make_shared<gympp::gazebo::IgnitionRobot>();
+    if (!ignRobot->configureECM(entity, sdf, ecm)) {
+        gymppError << "Failed to configure the Robot interface" << std::endl;
+        return;
+    }
+
+    if (!ignRobot->valid()) {
+        gymppError << "The Robot interface is not valid" << std::endl;
+        return;
+    }
+
+    // Store a pointer to gympp::Robot
+    pImpl->robot = ignRobot;
+
+    // TODO: Right now the gympp::Robot interface is only used inside this plugin.
+    //       Since we want to expose the robot also to python (in order to read and
+    //       modify the state) it can be registered in the RobotSingleton using the
+    //       scoped name.
+
+    // Auto-register the environment callbacks
+    gymppDebug << "Registering environment callbacks for robot '" << ignRobot->name() << "'"
+               << std::endl;
+    auto ecSingleton = EnvironmentCallbacksSingleton::Instance();
+    bool registered = ecSingleton->storeEnvironmentCallback(ignRobot->name(), this);
+    assert(registered);
+}
+
 void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
                          ignition::gazebo::EntityComponentManager& /*manager*/)
 {
@@ -96,15 +119,13 @@ void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
         return;
     }
 
-    // Get the pointer to the Robot interface
-    gympp::RobotPtr robot = pImpl->getRobot();
-    assert(robot);
+    assert(pImpl->robot);
 
     if (pImpl->firstRun) {
         pImpl->firstRun = false;
 
         // Initialize the PID
-        if (!robot->setJointPID("linear", {10000, 50, 200})) {
+        if (!pImpl->robot->setJointPID("linear", {10000, 50, 200})) {
             gymppError << "Failed to set the PID of joint 'linear'" << std::endl;
             return;
         }
@@ -114,7 +135,7 @@ void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
     }
 
     // Set the step size
-    if (!robot->setdt(info.dt)) {
+    if (!pImpl->robot->setdt(info.dt)) {
         gymppError << "Failed to set the step size" << std::endl;
         return;
     }
@@ -143,7 +164,7 @@ void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
             pImpl->action.reset();
         }
 
-        if (!robot->setJointForce("linear", appliedForce)) {
+        if (!pImpl->robot->setJointForce("linear", appliedForce)) {
             gymppError << "Failed to set the force to joint 'linear'" << std::endl;
             return;
         }
@@ -157,15 +178,13 @@ void CartPole::PostUpdate(const ignition::gazebo::UpdateInfo& info,
         return;
     }
 
-    // Get the pointer to the Robot interface
-    gympp::RobotPtr robot = pImpl->getRobot();
-    assert(robot);
+    assert(pImpl->robot);
 
-    double cartJointPosition = robot->jointPosition("linear");
-    double poleJointPosition = robot->jointPosition("pivot");
+    double cartJointPosition = pImpl->robot->jointPosition("linear");
+    double poleJointPosition = pImpl->robot->jointPosition("pivot");
 
-    double cartJointVelocity = robot->jointVelocity("linear");
-    double poleJointVelocity = robot->jointVelocity("pivot");
+    double cartJointVelocity = pImpl->robot->jointVelocity("linear");
+    double poleJointVelocity = pImpl->robot->jointVelocity("pivot");
 
     {
         std::lock_guard lock(pImpl->mutex);
@@ -191,14 +210,7 @@ bool CartPole::isDone()
 
 bool CartPole::reset()
 {
-    // Get the pointer to the Robot interface
-    gympp::RobotPtr robot = pImpl->getRobot();
-    assert(robot);
-
-    if (!robot) {
-        gymppError << "Failed to get pointer to the robot interface" << std::endl;
-        return false;
-    }
+    assert(pImpl->robot);
 
     // Reset the number of iterations
     pImpl->iterations = 0;
@@ -209,13 +221,13 @@ bool CartPole::reset()
     auto theta0 = pImpl->getRandomThetaInRad();
 
     // Set the random pole angle
-    if (!robot->resetJoint("pivot", theta0, v0)) {
+    if (!pImpl->robot->resetJoint("pivot", theta0, v0)) {
         gymppError << "Failed to reset the position of joint 'pivot'" << std::endl;
         return false;
     }
 
     // Reset the cart position
-    if (!robot->resetJoint("linear", x0, v0)) {
+    if (!pImpl->robot->resetJoint("linear", x0, v0)) {
         gymppError << "Failed to reset the position of joint 'linear'" << std::endl;
         return false;
     }
@@ -278,6 +290,7 @@ std::optional<gympp::gazebo::EnvironmentCallbacks::Observation> CartPole::getObs
 
 IGNITION_ADD_PLUGIN(gympp::plugins::CartPole,
                     gympp::plugins::CartPole::System,
+                    gympp::plugins::CartPole::ISystemConfigure,
                     gympp::plugins::CartPole::ISystemPreUpdate,
                     gympp::plugins::CartPole::ISystemPostUpdate,
                     gympp::gazebo::EnvironmentCallbacks)

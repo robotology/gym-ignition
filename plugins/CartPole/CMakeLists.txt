@@ -13,12 +13,14 @@ add_library(CartPolePlugin SHARED
 target_link_libraries(CartPolePlugin
     PUBLIC
     EnvironmentCallbacks
-    RobotSingleton
+    ignition-gazebo1::core
     PRIVATE
-    ignition-gazebo1::core)
+    IgnitionRobot
+    EnvironmentCallbacksSingleton
+    RobotSingleton)
 
 target_include_directories(CartPolePlugin PRIVATE
-    ${CMAKE_CURRENT_SOURCE_DIR})
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 if(MSVC)
     # Import math symbols from standard cmath

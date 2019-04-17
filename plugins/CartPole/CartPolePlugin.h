@@ -24,6 +24,7 @@ namespace gympp {
 
 class gympp::plugins::CartPole final
     : public ignition::gazebo::System
+    , public ignition::gazebo::ISystemConfigure
     , public ignition::gazebo::ISystemPreUpdate
     , public ignition::gazebo::ISystemPostUpdate
     , public gympp::gazebo::EnvironmentCallbacks
@@ -35,6 +36,11 @@ private:
 public:
     CartPole();
     ~CartPole() override = default;
+
+    void Configure(const ignition::gazebo::Entity& entity,
+                   const std::shared_ptr<const sdf::Element>& sdf,
+                   ignition::gazebo::EntityComponentManager& ecm,
+                   ignition::gazebo::EventManager& eventMgr) override;
 
     void PreUpdate(const ignition::gazebo::UpdateInfo& info,
                    ignition::gazebo::EntityComponentManager& manager) override;

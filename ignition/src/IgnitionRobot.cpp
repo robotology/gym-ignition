@@ -10,14 +10,10 @@
 #include "gympp/Log.h"
 #include "gympp/gazebo/RobotSingleton.h"
 
-#include <ignition/gazebo/EntityComponentManager.hh>
-#include <ignition/plugin/Register.hh>
-
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/JointForce.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
-//#include <ignition/gazebo/components/JointPositionDirect.hh>
 #include <ignition/gazebo/components/JointVelocity.hh>
 #include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Name.hh>
@@ -132,16 +128,12 @@ ComponentTypeT& IgnitionRobot::Impl::getOrCreateComponent(const ignition::gazebo
 // ==============
 
 IgnitionRobot::IgnitionRobot()
-    : System()
-    , pImpl{new Impl(), [](Impl* impl) { delete impl; }}
+    : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {}
 
-IgnitionRobot::~IgnitionRobot() = default;
-
-void IgnitionRobot::Configure(const ignition::gazebo::Entity& entity,
-                              const std::shared_ptr<const sdf::Element>& sdf,
-                              ignition::gazebo::EntityComponentManager& ecm,
-                              ignition::gazebo::EventManager& /*eventMgr*/)
+bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
+                                 const std::shared_ptr<const sdf::Element>& sdf,
+                                 ignition::gazebo::EntityComponentManager& ecm)
 {
     // Store the address of the entity-component manager
     pImpl->ecm = &ecm;
@@ -160,7 +152,7 @@ void IgnitionRobot::Configure(const ignition::gazebo::Entity& entity,
 
         gymppError << "The model associated to sdf element '" << sdfElementString << "is not valid"
                    << std::endl;
-        return;
+        return false;
     }
 
     gymppDebug << "Processing model '" << pImpl->model.Name(ecm) << "'" << std::endl;
@@ -221,19 +213,26 @@ void IgnitionRobot::Configure(const ignition::gazebo::Entity& entity,
     if (!valid()) {
         gymppError << "The IgnitionRobot object for model '" << pImpl->model.Name(ecm)
                    << "' is not valid" << std::endl;
-        return;
+        return false;
     }
 
-    // Store the pointer of the exposed interface into the singleton
+    // Register the robot in the singleton
     if (!RobotSingleton::get().storeRobot(this)) {
         gymppError << "Failed to store the robot in the RobotSingleton" << std::endl;
-        return;
+        return false;
     }
+
+    return true;
 }
 
+IgnitionRobot::~IgnitionRobot() = default;
 bool IgnitionRobot::valid() const
 {
     // TODO: find the proper logic to check if this object is valid
+
+    if (!pImpl->ecm) {
+        return false;
+    }
 
     if (pImpl->joints.size() == 0) {
         return false;
@@ -445,12 +444,3 @@ bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName,
 
     return true;
 }
-
-// =============
-// OTHER METHODS
-// =============
-
-IGNITION_ADD_PLUGIN(gympp::gazebo::IgnitionRobot,
-                    gympp::gazebo::IgnitionRobot::System,
-                    gympp::gazebo::IgnitionRobot::ISystemConfigure,
-                    gympp::Robot)

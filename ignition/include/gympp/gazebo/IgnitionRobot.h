@@ -11,8 +11,11 @@
 
 #include "gympp/Robot.h"
 
-#include <ignition/gazebo/System.hh>
+#include <ignition/gazebo/Entity.hh>
+#include <ignition/gazebo/EntityComponentManager.hh>
+#include <sdf/Element.hh>
 
+#include <functional>
 #include <memory>
 
 namespace gympp {
@@ -21,10 +24,7 @@ namespace gympp {
     } // namespace gazebo
 } // namespace gympp
 
-class gympp::gazebo::IgnitionRobot final
-    : public gympp::Robot
-    , public ignition::gazebo::System
-    , public ignition::gazebo::ISystemConfigure
+class gympp::gazebo::IgnitionRobot : public gympp::Robot
 {
 private:
     class Impl;
@@ -34,11 +34,9 @@ public:
     IgnitionRobot();
     ~IgnitionRobot() override;
 
-    void Configure(const ignition::gazebo::Entity& entity,
-                   const std::shared_ptr<const sdf::Element>& sdf,
-                   ignition::gazebo::EntityComponentManager& ecm,
-                   ignition::gazebo::EventManager& eventMgr) override;
-
+    bool configureECM(const ignition::gazebo::Entity& entity,
+                      const std::shared_ptr<const sdf::Element>& sdf,
+                      ignition::gazebo::EntityComponentManager& ecm);
     bool valid() const override;
 
     // ===========
