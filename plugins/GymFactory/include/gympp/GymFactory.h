@@ -10,16 +10,15 @@
 #define GYMPP_GYMFACTORY
 
 #include "gympp/Environment.h"
-#include "gympp/Metadata.h"
-#include "gympp/Space.h"
 #include <ignition/common/SingletonT.hh>
 
+#include <functional>
+#include <memory>
 #include <string>
-#include <unordered_map>
-#include <vector>
 
 namespace gympp {
     class GymFactory;
+    class PluginMetadata;
 } // namespace gympp
 
 class gympp::GymFactory : public ignition::common::SingletonT<gympp::GymFactory>

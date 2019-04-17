@@ -11,7 +11,12 @@
 
 #include "gympp/Environment.h"
 
+#include <array>
+#include <functional>
 #include <memory>
+#include <optional>
+#include <string>
+#include <vector>
 
 #ifdef NDEBUG
 #define DEFAULT_VERBOSITY 2

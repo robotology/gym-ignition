@@ -18,11 +18,15 @@
 #include <ignition/common/SignalHandler.hh>
 
 #include <cassert>
+#include <chrono>
 #include <cstdlib>
-#include <iomanip>
 #include <iostream>
+#include <memory>
 #include <optional>
+#include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
 using namespace gympp;
 using namespace clara;

@@ -9,26 +9,26 @@
 #include "gympp/gazebo/IgnitionEnvironment.h"
 #include "gympp/Log.h"
 #include "gympp/Random.h"
+#include "gympp/Space.h"
 #include "gympp/gazebo/EnvironmentCallbacks.h"
 #include "gympp/gazebo/EnvironmentCallbacksSingleton.h"
 #include "process.hpp"
 
+#include <ignition/common/Console.hh>
 #include <ignition/common/SystemPaths.hh>
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
-#include <ignition/gazebo/SystemLoader.hh>
-#include <ignition/plugin/SpecializedPluginPtr.hh>
+#include <ignition/gazebo/config.hh>
 #include <sdf/Element.hh>
+#include <sdf/Error.hh>
 #include <sdf/Model.hh>
 #include <sdf/Root.hh>
 #include <sdf/World.hh>
 
+#include <cassert>
 #include <chrono>
-#include <condition_variable>
-#include <functional>
-#include <mutex>
+#include <ostream>
 #include <thread>
-#include <vector>
 
 using namespace gympp::gazebo;
 

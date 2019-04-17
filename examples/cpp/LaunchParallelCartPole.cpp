@@ -6,7 +6,6 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#include "gympp/Common.h"
 #include "gympp/Environment.h"
 #include "gympp/GymFactory.h"
 #include "gympp/Log.h"
@@ -21,12 +20,14 @@
 #include <atomic>
 #include <cassert>
 #include <cstdlib>
-#include <iomanip>
 #include <iostream>
+#include <memory>
 #include <mutex>
 #include <optional>
 #include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
 using namespace gympp;
 using namespace clara;

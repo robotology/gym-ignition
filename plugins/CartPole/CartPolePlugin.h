@@ -11,8 +11,13 @@
 
 #include "gympp/gazebo/EnvironmentCallbacks.h"
 
+#include <ignition/gazebo/Entity.hh>
+#include <ignition/gazebo/EntityComponentManager.hh>
+#include <ignition/gazebo/EventManager.hh>
 #include <ignition/gazebo/System.hh>
+#include <sdf/Element.hh>
 
+#include <functional>
 #include <memory>
 #include <optional>
 

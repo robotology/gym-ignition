@@ -12,6 +12,7 @@
 #include "gympp/Robot.h"
 
 #include <memory>
+#include <string>
 
 namespace gympp {
     class Robot;

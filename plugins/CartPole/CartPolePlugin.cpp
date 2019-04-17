@@ -13,12 +13,15 @@
 #include "gympp/Robot.h"
 #include "gympp/gazebo/EnvironmentCallbacksSingleton.h"
 #include "gympp/gazebo/IgnitionRobot.h"
-#include "gympp/gazebo/RobotSingleton.h"
 
 #include <ignition/plugin/Register.hh>
 
+#include <cassert>
 #include <cmath>
 #include <mutex>
+#include <ostream>
+#include <random>
+#include <string>
 
 using namespace gympp::gazebo;
 using namespace gympp::plugins;

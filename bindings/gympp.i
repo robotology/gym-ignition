@@ -6,6 +6,7 @@
 #include "gympp/Environment.h"
 #include "gympp/GymFactory.h"
 #include "gympp/Space.h"
+#include "gympp/Metadata.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
 %}
 

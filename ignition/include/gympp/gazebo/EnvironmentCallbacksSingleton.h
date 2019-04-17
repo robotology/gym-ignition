@@ -15,9 +15,9 @@
 #include <memory>
 #include <string>
 
-#include "gympp/gazebo/EnvironmentCallbacks.h"
 namespace gympp {
     namespace gazebo {
+        class EnvironmentCallbacks;
         class EnvironmentCallbacksSingleton;
     } // namespace gazebo
 } // namespace gympp

@@ -8,9 +8,12 @@
 
 #include "gympp/GymFactory.h"
 #include "gympp/Log.h"
+#include "gympp/Metadata.h"
+#include "gympp/Space.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
 
 #include <cassert>
+#include <ostream>
 
 using namespace gympp;
 
