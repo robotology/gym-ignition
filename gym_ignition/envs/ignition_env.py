@@ -46,8 +46,7 @@ class IgnitionEnv(gym.Env):
 
         # Register the environment
         factory = gympp.GymFactory.Instance()
-        registered = factory.registerPlugin(self.md)
-        assert registered, "Failed to register the plugin environment"
+        factory.registerPlugin(self.md)
 
         # Load the environment from gympp
         self.ignenv = factory.make(self.md.getEnvironmentName())
