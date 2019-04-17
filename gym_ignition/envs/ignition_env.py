@@ -12,8 +12,8 @@ from typing import List, Tuple, Union, NewType
 # Import gympp bindings
 # See https://github.com/robotology/gym-ignition/issues/7
 if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
-    import os
-    sys.setdlopenflags(sys.getdlopenflags() | os.RTLD_GLOBAL)
+    import ctypes
+    sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 import gympp
 
 Action = NewType('Action', Union[float, np.ndarray, np.number])
