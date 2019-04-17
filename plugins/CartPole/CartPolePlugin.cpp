@@ -29,10 +29,13 @@ using ActionSample = gympp::BufferContainer<ActionDataType>::type;
 using ObservationDataType = double;
 using ObservationSample = gympp::BufferContainer<ObservationDataType>::type;
 
-const unsigned CartPositionObservationIndex = 0;
-const unsigned CartVelocityObservationIndex = 1;
-const unsigned PolePositionObservationIndex = 2;
-const unsigned PoleVelocityObservationIndex = 3;
+enum ObservationIndex
+{
+    CartPosition = 0,
+    CartVelocity = 1,
+    PolePosition = 2,
+    PoleVelocity = 3,
+};
 
 const size_t MaxEpisodeLength = 200;
 const double XThreshold = 2.4;
@@ -188,10 +191,12 @@ void CartPole::PostUpdate(const ignition::gazebo::UpdateInfo& info,
 
     {
         std::lock_guard lock(pImpl->mutex);
-        pImpl->observationBuffer[CartPositionObservationIndex] = cartJointPosition;
-        pImpl->observationBuffer[CartVelocityObservationIndex] = cartJointVelocity;
-        pImpl->observationBuffer[PolePositionObservationIndex] = (180.0 / M_PI) * poleJointPosition;
-        pImpl->observationBuffer[PoleVelocityObservationIndex] = (180.0 / M_PI) * poleJointVelocity;
+        pImpl->observationBuffer[ObservationIndex::CartPosition] = cartJointPosition;
+        pImpl->observationBuffer[ObservationIndex::CartVelocity] = cartJointVelocity;
+        pImpl->observationBuffer[ObservationIndex::PolePosition] =
+            (180.0 / M_PI) * poleJointPosition;
+        pImpl->observationBuffer[ObservationIndex::PoleVelocity] =
+            (180.0 / M_PI) * poleJointVelocity;
     }
 }
 
@@ -200,8 +205,8 @@ bool CartPole::isDone()
     std::lock_guard lock(pImpl->mutex);
 
     if (pImpl->iterations >= MaxEpisodeLength
-        || std::abs(pImpl->observationBuffer[PolePositionObservationIndex]) > ThetaThresholdDeg
-        || std::abs(pImpl->observationBuffer[CartPositionObservationIndex]) > XThreshold) {
+        || std::abs(pImpl->observationBuffer[ObservationIndex::PolePosition]) > ThetaThresholdDeg
+        || std::abs(pImpl->observationBuffer[ObservationIndex::CartPosition]) > XThreshold) {
         return true;
     }
 
@@ -240,10 +245,10 @@ bool CartPole::reset()
         // method returns the new observation.
         std::lock_guard lock(pImpl->mutex);
 
-        pImpl->observationBuffer[CartPositionObservationIndex] = x0;
-        pImpl->observationBuffer[CartVelocityObservationIndex] = v0;
-        pImpl->observationBuffer[PolePositionObservationIndex] = (180.0 / M_PI) * theta0;
-        pImpl->observationBuffer[PoleVelocityObservationIndex] = v0;
+        pImpl->observationBuffer[ObservationIndex::CartPosition] = x0;
+        pImpl->observationBuffer[ObservationIndex::CartVelocity] = v0;
+        pImpl->observationBuffer[ObservationIndex::PolePosition] = (180.0 / M_PI) * theta0;
+        pImpl->observationBuffer[ObservationIndex::PoleVelocity] = v0;
     }
 
     return true;
