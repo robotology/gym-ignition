@@ -53,7 +53,7 @@ gympp::GymFactory::GymFactory()
     : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {}
 
-gympp::EnvironmentPtr gympp::GymFactory::make(const std::__cxx11::string& envName)
+gympp::EnvironmentPtr gympp::GymFactory::make(const std::string& envName)
 {
     if (!pImpl->exists(envName)) {
         gymppError << "Environment '" << envName << "' has never been registered" << std::endl;
@@ -106,7 +106,7 @@ bool gympp::GymFactory::registerPlugin(const PluginMetadata& md)
     }
 
     if (pImpl->exists(md.environmentName)) {
-        gymppError << "Environment '" << md.environmentName << "' has been already registered"
+        gymppDebug << "Environment '" << md.environmentName << "' has been already registered"
                    << std::endl;
         return true;
     }
