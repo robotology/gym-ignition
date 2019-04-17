@@ -52,6 +52,10 @@ class IgnitionEnv(gym.Env):
         self.ignenv = factory.make(self.md.getEnvironmentName())
         assert self.ignenv, "Failed to create environment " + self.md.getEnvironmentName()
 
+        # Set the verbosity. Run the script as optimized (-O) to decrease the verbosity.
+        gympp.IgnitionEnvironment.setVerbosity(2)
+        assert(gympp.IgnitionEnvironment.setVerbosity(4) or True)
+
     def step(self, action: Action) -> Tuple[Observation, Reward, bool, str]:
         assert self.action_space.contains(action), "The action does not belong to the action space"
 
