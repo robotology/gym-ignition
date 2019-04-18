@@ -4,3 +4,4 @@
 
 add_subdirectory(CartPole)
 add_subdirectory(GymFactory)
+add_subdirectory(RobotController)
