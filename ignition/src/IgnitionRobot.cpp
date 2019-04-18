@@ -33,7 +33,7 @@ using JointName = std::string;
 using LinkEntity = ignition::gazebo::Entity;
 using JointEntity = ignition::gazebo::Entity;
 
-const ignition::math::PID DefaultPID(1, 0.1, 0.1, 1, -1, 1000, -1000);
+const ignition::math::PID DefaultPID(1, 0.1, 0.1, 1, -1, 10000, -10000);
 
 class IgnitionRobot::Impl
 {
