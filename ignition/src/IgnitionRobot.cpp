@@ -39,6 +39,7 @@ struct Buffers
 {
     struct
     {
+        gympp::Robot::JointPositions positions;
         gympp::Robot::JointPositions velocities;
     } joints;
 };
@@ -228,6 +229,7 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
     }
 
     // Initialize the buffers
+    pImpl->buffers.joints.positions.resize(pImpl->joints.size());
     pImpl->buffers.joints.velocities.resize(pImpl->joints.size());
 
     // Register the robot in the singleton
@@ -326,8 +328,12 @@ double IgnitionRobot::jointVelocity(const gympp::Robot::JointName& jointName) co
 
 gympp::Robot::JointPositions IgnitionRobot::jointPositions() const
 {
-    // TODO
-    return {};
+    size_t i = 0;
+    for (const auto& [jointName, _] : pImpl->joints) {
+        pImpl->buffers.joints.positions[i++] = jointPosition(jointName);
+    }
+
+    return pImpl->buffers.joints.positions;
 }
 
 gympp::Robot::JointVelocities IgnitionRobot::jointVelocities() const
