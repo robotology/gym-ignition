@@ -285,6 +285,11 @@ void IgnitionEnvironment::setVerbosity(int level)
     ignition::common::Console::SetVerbosity(level);
 }
 
+std::vector<IgnitionEnvironment::SdfModelName> IgnitionEnvironment::getModelNames() const
+{
+    return {pImpl->scopedModelName};
+}
+
 bool IgnitionEnvironment::setupGazeboModel(const std::string& modelFile,
                                            std::array<double, 6> /*pose*/)
 {
