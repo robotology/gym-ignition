@@ -4,12 +4,12 @@
 #define SWIG_FILE_WITH_INIT
 #include "gympp/Common.h"
 #include "gympp/Environment.h"
+#include "gympp/gazebo/IgnitionEnvironment.h"
 #include "gympp/gazebo/RobotSingleton.h"
 #include "gympp/GymFactory.h"
-#include "gympp/Space.h"
 #include "gympp/Metadata.h"
-#include "gympp/gazebo/IgnitionEnvironment.h"
 #include "gympp/Robot.h"
+#include "gympp/Space.h"
 %}
 
 %naturalvar;
