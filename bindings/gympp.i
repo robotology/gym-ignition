@@ -4,10 +4,12 @@
 #define SWIG_FILE_WITH_INIT
 #include "gympp/Common.h"
 #include "gympp/Environment.h"
+#include "gympp/gazebo/RobotSingleton.h"
 #include "gympp/GymFactory.h"
 #include "gympp/Space.h"
 #include "gympp/Metadata.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
+#include "gympp/Robot.h"
 %}
 
 %naturalvar;
@@ -60,5 +62,15 @@
 %template(GymFactorySingleton) ignition::common::SingletonT<gympp::GymFactory>;
 %include "gympp/Environment.h"
 %include "gympp/gazebo/IgnitionEnvironment.h"
+
+%ignore gympp::Robot::setdt(const StepSize&);
+%include "gympp/Robot.h"
+%extend gympp::Robot {
+    bool setdt(const double dt) {
+        return $self->setdt(std::chrono::duration<double>(dt));
+    }
+}
+
 %include "gympp/Metadata.h"
 %include "gympp/GymFactory.h"
+%include "gympp/gazebo/RobotSingleton.h"
