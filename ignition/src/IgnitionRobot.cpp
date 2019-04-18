@@ -17,11 +17,13 @@
 #include <ignition/gazebo/components/JointVelocity.hh>
 #include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Name.hh>
-#include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/math/PID.hh>
 
-#include <optional>
+#include <cassert>
+#include <chrono>
+#include <ostream>
+#include <string>
 #include <unordered_map>
 
 using namespace gympp::gazebo;

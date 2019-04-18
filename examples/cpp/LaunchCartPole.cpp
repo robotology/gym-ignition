@@ -18,11 +18,15 @@
 #include <ignition/common/SignalHandler.hh>
 
 #include <cassert>
+#include <chrono>
 #include <cstdlib>
-#include <iomanip>
 #include <iostream>
+#include <memory>
 #include <optional>
+#include <string>
 #include <thread>
+#include <utility>
+#include <vector>
 
 using namespace gympp;
 using namespace clara;
@@ -111,7 +115,7 @@ int main(int argc, char* argv[])
     size_t epoch = 1;
     size_t iteration = 0;
 
-    while (true) {
+    while (epoch <= 100) {
         iteration++;
 
         // Process oldState to obtain the action.
@@ -129,6 +133,7 @@ int main(int argc, char* argv[])
         // Print the observation
         if (auto* o = state->observation.getBuffer<double>(); o) {
             std::cout << "#" << epoch << "." << iteration << "\t";
+            std::cout << "[" << *actionSample.get<int>(0) << "]\t";
             for (const auto el : *o) {
                 std::cout.setf(std::ios::fixed);
                 std::cout.precision(6);
@@ -150,7 +155,7 @@ int main(int argc, char* argv[])
         // Handle termination
         if (state->done) {
             gymppDebug << "The environment reached the terminal state" << std::endl;
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
+            std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
             // Reset the environment
             auto newObservation = env->reset();
@@ -165,7 +170,7 @@ int main(int argc, char* argv[])
                 oldState.observation = newObservation.value();
                 oldState.reward = 0;
                 oldState.done = false;
-                gymppMessage << "Resetting the environment" << std::endl;
+                gymppDebug << "Resetting the environment" << std::endl;
                 continue;
             }
         }

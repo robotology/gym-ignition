@@ -9,6 +9,7 @@
 #include "gympp/gazebo/RobotSingleton.h"
 #include "gympp/Log.h"
 
+#include <ostream>
 #include <unordered_map>
 
 using namespace gympp::gazebo;

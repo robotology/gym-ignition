@@ -9,30 +9,38 @@
 #include "gympp/gazebo/IgnitionEnvironment.h"
 #include "gympp/Log.h"
 #include "gympp/Random.h"
+#include "gympp/Space.h"
 #include "gympp/gazebo/EnvironmentCallbacks.h"
 #include "gympp/gazebo/EnvironmentCallbacksSingleton.h"
 #include "process.hpp"
 
+#include <ignition/common/Console.hh>
 #include <ignition/common/SystemPaths.hh>
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
-#include <ignition/gazebo/SystemLoader.hh>
-#include <ignition/plugin/SpecializedPluginPtr.hh>
+#include <ignition/gazebo/config.hh>
 #include <sdf/Element.hh>
+#include <sdf/Error.hh>
 #include <sdf/Model.hh>
 #include <sdf/Root.hh>
 #include <sdf/World.hh>
 
+#include <cassert>
 #include <chrono>
-#include <condition_variable>
-#include <functional>
-#include <mutex>
+#include <ostream>
 #include <thread>
-#include <vector>
 
 using namespace gympp::gazebo;
 
 size_t IgnitionEnvironment::EnvironmentId = 0;
+
+struct GazeboData
+{
+    uint64_t numOfIterations = 0;
+    ignition::gazebo::ServerConfig config;
+    std::unique_ptr<TinyProcessLib::Process> gui;
+    std::shared_ptr<ignition::gazebo::Server> server;
+};
 
 class IgnitionEnvironment::Impl
 {
@@ -42,12 +50,7 @@ private:
 public:
     size_t id;
 
-    std::unique_ptr<TinyProcessLib::Process> ignitionGui;
-
-    uint64_t numOfIterations = 0;
-    ignition::gazebo::ServerConfig serverConfig;
-    std::shared_ptr<ignition::gazebo::Server> server;
-
+    GazeboData gazebo;
     gympp::gazebo::EnvironmentCallbacks* envCallbacks();
     std::shared_ptr<ignition::gazebo::Server> getServer();
 
@@ -73,11 +76,11 @@ gympp::gazebo::EnvironmentCallbacks* IgnitionEnvironment::Impl::envCallbacks()
 std::shared_ptr<ignition::gazebo::Server> IgnitionEnvironment::Impl::getServer()
 {
     // Lazy initialization of the server
-    if (!server) {
+    if (!gazebo.server) {
 
         assert(sdf.Element());
         assert(!sdf.Element()->ToString("").empty());
-        serverConfig.SetSdfString(sdf.Element()->ToString(""));
+        gazebo.config.SetSdfString(sdf.Element()->ToString(""));
 
         sdf::Root root;
         auto errors = root.LoadSdfString(sdf.Element()->ToString(""));
@@ -85,20 +88,20 @@ std::shared_ptr<ignition::gazebo::Server> IgnitionEnvironment::Impl::getServer()
 
         // Create the server
         gymppDebug << "Creating the server" << std::endl << std::flush;
-        serverConfig.SetUseLevels(false);
-        server = std::make_unique<ignition::gazebo::Server>(serverConfig);
-        assert(server);
+        gazebo.config.SetUseLevels(false);
+        gazebo.server = std::make_shared<ignition::gazebo::Server>(gazebo.config);
+        assert(gazebo.server);
 
         // The GUI needs the server already up. Warming up the first iteration and pausing the
         // server. It will be unpaused at the step() call.
         gymppDebug << "Starting the server as paused" << std::endl;
-        if (!server->Run(/*blocking=*/false, numOfIterations, /*paused=*/true)) {
+        if (!gazebo.server->Run(/*blocking=*/false, gazebo.numOfIterations, /*paused=*/true)) {
             gymppError << "Failed to warm up the gazebo server in paused state" << std::endl;
             return nullptr;
         }
     }
 
-    return server;
+    return gazebo.server;
 }
 
 // TODO: there's a bug in the destructor of sdf::Physics that prevents returning std::optional
@@ -133,9 +136,9 @@ bool IgnitionEnvironment::Impl::findAndLoadSdf(const std::string& sdfFileName, s
     return true;
 }
 
-// ===============
-// IGNITION GAZEBO
-// ===============
+// ====================
+// IGNITION ENVIRONMENT
+// ====================
 
 IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
                                          const ObservationSpacePtr oSpace,
@@ -147,8 +150,8 @@ IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
     // Assign an unique id to the object
     pImpl->id = EnvironmentId++;
 
-    pImpl->numOfIterations = iterations;
-    pImpl->serverConfig.SetUpdateRate(updateRate);
+    pImpl->gazebo.numOfIterations = iterations;
+    pImpl->gazebo.config.SetUpdateRate(updateRate);
 
     pImpl->systemPaths.SetFilePathEnv("IGN_GAZEBO_RESOURCE_PATH");
     pImpl->systemPaths.AddFilePaths(IGN_GAZEBO_WORLD_INSTALL_DIR);
@@ -171,20 +174,20 @@ bool IgnitionEnvironment::setupIgnitionPlugin(const std::string& libName,
     ignition::gazebo::ServerConfig::PluginInfo pluginInfo{
         pImpl->scopedModelName, "model", libName, className, sdf};
 
-    pImpl->serverConfig.AddPlugin(pluginInfo);
+    pImpl->gazebo.config.AddPlugin(pluginInfo);
 
     return true;
 }
 
 IgnitionEnvironment::~IgnitionEnvironment()
 {
-    if (pImpl->ignitionGui) {
+    if (pImpl->gazebo.gui) {
 #if defined(WIN32) || defined(_WIN32)
         bool force = false;
 #else
         bool force = true;
 #endif
-        pImpl->ignitionGui->kill(force);
+        pImpl->gazebo.gui->kill(force);
     }
 }
 
@@ -197,7 +200,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
         return {};
     }
 
-    assert(pImpl->server);
+    assert(server);
     assert(action_space);
     assert(observation_space);
 
@@ -230,7 +233,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
         }
     }
     else {
-        if (!server->Run(/*_blocking=*/true, pImpl->numOfIterations, /*_paused=*/false)) {
+        if (!server->Run(/*blocking=*/true, pImpl->gazebo.numOfIterations, /*paused=*/false)) {
             gymppError << "The server couldn't execute the step" << std::endl;
             return {};
         }
@@ -392,7 +395,7 @@ bool IgnitionEnvironment::render(RenderMode mode)
 {
     // If ign-gazebo-gui is already running, return without doing anything.
     int exit_status;
-    if (pImpl->ignitionGui && !pImpl->ignitionGui->try_get_exit_status(exit_status)) {
+    if (pImpl->gazebo.gui && !pImpl->gazebo.gui->try_get_exit_status(exit_status)) {
         return true;
     }
 
@@ -406,7 +409,7 @@ bool IgnitionEnvironment::render(RenderMode mode)
         }
 
         // Spawn a new process with the GUI
-        pImpl->ignitionGui = std::make_unique<TinyProcessLib::Process>("ign-gazebo-gui");
+        pImpl->gazebo.gui = std::make_unique<TinyProcessLib::Process>("ign-gazebo-gui");
 
         return true;
     }

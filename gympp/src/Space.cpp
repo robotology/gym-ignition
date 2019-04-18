@@ -11,7 +11,10 @@
 #include "gympp/Random.h"
 
 #include <cassert>
+#include <ostream>
 #include <random>
+#include <utility>
+#include <vector>
 
 template class gympp::spaces::details::TBox<double>;
 

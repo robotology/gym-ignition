@@ -48,6 +48,18 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
 # Add custom CMake functions / macros
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+# Get include-what-you-use information when compiling
+option(USE_IWYU "Get the output of include-what-you-use" OFF)
+if(USE_IWYU)
+    find_program(IWYU_PATH NAMES include-what-you-use iwyu)
+    if(IWYU_PATH)
+        set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_PATH})
+    endif()
+endif()
+
+# TODO: install basic package file
+# TODO: RPATH
+
 # Add the C++ sources subdirectory
 add_subdirectory(gympp)
 

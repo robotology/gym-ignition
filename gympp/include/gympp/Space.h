@@ -11,7 +11,6 @@
 
 #include "gympp/Common.h"
 
-#include <any>
 #include <functional>
 #include <memory>
 
