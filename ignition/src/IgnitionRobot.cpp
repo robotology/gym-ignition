@@ -22,9 +22,9 @@
 
 #include <cassert>
 #include <chrono>
+#include <map>
 #include <ostream>
 #include <string>
-#include <unordered_map>
 
 using namespace gympp::gazebo;
 
@@ -51,10 +51,11 @@ public:
     ignition::gazebo::Model model;
     std::chrono::duration<double> dt;
 
-    std::unordered_map<LinkName, LinkEntity> links;
-    std::unordered_map<JointName, JointEntity> joints;
-    std::unordered_map<JointName, ignition::math::PID> pids;
     Buffers buffers;
+
+    std::map<LinkName, LinkEntity> links;
+    std::map<JointName, JointEntity> joints;
+    std::map<JointName, ignition::math::PID> pids;
 
     inline bool jointExists(const JointName& jointName) const
     {
