@@ -4,7 +4,7 @@
 
 from gym.envs.registration import register
 from gym import logger
-from gym_ignition.envs.ignition_env import IgnitionEnv
+from gym_ignition.envs.base.ignition_env import IgnitionEnv
 
 # Set gym verbosity
 logger.set_level(logger.ERROR)
