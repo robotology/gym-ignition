@@ -71,6 +71,12 @@
     }
 }
 
+%inline %{
+    std::shared_ptr<gympp::gazebo::IgnitionEnvironment> envToIgnEnv(gympp::EnvironmentPtr env) {
+        return std::dynamic_pointer_cast<gympp::gazebo::IgnitionEnvironment>(env);
+    }
+%}
+
 %include "gympp/Metadata.h"
 %include "gympp/GymFactory.h"
 %include "gympp/gazebo/RobotSingleton.h"
