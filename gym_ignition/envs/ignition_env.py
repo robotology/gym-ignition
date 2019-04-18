@@ -12,8 +12,8 @@ from typing import List, Tuple, Union, NewType
 # Import gympp bindings
 # See https://github.com/robotology/gym-ignition/issues/7
 if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
-    import os
-    sys.setdlopenflags(sys.getdlopenflags() | os.RTLD_GLOBAL)
+    import ctypes
+    sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 import gympp
 
 Action = NewType('Action', Union[float, np.ndarray, np.number])
@@ -46,12 +46,15 @@ class IgnitionEnv(gym.Env):
 
         # Register the environment
         factory = gympp.GymFactory.Instance()
-        registered = factory.registerPlugin(self.md)
-        assert registered, "Failed to register the plugin environment"
+        factory.registerPlugin(self.md)
 
         # Load the environment from gympp
         self.ignenv = factory.make(self.md.getEnvironmentName())
         assert self.ignenv, "Failed to create environment " + self.md.getEnvironmentName()
+
+        # Set the verbosity. Run the script as optimized (-O) to decrease the verbosity.
+        gympp.IgnitionEnvironment.setVerbosity(2)
+        assert(gympp.IgnitionEnvironment.setVerbosity(4) or True)
 
     def step(self, action: Action) -> Tuple[Observation, Reward, bool, str]:
         assert self.action_space.contains(action), "The action does not belong to the action space"
@@ -115,7 +118,7 @@ class IgnitionEnv(gym.Env):
 
         # Convert it to a numpy array (this is the only required copy)
         observation = np.array(observation_vector)
-        assert self.observation_space.contains(observation),\
+        assert self.observation_space.contains(observation), \
             "The returned observation does not belong to the space"
 
         # Return the list
