@@ -35,6 +35,14 @@ using JointEntity = ignition::gazebo::Entity;
 
 const ignition::math::PID DefaultPID(1, 0.1, 0.1, 1, -1, 10000, -10000);
 
+struct Buffers
+{
+    struct
+    {
+        gympp::Robot::JointPositions velocities;
+    } joints;
+};
+
 class IgnitionRobot::Impl
 {
 public:
@@ -45,6 +53,7 @@ public:
     std::unordered_map<LinkName, LinkEntity> links;
     std::unordered_map<JointName, JointEntity> joints;
     std::unordered_map<JointName, ignition::math::PID> pids;
+    Buffers buffers;
 
     inline bool jointExists(const JointName& jointName) const
     {
@@ -218,6 +227,9 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
         return false;
     }
 
+    // Initialize the buffers
+    pImpl->buffers.joints.velocities.resize(pImpl->joints.size());
+
     // Register the robot in the singleton
     if (!RobotSingleton::get().storeRobot(this)) {
         gymppError << "Failed to store the robot in the RobotSingleton" << std::endl;
@@ -320,8 +332,12 @@ gympp::Robot::JointPositions IgnitionRobot::jointPositions() const
 
 gympp::Robot::JointVelocities IgnitionRobot::jointVelocities() const
 {
-    // TODO
-    return {};
+    size_t i = 0;
+    for (const auto& [jointName, _] : pImpl->joints) {
+        pImpl->buffers.joints.velocities[i++] = jointVelocity(jointName);
+    }
+
+    return pImpl->buffers.joints.velocities;
 }
 
 gympp::Robot::StepSize IgnitionRobot::dt() const
@@ -388,11 +404,27 @@ bool IgnitionRobot::setJointPosition(const gympp::Robot::JointName& jointName,
     return setJointForce(jointName, force);
 }
 
-bool IgnitionRobot::setJointVelocity(const gympp::Robot::JointName& /*jointName*/,
-                                     const double /*jointVelocityReference*/)
+bool IgnitionRobot::setJointVelocity(const gympp::Robot::JointName& jointName,
+                                     const double jointVelocityReference)
 {
-    // TODO
-    return {};
+    JointEntity jointEntity = pImpl->getJointEntity(jointName);
+    if (jointEntity == ignition::gazebo::kNullEntity) {
+        return false;
+    }
+
+    // Get the current joint velocity
+    double jointVelocityCurrent = jointVelocity(jointName);
+
+    if (pImpl->dt == std::chrono::duration<double>(0)) {
+        gymppDebug << "The step interval was not configured. The PIDs will not work." << std::endl;
+    }
+
+    // Use the position PID to process the reference
+    assert(pImpl->pidExists(jointName));
+    auto& pid = pImpl->pids[jointName];
+    double force = pid.Update(jointVelocityCurrent - jointVelocityReference, pImpl->dt);
+
+    return setJointForce(jointName, force);
 }
 
 bool IgnitionRobot::setJointPID(const gympp::Robot::JointName& jointName, const PID& pid)
