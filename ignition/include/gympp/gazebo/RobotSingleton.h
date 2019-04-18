@@ -11,6 +11,7 @@
 
 #include "gympp/Robot.h"
 
+#include <functional>
 #include <memory>
 #include <string>
 
@@ -25,7 +26,7 @@ class gympp::gazebo::RobotSingleton
 {
 private:
     class Impl;
-    std::unique_ptr<Impl> pImpl;
+    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
 
 public:
     RobotSingleton();
@@ -36,7 +37,7 @@ public:
     static RobotSingleton& get();
 
     RobotPtr getRobot(const std::string& robotName) const;
-    bool storeRobot(RobotPtr robotInterface);
+    bool storeRobot(RobotPtr robot);
 };
 
-#endif // GYMPP_ROBOT_ROBOTSINGLETON_H
+#endif // GYMPP_GAZEBO_ROBOTSINGLETON_H

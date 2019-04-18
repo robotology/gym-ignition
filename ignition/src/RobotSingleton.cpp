@@ -22,7 +22,7 @@ public:
 };
 
 RobotSingleton::RobotSingleton()
-    : pImpl(std::make_unique<Impl>())
+    : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {}
 
 RobotSingleton& RobotSingleton::get()
@@ -41,20 +41,20 @@ gympp::RobotPtr RobotSingleton::getRobot(const std::string& robotName) const
     return pImpl->robots.at(robotName);
 }
 
-bool RobotSingleton::storeRobot(RobotPtr robotInterface)
+bool RobotSingleton::storeRobot(RobotPtr robot)
 {
-    if (!(robotInterface && robotInterface->valid())) {
+    if (!(robot && robot->valid())) {
         gymppError << "Trying to store an Robot pointer not valid" << std::endl;
         return false;
     }
 
-    if (pImpl->robots.find(robotInterface->name()) != pImpl->robots.end()) {
-        gymppError << "The '" << robotInterface->name()
+    if (pImpl->robots.find(robot->name()) != pImpl->robots.end()) {
+        gymppError << "The '" << robot->name()
                    << "' robot seems duplicated. It has been already added." << std::endl;
         return false;
     }
 
-    gymppDebug << "Registering robot '" << robotInterface->name() << "'" << std::endl;
-    pImpl->robots[robotInterface->name()] = robotInterface;
+    gymppDebug << "Registering robot '" << robot->name() << "'" << std::endl;
+    pImpl->robots[robot->name()] = robot;
     return true;
 }
