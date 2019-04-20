@@ -5,18 +5,24 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
+from gym import logger
 import gym_ignition
 
+# Set gym verbosity
+logger.set_level(logger.INFO)
+assert(logger.set_level(logger.DEBUG) or True)
+
+logger.debug("Initializing the environment")
+
 # Create the environment
+# env = gym.make("CartPole-v1")
 env = gym.make("CartPoleIgnition-v0")
+# env = gym.make("CartPoleIgnitionPython-v0")
 
 # Initialize the seed
 env.seed(42)
 
-# Render the environment
-env.render('human')
-
-for _ in range(10):
+for epoch in range(10):
     # Reset the environment
     observation = env.reset()
 
@@ -29,10 +35,18 @@ for _ in range(10):
         action = env.action_space.sample()
         observation, reward, done, _ = env.step(action)
 
-        totalReward += reward
-        
-        for value in observation:
-            print("%.6f\t" % value, end='')
-        print()
+        # Render the environment
+        env.render('human')
 
-    print(totalReward)
+        # Accumulate the reward
+        totalReward += reward
+
+        # Print the observation
+        msg = ""
+        for value in observation:
+            msg += "\t%.6f" % value
+        logger.debug(msg)
+
+    logger.info("Total reward for episode #{}: {}".format(epoch, totalReward))
+
+env.close()
