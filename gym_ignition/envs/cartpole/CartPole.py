@@ -11,6 +11,7 @@ class CartPoleEnv(IgnitionEnv):
     def __init__(self):
         IgnitionEnv.__init__(self)
 
+    @property
     def _plugin_metadata(self) -> PluginMetadata:
         md = PluginMetadata()
         md.setEnvironmentName("CartPole")
