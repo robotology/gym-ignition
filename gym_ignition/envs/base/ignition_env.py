@@ -187,9 +187,16 @@ class IgnitionEnv(gym.Env):
         assert observation_vector, "Failed to get the observation buffer"
         assert observation_vector.size() > 0, "The observation does not contain elements"
 
-        # Convert it to a numpy array (this is the only required copy)
-        observation = np.array(observation_vector)
-        assert self.observation_space.contains(observation), \
+        # Convert the observation to a numpy array (this is the only required copy)
+        if isinstance(self.observation_space, gym.spaces.Box):
+            observation = np.array(observation_vector)
+        elif isinstance(self.observation_space, gym.spaces.Discrete):
+            assert observation_vector.size() == 1, "The buffer has the wrong dimension"
+            observation = observation_vector[0]
+        else:
+            assert False, "Space not supported"
+
+        assert self.observation_space.contains(observation),\
             "The returned observation does not belong to the space"
 
         # Return the list
