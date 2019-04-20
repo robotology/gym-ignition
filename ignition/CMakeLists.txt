@@ -2,9 +2,27 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-# =============================
-# EnvironmentCallbacksSingleton
-# =============================
+# =====================
+# ENVIRONMENT CALLBACKS
+# =====================
+
+add_library(EnvironmentCallbacks INTERFACE)
+target_sources(EnvironmentCallbacks INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/EnvironmentCallbacks.h)
+
+target_include_directories(EnvironmentCallbacks INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_link_libraries(EnvironmentCallbacks INTERFACE gympp)
+
+install(
+    FILES include/gympp/gazebo/EnvironmentCallbacks.h
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp/gazebo)
+
+# ===============================
+# ENVIRONMENT CALLBACKS SINGLETON
+# ===============================
 
 add_library(EnvironmentCallbacksSingleton SHARED
     include/gympp/gazebo/EnvironmentCallbacksSingleton.h
@@ -14,9 +32,12 @@ target_include_directories(EnvironmentCallbacksSingleton PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(EnvironmentCallbacksSingleton PUBLIC
+target_link_libraries(EnvironmentCallbacksSingleton
+    PUBLIC
     gympp
-    ignition-gazebo1::core)
+    ignition-gazebo1::core
+    PRIVATE
+    EnvironmentCallbacks)
 
 set_target_properties(EnvironmentCallbacksSingleton PROPERTIES
     PUBLIC_HEADER include/gympp/gazebo/EnvironmentCallbacksSingleton.h)
@@ -31,6 +52,7 @@ add_library(GazeboWrapper
 
 target_link_libraries(GazeboWrapper
     PRIVATE
+    EnvironmentCallbacks
     EnvironmentCallbacksSingleton
     ignition-gazebo1::core
     tiny-process-library)
@@ -55,9 +77,8 @@ target_link_libraries(IgnitionEnvironment
     gympp
     GazeboWrapper
     PRIVATE
-    EnvironmentCallbacksSingleton
-    ignition-gazebo1::core
-    tiny-process-library)
+    EnvironmentCallbacks
+    EnvironmentCallbacksSingleton)
 
 set_target_properties(IgnitionEnvironment PROPERTIES
     PUBLIC_HEADER include/gympp/gazebo/IgnitionEnvironment.h)
@@ -65,24 +86,6 @@ set_target_properties(IgnitionEnvironment PROPERTIES
 target_include_directories(IgnitionEnvironment PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
-# ==============================
-# IGNITION ENVIRONMENT CALLBACKS
-# ==============================
-
-add_library(EnvironmentCallbacks INTERFACE)
-target_sources(EnvironmentCallbacks INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/EnvironmentCallbacks.h)
-
-target_include_directories(EnvironmentCallbacks INTERFACE
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
-target_link_libraries(EnvironmentCallbacks INTERFACE gympp)
-
-install(
-    FILES include/gympp/gazebo/EnvironmentCallbacks.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp/gazebo)
 
 # ========================
 # IGNITION ROBOT SINGLETON
@@ -118,8 +121,7 @@ add_library(IgnitionRobot SHARED
 target_link_libraries(IgnitionRobot
     PUBLIC
     gympp
-    RobotSingleton
-    ignition-gazebo1::core)
+    RobotSingleton)
 
 set_target_properties(IgnitionRobot PROPERTIES
     PUBLIC_HEADER include/gympp/gazebo/IgnitionRobot.h)
