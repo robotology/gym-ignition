@@ -9,3 +9,7 @@ from gym_ignition.envs.base.ignition_python_env import IgnitionPythonEnv
 register(
     id='CartPoleIgnition-v0',
     entry_point='gym_ignition.envs.cartpole:CartPoleEnv')
+
+register(
+    id='CartPoleIgnitionPython-v0',
+    entry_point='gym_ignition.envs.python.cartpole:CartPolePythonEnv')
