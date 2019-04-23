@@ -4,6 +4,7 @@
 
 from gym.envs.registration import register
 from gym_ignition.envs.base.ignition_env import IgnitionEnv
+from gym_ignition.envs.base.ignition_python_env import IgnitionPythonEnv
 
 register(
     id='CartPoleIgnition-v0',
