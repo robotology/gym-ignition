@@ -5,14 +5,18 @@
 #include "gympp/Common.h"
 #include "gympp/Environment.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
+#include "gympp/gazebo/GazeboWrapper.h"
 #include "gympp/gazebo/RobotSingleton.h"
 #include "gympp/GymFactory.h"
 #include "gympp/Metadata.h"
 #include "gympp/Robot.h"
 #include "gympp/Space.h"
+#include <cstdint>
 %}
 
 %naturalvar;
+
+%include <stdint.i>
 
 %include <std_string.i>
 %include <std_vector.i>
@@ -57,11 +61,13 @@
 %template(Box) gympp::spaces::details::TBox<double>;
 
 %shared_ptr(gympp::Environment)
+%shared_ptr(gympp::gazebo::GazeboWrapper)
 %shared_ptr(gympp::gazebo::IgnitionEnvironment)
 %include "ignition/common/SingletonT.hh"
 %template(GymFactorySingleton) ignition::common::SingletonT<gympp::GymFactory>;
 %include "gympp/Environment.h"
 %include "gympp/gazebo/IgnitionEnvironment.h"
+%include "gympp/gazebo/GazeboWrapper.h"
 
 %ignore gympp::Robot::setdt(const StepSize&);
 %include "gympp/Robot.h"
@@ -74,6 +80,10 @@
 %inline %{
     std::shared_ptr<gympp::gazebo::IgnitionEnvironment> envToIgnEnv(gympp::EnvironmentPtr env) {
         return std::dynamic_pointer_cast<gympp::gazebo::IgnitionEnvironment>(env);
+    }
+    
+    std::shared_ptr<gympp::gazebo::GazeboWrapper> envToGazeboWrapper(gympp::EnvironmentPtr env) {
+        return std::dynamic_pointer_cast<gympp::gazebo::GazeboWrapper>(env);
     }
 %}
 
