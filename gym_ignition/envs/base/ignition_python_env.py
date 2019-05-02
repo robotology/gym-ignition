@@ -3,6 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
+from gym_ignition.utils import logger
 from gympp import RobotSingleton_get, GazeboWrapper, Robot
 
 
@@ -68,9 +69,8 @@ class IgnitionPythonEnv(gym.Env):
             # Create the GazeboWrapper object
             self._gazebo_wrapper = GazeboWrapper(self.update_rate, self.iterations)
 
-            # Set the verbosity. Run the script as optimized (-O) to decrease the verbosity.
-            GazeboWrapper.setVerbosity(2)
-            assert (GazeboWrapper.setVerbosity(4) or True)
+            # Set the verbosity
+            logger.set_level(gym.logger.MIN_LEVEL)
 
             # Configure the robot ignition plugin
             lib_name = "RobotController"

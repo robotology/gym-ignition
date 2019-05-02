@@ -3,11 +3,11 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from gym_ignition import IgnitionPythonEnv
+from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
 
 import gym
 from gym.utils import seeding
-from gym import logger
 import numpy as np
 
 class CartPolePythonEnv(IgnitionPythonEnv):

@@ -9,6 +9,7 @@ from gym.utils import seeding
 # import numpy as np
 from numbers import Number
 from gym_ignition import gympp
+from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
 
 
@@ -61,9 +62,8 @@ class IgnitionEnv(gym.Env):
         self._env = factory.make(md.getEnvironmentName())
         assert self._env, "Failed to create environment " + md.getEnvironmentName()
 
-        # Set the verbosity. Run the script as optimized (-O) to decrease the verbosity.
-        gympp.GazeboWrapper.setVerbosity(2)
-        assert (gympp.GazeboWrapper.setVerbosity(4) or True)
+        # Set the verbosity
+        logger.set_level(gym.logger.MIN_LEVEL)
 
         # Return the gympp environment
         return self._env
