@@ -66,8 +66,8 @@
 %include "ignition/common/SingletonT.hh"
 %template(GymFactorySingleton) ignition::common::SingletonT<gympp::GymFactory>;
 %include "gympp/Environment.h"
-%include "gympp/gazebo/IgnitionEnvironment.h"
 %include "gympp/gazebo/GazeboWrapper.h"
+%include "gympp/gazebo/IgnitionEnvironment.h"
 
 %ignore gympp::Robot::setdt(const StepSize&);
 %include "gympp/Robot.h"
