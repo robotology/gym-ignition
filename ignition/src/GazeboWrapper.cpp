@@ -163,17 +163,25 @@ bool GazeboWrapper::run()
     }
 
     assert(server);
+    assert(server->Paused());
+    assert((server->Running() && server->Paused().value())
+           || (!server->Running() && !server->Paused().value()));
 
     // Handle first iteration
-    if (server->Running()) {
+    if (server->Running() && server->Paused().value()) {
         gymppDebug << "Unpausing the server. Running the first simulation run." << std::endl;
-        server->SetPaused(false);
+        bool ok = server->SetPaused(false);
+        assert(ok);
 
         // Since the server was started in non-blocking mode, we have to wait that this first
         // iteration finishes
         while (server->Running()) {
+            gymppDebug << "Waiting the first simulation run to finish..." << std::endl;
+            assert(!server->Paused().value());
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+
+        gymppDebug << "First run ok" << std::endl;
     }
     // Run regular iteration
     else {
