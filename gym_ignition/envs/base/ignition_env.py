@@ -47,7 +47,7 @@ class IgnitionEnv(gym.Env):
         assert(action_space and observation_space), "Failed to create spaces"
 
     @property
-    def gympp_env(self) -> gympp.GazeboWrapper:
+    def gympp_env(self) -> gympp.IgnitionEnvironment:
         if self._env:
             return self._env
 
@@ -67,6 +67,10 @@ class IgnitionEnv(gym.Env):
 
         # Return the gympp environment
         return self._env
+
+    @property
+    def gazebo(self) -> gympp.GazeboWrapper:
+        return gympp.envToGazeboWrapper(self.gympp_env)
 
     @property
     def action_space(self) -> gym.Space:
