@@ -3,12 +3,13 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from gym.envs.registration import register
-from gym import logger
-from gym_ignition.envs.ignition_env import IgnitionEnv
-
-# Set gym verbosity
-logger.set_level(logger.ERROR)
+from gym_ignition.envs.base.ignition_env import IgnitionEnv
+from gym_ignition.envs.base.ignition_python_env import IgnitionPythonEnv
 
 register(
     id='CartPoleIgnition-v0',
-    entry_point='gym_ignition.envs.cartpole:CartPoleEnv')
+    entry_point='gym_ignition.envs.cpp.cartpole:CartPoleEnv')
+
+register(
+    id='CartPoleIgnitionPython-v0',
+    entry_point='gym_ignition.envs.python.cartpole:CartPolePythonEnv')

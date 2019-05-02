@@ -5,9 +5,10 @@
 import sys
 import gym
 from gym import spaces
-import numpy as np
+from gym.utils import seeding
+# import numpy as np
 from numbers import Number
-from typing import List, Tuple, Union, NewType
+from gym_ignition.utils.typing import *
 
 # Import gympp bindings
 # See https://github.com/robotology/gym-ignition/issues/7
@@ -16,47 +17,106 @@ if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
     sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 import gympp
 
-Action = NewType('Action', Union[float, np.ndarray, np.number])
-Observation = NewType('Observation', np.array)
-Reward = NewType('Reward', float)
-
 
 class IgnitionEnv(gym.Env):
-    """The main gym_ignition class. It encapsulates environments created in c++ with
-    gympp and hides the swig bindings from the gym user, exposing only a regular
-    OpenAI Gym interface.
+    """Class that exposes C++ Ignition environments
 
-    The environments that inherit from this class must implement the _plugin_metadata
-    method. The information that it provides are then enough to load the ignition
-    plugin and insert it in a Gazebo environment.
+    This class encapsulates environments created as C++ plugins. Plugins that implement
+    the provided gympp and ignition interfaces are inherently compatible with this
+    class if they support the C++ factory.
+
+    The users of this class need to implement the following method:
+
+    _plugin_metadata
+
+    The methods inherited from gym.Env are already implemented.
     """
 
     metadata = {'render.modes': ['human']}
 
-    def __init__(self) -> None:
+    def __init__(self):
+        # Private attributes
+        self._env = None
+        self._action_space = None
+        self._observation_space = None
+        self._act_dt = None
+        self._obs_dt = None
+        self._robot = None
 
-        # Get the plugin metadata
-        self.md = self._plugin_metadata()
+        # Seed the environment
+        self.seed()
 
-        # Create the spaces
-        self.action_space, self.act_dt = IgnitionEnv._create_space(
-            self.md.getActionSpaceMetadata())
-        self.observation_space, self.obs_dt = IgnitionEnv._create_space(
-            self.md.getObservationSpaceMetadata())
+        # Trigger the creation of the spaces
+        action_space = self.action_space
+        observation_space = self.observation_space
+        assert(action_space and observation_space), "Failed to create spaces"
+
+    @property
+    def gympp_env(self) -> gympp.GazeboWrapper:
+        if self._env:
+            return self._env
+
+        # Get the metadata
+        md = self._plugin_metadata
 
         # Register the environment
         factory = gympp.GymFactory.Instance()
-        factory.registerPlugin(self.md)
+        factory.registerPlugin(md)
 
         # Load the environment from gympp
-        self.ignenv = factory.make(self.md.getEnvironmentName())
-        assert self.ignenv, "Failed to create environment " + self.md.getEnvironmentName()
+        self._env = factory.make(md.getEnvironmentName())
+        assert self._env, "Failed to create environment " + md.getEnvironmentName()
 
         # Set the verbosity. Run the script as optimized (-O) to decrease the verbosity.
-        gympp.IgnitionEnvironment.setVerbosity(2)
-        assert(gympp.IgnitionEnvironment.setVerbosity(4) or True)
+        gympp.GazeboWrapper.setVerbosity(2)
+        assert (gympp.GazeboWrapper.setVerbosity(4) or True)
 
-    def step(self, action: Action) -> Tuple[Observation, Reward, bool, str]:
+        # Return the gympp environment
+        return self._env
+
+    @property
+    def action_space(self) -> gym.Space:
+        if self._action_space:
+            return self._action_space
+
+        # Create the action space from the metadata
+        md = self._plugin_metadata
+        self._action_space, self._act_dt = self._create_space(md.getActionSpaceMetadata())
+
+        return self._action_space
+
+    @property
+    def observation_space(self) -> gym.Space:
+        if self._observation_space:
+            return self._observation_space
+
+        # Create the action space from the metadata
+        md = self._plugin_metadata
+        self._observation_space, self._obs_dt = self._create_space(
+            md.getObservationSpaceMetadata())
+
+        return self._observation_space
+
+    @property
+    def robot(self) -> gympp.Robot:
+        if self._robot:
+            assert self._robot.valid(), "The Robot object is not valid"
+            return self._robot
+
+        # Get the robot name
+        gazebo_wrapper = gympp.envToGazeboWrapper(self.gympp_env)
+        model_names = gazebo_wrapper.getModelNames()
+        assert len(model_names) == 1, "The environment has more than one model"
+        model_name = model_names[0]
+
+        # Get the pointer to the Robot object
+        self._robot = gympp.RobotSingleton_get().getRobot(model_name)
+        assert self._robot, "Failed to get the Robot object"
+
+        # Return the object
+        return self._robot
+
+    def step(self, action: Action) -> State:
         assert self.action_space.contains(action), "The action does not belong to the action space"
 
         # The bindings do not accept yet numpy types as arguments. We need to covert
@@ -81,44 +141,62 @@ class IgnitionEnv(gym.Env):
             action_list = list(action)
 
         # Create the gympp::Sample object
-        action_buffer = getattr(gympp, 'Vector' + self.act_dt)(action_list)
+        action_buffer = getattr(gympp, 'Vector' + self._act_dt)(action_list)
         action_sample = gympp.Sample(action_buffer)
 
         # Execute the step and get the std::optional<gympp::State> object
-        state_optional = self.ignenv.step(action_sample)
+        state_optional = self.gympp_env.step(action_sample)
         assert state_optional.has_value()
 
         # Get the gympp::State
         state = state_optional.value()
 
         # Get the std::vector buffer of gympp::Observation
-        observation_vector = getattr(state.observation, 'getBuffer' + self.obs_dt)()
+        observation_vector = getattr(state.observation, 'getBuffer' + self._obs_dt)()
         assert observation_vector, "Failed to get the observation buffer"
         assert observation_vector.size() > 0, "The observation does not contain elements"
 
-        # Convert it to a numpy array (this is the only required copy)
-        observation = np.array(observation_vector)
-        assert self.observation_space.contains(observation), "The returned observation does not belong to the space"
+        # Convert the observation to a numpy array (this is the only required copy)
+        if isinstance(self.observation_space, gym.spaces.Box):
+            observation = np.array(observation_vector)
+        elif isinstance(self.observation_space, gym.spaces.Discrete):
+            assert observation_vector.size() == 1, "The buffer has the wrong dimension"
+            observation = observation_vector[0]
+        else:
+            assert False, "Space not supported"
+
+        assert self.observation_space.contains(observation), \
+            "The returned observation does not belong to the space"
+
+        # Create the info dict
+        info = {'gympp': state.info}
 
         # Return the tuple
-        return observation, state.reward, state.done, state.info
+        return State((observation, state.reward, state.done, info))
 
     def reset(self) -> Observation:
         # Get std::optional<gympp::Observation>
-        obs_optional = self.ignenv.reset()
+        obs_optional = self.gympp_env.reset()
         assert obs_optional.has_value(), "The environment didn't return the observation"
 
         # Get gympp::Observation
         gympp_observation = obs_optional.value()
 
         # Get the std::vector buffer of gympp::Observation
-        observation_vector = getattr(gympp_observation, 'getBuffer' + self.obs_dt)()
+        observation_vector = getattr(gympp_observation, 'getBuffer' + self._obs_dt)()
         assert observation_vector, "Failed to get the observation buffer"
         assert observation_vector.size() > 0, "The observation does not contain elements"
 
-        # Convert it to a numpy array (this is the only required copy)
-        observation = np.array(observation_vector)
-        assert self.observation_space.contains(observation), \
+        # Convert the observation to a numpy array (this is the only required copy)
+        if isinstance(self.observation_space, gym.spaces.Box):
+            observation = np.array(observation_vector)
+        elif isinstance(self.observation_space, gym.spaces.Discrete):
+            assert observation_vector.size() == 1, "The buffer has the wrong dimension"
+            observation = observation_vector[0]
+        else:
+            assert False, "Space not supported"
+
+        assert self.observation_space.contains(observation),\
             "The returned observation does not belong to the space"
 
         # Return the list
@@ -126,18 +204,18 @@ class IgnitionEnv(gym.Env):
 
     def render(self, mode: str = 'human') -> None:
         rendermode = {'human': gympp.Environment.RenderMode_HUMAN}
-        ok = self.ignenv.render(rendermode[mode])
+        ok = self.gympp_env.render(rendermode[mode])
         assert ok, "Failed to render environment"
 
     def close(self) -> None:
         return
 
-    def seed(self, seed: int = None) -> List[int]:
-        if seed:
-            assert isinstance(seed, int), "The seed must be a positive integer"
-            assert seed > 0, "The seed must be a positive integer"
-        else:
-            seed = np.random.randint(low=1, high=1000)
+    def seed(self, seed: int = None) -> SeedList:
+        # Create the seed and the random numbers generator
+        np_random, seed = seeding.np_random(seed)
+
+        # Spaces need to be seeded. Apply the same logic contained in gym.seeding.
+        short_seed = seeding._int_list_from_bigint(seeding.hash_seed(seed))
 
         # TODO: it would be nice having the same behavior of the environment
         #       if executed from cpp and python. However, the spaces are
@@ -145,26 +223,26 @@ class IgnitionEnv(gym.Env):
         #       gym.Space objects out of gympp::Space objects.
 
         # Seed the environment
-        vector_seeds = self.ignenv.seed(seed)
-
-        # Seed numpy
-        np.random.seed(seed)
+        vector_seeds = self.gympp_env.seed(short_seed[0])
 
         # Seed the spaces
-        self.action_space.seed(seed)
-        self.observation_space.seed(seed)
+        self.action_space.seed(short_seed)
+        self.observation_space.seed(short_seed)
 
-        return list(vector_seeds)
+        return SeedList(list(vector_seeds))
 
+    @property
     def _plugin_metadata(self) -> gympp.PluginMetadata:
         """Return metadata of the gympp plugin
 
         Loading an environment created with gympp in python requires the knowledge of
         the plugin metadata that implements it. Every environment should implement this
         method.
+
+        Returns:
+            gympp.PluginMetadata: The metadata of the C++ environment plugin
         """
         raise NotImplementedError
-        return gympp.PluginMetadata()
 
     @classmethod
     def _create_space(cls, md: gympp.SpaceMetadata = None) \

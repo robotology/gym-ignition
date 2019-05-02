@@ -22,9 +22,9 @@
 
 #include <cassert>
 #include <chrono>
+#include <map>
 #include <ostream>
 #include <string>
-#include <unordered_map>
 
 using namespace gympp::gazebo;
 
@@ -33,7 +33,16 @@ using JointName = std::string;
 using LinkEntity = ignition::gazebo::Entity;
 using JointEntity = ignition::gazebo::Entity;
 
-const ignition::math::PID DefaultPID(1, 0.1, 0.1, 1, -1, 1000, -1000);
+const ignition::math::PID DefaultPID(1, 0.1, 0.1, 1, -1, 10000, -10000);
+
+struct Buffers
+{
+    struct
+    {
+        gympp::Robot::JointPositions positions;
+        gympp::Robot::JointPositions velocities;
+    } joints;
+};
 
 class IgnitionRobot::Impl
 {
@@ -42,9 +51,11 @@ public:
     ignition::gazebo::Model model;
     std::chrono::duration<double> dt;
 
-    std::unordered_map<LinkName, LinkEntity> links;
-    std::unordered_map<JointName, JointEntity> joints;
-    std::unordered_map<JointName, ignition::math::PID> pids;
+    Buffers buffers;
+
+    std::map<LinkName, LinkEntity> links;
+    std::map<JointName, JointEntity> joints;
+    std::map<JointName, ignition::math::PID> pids;
 
     inline bool jointExists(const JointName& jointName) const
     {
@@ -169,7 +180,7 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
             // Find the entity of the joint in the ecm
             auto jointEntity = pImpl->model.JointByName(ecm, name->Data());
             if (jointEntity == ignition::gazebo::kNullEntity) {
-                gymppDebug << "Failed to find entity for joint '" << name->Data() << "'"
+                gymppError << "Failed to find entity for joint '" << name->Data() << "'"
                            << std::endl;
                 return false;
             }
@@ -199,14 +210,14 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
             return true;
         }
 
-        // Find the entity of the joint in the ecm
+        // Find the entity of the link in the ecm
         auto linkEntity = pImpl->model.LinkByName(ecm, name->Data());
         if (linkEntity == ignition::gazebo::kNullEntity) {
-            gymppDebug << "Failed to find entity for link '" << name->Data() << "'" << std::endl;
-            //            return false;
+            gymppError << "Failed to find entity for link '" << name->Data() << "'" << std::endl;
+            return false;
         }
 
-        // Store the joint entity
+        // Store the link entity
         pImpl->links[name->Data()] = linkEntity;
         return true;
     });
@@ -218,6 +229,10 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
         return false;
     }
 
+    // Initialize the buffers
+    pImpl->buffers.joints.positions.resize(pImpl->joints.size());
+    pImpl->buffers.joints.velocities.resize(pImpl->joints.size());
+
     // Register the robot in the singleton
     if (!RobotSingleton::get().storeRobot(this)) {
         gymppError << "Failed to store the robot in the RobotSingleton" << std::endl;
@@ -228,6 +243,7 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
 }
 
 IgnitionRobot::~IgnitionRobot() = default;
+
 bool IgnitionRobot::valid() const
 {
     // TODO: find the proper logic to check if this object is valid
@@ -268,8 +284,9 @@ gympp::Robot::RobotName IgnitionRobot::name() const
 gympp::Robot::JointNames IgnitionRobot::jointNames() const
 {
     JointNames names;
+    names.reserve(pImpl->joints.size());
 
-    for (const auto& [jointName, jointEntity] : pImpl->joints) {
+    for (const auto& [jointName, _] : pImpl->joints) {
         names.push_back(jointName);
     }
 
@@ -279,10 +296,7 @@ gympp::Robot::JointNames IgnitionRobot::jointNames() const
 double IgnitionRobot::jointPosition(const gympp::Robot::JointName& jointName) const
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
-    if (jointEntity == ignition::gazebo::kNullEntity) {
-        // TODO
-        return {};
-    }
+    assert(jointEntity != ignition::gazebo::kNullEntity);
 
     // Get the joint position component
     auto jointPositionComponent =
@@ -299,10 +313,7 @@ double IgnitionRobot::jointPosition(const gympp::Robot::JointName& jointName) co
 double IgnitionRobot::jointVelocity(const gympp::Robot::JointName& jointName) const
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
-    if (jointEntity == ignition::gazebo::kNullEntity) {
-        // TODO
-        return {};
-    }
+    assert(jointEntity != ignition::gazebo::kNullEntity);
 
     // Get the joint velocity component
     auto jointVelocityComponent =
@@ -318,14 +329,22 @@ double IgnitionRobot::jointVelocity(const gympp::Robot::JointName& jointName) co
 
 gympp::Robot::JointPositions IgnitionRobot::jointPositions() const
 {
-    // TODO
-    return {};
+    size_t i = 0;
+    for (const auto& [jointName, _] : pImpl->joints) {
+        pImpl->buffers.joints.positions[i++] = jointPosition(jointName);
+    }
+
+    return pImpl->buffers.joints.positions;
 }
 
 gympp::Robot::JointVelocities IgnitionRobot::jointVelocities() const
 {
-    // TODO
-    return {};
+    size_t i = 0;
+    for (const auto& [jointName, _] : pImpl->joints) {
+        pImpl->buffers.joints.velocities[i++] = jointVelocity(jointName);
+    }
+
+    return pImpl->buffers.joints.velocities;
 }
 
 gympp::Robot::StepSize IgnitionRobot::dt() const
@@ -335,12 +354,9 @@ gympp::Robot::StepSize IgnitionRobot::dt() const
 
 IgnitionRobot::PID IgnitionRobot::jointPID(const gympp::Robot::JointName& jointName) const
 {
-    if (!pImpl->jointExists(jointName)) {
-        return {};
-        // TODO
-    }
-
+    assert(pImpl->jointExists(jointName));
     assert(pImpl->pidExists(jointName));
+
     auto& pid = pImpl->pids[jointName];
     return PID(pid.PGain(), pid.IGain(), pid.DGain());
 }
@@ -381,8 +397,11 @@ bool IgnitionRobot::setJointPosition(const gympp::Robot::JointName& jointName,
     }
 
     // Get the current joint position
-    // TODO: what if it does not exist? This should return optional.
     double jointPositionCurrent = jointPosition(jointName);
+
+    if (pImpl->dt == std::chrono::duration<double>(0)) {
+        gymppDebug << "The step interval was not configured. The PIDs will not work." << std::endl;
+    }
 
     // Use the position PID to process the reference
     assert(pImpl->pidExists(jointName));
@@ -392,11 +411,27 @@ bool IgnitionRobot::setJointPosition(const gympp::Robot::JointName& jointName,
     return setJointForce(jointName, force);
 }
 
-bool IgnitionRobot::setJointVelocity(const gympp::Robot::JointName& /*jointName*/,
-                                     const double /*jointVelocityReference*/)
+bool IgnitionRobot::setJointVelocity(const gympp::Robot::JointName& jointName,
+                                     const double jointVelocityReference)
 {
-    // TODO
-    return {};
+    JointEntity jointEntity = pImpl->getJointEntity(jointName);
+    if (jointEntity == ignition::gazebo::kNullEntity) {
+        return false;
+    }
+
+    // Get the current joint velocity
+    double jointVelocityCurrent = jointVelocity(jointName);
+
+    if (pImpl->dt == std::chrono::duration<double>(0)) {
+        gymppDebug << "The step interval was not configured. The PIDs will not work." << std::endl;
+    }
+
+    // Use the position PID to process the reference
+    assert(pImpl->pidExists(jointName));
+    auto& pid = pImpl->pids[jointName];
+    double force = pid.Update(jointVelocityCurrent - jointVelocityReference, pImpl->dt);
+
+    return setJointForce(jointName, force);
 }
 
 bool IgnitionRobot::setJointPID(const gympp::Robot::JointName& jointName, const PID& pid)

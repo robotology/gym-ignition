@@ -12,6 +12,7 @@
 #include "gympp/GymFactory.h"
 #include "gympp/Log.h"
 #include "gympp/Metadata.h"
+#include "gympp/Space.h"
 
 class GymppPluginRegistrator_CartPole
 {
