@@ -35,7 +35,7 @@ target_include_directories(EnvironmentCallbacksSingleton PUBLIC
 target_link_libraries(EnvironmentCallbacksSingleton
     PUBLIC
     gympp
-    ignition-gazebo1::core
+    ignition-gazebo2::core
     PRIVATE
     EnvironmentCallbacks)
 
@@ -54,7 +54,7 @@ target_link_libraries(GazeboWrapper
     PRIVATE
     EnvironmentCallbacks
     EnvironmentCallbacksSingleton
-    ignition-gazebo1::core
+    ignition-gazebo2::core
     tiny-process-library)
 
 set_target_properties(GazeboWrapper PROPERTIES
@@ -101,7 +101,7 @@ add_library(RobotSingleton SHARED
 target_link_libraries(RobotSingleton
     PUBLIC
     gympp
-    ignition-gazebo1::core)
+    ignition-gazebo2::core)
 
 set_target_properties(RobotSingleton PROPERTIES
     PUBLIC_HEADER include/gympp/gazebo/RobotSingleton.h)

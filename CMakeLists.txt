@@ -63,8 +63,8 @@ endif()
 # Add the C++ sources subdirectory
 add_subdirectory(gympp)
 
-find_package(ignition-gazebo1 COMPONENTS all)
-if(ignition-gazebo1_FOUND)
+find_package(ignition-gazebo2 COMPONENTS all)
+if(ignition-gazebo2_FOUND)
     add_subdirectory(ignition)
     add_subdirectory(deps)
     add_subdirectory(plugins)

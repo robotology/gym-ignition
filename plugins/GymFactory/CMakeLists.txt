@@ -13,7 +13,7 @@ add_library(GymFactory
 
 target_link_libraries(GymFactory
     PUBLIC gympp
-    PRIVATE IgnitionEnvironment ignition-gazebo1::core)
+    PRIVATE IgnitionEnvironment ignition-gazebo2::core)
 
 set_target_properties(GymFactory PROPERTIES
     PUBLIC_HEADER
