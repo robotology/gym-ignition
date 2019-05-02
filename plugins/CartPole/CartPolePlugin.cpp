@@ -40,7 +40,8 @@ enum ObservationIndex
     PoleVelocity = 3,
 };
 
-const size_t MaxEpisodeLength = 200;
+const double DefaultControllerRate = 1000;
+const size_t MaxEpisodeLength = 20000;
 const double XThreshold = 2.4;
 const double ThetaThresholdDeg = 12;
 const double AppliedForce = 10;
@@ -48,8 +49,8 @@ const double MaxTheta0Rad = 10 * (M_PI / 180.0);
 
 enum CartPoleAction
 {
-    MOVE_RIGHT,
     MOVE_LEFT,
+    MOVE_RIGHT,
     DONT_MOVE,
 };
 
@@ -57,7 +58,6 @@ class CartPole::Impl
 {
 public:
     unsigned seed;
-    bool firstRun = true;
     mutable std::mutex mutex;
 
     size_t iterations;
@@ -90,11 +90,22 @@ void CartPole::Configure(const ignition::gazebo::Entity& entity,
                          ignition::gazebo::EntityComponentManager& ecm,
                          ignition::gazebo::EventManager& /*eventMgr*/)
 {
-    // Create a gympp::IgnitionRobot object from the ecm
+    // Create an IgnitionRobot object from the ecm
     auto ignRobot = std::make_shared<gympp::gazebo::IgnitionRobot>();
     if (!ignRobot->configureECM(entity, sdf, ecm)) {
         gymppError << "Failed to configure the Robot interface" << std::endl;
         return;
+    }
+
+    // Read the optional update_rate option from the sdf
+    if (sdf->HasElement("update_rate")) {
+        double rate = sdf->Get<double>("update_rate");
+        ignRobot->setdt(std::chrono::duration<double>(1 / rate));
+        gymppDebug << "Setting plugin rate " << rate << " Hz" << std::endl;
+    }
+    else {
+        ignRobot->setdt(std::chrono::duration<double>(1 / DefaultControllerRate));
+        gymppDebug << "Setting plugin rate " << DefaultControllerRate << " Hz" << std::endl;
     }
 
     if (!ignRobot->valid()) {
@@ -104,11 +115,6 @@ void CartPole::Configure(const ignition::gazebo::Entity& entity,
 
     // Store a pointer to gympp::Robot
     pImpl->robot = ignRobot;
-
-    // TODO: Right now the gympp::Robot interface is only used inside this plugin.
-    //       Since we want to expose the robot also to python (in order to read and
-    //       modify the state) it can be registered in the RobotSingleton using the
-    //       scoped name.
 
     // Auto-register the environment callbacks
     gymppDebug << "Registering environment callbacks for robot '" << ignRobot->name() << "'"
@@ -127,33 +133,15 @@ void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
 
     assert(pImpl->robot);
 
-    if (pImpl->firstRun) {
-        pImpl->firstRun = false;
-
-        // Initialize the PID
-        if (!pImpl->robot->setJointPID("linear", {10000, 50, 200})) {
-            gymppError << "Failed to set the PID of joint 'linear'" << std::endl;
-            return;
-        }
-
-        // Stop here and run the first simulation step
-        return;
-    }
-
-    // Set the step size
-    if (!pImpl->robot->setdt(info.dt)) {
-        gymppError << "Failed to set the step size" << std::endl;
-        return;
-    }
-
     // Actuate the action
     // ==================
 
     {
-        double appliedForce = 0;
         std::lock_guard lock(pImpl->mutex);
 
         if (pImpl->action) {
+            double appliedForce;
+
             switch (*pImpl->action) {
                 case MOVE_LEFT:
                     appliedForce = AppliedForce;
@@ -162,17 +150,18 @@ void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
                     appliedForce = -AppliedForce;
                     break;
                 case DONT_MOVE:
+                    appliedForce = 0;
                     break;
             }
 
             // Reset the action. This allows to perform multiple simulator iterations for each
             // environment step.
             pImpl->action.reset();
-        }
 
-        if (!pImpl->robot->setJointForce("linear", appliedForce)) {
-            gymppError << "Failed to set the force to joint 'linear'" << std::endl;
-            return;
+            if (!pImpl->robot->setJointForce("linear", appliedForce)) {
+                gymppError << "Failed to set the force to joint 'linear'" << std::endl;
+                return;
+            }
         }
     }
 }
@@ -224,8 +213,8 @@ bool CartPole::reset()
     pImpl->iterations = 0;
 
     // Joint positions
-    auto x0 = 0.0;
-    auto v0 = 0.0;
+    double x0 = 0.0;
+    double v0 = 0.0;
     auto theta0 = pImpl->getRandomThetaInRad();
 
     // Set the random pole angle
@@ -239,9 +228,6 @@ bool CartPole::reset()
         gymppError << "Failed to reset the position of joint 'linear'" << std::endl;
         return false;
     }
-
-    // Notify that the next iteration is equivalent to the first run
-    pImpl->firstRun = true;
 
     {
         // Update the observation. This is required because the Environment::reset()
