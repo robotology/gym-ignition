@@ -29,6 +29,7 @@ namespace gympp {
 
 class gympp::plugins::RobotController final
     : public ignition::gazebo::System
+    , public ignition::gazebo::ISystemPreUpdate
     , public ignition::gazebo::ISystemConfigure
     , public gympp::gazebo::EnvironmentCallbacks
 {
@@ -44,6 +45,9 @@ public:
                    const std::shared_ptr<const sdf::Element>& sdf,
                    ignition::gazebo::EntityComponentManager& ecm,
                    ignition::gazebo::EventManager& eventMgr) override;
+
+    void PreUpdate(const ignition::gazebo::UpdateInfo& info,
+                   ignition::gazebo::EntityComponentManager& ecm) override;
 
     bool isDone() override;
     bool reset() override;
