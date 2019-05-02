@@ -8,14 +8,8 @@ from gym import spaces
 from gym.utils import seeding
 # import numpy as np
 from numbers import Number
+from gym_ignition import gympp
 from gym_ignition.utils.typing import *
-
-# Import gympp bindings
-# See https://github.com/robotology/gym-ignition/issues/7
-if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
-    import ctypes
-    sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
-import gympp
 
 
 class IgnitionEnv(gym.Env):
