@@ -105,6 +105,9 @@ private:
     std::string modelFileName;
     std::string worldFileName;
 
+    size_t gazeboUpdateRate;
+    size_t environmentUpdateRate;
+
     SpaceMetadata actionSpace;
     SpaceMetadata observationSpace;
 
@@ -114,6 +117,8 @@ public:
     inline std::string getClassName() const { return className; }
     inline std::string getModelFileName() const { return modelFileName; }
     inline std::string getWorldFileName() const { return worldFileName; }
+    inline size_t getGazeboUpdateRate() const { return gazeboUpdateRate; }
+    inline size_t getEnvironmentUpdateRate() const { return environmentUpdateRate; }
     inline SpaceMetadata getActionSpaceMetadata() const { return actionSpace; }
     inline SpaceMetadata getObservationSpaceMetadata() const { return observationSpace; }
 
@@ -143,6 +148,16 @@ public:
         this->worldFileName = worldFileName;
     }
 
+    inline void setGazeboUpdateRate(const size_t gazeboUpdateRate)
+    {
+        this->gazeboUpdateRate = gazeboUpdateRate;
+    }
+
+    inline void setEnvironmentUpdateRate(const size_t environmentUpdateRate)
+    {
+        this->environmentUpdateRate = environmentUpdateRate;
+    }
+
     bool isValid() const
     {
         bool ok = true;
@@ -153,6 +168,8 @@ public:
         ok = ok && !worldFileName.empty();
         ok = ok && actionSpace.isValid();
         ok = ok && observationSpace.isValid();
+        ok = ok && (gazeboUpdateRate != 0);
+        ok = ok && (environmentUpdateRate != 0);
         return ok;
     }
 };
