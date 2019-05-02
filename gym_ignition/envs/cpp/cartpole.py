@@ -22,6 +22,8 @@ class CartPoleEnv(IgnitionEnv):
         md.setClassName("gympp::plugins::CartPole")
         md.setWorldFileName("CartPole.world")
         md.setModelFileName("CartPole/CartPole.sdf")
+        md.setGazeboUpdateRate(1000000000)
+        md.setEnvironmentUpdateRate(int(md.getGazeboUpdateRate() / 10))
 
         # Configure the action space
         action_space_md = SpaceMetadata()
@@ -40,4 +42,5 @@ class CartPoleEnv(IgnitionEnv):
         md.setObservationSpaceMetadata(observation_space_md)
 
         # Return the metadata
+        assert md.isValid(), "The plugin metadata object is not valid"
         return md
