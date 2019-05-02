@@ -137,4 +137,4 @@ class CartPolePythonEnv(IgnitionPythonEnv):
         return "CartPole/CartPole.sdf"
 
     def _get_world_sdf(self) -> str:
-        return "CartPole.world"
+        return "DefaultEmptyWorld.world"

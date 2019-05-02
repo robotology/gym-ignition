@@ -27,7 +27,7 @@ public:
         cartPoleMetadata.setLibraryName("CartPolePlugin");
         cartPoleMetadata.setClassName("gympp::plugins::CartPole");
         cartPoleMetadata.setModelFileName("CartPole/CartPole.sdf");
-        cartPoleMetadata.setWorldFileName("CartPole.world");
+        cartPoleMetadata.setWorldFileName("DefaultEmptyWorld.world");
 
         gympp::SpaceMetadata actionSpaceMetadata;
         actionSpaceMetadata.setDimensions({3});

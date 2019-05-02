@@ -68,16 +68,6 @@
         <iterations>true</iterations>
         <topic>/world/default/stats</topic>
       </plugin>
-
-      <!-- Grid 3D -->
-<!--      <plugin filename='Grid3D' name='3D Grid'>
-        <ignition-gui>
-          <title>3D Grid</title>
-        </ignition-gui>
-        <engine>ogre</engine>
-        <scene></scene>
-        <auto_close>true</auto_close>
-      </plugin>-->
     </gui>
 
     <model name='ground_plane'>
@@ -114,11 +104,6 @@
         </visual>
       </link>
     </model>
-
-    <include>
-      <pose>0 0 0 0 0 0</pose>
-      <uri>CartPole</uri>
-    </include>
 
   </world>
 </sdf>
