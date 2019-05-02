@@ -74,6 +74,7 @@ std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
         // The GUI needs the server already up. Warming up the first iteration and pausing the
         // server. It will be unpaused at the step() call.
         gymppDebug << "Starting the server as paused" << std::endl;
+        gymppDebug << "Running " << gazebo.numOfIterations << " iterations every step" << std::endl;
         if (!gazebo.server->Run(/*blocking=*/false, gazebo.numOfIterations, /*paused=*/true)) {
             gymppError << "Failed to warm up the gazebo server in paused state" << std::endl;
             return nullptr;
@@ -115,7 +116,7 @@ bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Ro
     return true;
 }
 
-GazeboWrapper::GazeboWrapper(double updateRate, uint64_t iterations)
+GazeboWrapper::GazeboWrapper(size_t updateRate, uint64_t iterations)
     : pImpl{new GazeboWrapper::Impl, [](Impl* impl) { delete impl; }}
 {
     // Assign an unique id to the object
@@ -315,7 +316,9 @@ bool GazeboWrapper::setupGazeboWorld(const std::string& worldFile)
     return true;
 }
 
-bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName, const std::string& className)
+bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName,
+                                        const std::string& className,
+                                        size_t updateRate)
 {
     assert(!pImpl->scopedModelName.empty());
 
@@ -324,10 +327,30 @@ bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName, const std::s
     sdf->AddAttribute("name", "string", className, true);
     sdf->AddAttribute("filename", "string", libName, true);
 
+    // Set the update rate of the plugin. By default the update rate of the physic engine is used.
+    if (updateRate != 0.0) {
+        // Rate of the agent
+        auto element = std::make_shared<sdf::Element>();
+        element->SetName("update_rate");
+        element->AddValue("double", std::to_string(updateRate), true);
+        sdf->InsertElement(element);
+    }
+
     ignition::gazebo::ServerConfig::PluginInfo pluginInfo{
         pImpl->scopedModelName, "model", libName, className, sdf};
 
     pImpl->gazebo.config.AddPlugin(pluginInfo);
+
+    // Update the number of iterations accordingly to the simulation step and plugin update rate
+    assert(pImpl->gazebo.config.UpdateRate());
+    pImpl->gazebo.numOfIterations =
+        static_cast<size_t>(pImpl->gazebo.config.UpdateRate().value() / updateRate);
+
+    if ((static_cast<size_t>(pImpl->gazebo.config.UpdateRate().value()) % updateRate) != 0) {
+        gymppWarning << "Rounding the number of iterations to " << pImpl->gazebo.numOfIterations
+                     << " from the nominal "
+                     << pImpl->gazebo.config.UpdateRate().value() / updateRate << std::endl;
+    }
 
     return true;
 }
