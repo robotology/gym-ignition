@@ -20,9 +20,15 @@ class CartPolePythonEnv(IgnitionPythonEnv):
         self._force_mag = 10
         self._steps_beyond_done = None
 
+        # Configure the simulation
+        self.agent_rate = 1000
+        self.physics_rate = 2000
+        self._joint_controller_dt = 1 / self.agent_rate
+
         # Configure action space
         self.action_space = gym.spaces.Discrete(2)
 
+        # Variables limits
         self._x_threshold = 2.4
         self._theta_threshold_radians = 12 * 2 * np.pi / 360
 
