@@ -528,9 +528,17 @@ bool IgnitionRobot::setJointVelocity(const gympp::Robot::JointName& jointName,
 
 bool IgnitionRobot::setJointPID(const gympp::Robot::JointName& jointName, const PID& pid)
 {
-    if (!pImpl->pidExists(jointName)) {
-        gymppError << "Joint name '" << jointName << "' is not a controlled joint" << std::endl;
+    JointEntity jointEntity = pImpl->getJointEntity(jointName);
+    if (jointEntity == ignition::gazebo::kNullEntity) {
         return false;
+    }
+
+    if (!pImpl->pidExists(jointName)) {
+        gymppDebug << "Creating new PID for joint " << jointName << std::endl;
+        pImpl->pids[jointName] = DefaultPID;
+    }
+    else {
+        pImpl->pids[jointName].Reset();
     }
 
     // Update the gains. The other PID parameters do not change.
