@@ -489,10 +489,16 @@ bool IgnitionRobot::setJointPosition(const gympp::Robot::JointName& jointName,
     }
 
     // Reset the position
-    auto& jointPosComponent =
+    auto& jointPosResetComponent =
         pImpl->getOrCreateComponent<ignition::gazebo::components::JointPositionReset>(jointEntity);
 
-    jointPosComponent = ignition::gazebo::components::JointPositionReset({jointPosition});
+    jointPosResetComponent = ignition::gazebo::components::JointPositionReset({jointPosition});
+
+    // Store the new position in the ECM
+    auto& jointPosComponent =
+        pImpl->getOrCreateComponent<ignition::gazebo::components::JointPosition>(jointEntity);
+
+    jointPosComponent = ignition::gazebo::components::JointPosition({jointPosition});
 
     return true;
 }
@@ -510,6 +516,12 @@ bool IgnitionRobot::setJointVelocity(const gympp::Robot::JointName& jointName,
         pImpl->getOrCreateComponent<ignition::gazebo::components::JointVelocityReset>(jointEntity);
 
     jointPosComponent = ignition::gazebo::components::JointVelocityReset({jointVelocity});
+
+    // Store the new velocity in the ECM
+    auto& jointVelComponent =
+        pImpl->getOrCreateComponent<ignition::gazebo::components::JointVelocity>(jointEntity);
+
+    jointVelComponent = ignition::gazebo::components::JointVelocity(jointVelocity);
 
     return true;
 }
