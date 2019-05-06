@@ -7,7 +7,6 @@ from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
 
 import gym
-from gym.utils import seeding
 import numpy as np
 
 class CartPolePythonEnv(IgnitionPythonEnv):
@@ -16,7 +15,6 @@ class CartPolePythonEnv(IgnitionPythonEnv):
         super().__init__()
 
         # Private attributes
-        self._np_random = None
         self._force_mag = 10
         self._steps_beyond_done = None
 
@@ -119,19 +117,6 @@ class CartPolePythonEnv(IgnitionPythonEnv):
         self._steps_beyond_done = None
 
         return Observation(np.array(new_state))
-
-    def seed(self, seed: int = None) -> SeedList:
-        # Generate the rng
-        self._np_random, seed = seeding.np_random(seed)
-
-        # Spaces need to be seeded. Apply the same logic contained in gym.seeding.
-        short_seed = seeding._int_list_from_bigint(seeding.hash_seed(seed))
-
-        # Seed the spaces
-        self.action_space.seed(short_seed)
-        self.observation_space.seed(short_seed)
-
-        return SeedList([seed])
 
     def _get_model_sdf(self) -> str:
         return "CartPole/CartPole.sdf"

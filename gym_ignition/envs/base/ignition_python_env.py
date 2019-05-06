@@ -4,6 +4,7 @@
 
 import gym
 from gym_ignition.utils import logger
+from gym_ignition.utils.typing import *
 from gympp import RobotSingleton_get, GazeboWrapper, Robot
 
 
@@ -37,6 +38,7 @@ class IgnitionPythonEnv(gym.Env):
         self._iterations = None
         self._joint_controller_dt = None
         self._physics_rate = 1000000000.0
+        self._np_random = None
 
         # Initialize default values
         self.agent_rate = self._physics_rate / 10
@@ -151,6 +153,20 @@ class IgnitionPythonEnv(gym.Env):
 
     def close(self) -> None:
         self.gazebo.close()
+
+    def seed(self, seed: int = None) -> SeedList:
+        if not seed:
+            seed = np.random.randint(2**32 - 1)
+
+        # Seed numpy
+        self._np_random = np.random
+        self._np_random.seed(seed)
+
+        # Seed the spaces
+        self.action_space.seed(seed)
+        self.observation_space.seed(seed)
+
+        return SeedList([seed])
 
     def _get_model_sdf(self) -> str:
         """Get the name of the sdf file containing the gazebo model

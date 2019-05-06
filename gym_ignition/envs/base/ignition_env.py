@@ -5,8 +5,6 @@
 import sys
 import gym
 from gym import spaces
-from gym.utils import seeding
-# import numpy as np
 from numbers import Number
 from gym_ignition import gympp
 from gym_ignition.utils import logger
@@ -37,6 +35,7 @@ class IgnitionEnv(gym.Env):
         self._act_dt = None
         self._obs_dt = None
         self._robot = None
+        self._np_random = None
 
         # Seed the environment
         self.seed()
@@ -209,23 +208,19 @@ class IgnitionEnv(gym.Env):
         return
 
     def seed(self, seed: int = None) -> SeedList:
-        # Create the seed and the random numbers generator
-        np_random, seed = seeding.np_random(seed)
+        if not seed:
+            seed = np.random.randint(2**32 - 1)
 
-        # Spaces need to be seeded. Apply the same logic contained in gym.seeding.
-        short_seed = seeding._int_list_from_bigint(seeding.hash_seed(seed))
-
-        # TODO: it would be nice having the same behavior of the environment
-        #       if executed from cpp and python. However, the spaces are
-        #       different. We can obtain this only if we manage to map
-        #       gym.Space objects out of gympp::Space objects.
+        # Seed numpy
+        self._np_random = np.random
+        self._np_random.seed(seed)
 
         # Seed the environment
-        vector_seeds = self.gympp_env.seed(short_seed[0])
+        vector_seeds = self.gympp_env.seed(seed)
 
         # Seed the spaces
-        self.action_space.seed(short_seed)
-        self.observation_space.seed(short_seed)
+        self.action_space.seed(seed)
+        self.observation_space.seed(seed)
 
         return SeedList(list(vector_seeds))
 
