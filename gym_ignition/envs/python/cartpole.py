@@ -19,9 +19,9 @@ class CartPolePythonEnv(IgnitionPythonEnv):
         self._steps_beyond_done = None
 
         # Configure the simulation
-        self.agent_rate = 1000
+        self.agent_rate = 100
         self.physics_rate = 2000
-        self._joint_controller_dt = 1 / self.agent_rate
+        self._joint_controller_rate = self.agent_rate
 
         # Configure action space
         self.action_space = gym.spaces.Discrete(2)

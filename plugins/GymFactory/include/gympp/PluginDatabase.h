@@ -47,8 +47,8 @@ public:
         cartPoleMetadata.setActionSpaceMetadata(actionSpaceMetadata);
         cartPoleMetadata.setObservationSpaceMetadata(observationSpaceMetadata);
 
-        cartPoleMetadata.setGazeboUpdateRate(1000000000);
-        cartPoleMetadata.setEnvironmentUpdateRate(cartPoleMetadata.getGazeboUpdateRate() / 10);
+        cartPoleMetadata.setGazeboUpdateRate(1000);
+        cartPoleMetadata.setEnvironmentUpdateRate(100);
 
         factory->registerPlugin(cartPoleMetadata);
     }

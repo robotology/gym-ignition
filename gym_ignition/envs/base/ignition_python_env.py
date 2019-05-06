@@ -36,13 +36,15 @@ class IgnitionPythonEnv(gym.Env):
         self._model_sdf = None
         self._world_sdf = None
         self._iterations = None
-        self._joint_controller_dt = None
-        self._physics_rate = 1000000000.0
+        self._joint_controller_rate = None
+        self._physics_rate = None
         self._np_random = None
 
         # Initialize default values
-        self.agent_rate = self._physics_rate / 10
-        self._joint_controller_dt = 1 / self.agent_rate
+        self._physics_rate = 10000.0
+        self._joint_controller_rate = 1000
+
+        self.agent_rate = 100
 
     @property
     def physics_rate(self) -> float:
@@ -73,8 +75,7 @@ class IgnitionPythonEnv(gym.Env):
             # Create the GazeboWrapper object
             logger.debug("Starting gazebo with {} Hz and {} iterations".format(
                 self.physics_rate, self._iterations))
-            self._gazebo_wrapper = GazeboWrapper(int(self.physics_rate),
-                                                 int(self._iterations))
+            self._gazebo_wrapper = GazeboWrapper(self.physics_rate, int(self._iterations))
 
             # Set the verbosity
             logger.set_level(gym.logger.MIN_LEVEL)
@@ -97,7 +98,7 @@ class IgnitionPythonEnv(gym.Env):
 
             # Initialize the plugin
             wrapper_ok = self._gazebo_wrapper.setupIgnitionPlugin(lib_name, class_name,
-                                                                  int(self.agent_rate))
+                                                                  self.agent_rate)
             assert wrapper_ok, "Failed to setup the ignition plugin"
 
             # Initialize the ignition gazebo wrapper
@@ -115,7 +116,7 @@ class IgnitionPythonEnv(gym.Env):
     @property
     def robot(self) -> Robot:
         if self._robot:
-            assert(self._robot.dt() == self._joint_controller_dt)
+            assert(self._robot.dt() == (1 / self._joint_controller_rate))
             return self._robot
 
         # Get the robot name
@@ -130,7 +131,7 @@ class IgnitionPythonEnv(gym.Env):
         assert self._robot.valid(), "The Robot object is not valid"
 
         # Set the default update rate
-        self._robot.setdt(self._joint_controller_dt)
+        self._robot.setdt(1 / self._joint_controller_rate)
 
         # Return the robot object
         return self._robot

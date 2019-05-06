@@ -22,8 +22,8 @@ class CartPoleEnv(IgnitionEnv):
         md.setClassName("gympp::plugins::CartPole")
         md.setWorldFileName("DefaultEmptyWorld.world")
         md.setModelFileName("CartPole/CartPole.sdf")
-        md.setGazeboUpdateRate(1000000000)
-        md.setEnvironmentUpdateRate(md.getGazeboUpdateRate() / 10)
+        md.setGazeboUpdateRate(1000)      # Rate of physics
+        md.setEnvironmentUpdateRate(100)  # Rate of environment and joint controller
 
         # Configure the action space
         action_space_md = SpaceMetadata()

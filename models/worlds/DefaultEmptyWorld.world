@@ -9,6 +9,11 @@
     <plugin filename='libignition-gazebo-user-commands-system.so' name='ignition::gazebo::systems::UserCommands'>
     </plugin>
 
+    <physics default="true" type="dart">
+        <!-- Run the simulation at max speed -->
+        <real_time_factor>100</real_time_factor>
+    </physics>
+
     <gui fullscreen='0'>
       <!-- 3D scene -->
       <plugin filename='Scene3D' name='3D View'>
