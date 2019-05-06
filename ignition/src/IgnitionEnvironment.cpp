@@ -128,8 +128,6 @@ gympp::EnvironmentPtr IgnitionEnvironment::env()
 
 std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
 {
-    gymppDebug << "Resetting the environment" << std::endl;
-
     // Check if the gazebo server is running. It reset() is executed as first method,
     // the server is initialized lazily.
     if (!GazeboWrapper::initialize()) {

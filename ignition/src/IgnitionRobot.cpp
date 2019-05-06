@@ -215,7 +215,6 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
 
             // Create the joint position and velocity components.
             // In this way this data is stored in these components after the physics step.
-            gymppWarning << "Creating pos" << std::endl;
             ecm.CreateComponent(entity, ignition::gazebo::components::JointPosition());
             ecm.CreateComponent(entity, ignition::gazebo::components::JointVelocity());
 
