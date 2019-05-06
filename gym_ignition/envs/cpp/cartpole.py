@@ -23,7 +23,7 @@ class CartPoleEnv(IgnitionEnv):
         md.setWorldFileName("DefaultEmptyWorld.world")
         md.setModelFileName("CartPole/CartPole.sdf")
         md.setGazeboUpdateRate(1000000000)
-        md.setEnvironmentUpdateRate(int(md.getGazeboUpdateRate() / 10))
+        md.setEnvironmentUpdateRate(md.getGazeboUpdateRate() / 10)
 
         # Configure the action space
         action_space_md = SpaceMetadata()

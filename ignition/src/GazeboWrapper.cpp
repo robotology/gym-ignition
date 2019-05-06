@@ -116,7 +116,7 @@ bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Ro
     return true;
 }
 
-GazeboWrapper::GazeboWrapper(size_t updateRate, uint64_t iterations)
+GazeboWrapper::GazeboWrapper(double updateRate, uint64_t iterations)
     : pImpl{new GazeboWrapper::Impl, [](Impl* impl) { delete impl; }}
 {
     // Assign an unique id to the object
@@ -326,7 +326,7 @@ bool GazeboWrapper::setupGazeboWorld(const std::string& worldFile)
 
 bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName,
                                         const std::string& className,
-                                        size_t updateRate)
+                                        double updateRate)
 {
     assert(!pImpl->scopedModelName.empty());
 
@@ -351,10 +351,10 @@ bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName,
 
     // Update the number of iterations accordingly to the simulation step and plugin update rate
     assert(pImpl->gazebo.config.UpdateRate());
-    pImpl->gazebo.numOfIterations =
-        static_cast<size_t>(pImpl->gazebo.config.UpdateRate().value() / updateRate);
+    double rateRatio = pImpl->gazebo.config.UpdateRate().value() / updateRate;
+    pImpl->gazebo.numOfIterations = static_cast<size_t>(rateRatio);
 
-    if ((static_cast<size_t>(pImpl->gazebo.config.UpdateRate().value()) % updateRate) != 0) {
+    if (rateRatio != static_cast<size_t>(rateRatio)) {
         gymppWarning << "Rounding the number of iterations to " << pImpl->gazebo.numOfIterations
                      << " from the nominal "
                      << pImpl->gazebo.config.UpdateRate().value() / updateRate << std::endl;
