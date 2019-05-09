@@ -35,7 +35,6 @@ private:
     std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
 
 public:
-    static size_t EnvironmentId;
     using SdfModelName = std::string;
 
     GazeboWrapper() = delete;
