@@ -40,7 +40,7 @@ private:
 
 public:
     CartPole();
-    ~CartPole() override = default;
+    ~CartPole() override;
 
     void Configure(const ignition::gazebo::Entity& entity,
                    const std::shared_ptr<const sdf::Element>& sdf,
