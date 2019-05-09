@@ -6,8 +6,8 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_ROBOT_ROBOTSINGLETON_H
-#define GYMPP_ROBOT_ROBOTSINGLETON_H
+#ifndef GYMPP_GAZEBO_ROBOTSINGLETON_H
+#define GYMPP_GAZEBO_ROBOTSINGLETON_H
 
 #include "gympp/Robot.h"
 

@@ -6,8 +6,8 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_ROBOT_IGNITIONROBOT_H
-#define GYMPP_ROBOT_IGNITIONROBOT_H
+#ifndef GYMPP_GAZEBO_IGNITIONROBOT_H
+#define GYMPP_GAZEBO_IGNITIONROBOT_H
 
 #include "gympp/Robot.h"
 
@@ -79,4 +79,4 @@ public:
     bool update(const std::chrono::duration<double> time) override;
 };
 
-#endif // GYMPP_ROBOT_IGNITIONROBOT_H
+#endif // GYMPP_GAZEBO_IGNITIONROBOT_H

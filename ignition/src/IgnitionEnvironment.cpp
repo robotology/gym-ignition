@@ -32,7 +32,7 @@ public:
 EnvironmentCallbacks* IgnitionEnvironment::envCallbacks()
 {
     if (!pImpl->cb) {
-        auto ecSingleton = EnvironmentCallbacksSingleton::Instance();
+        auto* ecSingleton = EnvironmentCallbacksSingleton::Instance();
         auto modelNames = getModelNames();
         assert(modelNames.size() == 1);
         std::string scopedModelName = modelNames.front();
