@@ -68,6 +68,8 @@ struct Buffers
 class IgnitionRobot::Impl
 {
 public:
+    std::string name;
+
     ignition::gazebo::EntityComponentManager* ecm = nullptr;
     ignition::gazebo::Model model;
 
@@ -264,6 +266,10 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
         return false;
     }
 
+    // Store the name of the robot. In this way we don't have to access the ECM for that.
+    // It is useful because this information might be used after the deletion of the ECM.
+    pImpl->name = pImpl->model.Name(ecm);
+
     // Initialize the buffers
     pImpl->buffers.joints.positions.resize(pImpl->joints.size());
     pImpl->buffers.joints.velocities.resize(pImpl->joints.size());
@@ -302,8 +308,7 @@ bool IgnitionRobot::valid() const
 
 gympp::Robot::RobotName IgnitionRobot::name() const
 {
-    assert(pImpl->ecm);
-    return pImpl->model.Name(*pImpl->ecm);
+    return pImpl->name;
 }
 
 gympp::Robot::JointNames IgnitionRobot::jointNames() const
