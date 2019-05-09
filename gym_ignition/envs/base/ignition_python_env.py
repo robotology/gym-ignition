@@ -71,52 +71,56 @@ class IgnitionPythonEnv(gym.Env):
 
     @property
     def gazebo(self) -> GazeboWrapper:
-        if not self._gazebo_wrapper:
-            # Create the GazeboWrapper object
-            logger.debug("Starting gazebo with {} Hz and {} iterations".format(
-                self.physics_rate, self._iterations))
-            self._gazebo_wrapper = GazeboWrapper(self.physics_rate, int(self._iterations))
+        if self._gazebo_wrapper:
+            assert self._gazebo_wrapper.getNumberOfIterations() == self._iterations, \
+                "Number of iterations modified after gazebo started"
 
-            # Set the verbosity
-            logger.set_level(gym.logger.MIN_LEVEL)
+            assert self._gazebo_wrapper.getUpdateRate() == self.physics_rate, \
+                "Update rate modified after gazebo started"
 
-            # Configure the robot ignition plugin
-            lib_name = "RobotController"
-            class_name = "gympp::plugins::RobotController"
+            return self._gazebo_wrapper
 
-            # Get the model and the world from the implementation of this class
-            self._model_sdf = self._get_model_sdf()
-            self._world_sdf = self._get_world_sdf()
+        # Create the GazeboWrapper object
+        logger.debug("Starting gazebo with {} Hz and {} iterations".format(
+            self.physics_rate, self._iterations))
+        self._gazebo_wrapper = GazeboWrapper(self.physics_rate, int(self._iterations))
 
-            # Initialize the world
-            world_ok = self._gazebo_wrapper.setupGazeboWorld(self._world_sdf)
-            assert world_ok, "Failed to initialize the gazebo world"
+        # Set the verbosity
+        logger.set_level(gym.logger.MIN_LEVEL)
 
-            # Initialize the model
-            model_ok = self._gazebo_wrapper.setupGazeboModel(self._model_sdf)
-            assert model_ok, "Failed to initialize the gazebo model"
+        # Configure the robot ignition plugin
+        lib_name = "RobotController"
+        class_name = "gympp::plugins::RobotController"
 
-            # Initialize the plugin
-            wrapper_ok = self._gazebo_wrapper.setupIgnitionPlugin(lib_name, class_name,
-                                                                  self.agent_rate)
-            assert wrapper_ok, "Failed to setup the ignition plugin"
+        # Get the model and the world from the implementation of this class
+        self._model_sdf = self._get_model_sdf()
+        self._world_sdf = self._get_world_sdf()
 
-            # Initialize the ignition gazebo wrapper
-            gazebo_initialized = self._gazebo_wrapper.initialize()
-            assert gazebo_initialized, "Failed to initialize ignition gazebo"
+        # Initialize the world
+        world_ok = self._gazebo_wrapper.setupGazeboWorld(self._world_sdf)
+        assert world_ok, "Failed to initialize the gazebo world"
 
-        assert self._gazebo_wrapper.getNumberOfIterations() == self._iterations, \
-            "Number of iterations modified after gazebo started"
+        # Initialize the model
+        model_ok = self._gazebo_wrapper.setupGazeboModel(self._model_sdf)
+        assert model_ok, "Failed to initialize the gazebo model"
 
-        assert self._gazebo_wrapper.getUpdateRate() == self.physics_rate, \
-            "Update rate modified after gazebo started"
+        # Initialize the plugin
+        wrapper_ok = self._gazebo_wrapper.setupIgnitionPlugin(lib_name, class_name,
+                                                              self.agent_rate)
+        assert wrapper_ok, "Failed to setup the ignition plugin"
+
+        # Initialize the ignition gazebo wrapper
+        gazebo_initialized = self._gazebo_wrapper.initialize() # TODO
+        assert gazebo_initialized, "Failed to initialize ignition gazebo"
 
         return self._gazebo_wrapper
 
     @property
     def robot(self) -> Robot:
         if self._robot:
-            assert(self._robot.dt() == (1 / self._joint_controller_rate))
+            assert self._robot.dt() == (1 / self._joint_controller_rate), \
+                "The controller period does not match with the configured period"
+            assert self._robot.valid(), "The robot object is not valid"
             return self._robot
 
         # Get the robot name

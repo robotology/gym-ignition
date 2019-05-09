@@ -9,6 +9,7 @@ from gym_ignition.utils.typing import *
 import gym
 import numpy as np
 
+
 class CartPolePythonEnv(IgnitionPythonEnv):
     def __init__(self):
         # Initialize base class
