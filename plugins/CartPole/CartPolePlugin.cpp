@@ -129,9 +129,14 @@ void CartPole::Configure(const ignition::gazebo::Entity& entity,
     // Auto-register the environment callbacks
     gymppDebug << "Registering environment callbacks for robot '" << ignRobot->name() << "'"
                << std::endl;
-    auto ecSingleton = EnvironmentCallbacksSingleton::Instance();
-    bool registered = ecSingleton->storeEnvironmentCallback(ignRobot->name(), this);
-    assert(registered);
+    auto* ecSingleton = EnvironmentCallbacksSingleton::Instance();
+
+    if (bool registered = ecSingleton->storeEnvironmentCallback(ignRobot->name(), this);
+        !registered) {
+        gymppError << "Failed to register the environment callbacks";
+        assert(registered);
+        return;
+    }
 }
 
 void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
