@@ -168,7 +168,14 @@ IgnitionRobot::IgnitionRobot()
     : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {}
 
-IgnitionRobot::~IgnitionRobot() = default;
+IgnitionRobot::~IgnitionRobot()
+{
+    // Remove the robot from the singleton
+    if (bool removed = RobotSingleton::get().deleteRobot(name()); !removed) {
+        gymppError << "Failed to store the robot in the RobotSingleton" << std::endl;
+        assert(removed);
+    }
+};
 
 bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
                                  const std::shared_ptr<const sdf::Element>& sdf,
