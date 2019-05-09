@@ -47,6 +47,12 @@ enum class ControlType
     Velocity
 };
 
+struct PIDData
+{
+    ControlType type;
+    ignition::math::PID pid;
+};
+
 struct Buffers
 {
     struct
@@ -55,7 +61,7 @@ struct Buffers
         gympp::Robot::JointVelocities velocities;
         std::map<JointName, double> references;
         std::map<JointName, double> appliedForces;
-        std::map<JointName, ControlType> controlType;
+        std::map<JointName, PIDData> pidData;
     } joints;
 };
 
@@ -72,7 +78,6 @@ public:
 
     std::map<LinkName, LinkEntity> links;
     std::map<JointName, JointEntity> joints;
-    std::map<JointName, ignition::math::PID> pids;
 
     inline bool jointExists(const JointName& jointName) const
     {
@@ -81,7 +86,7 @@ public:
 
     inline bool pidExists(const JointName& jointName) const
     {
-        return pids.find(jointName) != pids.end();
+        return buffers.joints.pidData.find(jointName) != buffers.joints.pidData.end();
     }
 
     inline bool linkExists(const LinkName& linkName) const
@@ -136,14 +141,14 @@ JointEntity IgnitionRobot::Impl::getJointEntity(const JointName& jointName)
         return ignition::gazebo::kNullEntity;
     }
 
-    // Return the link entity
+    // Return the joint entity
     return joints[jointName];
 }
 
 template <typename ComponentTypeT>
 ComponentTypeT& IgnitionRobot::Impl::getOrCreateComponent(const ignition::gazebo::Entity entity)
 {
-    auto component = ecm->Component<ComponentTypeT>(entity);
+    auto* component = ecm->Component<ComponentTypeT>(entity);
 
     if (!component) {
         ecm->CreateComponent(entity, ComponentTypeT());
@@ -284,10 +289,6 @@ bool IgnitionRobot::valid() const
         return false;
     }
 
-    if (pImpl->pids.size() != pImpl->buffers.joints.controlType.size()) {
-        return false;
-    }
-
     if (pImpl->links.size() == 0) {
         return false;
     }
@@ -351,15 +352,18 @@ double IgnitionRobot::jointVelocity(const gympp::Robot::JointName& jointName) co
         pImpl->ecm->Component<ignition::gazebo::components::JointVelocity>(jointEntity);
 
     if (!jointVelocityComponent) {
-        gymppError << "Velocity for joint '" << jointName
-                   << "' not found in the ecm. Component not initialized." << std::endl;
+        gymppError << "Velocity for joint '" << jointName << "' not found in the ecm" << std::endl;
         return {};
     }
 
-    // TODO: As soon as also JointVelocity will be a vector, check the number of elements as done
-    //       for the position.
+    if (jointVelocityComponent->Data().size() <= 0) {
+        gymppWarning << "The joint velocity component exists but it does not have yet any data"
+                     << std::endl;
+        return {};
+    }
 
-    return jointVelocityComponent->Data();
+    assert(jointVelocityComponent->Data().size() == 1);
+    return jointVelocityComponent->Data()[0];
 }
 
 gympp::Robot::JointPositions IgnitionRobot::jointPositions() const
@@ -392,7 +396,7 @@ IgnitionRobot::PID IgnitionRobot::jointPID(const gympp::Robot::JointName& jointN
     assert(pImpl->jointExists(jointName));
     assert(pImpl->pidExists(jointName));
 
-    auto& pid = pImpl->pids[jointName];
+    auto& pid = pImpl->buffers.joints.pidData[jointName].pid;
     return PID(pid.PGain(), pid.IGain(), pid.DGain());
 }
 
@@ -432,18 +436,18 @@ bool IgnitionRobot::setJointPositionTarget(const gympp::Robot::JointName& jointN
     }
 
     // Create the PID if it does not exist
-    if (pImpl->pids.find(jointName) == pImpl->pids.end()) {
-        pImpl->pids[jointName] = DefaultPID;
+    if (!pImpl->pidExists(jointName)) {
+        pImpl->buffers.joints.pidData[jointName] = {ControlType::Position, DefaultPID};
     }
 
     // Check the control type and switch to position control if the joint was controlled differently
-    if (pImpl->buffers.joints.controlType[jointName] != ControlType::Position) {
+    if (pImpl->buffers.joints.pidData[jointName].type != ControlType::Position) {
         gymppDebug << "Switching joint '" << jointName << "' to Position control" << std::endl;
-        pImpl->buffers.joints.controlType[jointName] = ControlType::Position;
+        pImpl->buffers.joints.pidData[jointName].type = ControlType::Position;
 
         // Reset the PID
         assert(pImpl->pidExists(jointName));
-        pImpl->pids[jointName].Reset();
+        pImpl->buffers.joints.pidData[jointName].pid.Reset();
     }
 
     // Update the joint reference
@@ -460,18 +464,18 @@ bool IgnitionRobot::setJointVelocityTarget(const gympp::Robot::JointName& jointN
     }
 
     // Create the PID if it does not exist
-    if (pImpl->pids.find(jointName) == pImpl->pids.end()) {
-        pImpl->pids[jointName] = DefaultPID;
+    if (!pImpl->pidExists(jointName)) {
+        pImpl->buffers.joints.pidData[jointName] = {ControlType::Velocity, DefaultPID};
     }
 
     // Check the control type and switch to velocity control if the joint was controlled differently
-    if (pImpl->buffers.joints.controlType[jointName] != ControlType::Velocity) {
+    if (pImpl->buffers.joints.pidData[jointName].type != ControlType::Velocity) {
         gymppDebug << "Switching joint '" << jointName << "' to Velocity control" << std::endl;
-        pImpl->buffers.joints.controlType[jointName] = ControlType::Velocity;
+        pImpl->buffers.joints.pidData[jointName].type = ControlType::Velocity;
 
         // Reset the PID
         assert(pImpl->pidExists(jointName));
-        pImpl->pids[jointName].Reset();
+        pImpl->buffers.joints.pidData[jointName].pid.Reset();
     }
 
     // Update the joint reference
@@ -511,17 +515,17 @@ bool IgnitionRobot::setJointVelocity(const gympp::Robot::JointName& jointName,
         return false;
     }
 
-    // Reset the position
-    auto& jointPosComponent =
+    // Reset the velocity
+    auto& jointVelResetComponent =
         pImpl->getOrCreateComponent<ignition::gazebo::components::JointVelocityReset>(jointEntity);
 
-    jointPosComponent = ignition::gazebo::components::JointVelocityReset({jointVelocity});
+    jointVelResetComponent = ignition::gazebo::components::JointVelocityReset({jointVelocity});
 
     // Store the new velocity in the ECM
     auto& jointVelComponent =
         pImpl->getOrCreateComponent<ignition::gazebo::components::JointVelocity>(jointEntity);
 
-    jointVelComponent = ignition::gazebo::components::JointVelocity(jointVelocity);
+    jointVelComponent = ignition::gazebo::components::JointVelocity({jointVelocity});
 
     return true;
 }
@@ -535,16 +539,16 @@ bool IgnitionRobot::setJointPID(const gympp::Robot::JointName& jointName, const 
 
     if (!pImpl->pidExists(jointName)) {
         gymppDebug << "Creating new PID for joint " << jointName << std::endl;
-        pImpl->pids[jointName] = DefaultPID;
+        pImpl->buffers.joints.pidData[jointName] = {ControlType::Position, DefaultPID};
     }
     else {
-        pImpl->pids[jointName].Reset();
+        pImpl->buffers.joints.pidData[jointName].pid.Reset();
     }
 
     // Update the gains. The other PID parameters do not change.
-    pImpl->pids[jointName].SetPGain(pid.p);
-    pImpl->pids[jointName].SetIGain(pid.i);
-    pImpl->pids[jointName].SetDGain(pid.d);
+    pImpl->buffers.joints.pidData[jointName].pid.SetPGain(pid.p);
+    pImpl->buffers.joints.pidData[jointName].pid.SetIGain(pid.i);
+    pImpl->buffers.joints.pidData[jointName].pid.SetDGain(pid.d);
 
     return true;
 }
@@ -573,10 +577,12 @@ bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName,
     }
 
     // Reset the PID
-    pImpl->pids[jointName].Reset();
+    if (pImpl->pidExists(jointName)) {
+        pImpl->buffers.joints.pidData[jointName].pid.Reset();
+        pImpl->buffers.joints.pidData[jointName].type = ControlType::Position;
+    }
 
     // Clean the joint controlling storage
-    pImpl->buffers.joints.controlType.erase(jointName);
     pImpl->buffers.joints.references.erase(jointName);
     return true;
 }
@@ -596,67 +602,67 @@ bool IgnitionRobot::update(const std::chrono::duration<double> time)
         stepTime = pImpl->dt;
     }
 
-    bool updateCurrentState = true;
-
     // If enough time is passed, store the time of this actuation step. In this case the state of
     // the robot is read and new force references are computed and actuated.
     // Otherwise, the same force of the last step is actuated.
+    bool updateCurrentState;
+
     if (stepTime >= pImpl->dt) {
         // Store the current update time
         pImpl->prevUpdateTime = time;
+
+        // Enable using the PID to compute the new force
+        updateCurrentState = true;
     }
     else {
+        // Disable the PID and send the same force reference as last update
         updateCurrentState = false;
     }
 
-    assert(pImpl->buffers.joints.references.size() == pImpl->buffers.joints.controlType.size());
+    // Return if there are no references to actuate
+    if (pImpl->buffers.joints.references.empty()) {
+        return true;
+    }
 
     // Actuate the references
-    if (!pImpl->buffers.joints.references.empty()) {
-        // The references can be either position or velocity references
-        for (auto& [jointName, reference] : pImpl->buffers.joints.references) {
-            assert(pImpl->pids.find(jointName) != pImpl->pids.end());
-            assert(pImpl->buffers.joints.controlType.find(jointName)
-                   != pImpl->buffers.joints.controlType.end());
+    // The references can be either position or velocity references
+    for (auto& [jointName, reference] : pImpl->buffers.joints.references) {
+        assert(pImpl->pidExists(jointName));
 
+        // Use the PID the compute the new force
+        if (updateCurrentState) {
             double force = 0;
 
-            if (!updateCurrentState) {
-                if (pImpl->buffers.joints.appliedForces.find(jointName)
-                    != pImpl->buffers.joints.appliedForces.end()) {
-                    force = pImpl->buffers.joints.appliedForces[jointName];
-
-                    if (!setJointForce(jointName, force)) {
-                        gymppError << "Failed to set force to joint '" << jointName << "'"
-                                   << std::endl;
-                        return false;
-                    }
-                }
-
-                break;
-            }
-
-            assert(updateCurrentState);
+            // Get the PID
+            auto& pid = pImpl->buffers.joints.pidData[jointName].pid;
 
             // Use the PID to get the reference
-            switch (pImpl->buffers.joints.controlType.at(jointName)) {
+            switch (pImpl->buffers.joints.pidData[jointName].type) {
                 case ControlType::Position:
-                    force = pImpl->pids[jointName].Update(jointPosition(jointName) - reference,
-                                                          stepTime);
+                    force = pid.Update(jointPosition(jointName) - reference, stepTime);
                     break;
                 case ControlType::Velocity:
-                    force = pImpl->pids[jointName].Update(jointVelocity(jointName) - reference,
-                                                          stepTime);
+                    force = pid.Update(jointVelocity(jointName) - reference, stepTime);
                     break;
             }
 
             // Store the force
             pImpl->buffers.joints.appliedForces[jointName] = force;
+        }
 
-            if (!setJointForce(jointName, force)) {
-                gymppError << "Failed to set force to joint '" << jointName << "'" << std::endl;
-                return false;
-            }
+        // Break if there is no force to actuate for this joint
+        if (pImpl->buffers.joints.appliedForces.find(jointName)
+            == pImpl->buffers.joints.appliedForces.end()) {
+            break;
+        }
+
+        // Get the force
+        auto force = pImpl->buffers.joints.appliedForces[jointName];
+
+        // Actuate the force
+        if (!setJointForce(jointName, force)) {
+            gymppError << "Failed to set force to joint '" << jointName << "'" << std::endl;
+            return false;
         }
     }
 
