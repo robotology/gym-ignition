@@ -64,6 +64,7 @@
 %shared_ptr(gympp::gazebo::GazeboWrapper)
 %shared_ptr(gympp::gazebo::IgnitionEnvironment)
 %include "ignition/common/SingletonT.hh"
+%ignore ignition::common::SingletonT<gympp::GymFactory>::myself;
 %template(GymFactorySingleton) ignition::common::SingletonT<gympp::GymFactory>;
 %include "gympp/Environment.h"
 %include "gympp/gazebo/GazeboWrapper.h"
