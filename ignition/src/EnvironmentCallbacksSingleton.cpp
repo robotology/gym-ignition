@@ -47,3 +47,19 @@ bool EnvironmentCallbacksSingleton::storeEnvironmentCallback(const std::string& 
 
     return true;
 }
+
+bool EnvironmentCallbacksSingleton::deleteEnvironmentCallback(const std::string& label)
+{
+    if (label.empty()) {
+        gymppError << "The label of the callbacks to delete is empty" << std::endl;
+        return false;
+    }
+
+    if (m_callbacks.find(label) == m_callbacks.end()) {
+        gymppError << "The callbacks '" << label << "' have never been stored" << std::endl;
+        return false;
+    }
+
+    m_callbacks.erase(label);
+    return true;
+}

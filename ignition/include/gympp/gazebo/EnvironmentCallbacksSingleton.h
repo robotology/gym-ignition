@@ -33,8 +33,10 @@ public:
     ~EnvironmentCallbacksSingleton() override = default;
 
     gympp::gazebo::EnvironmentCallbacks* get(const std::string& label);
+
     bool storeEnvironmentCallback(const std::string& label,
                                   gympp::gazebo::EnvironmentCallbacks* cb);
+    bool deleteEnvironmentCallback(const std::string& label);
 };
 
 #endif // GYMPP_ROBOT_ENVIRONMENTCALLBACKSSINGLETON_H
