@@ -209,7 +209,7 @@ bool GazeboWrapper::gui()
     }
 
     // Spawn a new process with the GUI
-    pImpl->gazebo.gui = std::make_unique<TinyProcessLib::Process>("ign-gazebo-gui");
+    pImpl->gazebo.gui = std::make_unique<TinyProcessLib::Process>("ign gazebo -g");
 
     return true;
 }
