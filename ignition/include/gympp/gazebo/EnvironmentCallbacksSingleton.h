@@ -11,9 +11,8 @@
 
 #include <ignition/common/SingletonT.hh>
 
-#include <functional>
-#include <memory>
 #include <string>
+#include <unordered_map>
 
 namespace gympp {
     namespace gazebo {
@@ -26,11 +25,12 @@ class gympp::gazebo::EnvironmentCallbacksSingleton
     : public ignition::common::SingletonT<EnvironmentCallbacksSingleton>
 {
 private:
-    class Impl;
-    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
+    static std::unordered_map<std::string, EnvironmentCallbacks*> m_callbacks;
 
+protected:
 public:
-    EnvironmentCallbacksSingleton();
+    EnvironmentCallbacksSingleton() = default;
+    ~EnvironmentCallbacksSingleton() override = default;
 
     gympp::gazebo::EnvironmentCallbacks* get(const std::string& label);
     bool storeEnvironmentCallback(const std::string& label,
