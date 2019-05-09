@@ -37,7 +37,9 @@ public:
     static RobotSingleton& get();
 
     RobotPtr getRobot(const std::string& robotName) const;
+
     bool storeRobot(RobotPtr robot);
+    bool deleteRobot(const std::string& robotName);
 };
 
 #endif // GYMPP_GAZEBO_ROBOTSINGLETON_H
