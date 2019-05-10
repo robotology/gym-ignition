@@ -14,6 +14,7 @@
 
 #include <cassert>
 #include <ostream>
+#include <unordered_map>
 
 using namespace gympp;
 
