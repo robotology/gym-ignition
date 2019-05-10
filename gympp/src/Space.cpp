@@ -16,56 +16,45 @@
 #include <utility>
 #include <vector>
 
-template class gympp::spaces::details::TBox<double>;
-
 using namespace gympp::spaces;
-using namespace gympp::spaces::details;
 
 // ===
 // BOX
 // ===
 
-template <typename DataType>
-class TBox<DataType>::Impl
+class Box::Impl
 {
 public:
-    TBox<DataType>::Limit low;
-    TBox<DataType>::Limit high;
+    Box::Limit low;
+    Box::Limit high;
     Shape shape;
 };
 
-template <typename DataType>
-TBox<DataType>::TBox(const DataType low, const DataType high, const Shape& shape)
+Box::Box(const DataSupport low, const DataSupport high, const Shape& shape)
     : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {
     // TODO
-    size_t size = shape.size();
-    assert(size == 1);
+    assert(shape.size() == 1);
 
     pImpl->shape = shape;
     pImpl->low = Limit(shape[0], low);
     pImpl->high = Limit(shape[0], high);
 }
 
-template <typename DataType>
-TBox<DataType>::TBox(const Limit& low, const Limit& high)
+Box::Box(const Limit& low, const Limit& high)
     : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {
     assert(low.size() == high.size());
     pImpl->shape = {low.size()};
 
     // TODO
-    size_t size = pImpl->shape.size();
-    assert(size == 1);
+    assert(pImpl->shape.size() == 1);
 
     pImpl->low = low;
     pImpl->high = high;
 }
 
-// Box::~Box() = default;
-
-template <typename DataType>
-typename TBox<DataType>::Sample TBox<DataType>::TBox::sample()
+Box::Sample Box::Box::sample()
 {
     Space::Sample randomSample;
 
@@ -73,7 +62,7 @@ typename TBox<DataType>::Sample TBox<DataType>::TBox::sample()
     // TODO: 1D
     assert(pImpl->shape.size() == 1);
     assert(pImpl->shape[0] != 0);
-    auto data = Buffer(pImpl->shape[0], DataType{});
+    auto data = Buffer(pImpl->shape[0], DataSupport{});
 
     // Fill it with random data within the bounds
     for (unsigned i = 0; i < data.size(); ++i) {
@@ -90,10 +79,9 @@ typename TBox<DataType>::Sample TBox<DataType>::TBox::sample()
     return randomSample;
 }
 
-template <typename DataType>
-bool TBox<DataType>::contains(const Space::Sample& data) const
+bool Box::contains(const Space::Sample& data) const
 {
-    auto* bufferPtr = data.getBuffer<DataType>();
+    auto* bufferPtr = data.getBuffer<DataSupport>();
 
     // Check the type
     if (!bufferPtr) {
@@ -121,20 +109,17 @@ bool TBox<DataType>::contains(const Space::Sample& data) const
     return true;
 }
 
-template <typename DataType>
-typename TBox<DataType>::Limit TBox<DataType>::high()
+typename Box::Limit Box::high()
 {
     return pImpl->high;
 }
 
-template <typename DataType>
-typename TBox<DataType>::Limit TBox<DataType>::low()
+typename Box::Limit Box::low()
 {
     return pImpl->low;
 }
 
-template <typename DataType>
-Box::Shape TBox<DataType>::shape()
+Box::Shape Box::shape()
 {
     return pImpl->shape;
 }

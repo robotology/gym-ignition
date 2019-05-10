@@ -54,11 +54,9 @@
 
 %include <std_shared_ptr.i>
 %shared_ptr(gympp::spaces::Space)
-%shared_ptr(gympp::spaces::details::TBox<double>)
+%shared_ptr(gympp::spaces::Box)
 %shared_ptr(gympp::spaces::Discrete)
-
 %include "gympp/Space.h"
-%template(Box) gympp::spaces::details::TBox<double>;
 
 %shared_ptr(gympp::Environment)
 %shared_ptr(gympp::gazebo::GazeboWrapper)
@@ -66,6 +64,7 @@
 %include "ignition/common/SingletonT.hh"
 %ignore ignition::common::SingletonT<gympp::GymFactory>::myself;
 %template(GymFactorySingleton) ignition::common::SingletonT<gympp::GymFactory>;
+
 %include "gympp/Environment.h"
 %include "gympp/gazebo/GazeboWrapper.h"
 %include "gympp/gazebo/IgnitionEnvironment.h"
