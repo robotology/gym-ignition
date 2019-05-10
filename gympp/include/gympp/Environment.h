@@ -59,7 +59,7 @@ public:
     using ObservationSpace = gympp::spaces::Space;
     using ActionSpacePtr = std::shared_ptr<ActionSpace>;
     using ObservationSpacePtr = std::shared_ptr<ObservationSpace>;
-    using RewardRange = gympp::Range<DataSupport>;
+    using RewardRange = gympp::Range;
 
 public:
     ActionSpacePtr action_space;

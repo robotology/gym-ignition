@@ -16,16 +16,10 @@
 
 namespace gympp {
     namespace spaces {
-
-        namespace details {
-            template <typename DataType>
-            class TBox;
-        }
-
+        class Box;
         class Space;
         class Discrete;
         using SpacePtr = std::shared_ptr<Space>;
-        using Box = gympp::spaces::details::TBox<double>;
     } // namespace spaces
 } // namespace gympp
 
@@ -48,19 +42,18 @@ public:
     // from_jsonable
 };
 
-template <typename DataType>
-class gympp::spaces::details::TBox : public gympp::spaces::Space
+class gympp::spaces::Box : public gympp::spaces::Space
 {
 public:
     using Shape = gympp::data::Shape;
-    using Buffer = typename gympp::BufferContainer<DataType>::type;
+    using Buffer = typename gympp::BufferContainer<DataSupport>::type;
     using Limit = Buffer;
     using Sample = gympp::data::Sample;
 
-    TBox() = delete;
-    TBox(const DataType low, const DataType high, const Shape& shape);
-    TBox(const Limit& low, const Limit& high);
-    ~TBox() override = default;
+    Box() = delete;
+    Box(const DataSupport low, const DataSupport high, const Shape& shape);
+    Box(const Limit& low, const Limit& high);
+    ~Box() override = default;
 
     Sample sample() override;
     bool contains(const Sample& data) const override;
@@ -73,9 +66,6 @@ private:
     class Impl;
     std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
 };
-
-// TODO: export the symbol and instantiate in the cpp
-extern template class gympp::spaces::details::TBox<double>;
 
 class gympp::spaces::Discrete : public gympp::spaces::Space
 {

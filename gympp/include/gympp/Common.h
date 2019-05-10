@@ -19,8 +19,6 @@
 namespace gympp {
 
     using DataSupport = double;
-
-    template <typename DataSupport>
     struct Range;
 
     template <typename Type>
@@ -90,7 +88,6 @@ struct gympp::data::Sample
     }
 };
 
-template <typename DataSupport>
 struct gympp::Range
 {
     Range(DataSupport minValue = std::numeric_limits<DataSupport>::lowest(),
