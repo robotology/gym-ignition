@@ -41,8 +41,6 @@
 %template(getBuffer_u) gympp::data::Sample::getBuffer<size_t>;
 %template(getBuffer_f) gympp::data::Sample::getBuffer<float>;
 %template(getBuffer_d) gympp::data::Sample::getBuffer<double>;
-%template(RangeFloat) gympp::Range<float>;
-%template(RangeDouble) gympp::Range<double>;
 
 %include "optional.i"
 %template(Optional_i) std::optional<int>;
