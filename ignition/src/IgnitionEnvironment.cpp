@@ -57,6 +57,13 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     assert(action_space);
     assert(observation_space);
 
+    // Check if the gazebo server is running. It reset() is executed as first method,
+    // the server is initialized lazily.
+    if (!GazeboWrapper::initialize()) {
+        gymppError << "Failed to either initialize gazebo or gather the server" << std::endl;
+        return {};
+    }
+
     // Get the environment callbacks
     auto callbacks = envCallbacks();
     if (!callbacks) {
@@ -128,8 +135,6 @@ gympp::EnvironmentPtr IgnitionEnvironment::env()
 
 std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
 {
-    gymppDebug << "Resetting the environment" << std::endl;
-
     // Check if the gazebo server is running. It reset() is executed as first method,
     // the server is initialized lazily.
     if (!GazeboWrapper::initialize()) {

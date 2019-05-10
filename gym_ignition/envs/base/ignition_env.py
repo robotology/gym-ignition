@@ -2,20 +2,12 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import sys
 import gym
 from gym import spaces
-from gym.utils import seeding
-# import numpy as np
 from numbers import Number
+from gym_ignition import gympp
+from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
-
-# Import gympp bindings
-# See https://github.com/robotology/gym-ignition/issues/7
-if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
-    import ctypes
-    sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
-import gympp
 
 
 class IgnitionEnv(gym.Env):
@@ -42,6 +34,7 @@ class IgnitionEnv(gym.Env):
         self._act_dt = None
         self._obs_dt = None
         self._robot = None
+        self._np_random = None
 
         # Seed the environment
         self.seed()
@@ -52,7 +45,7 @@ class IgnitionEnv(gym.Env):
         assert(action_space and observation_space), "Failed to create spaces"
 
     @property
-    def gympp_env(self) -> gympp.GazeboWrapper:
+    def gympp_env(self) -> gympp.IgnitionEnvironment:
         if self._env:
             return self._env
 
@@ -67,12 +60,15 @@ class IgnitionEnv(gym.Env):
         self._env = factory.make(md.getEnvironmentName())
         assert self._env, "Failed to create environment " + md.getEnvironmentName()
 
-        # Set the verbosity. Run the script as optimized (-O) to decrease the verbosity.
-        gympp.GazeboWrapper.setVerbosity(2)
-        assert (gympp.GazeboWrapper.setVerbosity(4) or True)
+        # Set the verbosity
+        logger.set_level(gym.logger.MIN_LEVEL)
 
         # Return the gympp environment
         return self._env
+
+    @property
+    def gazebo(self) -> gympp.GazeboWrapper:
+        return gympp.envToGazeboWrapper(self.gympp_env)
 
     @property
     def action_space(self) -> gym.Space:
@@ -211,23 +207,19 @@ class IgnitionEnv(gym.Env):
         return
 
     def seed(self, seed: int = None) -> SeedList:
-        # Create the seed and the random numbers generator
-        np_random, seed = seeding.np_random(seed)
+        if not seed:
+            seed = np.random.randint(2**32 - 1)
 
-        # Spaces need to be seeded. Apply the same logic contained in gym.seeding.
-        short_seed = seeding._int_list_from_bigint(seeding.hash_seed(seed))
-
-        # TODO: it would be nice having the same behavior of the environment
-        #       if executed from cpp and python. However, the spaces are
-        #       different. We can obtain this only if we manage to map
-        #       gym.Space objects out of gympp::Space objects.
+        # Seed numpy
+        self._np_random = np.random
+        self._np_random.seed(seed)
 
         # Seed the environment
-        vector_seeds = self.gympp_env.seed(short_seed[0])
+        vector_seeds = self.gympp_env.seed(seed)
 
         # Seed the spaces
-        self.action_space.seed(short_seed)
-        self.observation_space.seed(short_seed)
+        self.action_space.seed(seed)
+        self.observation_space.seed(seed)
 
         return SeedList(list(vector_seeds))
 

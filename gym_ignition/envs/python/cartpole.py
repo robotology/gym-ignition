@@ -3,12 +3,12 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from gym_ignition import IgnitionPythonEnv
+from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
 
 import gym
-from gym.utils import seeding
-from gym import logger
 import numpy as np
+
 
 class CartPolePythonEnv(IgnitionPythonEnv):
     def __init__(self):
@@ -16,13 +16,18 @@ class CartPolePythonEnv(IgnitionPythonEnv):
         super().__init__()
 
         # Private attributes
-        self._np_random = None
         self._force_mag = 10
         self._steps_beyond_done = None
+
+        # Configure the simulation
+        self.agent_rate = 100
+        self.physics_rate = 2000
+        self._joint_controller_rate = self.agent_rate
 
         # Configure action space
         self.action_space = gym.spaces.Discrete(2)
 
+        # Variables limits
         self._x_threshold = 2.4
         self._theta_threshold_radians = 12 * 2 * np.pi / 360
 
@@ -114,21 +119,8 @@ class CartPolePythonEnv(IgnitionPythonEnv):
 
         return Observation(np.array(new_state))
 
-    def seed(self, seed: int = None) -> SeedList:
-        # Generate the rng
-        self._np_random, seed = seeding.np_random(seed)
-
-        # Spaces need to be seeded. Apply the same logic contained in gym.seeding.
-        short_seed = seeding._int_list_from_bigint(seeding.hash_seed(seed))
-
-        # Seed the spaces
-        self.action_space.seed(short_seed)
-        self.observation_space.seed(short_seed)
-
-        return SeedList([seed])
-
     def _get_model_sdf(self) -> str:
         return "CartPole/CartPole.sdf"
 
     def _get_world_sdf(self) -> str:
-        return "CartPole.world"
+        return "DefaultEmptyWorld.world"

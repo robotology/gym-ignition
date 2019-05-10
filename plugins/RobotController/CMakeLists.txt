@@ -13,7 +13,7 @@ add_library(RobotController SHARED
 target_link_libraries(RobotController
     PUBLIC
     EnvironmentCallbacks
-    ignition-gazebo1::core
+    ignition-gazebo2::core
     PRIVATE
     IgnitionRobot
     RobotSingleton

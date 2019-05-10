@@ -10,6 +10,7 @@
     </plugin>
 
     <physics default="true" type="dart">
+        <!-- Run the simulation at max speed -->
         <real_time_factor>100</real_time_factor>
     </physics>
 
@@ -50,6 +51,28 @@
         <service>/world/default/control</service>
         <stats_topic>/world/default/stats</stats_topic>
       </plugin>
+      <!-- World statistics -->
+      <plugin filename="WorldStats" name="World stats">
+        <ignition-gui>
+          <title>World stats</title>
+          <property type="bool" key="showTitleBar">false</property>
+          <property type="bool" key="resizable">false</property>
+          <property type="double" key="height">110</property>
+          <property type="double" key="width">290</property>
+          <property type="double" key="z">1</property>
+
+          <property type="string" key="state">floating</property>
+          <anchors target="3D View">
+            <line own="right" target="right"/>
+            <line own="bottom" target="bottom"/>
+          </anchors>
+        </ignition-gui>
+        <sim_time>true</sim_time>
+        <real_time>true</real_time>
+        <real_time_factor>true</real_time_factor>
+        <iterations>true</iterations>
+        <topic>/world/default/stats</topic>
+      </plugin>
     </gui>
 
     <model name='ground_plane'>
@@ -79,18 +102,13 @@
             </box>
           </geometry>
           <material>
-            <ambient>1 1 1 1</ambient>
-            <diffuse>1 1 1 1</diffuse>
-            <specular>1 1 1 1</specular>
+            <ambient>0.8 0.8 0.8 1</ambient>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.8 0.8 0.8 1</specular>
           </material>
         </visual>
       </link>
     </model>
-
-    <include>
-      <pose>0 0 1.0 0 0 0</pose>
-      <uri>iCubGazebo</uri>
-    </include>
 
   </world>
 </sdf>

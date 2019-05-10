@@ -55,7 +55,9 @@ public:
     bool setupGazeboModel(const std::string& modelFile,
                           std::array<double, 6> pose = {0, 0, 0, 0, 0, 0});
     bool setupGazeboWorld(const std::string& worldFile);
-    bool setupIgnitionPlugin(const std::string& libName, const std::string& className);
+    bool setupIgnitionPlugin(const std::string& libName,
+                             const std::string& className,
+                             double updateRate = 0);
 };
 
 #endif // GYMPP_GAZEBO_GAZEBOWRAPPER

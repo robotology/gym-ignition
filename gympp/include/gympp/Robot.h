@@ -78,16 +78,22 @@ public:
     virtual bool setdt(const StepSize& stepSize) = 0;
 
     virtual bool setJointForce(const JointName& jointName, const double jointForce) = 0;
-    virtual bool setJointPosition(const JointName& jointName,
-                                  const double jointPositionReference) = 0;
-    virtual bool setJointVelocity(const JointName& jointName,
-                                  const double jointVelocityReference) = 0;
+
+    virtual bool setJointPositionTarget(const JointName& jointName,
+                                        const double jointPositionReference) = 0;
+    virtual bool setJointVelocityTarget(const JointName& jointName,
+                                        const double jointVelocityReference) = 0;
+
+    virtual bool setJointPosition(const JointName& jointName, const double jointPosition) = 0;
+    virtual bool setJointVelocity(const JointName& jointName, const double jointVelocity) = 0;
 
     virtual bool setJointPID(const JointName& jointName, const PID& pid) = 0;
 
     virtual bool resetJoint(const JointName& jointName,
                             const double jointPosition = 0,
                             const double jointVelocity = 0) = 0;
+
+    virtual bool update(const std::chrono::duration<double> time) = 0;
 };
 
 #endif // GYMPP_ROBOT_H

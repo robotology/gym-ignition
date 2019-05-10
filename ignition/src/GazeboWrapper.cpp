@@ -74,6 +74,7 @@ std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
         // The GUI needs the server already up. Warming up the first iteration and pausing the
         // server. It will be unpaused at the step() call.
         gymppDebug << "Starting the server as paused" << std::endl;
+        gymppDebug << "Running " << gazebo.numOfIterations << " iterations every step" << std::endl;
         if (!gazebo.server->Run(/*blocking=*/false, gazebo.numOfIterations, /*paused=*/true)) {
             gymppError << "Failed to warm up the gazebo server in paused state" << std::endl;
             return nullptr;
@@ -162,17 +163,25 @@ bool GazeboWrapper::run()
     }
 
     assert(server);
+    assert(server->Paused());
+    assert((server->Running() && server->Paused().value())
+           || (!server->Running() && !server->Paused().value()));
 
     // Handle first iteration
-    if (server->Running()) {
+    if (server->Running() && server->Paused().value()) {
         gymppDebug << "Unpausing the server. Running the first simulation run." << std::endl;
-        server->SetPaused(false);
+        bool ok = server->SetPaused(false);
+        assert(ok);
 
         // Since the server was started in non-blocking mode, we have to wait that this first
         // iteration finishes
         while (server->Running()) {
+            gymppDebug << "Waiting the first simulation run to finish..." << std::endl;
+            assert(!server->Paused().value());
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
+
+        gymppDebug << "First run ok" << std::endl;
     }
     // Run regular iteration
     else {
@@ -200,7 +209,7 @@ bool GazeboWrapper::gui()
     }
 
     // Spawn a new process with the GUI
-    pImpl->gazebo.gui = std::make_unique<TinyProcessLib::Process>("ign-gazebo-gui");
+    pImpl->gazebo.gui = std::make_unique<TinyProcessLib::Process>("ign gazebo -g");
 
     return true;
 }
@@ -315,7 +324,9 @@ bool GazeboWrapper::setupGazeboWorld(const std::string& worldFile)
     return true;
 }
 
-bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName, const std::string& className)
+bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName,
+                                        const std::string& className,
+                                        double updateRate)
 {
     assert(!pImpl->scopedModelName.empty());
 
@@ -324,10 +335,30 @@ bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName, const std::s
     sdf->AddAttribute("name", "string", className, true);
     sdf->AddAttribute("filename", "string", libName, true);
 
+    // Set the update rate of the plugin. By default the update rate of the physic engine is used.
+    if (updateRate != 0.0) {
+        // Rate of the agent
+        auto element = std::make_shared<sdf::Element>();
+        element->SetName("update_rate");
+        element->AddValue("double", std::to_string(updateRate), true);
+        sdf->InsertElement(element);
+    }
+
     ignition::gazebo::ServerConfig::PluginInfo pluginInfo{
         pImpl->scopedModelName, "model", libName, className, sdf};
 
     pImpl->gazebo.config.AddPlugin(pluginInfo);
+
+    // Update the number of iterations accordingly to the simulation step and plugin update rate
+    assert(pImpl->gazebo.config.UpdateRate());
+    double rateRatio = pImpl->gazebo.config.UpdateRate().value() / updateRate;
+    pImpl->gazebo.numOfIterations = static_cast<size_t>(rateRatio);
+
+    if (rateRatio != static_cast<size_t>(rateRatio)) {
+        gymppWarning << "Rounding the number of iterations to " << pImpl->gazebo.numOfIterations
+                     << " from the nominal "
+                     << pImpl->gazebo.config.UpdateRate().value() / updateRate << std::endl;
+    }
 
     return true;
 }

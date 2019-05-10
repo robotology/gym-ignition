@@ -15,6 +15,7 @@
 #include <ignition/plugin/Register.hh>
 
 #include <cassert>
+#include <chrono>
 #include <ostream>
 #include <string>
 
@@ -23,6 +24,8 @@ using namespace gympp::plugins;
 
 using ObservationDataType = int;
 using ObservationSample = gympp::BufferContainer<ObservationDataType>::type;
+
+const double DefaultControllerRate = 1000;
 
 class RobotController::Impl
 {
@@ -47,6 +50,17 @@ void RobotController::Configure(const ignition::gazebo::Entity& entity,
         return;
     }
 
+    // Read the optional update_rate option from the sdf
+    if (sdf->HasElement("update_rate")) {
+        double rate = sdf->Get<double>("update_rate");
+        ignRobot->setdt(std::chrono::duration<double>(1 / rate));
+        gymppDebug << "Setting plugin rate " << rate << " Hz" << std::endl;
+    }
+    else {
+        ignRobot->setdt(std::chrono::duration<double>(1 / DefaultControllerRate));
+        gymppDebug << "Setting plugin rate " << DefaultControllerRate << " Hz" << std::endl;
+    }
+
     if (!ignRobot->valid()) {
         gymppError << "The Robot interface is not valid" << std::endl;
         return;
@@ -61,6 +75,20 @@ void RobotController::Configure(const ignition::gazebo::Entity& entity,
     auto ecSingleton = EnvironmentCallbacksSingleton::Instance();
     bool registered = ecSingleton->storeEnvironmentCallback(ignRobot->name(), this);
     assert(registered);
+}
+
+void RobotController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
+                                ignition::gazebo::EntityComponentManager& /*ecm*/)
+{
+    if (info.paused) {
+        return;
+    }
+
+    if (!pImpl->robot->update(info.simTime)) {
+        assert(false);
+        gymppError << "Failed to update the robot controller" << std::endl;
+        return;
+    }
 }
 
 bool RobotController::isDone()
@@ -91,4 +119,5 @@ std::optional<gympp::gazebo::EnvironmentCallbacks::Observation> RobotController:
 IGNITION_ADD_PLUGIN(gympp::plugins::RobotController,
                     gympp::plugins::RobotController::System,
                     gympp::plugins::RobotController::ISystemConfigure,
+                    gympp::plugins::RobotController::ISystemPreUpdate,
                     gympp::gazebo::EnvironmentCallbacks)

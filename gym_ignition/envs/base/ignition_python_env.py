@@ -3,6 +3,8 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
+from gym_ignition.utils import logger
+from gym_ignition.utils.typing import *
 from gympp import RobotSingleton_get, GazeboWrapper, Robot
 
 
@@ -18,15 +20,11 @@ class IgnitionPythonEnv(gym.Env):
     Furthermore, the remaining methods of the gym.Env class have to implemented with
     the logic of the environment.
 
-    This class exposes the following read/write attributes
-
-    iterations:  The number of gazebo iterations executed every step
-    update_rate: The rate of the gazebo simulation in Hertz
-
-    and the following read/only attributes:
-
-    gazebo: The object that wraps the simulator
-    robot: The object that allows interacting with the simulated robot
+    Attributes:
+        agent_rate (float): The rate associated to a single env.step call in Hertz
+        physics_rate (float): The rate of the gazebo simulation in Hertz
+        gazebo: The object that wraps the simulator
+        robot: The object that allows interacting with the simulated robot
     """
 
     metadata = {'render.modes': ['human']}
@@ -37,76 +35,92 @@ class IgnitionPythonEnv(gym.Env):
         self._gazebo_wrapper = None
         self._model_sdf = None
         self._world_sdf = None
-        self._iterations = 1
-        self._update_rate = 100.0
+        self._iterations = None
+        self._joint_controller_rate = None
+        self._physics_rate = None
+        self._np_random = None
+
+        # Initialize default values
+        self._physics_rate = 10000.0
+        self._joint_controller_rate = 1000
+
+        self.agent_rate = 100
 
     @property
-    def iterations(self) -> int:
-        return self._iterations
+    def physics_rate(self) -> float:
+        return self._physics_rate
 
     @property
-    def update_rate(self) -> float:
-        return self._update_rate
+    def agent_rate(self) -> float:
+        return self._agent_rate
 
-    @iterations.setter
-    def iterations(self, iterations) -> None:
-        if self._gazebo_wrapper:
-            raise Exception("Gazebo server has been already created. You should set "
-                            "the number of iteration before its initialization.")
-        self._iterations = iterations
-
-    @update_rate.setter
-    def update_rate(self, update_rate) -> None:
+    @physics_rate.setter
+    def physics_rate(self, physics_rate: float) -> None:
         if self._gazebo_wrapper:
             raise Exception("Gazebo server has been already created. You should set "
                             "the update rate before its initialization.")
-        self._iterations = update_rate
+        self._physics_rate = float(physics_rate)
+
+        # Update the number of iterations using the agent_rate setter
+        self.agent_rate = self._agent_rate
+
+    @agent_rate.setter
+    def agent_rate(self, agent_rate: float) -> None:
+        self._agent_rate = float(agent_rate)
+        self._iterations = int(self._physics_rate / agent_rate)
 
     @property
     def gazebo(self) -> GazeboWrapper:
-        if not self._gazebo_wrapper:
-            # Create the GazeboWrapper object
-            self._gazebo_wrapper = GazeboWrapper(self.update_rate, self.iterations)
+        if self._gazebo_wrapper:
+            assert self._gazebo_wrapper.getNumberOfIterations() == self._iterations, \
+                "Number of iterations modified after gazebo started"
 
-            # Set the verbosity. Run the script as optimized (-O) to decrease the verbosity.
-            GazeboWrapper.setVerbosity(2)
-            assert (GazeboWrapper.setVerbosity(4) or True)
+            assert self._gazebo_wrapper.getUpdateRate() == self.physics_rate, \
+                "Update rate modified after gazebo started"
 
-            # Configure the robot ignition plugin
-            lib_name = "RobotController"
-            class_name = "gympp::plugins::RobotController"
+            return self._gazebo_wrapper
 
-            # Get the model and the world from the implementation of this class
-            self._model_sdf = self._get_model_sdf()
-            self._world_sdf = self._get_world_sdf()
+        # Create the GazeboWrapper object
+        logger.debug("Starting gazebo with {} Hz and {} iterations".format(
+            self.physics_rate, self._iterations))
+        self._gazebo_wrapper = GazeboWrapper(self.physics_rate, int(self._iterations))
 
-            # Initialize the world
-            world_ok = self._gazebo_wrapper.setupGazeboWorld(self._world_sdf)
-            assert world_ok, "Failed to initialize the gazebo world"
+        # Set the verbosity
+        logger.set_level(gym.logger.MIN_LEVEL)
 
-            # Initialize the model
-            model_ok = self._gazebo_wrapper.setupGazeboModel(self._model_sdf)
-            assert model_ok, "Failed to initialize the gazebo model"
+        # Configure the robot ignition plugin
+        lib_name = "RobotController"
+        class_name = "gympp::plugins::RobotController"
 
-            # Initialize the plugin
-            wrapper_ok = self._gazebo_wrapper.setupIgnitionPlugin(lib_name, class_name)
-            assert wrapper_ok, "Failed to setup the ignition plugin"
+        # Get the model and the world from the implementation of this class
+        self._model_sdf = self._get_model_sdf()
+        self._world_sdf = self._get_world_sdf()
 
-            # Initialize the ignition gazebo wrapper
-            gazebo_initialized = self._gazebo_wrapper.initialize()
-            assert gazebo_initialized, "Failed to initialize ignition gazebo"
+        # Initialize the world
+        world_ok = self._gazebo_wrapper.setupGazeboWorld(self._world_sdf)
+        assert world_ok, "Failed to initialize the gazebo world"
 
-        assert self._gazebo_wrapper.getNumberOfIterations() == self.iterations, \
-            "Number of iterations modified after gazebo started"
+        # Initialize the model
+        model_ok = self._gazebo_wrapper.setupGazeboModel(self._model_sdf)
+        assert model_ok, "Failed to initialize the gazebo model"
 
-        assert self._gazebo_wrapper.getUpdateRate() == self.update_rate, \
-            "Update rate modified after gazebo started"
+        # Initialize the plugin
+        wrapper_ok = self._gazebo_wrapper.setupIgnitionPlugin(lib_name, class_name,
+                                                              self.agent_rate)
+        assert wrapper_ok, "Failed to setup the ignition plugin"
+
+        # Initialize the ignition gazebo wrapper
+        gazebo_initialized = self._gazebo_wrapper.initialize() # TODO
+        assert gazebo_initialized, "Failed to initialize ignition gazebo"
 
         return self._gazebo_wrapper
 
     @property
     def robot(self) -> Robot:
         if self._robot:
+            assert self._robot.dt() == (1 / self._joint_controller_rate), \
+                "The controller period does not match with the configured period"
+            assert self._robot.valid(), "The robot object is not valid"
             return self._robot
 
         # Get the robot name
@@ -120,8 +134,19 @@ class IgnitionPythonEnv(gym.Env):
         assert self._robot, "Failed to get the Robot object"
         assert self._robot.valid(), "The Robot object is not valid"
 
+        # Set the default update rate
+        self._robot.setdt(1 / self._joint_controller_rate)
+
         # Return the robot object
         return self._robot
+
+    @gazebo.setter
+    def gazebo(self, gazebo: GazeboWrapper) -> None:
+        raise Exception("This attribute is read-only")
+
+    @robot.setter
+    def robot(self, robot: Robot) -> None:
+        raise Exception("This attribute is read-only")
 
     def render(self, mode: str = 'human') -> None:
         if mode == 'human':
@@ -133,6 +158,20 @@ class IgnitionPythonEnv(gym.Env):
 
     def close(self) -> None:
         self.gazebo.close()
+
+    def seed(self, seed: int = None) -> SeedList:
+        if not seed:
+            seed = np.random.randint(2**32 - 1)
+
+        # Seed numpy
+        self._np_random = np.random
+        self._np_random.seed(seed)
+
+        # Seed the spaces
+        self.action_space.seed(seed)
+        self.observation_space.seed(seed)
+
+        return SeedList([seed])
 
     def _get_model_sdf(self) -> str:
         """Get the name of the sdf file containing the gazebo model

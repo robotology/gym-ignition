@@ -64,18 +64,25 @@
 %shared_ptr(gympp::gazebo::GazeboWrapper)
 %shared_ptr(gympp::gazebo::IgnitionEnvironment)
 %include "ignition/common/SingletonT.hh"
+%ignore ignition::common::SingletonT<gympp::GymFactory>::myself;
 %template(GymFactorySingleton) ignition::common::SingletonT<gympp::GymFactory>;
 %include "gympp/Environment.h"
-%include "gympp/gazebo/IgnitionEnvironment.h"
 %include "gympp/gazebo/GazeboWrapper.h"
+%include "gympp/gazebo/IgnitionEnvironment.h"
 
-%ignore gympp::Robot::setdt(const StepSize&);
-%include "gympp/Robot.h"
 %extend gympp::Robot {
     bool setdt(const double dt) {
         return $self->setdt(std::chrono::duration<double>(dt));
     }
+    
+    double dt() const {
+        return $self->dt().count();
+    }
 }
+
+%ignore gympp::Robot::dt;
+%ignore gympp::Robot::setdt(const StepSize&);
+%include "gympp/Robot.h"
 
 %inline %{
     std::shared_ptr<gympp::gazebo::IgnitionEnvironment> envToIgnEnv(gympp::EnvironmentPtr env) {

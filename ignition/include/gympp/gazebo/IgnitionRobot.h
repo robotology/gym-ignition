@@ -62,14 +62,21 @@ public:
     bool setdt(const StepSize& stepSize) override;
 
     bool setJointForce(const JointName& jointName, const double jointForce) override;
-    bool setJointPosition(const JointName& jointName, const double jointPositionReference) override;
-    bool setJointVelocity(const JointName& jointName, const double jointVelocityReference) override;
+    bool setJointPositionTarget(const JointName& jointName,
+                                const double jointPositionReference) override;
+    bool setJointVelocityTarget(const JointName& jointName,
+                                const double jointVelocityReference) override;
+
+    bool setJointPosition(const JointName& jointName, const double jointPosition) override;
+    bool setJointVelocity(const JointName& jointName, const double jointVelocity) override;
 
     bool setJointPID(const JointName& jointName, const PID& pid) override;
 
     bool resetJoint(const JointName& jointName,
                     const double jointPosition = 0,
                     const double jointVelocity = 0) override;
+
+    bool update(const std::chrono::duration<double> time) override;
 };
 
 #endif // GYMPP_ROBOT_IGNITIONROBOT_H
