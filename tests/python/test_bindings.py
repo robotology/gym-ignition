@@ -57,7 +57,7 @@ def test_sample(create_std_vector):
 
 
 def test_range():
-    gympp_range = gympp.RangeDouble(-5.0, 10.0)
+    gympp_range = gympp.Range(-5.0, 10.0)
     assert gympp_range.contains(0), "Range object failed to verify if it containes a value"
     assert gympp_range.contains(-5), "Range object failed to verify if it containes a value"
     assert gympp_range.contains(10), "Range object failed to verify if it containes a value"
