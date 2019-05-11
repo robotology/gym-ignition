@@ -2,7 +2,7 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(name='gym_ignition',
       version='0.1',
@@ -15,4 +15,6 @@ setup(name='gym_ignition',
       license="LGPL",
       platforms='any',
       python_requires='>=3.6',
-      install_requires=['gym'])
+      install_requires=['gym'],
+      packages=find_packages(),
+      )
