@@ -51,6 +51,12 @@ if(USE_IWYU)
     endif()
 endif()
 
+# Settings for RPATH
+if(NOT MSVC)
+    option(ENABLE_RPATH "Enable RPATH installation" TRUE)
+    mark_as_advanced(ENABLE_RPATH)
+endif()
+
 # Add custom functions / macros
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -61,6 +67,16 @@ find_package(YCM QUIET)
 if(NOT ${YCM_FOUND})
     include(BootstrapYCM)
 endif()
+
+# Configure RPATH
+include(AddInstallRPATHSupport)
+add_install_rpath_support(BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
+                          LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
+                                   "${CMAKE_INSTALL_FULL_LIBDIR}/gympp/bindings"
+                                   "${CMAKE_INSTALL_FULL_LIBDIR}/gympp/plugins"
+                          INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
+                          DEPENDS ENABLE_RPATH
+                          USE_LINK_PATH)
 
 # Dependencies
 add_subdirectory(deps)
