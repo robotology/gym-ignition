@@ -121,6 +121,7 @@ add_library(IgnitionRobot SHARED
 target_link_libraries(IgnitionRobot
     PUBLIC
     gympp
+    PRIVATE
     RobotSingleton)
 
 set_target_properties(IgnitionRobot PROPERTIES

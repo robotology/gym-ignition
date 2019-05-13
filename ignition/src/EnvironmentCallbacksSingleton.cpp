@@ -12,30 +12,22 @@
 
 #include <cassert>
 #include <ostream>
-#include <unordered_map>
 
 using namespace gympp::gazebo;
 
-class EnvironmentCallbacksSingleton::Impl
-{
-public:
-    std::unordered_map<std::string, EnvironmentCallbacks*> callbacks;
-};
-
-EnvironmentCallbacksSingleton::EnvironmentCallbacksSingleton()
-    : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
-{}
+std::unordered_map<std::string, EnvironmentCallbacks*>
+    gympp::gazebo::EnvironmentCallbacksSingleton::m_callbacks = {};
 
 EnvironmentCallbacks* EnvironmentCallbacksSingleton::get(const std::string& label)
 {
-    if (pImpl->callbacks.find(label) == pImpl->callbacks.end()) {
+    if (m_callbacks.find(label) == m_callbacks.end()) {
         gymppError << "Failed to find environment callbacks labelled as '" << label << "'"
                    << std::endl;
         return nullptr;
     }
 
-    assert(pImpl->callbacks.at(label));
-    return pImpl->callbacks.at(label);
+    assert(m_callbacks.at(label));
+    return m_callbacks.at(label);
 }
 
 bool EnvironmentCallbacksSingleton::storeEnvironmentCallback(const std::string& label,
@@ -46,11 +38,28 @@ bool EnvironmentCallbacksSingleton::storeEnvironmentCallback(const std::string& 
         return false;
     }
 
-    if (pImpl->callbacks.find(label) != pImpl->callbacks.end()) {
+    if (m_callbacks.find(label) != m_callbacks.end()) {
         gymppError << "Environment callbacks with label '" << label
                    << "' have been already registered" << std::endl;
     }
 
-    pImpl->callbacks.insert({label, cb});
+    m_callbacks[label] = cb;
+
+    return true;
+}
+
+bool EnvironmentCallbacksSingleton::deleteEnvironmentCallback(const std::string& label)
+{
+    if (label.empty()) {
+        gymppError << "The label of the callbacks to delete is empty" << std::endl;
+        return false;
+    }
+
+    if (m_callbacks.find(label) == m_callbacks.end()) {
+        gymppError << "The callbacks '" << label << "' have never been stored" << std::endl;
+        return false;
+    }
+
+    m_callbacks.erase(label);
     return true;
 }

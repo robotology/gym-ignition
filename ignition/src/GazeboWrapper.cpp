@@ -26,8 +26,6 @@
 
 using namespace gympp::gazebo;
 
-size_t GazeboWrapper::EnvironmentId = 0;
-
 struct GazeboData
 {
     uint64_t numOfIterations = 0;
@@ -119,9 +117,6 @@ bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Ro
 GazeboWrapper::GazeboWrapper(double updateRate, uint64_t iterations)
     : pImpl{new GazeboWrapper::Impl, [](Impl* impl) { delete impl; }}
 {
-    // Assign an unique id to the object
-    pImpl->id = EnvironmentId++;
-
     // Configure gazebo
     pImpl->gazebo.numOfIterations = iterations;
     pImpl->gazebo.config.SetUpdateRate(updateRate);
@@ -283,7 +278,8 @@ bool GazeboWrapper::setupGazeboModel(const std::string& modelFile, std::array<do
         gymppDebug << "Found model '" << modelName << "' in the sdf file" << std::endl;
 
         // Create a scoped name
-        std::string scopedModelName = std::to_string(pImpl->id) + "::" + modelName;
+        std::string scopedModelName =
+            std::to_string(reinterpret_cast<uint64_t>(this)) + "::" + modelName;
         gymppDebug << "Registering scoped '" << scopedModelName << "' model" << std::endl;
 
         // Copy the content of the model in another sdf element.

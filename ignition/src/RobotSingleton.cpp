@@ -33,11 +33,17 @@ RobotSingleton& RobotSingleton::get()
 
 gympp::RobotPtr RobotSingleton::getRobot(const std::string& robotName) const
 {
+    if (robotName.empty()) {
+        gymppError << "The robot name to register is empty" << std::endl;
+        return nullptr;
+    }
+
     if (pImpl->robots.find(robotName) == pImpl->robots.end()) {
         gymppError << "Failed to find robot '" << robotName << "'" << std::endl;
         return nullptr;
     }
 
+    assert(pImpl->robots.at(robotName));
     return pImpl->robots.at(robotName);
 }
 
@@ -56,5 +62,21 @@ bool RobotSingleton::storeRobot(RobotPtr robot)
 
     gymppDebug << "Registering robot '" << robot->name() << "'" << std::endl;
     pImpl->robots[robot->name()] = robot;
+    return true;
+}
+
+bool RobotSingleton::deleteRobot(const std::string& robotName)
+{
+    if (robotName.empty()) {
+        gymppError << "The robot name to unregister is empty" << std::endl;
+        return false;
+    }
+
+    if (pImpl->robots.find(robotName) == pImpl->robots.end()) {
+        gymppError << "The robot '" << robotName << "' has never been stored" << std::endl;
+        return false;
+    }
+
+    pImpl->robots.erase(robotName);
     return true;
 }

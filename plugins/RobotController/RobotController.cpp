@@ -38,6 +38,16 @@ RobotController::RobotController()
     , pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {}
 
+RobotController::~RobotController()
+{
+    auto* ecSingleton = EnvironmentCallbacksSingleton::Instance();
+
+    if (bool removed = ecSingleton->deleteEnvironmentCallback(pImpl->robot->name()); !removed) {
+        gymppError << "Failed to unregister the environment callbacks";
+        assert(removed);
+    }
+}
+
 void RobotController::Configure(const ignition::gazebo::Entity& entity,
                                 const std::shared_ptr<const sdf::Element>& sdf,
                                 ignition::gazebo::EntityComponentManager& ecm,
