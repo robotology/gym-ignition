@@ -1,0 +1,143 @@
+dist: xenial
+language: cpp
+services: docker
+
+os: linux
+
+addons:
+  homebrew:
+    update: true
+    taps: osrf/simulation
+    packages:
+      - ccache
+      - swig
+      - ninja
+      - qt5
+      - gflags
+      - ignition-cmake2
+      - ignition-plugin1
+      - ignition-math6
+      - ignition-common3
+      - ignition-transport7
+      - ignition-msgs4
+      - ignition-tools
+      - ignition-fuel-tools3
+      - sdformat8
+      - ignition-physics1
+      - ignition-rendering2
+      - ignition-sensors2
+      - ignition-gui2
+
+cache:
+  directories:
+    - $HOME/.ccache
+    - $HOME/Library/Caches/Homebrew
+
+stages:
+  - test # Default stage with job matrix
+  - osx
+
+compiler:
+  - gcc
+  #- clang # TODO: pytest fails with clang
+
+env:
+  global:
+    - UBUNTU="bionic"
+    - TRAVIS_CMAKE_GENERATOR="Ninja"
+    - TRAVIS_INSTALL_PREFIX="/usr/local"
+  matrix:
+    - TRAVIS_BUILD_TYPE="Release"
+    - TRAVIS_BUILD_TYPE="Debug"
+
+# ===================
+# STAGE: test (linux)
+# ===================
+
+install:
+  - >-
+    if [ "$TRAVIS_EVENT_TYPE" = "cron" ] ; then
+        # Build the docker image
+        cd $TRAVIS_BUILD_DIR/.ci
+        docker build --pull --build-arg from=ubuntu:$UBUNTU --build-arg install_prefix="$TRAVIS_INSTALL_PREFIX" --rm -t diegoferigo/gym-ignition .
+        docker login --username=$DOCKERHUB_USERNAME --password=$DOCKERHUB_PASSWORD
+        docker push diegoferigo/gym-ignition
+    else
+        # Download the image
+        docker pull diegoferigo/gym-ignition
+    fi
+
+script:
+  # Execute the script
+  - >-
+    docker run -it --rm \
+      -v $TRAVIS_BUILD_DIR:$TRAVIS_BUILD_DIR \
+      -v $HOME/.ccache:$HOME/.ccache \
+      -w $TRAVIS_BUILD_DIR \
+      --env-file $TRAVIS_BUILD_DIR/.ci/env.list \
+      diegoferigo/gym-ignition \
+      sh .ci/script.sh
+
+# ==========
+# STAGE: osx
+# ==========
+
+stage_osx:
+  before_install: &osx_before_install
+    # Setup ccache
+    - export PATH="/usr/local/opt/ccache/libexec:$PATH"
+    # Setup qt
+    - export Qt5_DIR=/usr/local/opt/qt5/lib/cmake/Qt5
+
+  install: &osx_install
+    # Install ign-gazebo
+    - cd $HOME
+    - git clone --depth 1 https://github.com/diegoferigo/ign-gazebo
+    - cd ign-gazebo && mkdir -p build && cd build
+    - >-
+      cmake \
+        -G"Ninja" \
+        -DCMAKE_BUILD_TYPE="$TRAVIS_BUILD_TYPE" \
+        -DBUILD_TESTING:BOOL=OFF \
+        ..
+    - cmake --build . --target install
+    # Install pytest
+    - pip3 install pytest
+
+  before_script: &osx_before_script
+    - export TRAVIS_INSTALL_PREFIX="$HOME/local"
+
+  script: &osx_script
+    - cd $TRAVIS_BUILD_DIR/.ci
+    - ./script.sh
+
+# ======================
+# BUILD JOBS FROM STAGES
+# ======================
+
+jobs:
+  allow_failures:
+    - os: osx
+  include:
+    # ---------
+    # STAGE OSX
+    # ---------
+    - &osx_template
+      stage: osx
+      os: osx
+      osx_image: xcode10.2
+      services:
+      before_install: *osx_before_install
+      install: *osx_install
+      before_script: *osx_before_script
+      script: *osx_script
+      after_script: skip
+      after_failure: skip
+      after_success: skip
+      env:
+        TRAVIS_CMAKE_GENERATOR="Xcode"
+        TRAVIS_BUILD_TYPE="Release"
+    - <<: *osx_template
+      env:
+        TRAVIS_CMAKE_GENERATOR="Ninja"
+        TRAVIS_BUILD_TYPE="Release"
