@@ -9,9 +9,6 @@ project(Gympp VERSION 0.1)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add custom functions / macros
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
 # Include useful features
 include(GNUInstallDirs)
 
@@ -45,9 +42,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}"
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
 
-# Add custom CMake functions / macros
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
 # Get include-what-you-use information when compiling
 option(USE_IWYU "Get the output of include-what-you-use" OFF)
 if(USE_IWYU)
@@ -57,8 +51,35 @@ if(USE_IWYU)
     endif()
 endif()
 
-# TODO: install basic package file
-# TODO: RPATH
+# Settings for RPATH
+if(NOT MSVC)
+    option(ENABLE_RPATH "Enable RPATH installation" TRUE)
+    mark_as_advanced(ENABLE_RPATH)
+endif()
+
+# Add custom functions / macros
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+# Find YCM
+find_package(YCM QUIET)
+
+# Bootstrap YCM if not found
+if(NOT ${YCM_FOUND})
+    include(BootstrapYCM)
+endif()
+
+# Configure RPATH
+include(AddInstallRPATHSupport)
+add_install_rpath_support(BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
+                          LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
+                                   "${CMAKE_INSTALL_FULL_LIBDIR}/gympp/bindings"
+                                   "${CMAKE_INSTALL_FULL_LIBDIR}/gympp/plugins"
+                          INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
+                          DEPENDS ENABLE_RPATH
+                          USE_LINK_PATH)
+
+# Dependencies
+add_subdirectory(deps)
 
 # Add the C++ sources subdirectory
 add_subdirectory(gympp)
@@ -66,7 +87,6 @@ add_subdirectory(gympp)
 find_package(ignition-gazebo2 COMPONENTS all)
 if(ignition-gazebo2_FOUND)
     add_subdirectory(ignition)
-    add_subdirectory(deps)
     add_subdirectory(plugins)
     add_subdirectory(models)
     add_subdirectory(examples/cpp)
