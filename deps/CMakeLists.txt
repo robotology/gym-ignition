@@ -10,7 +10,7 @@ include(FetchContent)
 
 find_package(tiny-process-library QUIET)
 
-if(NOT tiny-process-library_FOUND)
+if(NOT ${tiny-process-library_FOUND})
     message(STATUS "Bootstrapping Tiny Process Library")
 
     FetchContent_Declare(
