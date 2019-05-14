@@ -15,6 +15,6 @@ setup(name='gym_ignition',
       license="LGPL",
       platforms='any',
       python_requires='>=3.6',
-      install_requires=['gym'],
+      install_requires=['gym >= 0.11'],
       packages=find_packages(),
       )
