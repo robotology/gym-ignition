@@ -61,10 +61,8 @@ def test_joint_controller():
     physics_rate = 1000.0
     controller_rate = 500.0
 
-    physics_iterations = 10  # TODO: Computed already inside the class
-
     # Create the gazebo wrapper
-    gazebo = gym_ignition.gympp.GazeboWrapper(physics_rate, physics_iterations)
+    gazebo = gympp.GazeboWrapper(physics_rate)
     assert gazebo, "Failed to get the gazebo wrapper"
 
     # Set verbosity

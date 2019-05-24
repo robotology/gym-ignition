@@ -23,6 +23,7 @@ class IgnitionPythonEnv(gym.Env):
     Attributes:
         agent_rate (float): The rate associated to a single env.step call in Hertz
         physics_rate (float): The rate of the gazebo simulation in Hertz
+        robot_controller_rate: The rate of the joint controller in Hertz
         gazebo: The object that wraps the simulator
         robot: The object that allows interacting with the simulated robot
     """
@@ -35,16 +36,10 @@ class IgnitionPythonEnv(gym.Env):
         self._gazebo_wrapper = None
         self._model_sdf = None
         self._world_sdf = None
-        self._iterations = None
-        self._joint_controller_rate = None
-        self._physics_rate = None
         self._np_random = None
-
-        # Initialize default values
-        self._physics_rate = 10000.0
-        self._joint_controller_rate = 1000
-
-        self.agent_rate = 100
+        self._iterations = None
+        self._physics_rate = None
+        self._robot_controller_rate = None
 
     @property
     def physics_rate(self) -> float:
@@ -54,36 +49,51 @@ class IgnitionPythonEnv(gym.Env):
     def agent_rate(self) -> float:
         return self._agent_rate
 
+    @property
+    def robot_controller_rate(self) -> float:
+        return self._robot_controller_rate
+
     @physics_rate.setter
     def physics_rate(self, physics_rate: float) -> None:
         if self._gazebo_wrapper:
             raise Exception("Gazebo server has been already created. You should set "
                             "the update rate before its initialization.")
-        self._physics_rate = float(physics_rate)
 
-        # Update the number of iterations using the agent_rate setter
-        self.agent_rate = self._agent_rate
+        self._physics_rate = float(physics_rate)
 
     @agent_rate.setter
     def agent_rate(self, agent_rate: float) -> None:
+        if self._gazebo_wrapper:
+            raise Exception("Gazebo server has been already created. You should set "
+                            "the update rate before its initialization.")
+
         self._agent_rate = float(agent_rate)
-        self._iterations = int(self._physics_rate / agent_rate)
+
+    @robot_controller_rate.setter
+    def robot_controller_rate(self, robot_controller_rate: float) -> None:
+        self._robot_controller_rate = robot_controller_rate
+
+        if self._robot:
+            logger.debug("Updating the robot rate after initializing. Consider doing "
+                         "this before.")
+            self.robot.setdt(robot_controller_rate)
 
     @property
     def gazebo(self) -> GazeboWrapper:
         if self._gazebo_wrapper:
-            assert self._gazebo_wrapper.getNumberOfIterations() == self._iterations, \
-                "Number of iterations modified after gazebo started"
-
             assert self._gazebo_wrapper.getUpdateRate() == self.physics_rate, \
                 "Update rate modified after gazebo started"
 
             return self._gazebo_wrapper
 
+        assert self.agent_rate, "Agent rate was not set"
+        assert self.physics_rate, "Physics rate was not set"
+
+        logger.debug("Starting gazebo with physics at {} Hz and agent at {} Hz ".format(
+            self.physics_rate, self.agent_rate))
+
         # Create the GazeboWrapper object
-        logger.debug("Starting gazebo with {} Hz and {} iterations".format(
-            self.physics_rate, self._iterations))
-        self._gazebo_wrapper = GazeboWrapper(self.physics_rate, int(self._iterations))
+        self._gazebo_wrapper = GazeboWrapper(self.physics_rate)
 
         # Set the verbosity
         logger.set_level(gym.logger.MIN_LEVEL)
@@ -118,8 +128,6 @@ class IgnitionPythonEnv(gym.Env):
     @property
     def robot(self) -> Robot:
         if self._robot:
-            assert self._robot.dt() == (1 / self._joint_controller_rate), \
-                "The controller period does not match with the configured period"
             assert self._robot.valid(), "The robot object is not valid"
             return self._robot
 
@@ -134,8 +142,9 @@ class IgnitionPythonEnv(gym.Env):
         assert self._robot, "Failed to get the Robot object"
         assert self._robot.valid(), "The Robot object is not valid"
 
-        # Set the default update rate
-        self._robot.setdt(1 / self._joint_controller_rate)
+        if self.robot_controller_rate:
+            ok_dt = self._robot.setdt(1 / self.robot_controller_rate)
+            assert ok_dt, "Failed to set the robot period"
 
         # Return the robot object
         return self._robot

@@ -21,8 +21,7 @@ class CartPolePythonEnv(IgnitionPythonEnv):
 
         # Configure the simulation
         self.agent_rate = 100
-        self.physics_rate = 2000
-        self._joint_controller_rate = self.agent_rate
+        self.physics_rate = 1000
 
         # Configure action space
         self.action_space = gym.spaces.Discrete(2)

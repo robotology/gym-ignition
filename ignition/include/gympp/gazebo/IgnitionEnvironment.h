@@ -46,8 +46,7 @@ public:
     IgnitionEnvironment() = delete;
     IgnitionEnvironment(const ActionSpacePtr aSpace,
                         const ObservationSpacePtr oSpace,
-                        double updateRate,
-                        uint64_t iterations);
+                        double physicsUpdateRate);
     ~IgnitionEnvironment() override = default;
 
     bool render(RenderMode mode) override;
