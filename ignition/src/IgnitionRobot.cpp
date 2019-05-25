@@ -601,6 +601,12 @@ bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName,
 
 bool IgnitionRobot::update(const std::chrono::duration<double> time)
 {
+    // Return if there are no references to actuate
+    if (pImpl->buffers.joints.references.empty()) {
+        return true;
+    }
+
+    // The controller period must have been set in order to use PIDs
     if (pImpl->dt == std::chrono::duration<double>(0.0)) {
         gymppError << "The update time of the controlled was not set" << std::endl;
         return false;
@@ -629,11 +635,6 @@ bool IgnitionRobot::update(const std::chrono::duration<double> time)
     else {
         // Disable the PID and send the same force reference as last update
         updateCurrentState = false;
-    }
-
-    // Return if there are no references to actuate
-    if (pImpl->buffers.joints.references.empty()) {
-        return true;
     }
 
     // Actuate the references
