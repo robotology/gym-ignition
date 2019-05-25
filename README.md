@@ -13,8 +13,8 @@
 </p>
 
 <p align="center">
-    <a href="https://travis-ci.com/robotology/gym-ignition">
-    <img src="https://img.shields.io/travis/com/robotology/gym-ignition/master.svg?logo=travis&label=master" alt="Build Status (Linux/macOS) (master)" />
+    <a href="https://travis-org.org/robotology/gym-ignition">
+    <img src="https://img.shields.io/travis/robotology/gym-ignition/master.svg?logo=travis&label=master" alt="Build Status (Linux/macOS) (master)" />
     </a>
     <a href="https://www.codacy.com/app/diegoferigo/gym-ignition?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=diegoferigo/gym-ignition&amp;utm_campaign=Badge_Grade">
     <img src="https://api.codacy.com/project/badge/Grade/899a7c8304e14ed9b2330eb309cdad15" alt="Codacy Badge" />
