@@ -1,4 +1,4 @@
-%module gympp
+%module gympp_bindings
 
 %{
 #define SWIG_FILE_WITH_INIT
