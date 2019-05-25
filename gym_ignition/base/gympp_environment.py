@@ -5,12 +5,12 @@
 import gym
 from gym import spaces
 from numbers import Number
-from gym_ignition import gympp
 from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
+from gym_ignition import gympp_bindings as bindings
 
 
-class IgnitionEnv(gym.Env):
+class GymppEnvironment(gym.Env):
     """Class that exposes C++ Ignition environments
 
     This class encapsulates environments created as C++ plugins. Plugins that implement
@@ -45,7 +45,7 @@ class IgnitionEnv(gym.Env):
         assert(action_space and observation_space), "Failed to create spaces"
 
     @property
-    def gympp_env(self) -> gympp.IgnitionEnvironment:
+    def gympp_env(self) -> bindings.IgnitionEnvironment:
         if self._env:
             return self._env
 
@@ -53,7 +53,7 @@ class IgnitionEnv(gym.Env):
         md = self._plugin_metadata
 
         # Register the environment
-        factory = gympp.GymFactory.Instance()
+        factory = bindings.GymFactory.Instance()
         factory.registerPlugin(md)
 
         # Load the environment from gympp
@@ -67,8 +67,8 @@ class IgnitionEnv(gym.Env):
         return self._env
 
     @property
-    def gazebo(self) -> gympp.GazeboWrapper:
-        return gympp.envToGazeboWrapper(self.gympp_env)
+    def gazebo(self) -> bindings.GazeboWrapper:
+        return bindings.envToGazeboWrapper(self.gympp_env)
 
     @property
     def action_space(self) -> gym.Space:
@@ -94,19 +94,19 @@ class IgnitionEnv(gym.Env):
         return self._observation_space
 
     @property
-    def robot(self) -> gympp.Robot:
+    def robot(self) -> bindings.Robot:
         if self._robot:
             assert self._robot.valid(), "The Robot object is not valid"
             return self._robot
 
         # Get the robot name
-        gazebo_wrapper = gympp.envToGazeboWrapper(self.gympp_env)
+        gazebo_wrapper = bindings.envToGazeboWrapper(self.gympp_env)
         model_names = gazebo_wrapper.getModelNames()
         assert len(model_names) == 1, "The environment has more than one model"
         model_name = model_names[0]
 
         # Get the pointer to the Robot object
-        self._robot = gympp.RobotSingleton_get().getRobot(model_name)
+        self._robot = bindings.RobotSingleton_get().getRobot(model_name)
         assert self._robot, "Failed to get the Robot object"
 
         # Return the object
@@ -137,8 +137,8 @@ class IgnitionEnv(gym.Env):
             action_list = list(action)
 
         # Create the gympp::Sample object
-        action_buffer = getattr(gympp, 'Vector' + self._act_dt)(action_list)
-        action_sample = gympp.Sample(action_buffer)
+        action_buffer = getattr(bindings, 'Vector' + self._act_dt)(action_list)
+        action_sample = bindings.Sample(action_buffer)
 
         # Execute the step and get the std::optional<gympp::State> object
         state_optional = self.gympp_env.step(action_sample)
@@ -199,8 +199,8 @@ class IgnitionEnv(gym.Env):
         return observation
 
     def render(self, mode: str = 'human') -> None:
-        rendermode = {'human': gympp.Environment.RenderMode_HUMAN}
-        ok = self.gympp_env.render(rendermode[mode])
+        render_mode = {'human': bindings.Environment.RenderMode_HUMAN}
+        ok = self.gympp_env.render(render_mode[mode])
         assert ok, "Failed to render environment"
 
     def close(self) -> None:
@@ -224,7 +224,7 @@ class IgnitionEnv(gym.Env):
         return SeedList(list(vector_seeds))
 
     @property
-    def _plugin_metadata(self) -> gympp.PluginMetadata:
+    def _plugin_metadata(self) -> bindings.PluginMetadata:
         """Return metadata of the gympp plugin
 
         Loading an environment created with gympp in python requires the knowledge of
@@ -237,8 +237,8 @@ class IgnitionEnv(gym.Env):
         raise NotImplementedError
 
     @classmethod
-    def _create_space(cls, md: gympp.SpaceMetadata = None) \
-            -> Union[Tuple[gympp.Box, str], Tuple[gympp.Discrete, str]]:
+    def _create_space(cls, md: bindings.SpaceMetadata = None) \
+            -> Union[Tuple[bindings.Box, str], Tuple[bindings.Discrete, str]]:
         """Create an object of the gym.space package from gympp space metadata
 
         Note: In order to map the dynamically typed nature of python to C++, this class
@@ -247,14 +247,14 @@ class IgnitionEnv(gym.Env):
               also a method suffix string (such as "_d" for double) that is appended to
               the calls of the swig bindings methods (e.g. obs.getBuffer_d()).
         """
-        assert isinstance(md, gympp.SpaceMetadata), "Wrong type for method argument"
+        assert isinstance(md, bindings.SpaceMetadata), "Wrong type for method argument"
 
         space_type = md.getType()
         low = md.getLowLimit()
         high = md.getHighLimit()
         dims = md.getDimensions()
 
-        if space_type is gympp.SpaceType_Box:
+        if space_type is bindings.SpaceType_Box:
             if not dims:
                 assert len(low) == len(high), "Sizes of low and high limits do not match"
                 return spaces.Box(np.array(low), np.array(high)), "_d"
@@ -263,7 +263,7 @@ class IgnitionEnv(gym.Env):
                 assert len(high) == 1, "The size of the limit is not valid"
                 return (spaces.Box(low[0], high[0], dims), "_d")
 
-        elif space_type is gympp.SpaceType_Discrete:
+        elif space_type is bindings.SpaceType_Discrete:
             assert len(dims) == 1, "The specified space dimension is not valid"
             return (spaces.Discrete(dims[0]), "_i")
 
