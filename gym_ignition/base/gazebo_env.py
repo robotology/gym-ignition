@@ -9,7 +9,7 @@ from gym_ignition.utils.typing import *
 from gym_ignition import gympp_bindings as bindings
 
 
-class GazeboEnvironment(gym.Wrapper):
+class GazeboEnv(gym.Wrapper):
     def __init__(self,
                  task: type,
                  robot : type,

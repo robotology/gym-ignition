@@ -7,7 +7,7 @@ import gym
 from gym_ignition.utils.typing import *
 
 
-class RTEnvironment(gym.Wrapper):
+class RTEnv(gym.Wrapper):
     def __init__(self,
                  task: type,
                  robot : type,

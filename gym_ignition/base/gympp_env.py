@@ -10,7 +10,7 @@ from gym_ignition.utils.typing import *
 from gym_ignition import gympp_bindings as bindings
 
 
-class GymppEnvironment(gym.Env):
+class GymppEnv(gym.Env):
     """Class that exposes C++ Ignition environments
 
     This class encapsulates environments created as C++ plugins. Plugins that implement

@@ -3,11 +3,11 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import numpy as np
-from gym_ignition.base import gympp_environment
+from gym_ignition.base import gympp_env
 from gym_ignition import gympp_bindings as bindings
 
 
-class CartPoleDiscrete(gympp_environment.GymppEnvironment):
+class CartPoleDiscrete(gympp_env.GymppEnv):
     def __init__(self):
         # Initialize the parent class
         super().__init__()
