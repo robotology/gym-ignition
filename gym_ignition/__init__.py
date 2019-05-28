@@ -34,6 +34,7 @@ from gym_ignition.tasks import cartpole_continuous
 
 register(
     id='CartPoleGympp-Discrete-v0',
+    max_episode_steps=5000,
     entry_point='gym_ignition.gympp.cartpole:CartPoleDiscrete')
 
 # ==========================
@@ -43,21 +44,25 @@ register(
 register(
     id='CartPoleGymppy-Discrete-v0',
     entry_point='gym_ignition.base.gazebo_env:GazeboEnv',
+    max_episode_steps=5000,
     kwargs={'task': cartpole_discrete.CartPoleDiscrete,
             'robot': sim.cartpole.CartPoleRobot,
             'sdf': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
             'agent_rate': 1000,
             'physics_rate': 1000,
+            'simulation_rate': 1e9,
             })
 
 register(
     id='CartPoleGymppy-Continuous-v0',
     entry_point='gym_ignition.base.gazebo_env:GazeboEnv',
+    max_episode_steps=5000,
     kwargs={'task': cartpole_continuous.CartPoleContinuous,
             'robot': sim.cartpole.CartPoleRobot,
             'sdf': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
             'agent_rate': 1000,
             'physics_rate': 1000,
+            'simulation_rate': 1e9,
             })
