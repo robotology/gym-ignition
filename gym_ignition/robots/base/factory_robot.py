@@ -3,8 +3,9 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from typing import List
-from gym_ignition import gympp_bindings as bindings
 from gym_ignition.base import robot
+from gym_ignition.utils import logger
+from gym_ignition import gympp_bindings as bindings
 
 
 class FactoryRobot(robot.Robot):
@@ -31,6 +32,7 @@ class FactoryRobot(robot.Robot):
         assert self._gympp_robot.valid(), "The Robot object is not valid"
 
         if self._controller_rate:
+            logger.debug("Robot controller rate: {} Hz".format(self._controller_rate))
             ok_dt = self._gympp_robot.setdt(1 / self._controller_rate)
             assert ok_dt, "Failed to set the robot controller period"
 
