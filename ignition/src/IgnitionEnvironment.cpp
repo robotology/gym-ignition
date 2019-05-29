@@ -45,11 +45,27 @@ EnvironmentCallbacks* IgnitionEnvironment::envCallbacks()
 
 IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
                                          const ObservationSpacePtr oSpace,
-                                         double physicsUpdateRate)
+                                         const double agentUpdateRate,
+                                         const double realTimeFactor,
+                                         const double physicsUpdateRate)
     : Environment(aSpace, oSpace)
-    , GazeboWrapper(physicsUpdateRate)
+    , GazeboWrapper(static_cast<unsigned>(physicsUpdateRate / agentUpdateRate),
+                    realTimeFactor,
+                    physicsUpdateRate)
     , pImpl{new IgnitionEnvironment::Impl, [](Impl* impl) { delete impl; }}
-{}
+{
+    gymppDebug << "Configuring gazebo for an agent running at " << agentUpdateRate << " Hz"
+               << std::endl;
+
+    // Update the number of iterations accordingly to the simulation step and plugin update
+    double rateRatio = physicsUpdateRate / agentUpdateRate;
+    auto numOfSimulationIterationsPerStep = static_cast<size_t>(rateRatio);
+
+    if (rateRatio != numOfSimulationIterationsPerStep) {
+        gymppWarning << "Rounding the number of iterations to " << numOfSimulationIterationsPerStep
+                     << " from the nominal " << rateRatio << std::endl;
+    }
+}
 
 std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action& action)
 {
