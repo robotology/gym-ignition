@@ -25,8 +25,6 @@ using namespace gympp::plugins;
 using ObservationDataType = int;
 using ObservationSample = gympp::BufferContainer<ObservationDataType>::type;
 
-const double DefaultControllerRate = 1000;
-
 class RobotController::Impl
 {
 public:
@@ -58,17 +56,6 @@ void RobotController::Configure(const ignition::gazebo::Entity& entity,
     if (!ignRobot->configureECM(entity, sdf, ecm)) {
         gymppError << "Failed to configure the Robot interface" << std::endl;
         return;
-    }
-
-    // Read the optional update_rate option from the sdf
-    if (sdf->HasElement("update_rate")) {
-        double rate = sdf->Get<double>("update_rate");
-        ignRobot->setdt(std::chrono::duration<double>(1 / rate));
-        gymppDebug << "Setting plugin rate " << rate << " Hz" << std::endl;
-    }
-    else {
-        ignRobot->setdt(std::chrono::duration<double>(1 / DefaultControllerRate));
-        gymppDebug << "Setting plugin rate " << DefaultControllerRate << " Hz" << std::endl;
     }
 
     if (!ignRobot->valid()) {

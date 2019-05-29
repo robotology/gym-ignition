@@ -40,7 +40,6 @@ enum ObservationIndex
     PoleVelocity = 3,
 };
 
-const double DefaultControllerRate = 1000;
 const size_t MaxEpisodeLength = 20000;
 const double XThreshold = 2.4;
 const double ThetaThresholdDeg = 12;
@@ -105,17 +104,6 @@ void CartPole::Configure(const ignition::gazebo::Entity& entity,
     if (!ignRobot->configureECM(entity, sdf, ecm)) {
         gymppError << "Failed to configure the Robot interface" << std::endl;
         return;
-    }
-
-    // Read the optional update_rate option from the sdf
-    if (sdf->HasElement("update_rate")) {
-        double rate = sdf->Get<double>("update_rate");
-        ignRobot->setdt(std::chrono::duration<double>(1 / rate));
-        gymppDebug << "Setting plugin rate " << rate << " Hz" << std::endl;
-    }
-    else {
-        ignRobot->setdt(std::chrono::duration<double>(1 / DefaultControllerRate));
-        gymppDebug << "Setting plugin rate " << DefaultControllerRate << " Hz" << std::endl;
     }
 
     if (!ignRobot->valid()) {
