@@ -49,9 +49,9 @@ register(
             'robot': sim.cartpole.CartPoleRobot,
             'sdf': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
+            'rtf': 1E9,
             'agent_rate': 1000,
             'physics_rate': 1000,
-            'simulation_rate': 1e9,
             })
 
 register(
@@ -62,7 +62,7 @@ register(
             'robot': sim.cartpole.CartPoleRobot,
             'sdf': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
+            'rtf': 1E9,
             'agent_rate': 1000,
             'physics_rate': 1000,
-            'simulation_rate': 1e9,
             })
