@@ -5,19 +5,18 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
-from gym import logger
 import gym_ignition
+from gym_ignition.utils import logger
 
 # Set gym verbosity
-logger.set_level(logger.INFO)
-assert(logger.set_level(logger.DEBUG) or True)
-
-logger.debug("Initializing the environment")
+logger.set_level(gym.logger.INFO)
+assert(logger.set_level(gym.logger.DEBUG) or True)
 
 # Create the environment
 # env = gym.make("CartPole-v1")
-env = gym.make("CartPoleIgnition-v0")
-# env = gym.make("CartPoleIgnitionPython-v0")
+# env = gym.make("CartPoleGympp-Discrete-v0")
+# env = gym.make("CartPoleGymppy-Discrete-v0")
+env = gym.make("CartPoleGymppy-Continuous-v0")
 
 # Initialize the seed
 env.seed(42)

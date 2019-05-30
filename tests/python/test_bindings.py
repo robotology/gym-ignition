@@ -4,25 +4,24 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import pytest
-from pathlib import Path
 import os
+import pytest
 import numpy as np
 from numpy import pi
-import gym_ignition
-from gym_ignition import gympp
+from pathlib import Path
+from gym_ignition import gympp_bindings as bindings
 
 @pytest.fixture
 def create_std_vector():
     python_list = [1.0, 2.0, 3.0]
-    vector = gympp.Vector_d(python_list)
+    vector = bindings.Vector_d(python_list)
     return vector
 
 
 @pytest.fixture
 def create_space_box_md():
-    md = gympp.SpaceMetadata()
-    md.setType(gympp.SpaceType_Box)
+    md = bindings.SpaceMetadata()
+    md.setType(bindings.SpaceType_Box)
     max_float = float(np.finfo(np.float32).max)
     md.setLowLimit([-2.5, -max_float, -24, -max_float])
     md.setHighLimit([2.5, max_float, 24, max_float])
@@ -31,22 +30,22 @@ def create_space_box_md():
 
 @pytest.fixture
 def create_space_discrete_md():
-    md = gympp.SpaceMetadata()
-    md.setType(gympp.SpaceType_Discrete)
+    md = bindings.SpaceMetadata()
+    md.setType(bindings.SpaceType_Discrete)
     md.setDimensions([2])
     return md
 
 
 def test_vectors():
     python_list = [1.0, 2.0, 3.0]
-    vector = gympp.Vector_d(python_list)
+    vector = bindings.Vector_d(python_list)
     for i in range(0, vector.size()-1):
         assert python_list[i] == vector[i], "Vectors do not match"
 
 
 def test_sample(create_std_vector):
     vector = create_std_vector
-    sample = gympp.Sample(vector)
+    sample = bindings.Sample(vector)
 
     for i in range(0, vector.size()-1):
         assert sample.getBuffer_d()[i] == vector[i], "Sample object does not contain correct data"
@@ -57,7 +56,7 @@ def test_sample(create_std_vector):
 
 
 def test_range():
-    gympp_range = gympp.Range(-5.0, 10.0)
+    gympp_range = bindings.Range(-5.0, 10.0)
     assert gympp_range.contains(0), "Range object failed to verify if it containes a value"
     assert gympp_range.contains(-5), "Range object failed to verify if it containes a value"
     assert gympp_range.contains(10), "Range object failed to verify if it containes a value"
@@ -66,10 +65,10 @@ def test_range():
 
 
 def test_discrete_space():
-    discrete_space = gympp.Discrete(12)
+    discrete_space = bindings.Discrete(12)
 
-    assert not discrete_space.contains(gympp.Sample([-1])), "Discrete object failed to verify if a sample belongs to its space"
-    assert not discrete_space.contains(gympp.Sample([13])), "Discrete object failed to verify if a sample belongs to its space"
+    assert not discrete_space.contains(bindings.Sample([-1])), "Discrete object failed to verify if a sample belongs to its space"
+    assert not discrete_space.contains(bindings.Sample([13])), "Discrete object failed to verify if a sample belongs to its space"
 
     for n in range(50):
         sample = discrete_space.sample()
@@ -80,13 +79,13 @@ def test_discrete_space():
 
 def test_box_space():
     size = 4
-    box = gympp.Box(-1, 42, [size])
+    box = bindings.Box(-1, 42, [size])
 
     # By default the data precision of python list is float. Force double.
-    assert box.contains(gympp.Sample(gympp.Vector_d([0, pi, 12, 42]))), "Box object failed to verify if a sample belongs to its space"
-    assert not box.contains(gympp.Sample(gympp.Vector_d([0, pi, 12, 43]))), "Box object failed to verify if a sample belongs to its space"
-    assert not box.contains(gympp.Sample(gympp.Vector_d([0]))), "Box object failed to verify if a sample belongs to its space"
-    assert not box.contains(gympp.Sample(gympp.Vector_d([0, pi, 12, 43, 0]))), "Box object failed to verify if a sample belongs to its space"
+    assert box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 42]))), "Box object failed to verify if a sample belongs to its space"
+    assert not box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 43]))), "Box object failed to verify if a sample belongs to its space"
+    assert not box.contains(bindings.Sample(bindings.Vector_d([0]))), "Box object failed to verify if a sample belongs to its space"
+    assert not box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 43, 0]))), "Box object failed to verify if a sample belongs to its space"
 
     for n in range(50):
         sample = box.sample()
@@ -98,17 +97,17 @@ def test_box_space():
 def test_space_box_metadata(create_space_box_md):
     md = create_space_box_md
     assert md.isValid(), "The space is not valid"
-    assert md.getType() == gympp.SpaceType_Box, "The space type is not correct"
+    assert md.getType() == bindings.SpaceType_Box, "The space type is not correct"
 
 
 def test_space_discrete_metadata(create_space_discrete_md):
     md = create_space_discrete_md
     assert md.isValid(), "The space is not valid"
-    assert md.getType() == gympp.SpaceType_Discrete, "The space type is not correct"
+    assert md.getType() == bindings.SpaceType_Discrete, "The space type is not correct"
 
 
 def test_metadata():
-    md = gympp.PluginMetadata()
+    md = bindings.PluginMetadata()
     assert not md.isValid(), "The metadata should not be valid"
 
     environment_name = "EnvironmentName"
@@ -143,10 +142,10 @@ def test_metadata():
 
 def test_gymfactory():
     # Get the factory
-    factory = gympp.GymFactory.Instance()
+    factory = bindings.GymFactory.Instance()
 
     # Register a plugin with empty metadata
-    md = gympp.PluginMetadata()
+    md = bindings.PluginMetadata()
     assert not factory.registerPlugin(md), "The empty plugin metadata should not be valid"
 
     # Get a not registered environment
@@ -164,7 +163,7 @@ def test_gymfactory():
     assert found, "Failed to find CartPole plugin"
 
     # Create the metadata
-    md = gympp.PluginMetadata()
+    md = bindings.PluginMetadata()
     md.setEnvironmentName("CartPole")
     md.setLibraryName("CartPolePlugin")
     md.setClassName("gympp::plugins::CartPole")
@@ -172,11 +171,11 @@ def test_gymfactory():
     md.setModelFileName("CartPole/CartPole.sdf")
     md.setGazeboUpdateRate(1000000000)
     md.setEnvironmentUpdateRate(md.getGazeboUpdateRate() / 10)
-    action_space_md = gympp.SpaceMetadata()
-    action_space_md.setType(gympp.SpaceType_Discrete)
+    action_space_md = bindings.SpaceMetadata()
+    action_space_md.setType(bindings.SpaceType_Discrete)
     action_space_md.setDimensions([2])
-    observation_space_md = gympp.SpaceMetadata()
-    observation_space_md.setType(gympp.SpaceType_Box)
+    observation_space_md = bindings.SpaceMetadata()
+    observation_space_md.setType(bindings.SpaceType_Box)
     max_float = float(np.finfo(np.float32).max)
     observation_space_md.setLowLimit([-2.5, -max_float, -24, -max_float])
     observation_space_md.setHighLimit([2.5, max_float, 24, max_float])
@@ -193,15 +192,15 @@ def test_gymfactory():
     assert env, "Failed to create CartPoleIgnition environment from the factory"
 
     # Get the gazebo wrapper
-    gazebo = gympp.envToGazeboWrapper(env)
+    gazebo = bindings.envToGazeboWrapper(env)
     assert gazebo, "Failed to get gazebo wrapper"
 
     # Get the ignition environment
-    ignenv = gympp.envToIgnEnv(env)
-    assert ignenv, "Failed to get the ignition environment"
+    ign_env = bindings.envToIgnEnv(env)
+    assert ign_env, "Failed to get the ignition environment"
 
     # Set verbosity
-    gympp.GazeboWrapper.setVerbosity(1)
+    bindings.GazeboWrapper.setVerbosity(1)
 
     # Use the environment
     env.reset()
@@ -223,6 +222,6 @@ def test_gymfactory():
     env2 = factory.make("CartPole")
     assert env2, "Failed to create CartPoleIgnition environment from the factory"
     assert env != env2, "Environment created from the factory are the same"
-    gympp.GazeboWrapper.setVerbosity(1)
+    bindings.GazeboWrapper.setVerbosity(1)
     env2.reset()
     env2.step(action)

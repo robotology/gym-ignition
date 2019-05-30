@@ -45,10 +45,9 @@ EnvironmentCallbacks* IgnitionEnvironment::envCallbacks()
 
 IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
                                          const ObservationSpacePtr oSpace,
-                                         double updateRate,
-                                         uint64_t iterations)
+                                         double physicsUpdateRate)
     : Environment(aSpace, oSpace)
-    , GazeboWrapper(updateRate, iterations)
+    , GazeboWrapper(physicsUpdateRate)
     , pImpl{new IgnitionEnvironment::Impl, [](Impl* impl) { delete impl; }}
 {}
 

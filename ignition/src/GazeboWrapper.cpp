@@ -64,7 +64,8 @@ std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
         assert(errors.empty()); // This should be already ok
 
         // Create the server
-        gymppDebug << "Creating the server" << std::endl << std::flush;
+        gymppDebug << "Creating the gazebo server (physics: " << gazebo.config.UpdateRate().value()
+                   << " Hz, " << gazebo.numOfIterations << " iterations)" << std::endl;
         gazebo.config.SetUseLevels(false);
         gazebo.server = std::make_shared<ignition::gazebo::Server>(gazebo.config);
         assert(gazebo.server);
@@ -72,7 +73,6 @@ std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
         // The GUI needs the server already up. Warming up the first iteration and pausing the
         // server. It will be unpaused at the step() call.
         gymppDebug << "Starting the server as paused" << std::endl;
-        gymppDebug << "Running " << gazebo.numOfIterations << " iterations every step" << std::endl;
         if (!gazebo.server->Run(/*blocking=*/false, gazebo.numOfIterations, /*paused=*/true)) {
             gymppError << "Failed to warm up the gazebo server in paused state" << std::endl;
             return nullptr;
@@ -114,11 +114,10 @@ bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Ro
     return true;
 }
 
-GazeboWrapper::GazeboWrapper(double updateRate, uint64_t iterations)
+GazeboWrapper::GazeboWrapper(double updateRate)
     : pImpl{new GazeboWrapper::Impl, [](Impl* impl) { delete impl; }}
 {
     // Configure gazebo
-    pImpl->gazebo.numOfIterations = iterations;
     pImpl->gazebo.config.SetUpdateRate(updateRate);
 
     // Configure search path of resources
@@ -322,9 +321,10 @@ bool GazeboWrapper::setupGazeboWorld(const std::string& worldFile)
 
 bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName,
                                         const std::string& className,
-                                        double updateRate)
+                                        double agentUpdateRate)
 {
     assert(!pImpl->scopedModelName.empty());
+    assert(pImpl->gazebo.config.UpdateRate());
 
     sdf::ElementPtr sdf(new sdf::Element);
     sdf->SetName("plugin");
@@ -332,12 +332,15 @@ bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName,
     sdf->AddAttribute("filename", "string", libName, true);
 
     // Set the update rate of the plugin. By default the update rate of the physic engine is used.
-    if (updateRate != 0.0) {
+    if (agentUpdateRate != 0.0) {
         // Rate of the agent
         auto element = std::make_shared<sdf::Element>();
         element->SetName("update_rate");
-        element->AddValue("double", std::to_string(updateRate), true);
+        element->AddValue("double", std::to_string(agentUpdateRate), true);
         sdf->InsertElement(element);
+    }
+    else {
+        agentUpdateRate = pImpl->gazebo.config.UpdateRate().value();
     }
 
     ignition::gazebo::ServerConfig::PluginInfo pluginInfo{
@@ -346,14 +349,13 @@ bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName,
     pImpl->gazebo.config.AddPlugin(pluginInfo);
 
     // Update the number of iterations accordingly to the simulation step and plugin update rate
-    assert(pImpl->gazebo.config.UpdateRate());
-    double rateRatio = pImpl->gazebo.config.UpdateRate().value() / updateRate;
+    double rateRatio = pImpl->gazebo.config.UpdateRate().value() / agentUpdateRate;
     pImpl->gazebo.numOfIterations = static_cast<size_t>(rateRatio);
 
     if (rateRatio != static_cast<size_t>(rateRatio)) {
         gymppWarning << "Rounding the number of iterations to " << pImpl->gazebo.numOfIterations
                      << " from the nominal "
-                     << pImpl->gazebo.config.UpdateRate().value() / updateRate << std::endl;
+                     << pImpl->gazebo.config.UpdateRate().value() / agentUpdateRate << std::endl;
     }
 
     return true;

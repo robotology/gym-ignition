@@ -76,10 +76,8 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::string& envName)
     }
 
     // Create the environment
-    auto ignGym = std::make_shared<gazebo::IgnitionEnvironment>(actionSpace,
-                                                                observationSpace,
-                                                                /*updateRate=*/md.gazeboUpdateRate,
-                                                                /*iterations=*/1);
+    auto ignGym = std::make_shared<gazebo::IgnitionEnvironment>(
+        actionSpace, observationSpace, md.gazeboUpdateRate);
 
     // Setup the world
     if (!ignGym->setupGazeboWorld(md.worldFileName)) {

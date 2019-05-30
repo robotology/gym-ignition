@@ -38,7 +38,7 @@ public:
     using SdfModelName = std::string;
 
     GazeboWrapper() = delete;
-    GazeboWrapper(double updateRate, uint64_t iterations = 1);
+    GazeboWrapper(double updateRate);
     virtual ~GazeboWrapper();
 
     bool initialize();
@@ -56,7 +56,7 @@ public:
     bool setupGazeboWorld(const std::string& worldFile);
     bool setupIgnitionPlugin(const std::string& libName,
                              const std::string& className,
-                             double updateRate = 0);
+                             double agentUpdateRate = 0);
 };
 
 #endif // GYMPP_GAZEBO_GAZEBOWRAPPER

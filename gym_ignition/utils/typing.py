@@ -1,5 +1,5 @@
-from typing import List, Tuple, Dict, Union, NewType
 import numpy as np
+from typing import List, Tuple, Dict, Union, NewType
 
 Action = NewType('Action', Union[np.ndarray, np.number])
 Observation = NewType('Observation', np.ndarray)
