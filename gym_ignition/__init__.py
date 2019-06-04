@@ -32,6 +32,9 @@ from gym_ignition.tasks import cartpole_continuous
 # GYMPP C++ ENVIRONMENTS
 # ======================
 
+import numpy as np
+max_float = float(np.finfo(np.float32).max)
+
 register(
     id='CartPoleGympp-Discrete-v0',
     max_episode_steps=5000,
@@ -49,7 +52,7 @@ register(
             'robot': sim.cartpole.CartPoleRobot,
             'sdf': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
-            'rtf': 1E9,
+            'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
             })
@@ -62,7 +65,7 @@ register(
             'robot': sim.cartpole.CartPoleRobot,
             'sdf': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
-            'rtf': 1E9,
+            'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
             })
