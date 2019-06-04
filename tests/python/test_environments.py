@@ -10,8 +10,8 @@ from numpy import pi, sin
 from gym_ignition.utils import logger
 from gym_ignition import gympp_bindings as bindings
 
-# Set gym verbosity
-logger.set_level(gym.logger.WARN)
+# Set verbosity
+logger.set_level(gym.logger.DEBUG)
 
 
 def test_create_cpp_environment():
@@ -60,11 +60,14 @@ def test_joint_controller():
     controller_rate = 500.0
 
     # Create the gazebo wrapper
-    gazebo = bindings.GazeboWrapper(physics_rate)
+    numOfIterations = 10
+    desiredRTF = float(np.finfo(np.float32).max)
+    physicsUpdateRate = 1000.0
+    gazebo = bindings.GazeboWrapper(numOfIterations, desiredRTF, physicsUpdateRate)
     assert gazebo, "Failed to get the gazebo wrapper"
 
-    # Set verbosity
-    logger.set_level(gym.logger.WARN)
+    # Set the verbosity
+    logger.set_level(gym.logger.MIN_LEVEL)
 
     # Initialize the world
     world_ok = gazebo.setupGazeboWorld(world_sdf)
@@ -75,7 +78,7 @@ def test_joint_controller():
     assert model_ok, "Failed to initialize the gazebo model"
 
     # Initialize the plugin
-    wrapper_ok = gazebo.setupIgnitionPlugin(lib_name, class_name, agent_rate)
+    wrapper_ok = gazebo.setupIgnitionPlugin(lib_name, class_name)
     assert wrapper_ok, "Failed to setup the ignition plugin"
 
     # Initialize the ignition gazebo wrapper
