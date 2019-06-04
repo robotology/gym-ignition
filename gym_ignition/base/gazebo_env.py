@@ -190,7 +190,11 @@ class GazeboEnv(gym.Wrapper):
 
     def render(self, mode: str = 'human', **kwargs) -> None:
         if mode == 'human':
-            gui_ok = self.gazebo.gui()
+            # Initialize gazebo if not yet done
+            gazebo = self.gazebo
+            assert gazebo, "Gazebo object not valid"
+
+            gui_ok = gazebo.gui()
             assert gui_ok, "Failed to render the environment"
             return
 
