@@ -108,9 +108,9 @@ class CartPoleContinuous(gym_ignition.Task):
             x_dot = observation[1]
 
             reward = reward \
-                     - 0.10 * np.abs(x) \
-                     - 0.10 * np.abs(x_dot) \
-                     - 10.0 * (x == self._x_threshold_reset)
+                - 0.10 * np.abs(x) \
+                - 0.10 * np.abs(x_dot) \
+                - 10.0 * (x >= self._x_threshold_reset)
 
         return reward
 
