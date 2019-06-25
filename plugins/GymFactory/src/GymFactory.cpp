@@ -76,8 +76,12 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::string& envName)
     }
 
     // Create the environment
-    auto ignGym = std::make_shared<gazebo::IgnitionEnvironment>(
-        actionSpace, observationSpace, md.gazeboUpdateRate);
+    auto ignGym =
+        std::make_shared<gazebo::IgnitionEnvironment>(actionSpace,
+                                                      observationSpace,
+                                                      md.agentRate,
+                                                      md.getPhysicsData().rtf,
+                                                      1 / md.getPhysicsData().maxStepSize);
 
     // Setup the world
     if (!ignGym->setupGazeboWorld(md.worldFileName)) {
@@ -92,7 +96,7 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::string& envName)
     }
 
     // Setup the plugin
-    if (!ignGym->setupIgnitionPlugin(md.libraryName, md.className, md.environmentUpdateRate)) {
+    if (!ignGym->setupIgnitionPlugin(md.libraryName, md.className)) {
         gymppError << "Failed to setup the ignition plugin" << std::endl;
         return nullptr;
     }

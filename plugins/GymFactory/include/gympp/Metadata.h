@@ -11,6 +11,7 @@
 
 #include "gympp/Log.h"
 #include "gympp/Space.h"
+#include "gympp/gazebo/IgnitionEnvironment.h"
 
 #include <string>
 #include <vector>
@@ -105,8 +106,8 @@ private:
     std::string modelFileName;
     std::string worldFileName;
 
-    double gazeboUpdateRate;
-    double environmentUpdateRate;
+    double agentRate;
+    gazebo::PhysicsData physicsData;
 
     SpaceMetadata actionSpace;
     SpaceMetadata observationSpace;
@@ -117,8 +118,8 @@ public:
     inline std::string getClassName() const { return className; }
     inline std::string getModelFileName() const { return modelFileName; }
     inline std::string getWorldFileName() const { return worldFileName; }
-    inline double getGazeboUpdateRate() const { return gazeboUpdateRate; }
-    inline double getEnvironmentUpdateRate() const { return environmentUpdateRate; }
+    inline double getAgentRate() const { return agentRate; }
+    inline gazebo::PhysicsData getPhysicsData() const { return physicsData; }
     inline SpaceMetadata getActionSpaceMetadata() const { return actionSpace; }
     inline SpaceMetadata getObservationSpaceMetadata() const { return observationSpace; }
 
@@ -148,14 +149,11 @@ public:
         this->worldFileName = worldFileName;
     }
 
-    inline void setGazeboUpdateRate(const double gazeboUpdateRate)
-    {
-        this->gazeboUpdateRate = gazeboUpdateRate;
-    }
+    inline void setAgentRate(const double agentRate) { this->agentRate = agentRate; }
 
-    inline void setEnvironmentUpdateRate(const double environmentUpdateRate)
+    inline void setPhysicsData(const gazebo::PhysicsData& physicsData)
     {
-        this->environmentUpdateRate = environmentUpdateRate;
+        this->physicsData = physicsData;
     }
 
     bool isValid() const
@@ -168,8 +166,9 @@ public:
         ok = ok && !worldFileName.empty();
         ok = ok && actionSpace.isValid();
         ok = ok && observationSpace.isValid();
-        ok = ok && (gazeboUpdateRate != 0.0);
-        ok = ok && (environmentUpdateRate != 0.0);
+        ok = ok && physicsData.rtf > 0;
+        ok = ok && physicsData.maxStepSize > 0;
+        ok = ok && agentRate > 0;
         return ok;
     }
 };

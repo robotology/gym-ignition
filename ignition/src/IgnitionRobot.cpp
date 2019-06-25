@@ -442,6 +442,12 @@ bool IgnitionRobot::setJointForce(const gympp::Robot::JointName& jointName, cons
 bool IgnitionRobot::setJointPositionTarget(const gympp::Robot::JointName& jointName,
                                            const double jointPositionReference)
 {
+    // The controller period must have been set in order to set references
+    if (pImpl->dt == std::chrono::duration<double>(0.0)) {
+        gymppError << "The update time of the controlled was not set" << std::endl;
+        return false;
+    }
+
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
     if (jointEntity == ignition::gazebo::kNullEntity) {
         return false;
@@ -470,6 +476,12 @@ bool IgnitionRobot::setJointPositionTarget(const gympp::Robot::JointName& jointN
 bool IgnitionRobot::setJointVelocityTarget(const gympp::Robot::JointName& jointName,
                                            const double jointVelocityReference)
 {
+    // The controller period must have been set in order to set references
+    if (pImpl->dt == std::chrono::duration<double>(0.0)) {
+        gymppError << "The update time of the controlled was not set" << std::endl;
+        return false;
+    }
+
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
     if (jointEntity == ignition::gazebo::kNullEntity) {
         return false;

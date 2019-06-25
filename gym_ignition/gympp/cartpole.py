@@ -22,8 +22,12 @@ class CartPoleDiscrete(gympp_env.GymppEnv):
         md.setClassName("gympp::plugins::CartPole")
         md.setWorldFileName("DefaultEmptyWorld.world")
         md.setModelFileName("CartPole/CartPole.sdf")
-        md.setGazeboUpdateRate(1000)      # Rate of physics
-        md.setEnvironmentUpdateRate(1000) # Rate of environment and joint controller
+
+        md.setAgentRate(1000)
+
+        real_time_factor = 1E9
+        max_physics_step_size = 0.001
+        md.setPhysicsData(bindings.PhysicsData(real_time_factor, max_physics_step_size))
 
         # Configure the action space
         action_space_md = bindings.SpaceMetadata()

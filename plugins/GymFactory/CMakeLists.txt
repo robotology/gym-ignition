@@ -12,8 +12,8 @@ add_library(GymFactory
     src/GymFactory.cpp)
 
 target_link_libraries(GymFactory
-    PUBLIC gympp
-    PRIVATE IgnitionEnvironment ignition-gazebo2::core)
+    PUBLIC gympp IgnitionEnvironment
+    PRIVATE ignition-gazebo2::core)
 
 set_target_properties(GymFactory PROPERTIES
     PUBLIC_HEADER

@@ -15,8 +15,9 @@ class GazeboEnv(gym.Wrapper):
                  robot : type,
                  sdf: str,
                  world: str,
-                 physics_rate: float,
+                 rtf: float,
                  agent_rate: float,
+                 physics_rate: float,
                  **kwargs):
 
         # Save the keyworded arguments.
@@ -27,9 +28,12 @@ class GazeboEnv(gym.Wrapper):
         # Store the type of the class that provides gymppy.Robot interface
         self._robot_cls = robot
 
-        # Gazebo private attributes
+        # SDF files
         self._sdf = sdf
         self._world = world
+
+        # Gazebo simulation attributes
+        self._rtf = rtf
         self._agent_rate = agent_rate
         self._physics_rate = physics_rate
         self._gazebo_wrapper = None
@@ -59,34 +63,12 @@ class GazeboEnv(gym.Wrapper):
     # ==========
 
     @property
-    def physics_rate(self) -> float:
-        return self._physics_rate
-
-    @property
-    def agent_rate(self) -> float:
-        return self._agent_rate
-
-    @physics_rate.setter
-    def physics_rate(self, physics_rate: float) -> None:
-        if self._gazebo_wrapper:
-            raise Exception("Gazebo server has been already created. You should set "
-                            "the update rate before its initialization.")
-
-        self._physics_rate = float(physics_rate)
-
-    @agent_rate.setter
-    def agent_rate(self, agent_rate: float) -> None:
-        if self._gazebo_wrapper:
-            raise Exception("Gazebo server has been already created. You should set "
-                            "the update rate before its initialization.")
-
-        self._agent_rate = float(agent_rate)
-
-    @property
     def gazebo(self) -> bindings.GazeboWrapper:
         if self._gazebo_wrapper:
-            assert self._gazebo_wrapper.getUpdateRate() == self.physics_rate, \
-                "Update rate modified after gazebo started"
+            assert self._gazebo_wrapper.getPhysicsData().rtf == self._rtf, \
+                "The RTF of gazebo does not match the configuration"
+            assert 1 / self._gazebo_wrapper.getPhysicsData().maxStepSize == self._physics_rate, \
+                "The physics rate of gazebo does not match the configuration"
 
             return self._gazebo_wrapper
 
@@ -94,14 +76,31 @@ class GazeboEnv(gym.Wrapper):
         # INITIALIZE GAZEBO
         # =================
 
-        assert self.agent_rate, "Agent rate was not set"
-        assert self.physics_rate, "Physics rate was not set"
+        assert self._rtf, "Real Time Factor was not set"
+        assert self._agent_rate, "Agent rate was not set"
+        assert self._physics_rate, "Physics rate was not set"
 
-        logger.debug("Starting gazebo with physics at {} Hz and agent at {} Hz ".format(
-            self.physics_rate, self.agent_rate))
+        logger.debug("Starting gazebo")
+        logger.debug("Agent rate: {} Hz".format(self._agent_rate))
+        logger.debug("Physics rate: {} Hz".format(self._physics_rate))
+        logger.debug("Simulation RTF: {}".format(self._rtf))
+
+        # Compute the number of physics iteration to execute at every environment step
+        num_of_iterations_per_gazebo_step = self._physics_rate / self._agent_rate
+
+        if num_of_iterations_per_gazebo_step != int(num_of_iterations_per_gazebo_step):
+            logger.warn("Rounding the number of iterations to {} from the nominal {}"
+                        .format(int(num_of_iterations_per_gazebo_step),
+                                num_of_iterations_per_gazebo_step))
+        else:
+            logger.debug("Setting {} iteration per simulator step"
+                         .format(int(num_of_iterations_per_gazebo_step)))
 
         # Create the GazeboWrapper object
-        self._gazebo_wrapper = bindings.GazeboWrapper(self.physics_rate)
+        self._gazebo_wrapper = bindings.GazeboWrapper(
+            int(num_of_iterations_per_gazebo_step),
+            self._rtf,
+            self._physics_rate)
 
         # Set the verbosity
         logger.set_level(gym.logger.MIN_LEVEL)
@@ -117,8 +116,7 @@ class GazeboEnv(gym.Wrapper):
         # Initialize the robot controller plugin
         lib_name = "RobotController"
         class_name = "gympp::plugins::RobotController"
-        wrapper_ok = self._gazebo_wrapper.setupIgnitionPlugin(lib_name, class_name,
-                                                              self.agent_rate)
+        wrapper_ok = self._gazebo_wrapper.setupIgnitionPlugin(lib_name, class_name)
         assert wrapper_ok, "Failed to setup the ignition plugin"
 
         # Initialize the ignition gazebo wrapper
@@ -192,7 +190,11 @@ class GazeboEnv(gym.Wrapper):
 
     def render(self, mode: str = 'human', **kwargs) -> None:
         if mode == 'human':
-            gui_ok = self.gazebo.gui()
+            # Initialize gazebo if not yet done
+            gazebo = self.gazebo
+            assert gazebo, "Gazebo object not valid"
+
+            gui_ok = gazebo.gui()
             assert gui_ok, "Failed to render the environment"
             return
 

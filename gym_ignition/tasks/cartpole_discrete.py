@@ -106,7 +106,10 @@ class CartPoleDiscrete(gym_ignition.Task):
             x_dot = observation[1]
 
             # Update the reward
-            reward = reward - np.abs(x) - np.abs(x_dot) - 10 * (x == self._x_threshold)
+            reward = reward \
+                - np.abs(x) \
+                - np.abs(x_dot) \
+                - 10 * (x >= self._x_threshold)
 
         return reward
 

@@ -18,6 +18,7 @@
 #include <sdf/Element.hh>
 #include <sdf/Error.hh>
 #include <sdf/Model.hh>
+#include <sdf/Physics.hh>
 #include <sdf/Root.hh>
 #include <sdf/World.hh>
 
@@ -26,8 +27,13 @@
 
 using namespace gympp::gazebo;
 
+// =====
+// PIMPL
+// =====
+
 struct GazeboData
 {
+    PhysicsData physics;
     uint64_t numOfIterations = 0;
     ignition::gazebo::ServerConfig config;
     std::unique_ptr<TinyProcessLib::Process> gui;
@@ -45,6 +51,9 @@ public:
     sdf::Root sdf;
     bool findAndLoadSdf(const std::string& sdfFileName, sdf::Root& sdfRoot);
 
+    PhysicsData getPhysicsData() const;
+    bool setPhysics(const PhysicsData& physicsData);
+
     ignition::common::SystemPaths systemPaths;
 
     std::string scopedModelName;
@@ -57,15 +66,16 @@ std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
 
         assert(sdf.Element());
         assert(!sdf.Element()->ToString("").empty());
-        gazebo.config.SetSdfString(sdf.Element()->ToString(""));
 
+        // Check if there are sdf parsing errors
         sdf::Root root;
         auto errors = root.LoadSdfString(sdf.Element()->ToString(""));
         assert(errors.empty()); // This should be already ok
 
+        // Store the sdf string in the gazebo configuration
+        gazebo.config.SetSdfString(sdf.Element()->ToString(""));
+
         // Create the server
-        gymppDebug << "Creating the gazebo server (physics: " << gazebo.config.UpdateRate().value()
-                   << " Hz, " << gazebo.numOfIterations << " iterations)" << std::endl;
         gazebo.config.SetUseLevels(false);
         gazebo.server = std::make_shared<ignition::gazebo::Server>(gazebo.config);
         assert(gazebo.server);
@@ -114,11 +124,91 @@ bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Ro
     return true;
 }
 
-GazeboWrapper::GazeboWrapper(double updateRate)
+PhysicsData GazeboWrapper::Impl::getPhysicsData() const
+{
+    assert(sdf.WorldCount() == 1);
+    assert(sdf.WorldByIndex(0)->PhysicsCount() == 1);
+
+    PhysicsData physics;
+
+    physics.rtf = sdf.WorldByIndex(0)->PhysicsByIndex(0)->RealTimeFactor();
+    physics.maxStepSize = sdf.WorldByIndex(0)->PhysicsByIndex(0)->MaxStepSize();
+
+    return physics;
+}
+
+bool GazeboWrapper::Impl::setPhysics(const PhysicsData& physicsData)
+{
+    assert(sdf.WorldCount() == 1);
+    assert(sdf.WorldByIndex(0)->PhysicsCount() == 1);
+
+    gymppDebug << "Setting physics profile" << std::endl;
+    gymppDebug << "Desired RTF: " << physicsData.rtf << std::endl;
+    gymppDebug << "Max physics step size:" << physicsData.maxStepSize << std::endl;
+    gymppDebug << "Real time update rate: " << physicsData.realTimeUpdateRate << std::endl;
+
+    if (physicsData.rtf <= 0) {
+        gymppError << "The real time factor cannot be less than zero" << std::endl;
+        return false;
+    }
+
+    if (physicsData.maxStepSize <= 0) {
+        gymppError << "The maximum step size of the physics cannot be less than zero" << std::endl;
+        return false;
+    }
+
+    // Set the physics properties using the helper.
+    // This sets the internal value but it does not update the DOM.
+    {
+        auto* physics = const_cast<sdf::Physics*>(sdf.WorldByIndex(0)->PhysicsByIndex(0));
+        physics->SetMaxStepSize(physicsData.maxStepSize);
+        physics->SetRealTimeFactor(physicsData.rtf);
+    }
+
+    // Update the DOM operating directly on the raw elements
+    {
+        sdf::ElementPtr world = sdf.Element()->GetElement("world");
+        assert(world);
+
+        sdf::ElementPtr physics = world->GetElement("physics");
+        assert(physics);
+
+        sdf::ElementPtr max_step_size = physics->GetElement("max_step_size");
+        max_step_size->AddValue("double", std::to_string(physicsData.maxStepSize), true);
+
+        sdf::ElementPtr real_time_update_rate = physics->GetElement("real_time_update_rate");
+        real_time_update_rate->AddValue(
+            "double", std::to_string(physicsData.realTimeUpdateRate), true);
+
+        sdf::ElementPtr real_time_factor = physics->GetElement("real_time_factor");
+        real_time_factor->AddValue("double", std::to_string(physicsData.rtf), true);
+    }
+
+    assert(getPhysicsData() == gazebo.physics);
+    return true;
+}
+
+// =============
+// GAZEBOWRAPPER
+// =============
+
+GazeboWrapper::GazeboWrapper(const size_t numOfIterations,
+                             const double desiredRTF,
+                             const double physicsUpdateRate)
     : pImpl{new GazeboWrapper::Impl, [](Impl* impl) { delete impl; }}
 {
     // Configure gazebo
-    pImpl->gazebo.config.SetUpdateRate(updateRate);
+    pImpl->gazebo.numOfIterations = numOfIterations;
+
+    // Configure the physics profile
+    pImpl->gazebo.physics.rtf = desiredRTF;
+    pImpl->gazebo.physics.maxStepSize = 1 / physicsUpdateRate;
+
+    if (numOfIterations == 0) {
+        gymppError << "Failed to set the number of gazebo iterations" << std::endl;
+        gymppError << "Check that the agent rate is not higher than the physics rate" << std::endl;
+        assert(numOfIterations != 0);
+    }
 
     // Configure search path of resources
     pImpl->systemPaths.SetFilePathEnv("IGN_GAZEBO_RESOURCE_PATH");
@@ -222,16 +312,9 @@ bool GazeboWrapper::close()
     return true;
 }
 
-double GazeboWrapper::getUpdateRate() const
+PhysicsData GazeboWrapper::getPhysicsData() const
 {
-    auto updateRate = pImpl->gazebo.config.UpdateRate();
-    assert(updateRate);
-    return updateRate.value();
-}
-
-uint64_t GazeboWrapper::getNumberOfIterations() const
-{
-    return pImpl->gazebo.numOfIterations;
+    return pImpl->gazebo.physics;
 }
 
 void GazeboWrapper::setVerbosity(int level)
@@ -316,47 +399,30 @@ bool GazeboWrapper::setupGazeboWorld(const std::string& worldFile)
         return false;
     }
 
+    if (!pImpl->setPhysics(pImpl->gazebo.physics)) {
+        gymppError << "Failed to set physics profile" << std::endl;
+        return false;
+    }
+
     return true;
 }
 
-bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName,
-                                        const std::string& className,
-                                        double agentUpdateRate)
+bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName, const std::string& className)
 {
     assert(!pImpl->scopedModelName.empty());
-    assert(pImpl->gazebo.config.UpdateRate());
 
+    // Create the plugin sdf element
     sdf::ElementPtr sdf(new sdf::Element);
     sdf->SetName("plugin");
     sdf->AddAttribute("name", "string", className, true);
     sdf->AddAttribute("filename", "string", libName, true);
 
-    // Set the update rate of the plugin. By default the update rate of the physic engine is used.
-    if (agentUpdateRate != 0.0) {
-        // Rate of the agent
-        auto element = std::make_shared<sdf::Element>();
-        element->SetName("update_rate");
-        element->AddValue("double", std::to_string(agentUpdateRate), true);
-        sdf->InsertElement(element);
-    }
-    else {
-        agentUpdateRate = pImpl->gazebo.config.UpdateRate().value();
-    }
-
+    // Store the plugin information
     ignition::gazebo::ServerConfig::PluginInfo pluginInfo{
         pImpl->scopedModelName, "model", libName, className, sdf};
 
+    // Insert the plugin context into the server configuration
     pImpl->gazebo.config.AddPlugin(pluginInfo);
-
-    // Update the number of iterations accordingly to the simulation step and plugin update rate
-    double rateRatio = pImpl->gazebo.config.UpdateRate().value() / agentUpdateRate;
-    pImpl->gazebo.numOfIterations = static_cast<size_t>(rateRatio);
-
-    if (rateRatio != static_cast<size_t>(rateRatio)) {
-        gymppWarning << "Rounding the number of iterations to " << pImpl->gazebo.numOfIterations
-                     << " from the nominal "
-                     << pImpl->gazebo.config.UpdateRate().value() / agentUpdateRate << std::endl;
-    }
 
     return true;
 }

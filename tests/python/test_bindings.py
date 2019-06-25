@@ -5,11 +5,17 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import os
+import gym
 import pytest
 import numpy as np
 from numpy import pi
 from pathlib import Path
+from gym_ignition.utils import logger
 from gym_ignition import gympp_bindings as bindings
+
+# Set verbosity
+logger.set_level(gym.logger.DEBUG)
+
 
 @pytest.fixture
 def create_std_vector():
@@ -130,14 +136,17 @@ def test_metadata():
     md.setWorldFileName(world_name)
     assert md.getWorldFileName() == world_name, "Failed to store the world file name"
 
-    gazebo_rate = 1000.0
-    md.setGazeboUpdateRate(gazebo_rate)
-    assert md.getGazeboUpdateRate() == gazebo_rate, "Failed to store the gazebo update " \
-                                                    "rate"
-    environment_rate = 100.0
-    md.setEnvironmentUpdateRate(environment_rate)
-    assert md.getEnvironmentUpdateRate() == environment_rate, "Failed to store the " \
-                                                              "environment update rate"
+    agent_rate = 1000
+    md.setAgentRate(agent_rate)
+    assert md.getAgentRate() == agent_rate, "Failed to store the agent rate"
+
+    real_time_factor = 1E9
+    max_physics_step_size = 0.001
+    md.setPhysicsData(bindings.PhysicsData(real_time_factor, max_physics_step_size))
+    physics_data = md.getPhysicsData()
+    assert physics_data.rtf == real_time_factor, "Failed to store RTF"
+    assert physics_data.maxStepSize == max_physics_step_size, "Failed to store the " \
+                                                              "max physics step size"
 
 
 def test_gymfactory():
@@ -169,8 +178,8 @@ def test_gymfactory():
     md.setClassName("gympp::plugins::CartPole")
     md.setWorldFileName("DefaultEmptyWorld.world")
     md.setModelFileName("CartPole/CartPole.sdf")
-    md.setGazeboUpdateRate(1000000000)
-    md.setEnvironmentUpdateRate(md.getGazeboUpdateRate() / 10)
+    md.setAgentRate(1000)
+    md.setPhysicsData(bindings.PhysicsData(1.0, 0.001))
     action_space_md = bindings.SpaceMetadata()
     action_space_md.setType(bindings.SpaceType_Discrete)
     action_space_md.setDimensions([2])

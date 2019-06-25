@@ -24,6 +24,7 @@
 
 namespace gympp {
     namespace gazebo {
+        struct PhysicsData;
         class GazeboWrapper;
     } // namespace gazebo
 } // namespace gympp
@@ -35,10 +36,12 @@ private:
     std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
 
 public:
+    // TODO
     using SdfModelName = std::string;
 
-    GazeboWrapper() = delete;
-    GazeboWrapper(double updateRate);
+    GazeboWrapper(const size_t numOfIterations = 1,
+                  const double desiredRTF = std::numeric_limits<double>::max(),
+                  const double physicsUpdateRate = 1000);
     virtual ~GazeboWrapper();
 
     bool initialize();
@@ -46,17 +49,45 @@ public:
     bool gui();
     bool close();
 
-    double getUpdateRate() const;
-    uint64_t getNumberOfIterations() const;
+    PhysicsData getPhysicsData() const;
 
     static void setVerbosity(int level = DEFAULT_VERBOSITY);
     std::vector<SdfModelName> getModelNames() const;
     bool setupGazeboModel(const std::string& modelFile,
                           std::array<double, 6> pose = {0, 0, 0, 0, 0, 0});
     bool setupGazeboWorld(const std::string& worldFile);
-    bool setupIgnitionPlugin(const std::string& libName,
-                             const std::string& className,
-                             double agentUpdateRate = 0);
+    bool setupIgnitionPlugin(const std::string& libName, const std::string& className);
+};
+
+struct gympp::gazebo::PhysicsData
+{
+    double rtf;
+    double maxStepSize;
+    const double realTimeUpdateRate = -1;
+
+    PhysicsData(double _rtf = 1, double _maxStepSize = 0.001)
+        : rtf(_rtf)
+        , maxStepSize(_maxStepSize)
+    {}
+
+    PhysicsData(const PhysicsData& other)
+        : rtf(other.rtf)
+        , maxStepSize(other.maxStepSize)
+        , realTimeUpdateRate(other.realTimeUpdateRate)
+    {}
+
+    PhysicsData& operator=(const PhysicsData& other)
+    {
+        rtf = other.rtf;
+        maxStepSize = other.maxStepSize;
+        return *this;
+    }
+
+    bool operator==(const PhysicsData& other)
+    {
+        return other.rtf == rtf && other.maxStepSize == maxStepSize
+               && other.realTimeUpdateRate == realTimeUpdateRate;
+    }
 };
 
 #endif // GYMPP_GAZEBO_GAZEBOWRAPPER
