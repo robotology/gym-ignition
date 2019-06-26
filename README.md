@@ -10,6 +10,8 @@
 <b><a href="https://github.com/robotology/gym-ignition#how">How</a></b>
 •
 <b><a href="https://github.com/robotology/gym-ignition#setup">Setup</a></b>
+•
+<b><a href="https://github.com/robotology/gym-ignition#Citation">Citation</a></b>
 </p>
 
 <p align="center">
@@ -104,6 +106,19 @@ Ignition Robotics needs to find in the system four types of files. Depending on 
 | `IGN_FILE_PATH`                 | Location of mesh files - model dependent        | Folders searched to resolve `file://` URIs |
 
 Furthermore, in order to use the python bindings you should export `PYTHONPATH=<installprefix>/lib/gympp/bindings`.
+
+## Citation
+
+```
+@inproceedings{ferigoGymIgnition2019,
+  title = {Gym-Ignition: Reproducible Robotic Simulations for Reinforcement Learning},
+  author = {Ferigo, Diego and Traversaro, Silvio and Pucci, Daniele},
+  booktitle = {RSS 2019 Workshop on Closing the Reality Gap in Sim2real Transfer for Robotic Manipulation},
+  year = {2019},
+}
+```
+
+[`paper.pdf`](https://sim2real.github.io/assets/papers/ferigo.pdf)
 
 ---
 
