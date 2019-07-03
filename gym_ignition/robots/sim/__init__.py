@@ -4,3 +4,4 @@
 
 # from gym_ignition.robots.sim import icub
 from gym_ignition.robots.sim import cartpole
+from gym_ignition.robots.sim import minitaur
