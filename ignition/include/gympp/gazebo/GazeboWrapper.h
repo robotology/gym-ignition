@@ -54,7 +54,7 @@ public:
     static void setVerbosity(int level = DEFAULT_VERBOSITY);
     std::vector<SdfModelName> getModelNames() const;
     bool setupGazeboModel(const std::string& modelFile,
-                          std::array<double, 6> pose = {0, 0, 0, 0, 0, 0});
+                          const std::array<double, 6>& pose = {0, 0, 0, 0, 0, 0});
     bool setupGazeboWorld(const std::string& worldFile);
     bool setupIgnitionPlugin(const std::string& libName, const std::string& className);
 };

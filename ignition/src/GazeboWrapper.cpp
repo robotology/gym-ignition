@@ -97,7 +97,7 @@ bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Ro
 {
     if (sdfFileName.empty()) {
         gymppError << "The SDF file name of the gazebo model is empty" << std::endl;
-        return {};
+        return false;
     }
 
     // Find the file
@@ -108,7 +108,7 @@ bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Ro
         gymppError << "Failed to find '" << sdfFileName << "'. "
                    << "Check that it's contained in the paths defined in IGN_GAZEBO_RESOURCE_PATH."
                    << std::endl;
-        return {};
+        return false;
     }
 
     // Load the sdf
@@ -119,7 +119,7 @@ bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Ro
         for (const auto& error : errors) {
             gymppError << error << std::endl;
         }
-        return {};
+        return false;
     }
     return true;
 }
@@ -327,7 +327,8 @@ std::vector<GazeboWrapper::SdfModelName> GazeboWrapper::getModelNames() const
     return {pImpl->scopedModelName};
 }
 
-bool GazeboWrapper::setupGazeboModel(const std::string& modelFile, std::array<double, 6> /*pose*/)
+bool GazeboWrapper::setupGazeboModel(const std::string& modelFile,
+                                     const std::array<double, 6>& pose)
 {
     if (!pImpl->scopedModelName.empty()) {
         gymppError << "The model has been already configured previously" << std::endl;
@@ -370,6 +371,19 @@ bool GazeboWrapper::setupGazeboModel(const std::string& modelFile, std::array<do
         sdf::ElementPtr renamedModel(new sdf::Element);
         renamedModel->SetName("model");
         renamedModel->AddAttribute("name", "string", scopedModelName, true);
+
+        // Create the pose string from the array
+        std::string poseString;
+        for (const double val : pose) {
+            poseString += std::to_string(val);
+            poseString += " ";
+        }
+
+        // Add the pose
+        sdf::ElementPtr poseElement(new sdf::Element);
+        poseElement->SetName("pose");
+        poseElement->AddValue("string", poseString, true);
+        renamedModel->InsertElement(poseElement);
 
         sdf::ElementPtr child = sdfRoot.ModelByIndex(i)->Element()->GetFirstElement();
 
