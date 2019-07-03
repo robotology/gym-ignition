@@ -18,6 +18,7 @@
 
 %include <stdint.i>
 
+%include <std_array.i>
 %include <std_string.i>
 %include <std_vector.i>
 
@@ -27,6 +28,8 @@
 %template(Vector_f) std::vector<float>;
 %template(Vector_d) std::vector<double>;
 %template(Vector_s) std::vector<std::string>;
+
+%template(ArrayDouble6) std::array<double, 6>;
 
 %include "gympp/Common.h"
 %template(BufferContainer_i) gympp::BufferContainer<int>;
