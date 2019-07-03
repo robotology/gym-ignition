@@ -1,0 +1,15 @@
+<package>
+  <name>GymIgnition</name>
+  <version>1.6</version>
+  <description>
+    This is to make ROS find resources inside this folder.
+  </description>
+  <maintainer email="diego.ferigo@iit.it"></maintainer>
+  <license>All Right Reserved</license>
+
+  <url></url>
+  <author>
+    <name>Diego Ferigo</name>
+    <email>diego.ferigo@iit.it</email>
+  </author>
+</package>
