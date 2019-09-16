@@ -71,6 +71,18 @@ class Task(gym.Env, abc.ABC):
     # gym.Env INTERFACE
     # =================
 
+    def step(self, action):
+        raise NotImplementedError
+
+    def reset(self,):
+        raise NotImplementedError
+
+    def render(self, mode='human'):
+        raise NotImplementedError
+
+    def close(self):
+        raise NotImplementedError
+
     def seed(self, seed: int = None) -> SeedList:
         if not seed:
             seed = np.random.randint(2**32 - 1)
