@@ -5,8 +5,9 @@
 import abc
 import gym
 import numpy as np
-from gym_ignition.utils.typing import *
+from typing import Tuple
 from gym_ignition.base.robot import robot_abc, RobotFeatures
+from gym_ignition.utils.typing import Action, Observation, Reward, SeedList
 
 
 class Task(gym.Env, abc.ABC):
@@ -24,6 +25,11 @@ class Task(gym.Env, abc.ABC):
         # object is a not a common practice.
         self.action_space = None
         self.observation_space = None
+
+    # ==========
+    # PROPERTIES
+    # ==========
+
     @property
     def robot(self) -> RobotFeatures:
         if self._robot:
@@ -37,25 +43,33 @@ class Task(gym.Env, abc.ABC):
         if not robot.valid(): raise Exception("Robot object is not valid")
         self._robot = robot
 
-    @abstractmethod
+    # ==============
+    # TASK INTERFACE
+    # ==============
+
+    @abc.abstractmethod
+    def _reset(self) -> bool:
+        pass
+
+    @abc.abstractmethod
     def _set_action(self, action: Action) -> bool:
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def _get_observation(self) -> Observation:
         pass
 
-    @abstractmethod
-    def _get_reward(self) -> float:
+    @abc.abstractmethod
+    def _get_reward(self) -> Reward:
         pass
 
-    @abstractmethod
+    @abc.abstractmethod
     def _is_done(self) -> bool:
         pass
 
-    @abstractmethod
-    def _reset(self) -> bool:
-        pass
+    # =================
+    # gym.Env INTERFACE
+    # =================
 
     def seed(self, seed: int = None) -> SeedList:
         if not seed:
