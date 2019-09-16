@@ -2,19 +2,21 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+import abc
 import gym
-from abc import ABC, abstractmethod
+import numpy as np
 from gym_ignition.utils.typing import *
-from gym_ignition.base.robot import Robot
+from gym_ignition.base.robot import robot_abc, RobotFeatures
 
 
-class Task(ABC, gym.Env):
-    def __init__(self, robot: Robot = None) -> None:
+class Task(gym.Env, abc.ABC):
+
+    def __init__(self, robot: RobotFeatures = None) -> None:
         self._robot = robot
         self._np_random = None
 
     @property
-    def robot(self) -> Robot:
+    def robot(self) -> RobotFeatures:
         if self._robot:
             assert self._robot.valid(), "The robot interface is not valid"
             return self._robot
@@ -22,8 +24,8 @@ class Task(ABC, gym.Env):
         assert False, "The robot interface object was never stored"
 
     @robot.setter
-    def robot(self, robot: Robot) -> None:
-        assert robot.valid(), "Robot object is not valid"
+    def robot(self, robot: robot_abc.RobotABC) -> None:
+        if not robot.valid(): raise Exception("Robot object is not valid")
         self._robot = robot
 
     @abstractmethod
