@@ -51,13 +51,21 @@ class GazeboEnv(gym.Wrapper):
         # Seed the environment
         self.seed()
 
-    @property
-    def unwrapped(self):
-        # The task is not a complete gym.Env environment since task objects implement
-        # the Task interface.
-        # This wrapper implements the step method using Ignition Gazebo. For this reason,
-        #  the unwrapped environment is the gym.Env interface provided by this wrapper.
-        return self
+    def __getattr__(self, name):
+        # We need to override this method because gym.Wrapper has a custom implementation
+        # that forwards all the asked attributes to the wrapped class.
+        # Due to this reason, regular wrappers cannot have new public methods and
+        # attributes. This is a workaround that requires specifying all the new ones in
+        # the list below.
+        #
+        # This fix is needed after https://github.com/openai/gym/issues/1554
+
+        exposed_public_attributes = ["gazebo"]
+
+        if name in exposed_public_attributes:
+            return self.__getattribute__(name)
+        else:
+            return getattr(self.env, name)
 
     # ==========
     # PROPERTIES
