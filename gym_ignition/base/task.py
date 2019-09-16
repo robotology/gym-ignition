@@ -15,6 +15,15 @@ class Task(gym.Env, abc.ABC):
         self._robot = robot
         self._np_random = None
 
+        # The parent class gym.Env has the following defined as class variables.
+        # Since they are hidden from the users, and child classes of Task need to fill
+        # their values, here we define them again as object variables.
+        #
+        # Note that object variables shadow class variables when accessed from an object
+        # instance. This is not a problem because accessing spaces from the class
+        # object is a not a common practice.
+        self.action_space = None
+        self.observation_space = None
     @property
     def robot(self) -> RobotFeatures:
         if self._robot:
