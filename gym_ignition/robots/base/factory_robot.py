@@ -2,13 +2,14 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from typing import List
+from typing import List, Union
 from gym_ignition.base import robot
 from gym_ignition.utils import logger
+from gym_ignition.base.robot import robot_joints
 from gym_ignition import gympp_bindings as bindings
 
 
-class FactoryRobot(robot.Robot):
+class FactoryRobot(robot.robot_abc.RobotABC):
     def __init__(self, robot_name: str, controller_rate: float = None) -> None:
         super().__init__()
 
@@ -59,7 +60,7 @@ class FactoryRobot(robot.Robot):
     def dt(self) -> float:
         return self.gympp_robot.dt()
 
-    def joint_pid(self) -> robot.PID:
+    def joint_pid(self, joint_name: str) -> Union[robot_joints.PID, None]:
         return self.gympp_robot.jointPID()
 
     def set_dt(self, step_size: float) -> bool:
@@ -82,7 +83,7 @@ class FactoryRobot(robot.Robot):
     def set_joint_velocity(self, joint_name: str, velocity: float) -> bool:
         return self.gympp_robot.setJointVelocity(joint_name, velocity)
 
-    def set_joint_pid(self, joint_name: str, pid: robot.PID) -> bool:
+    def set_joint_pid(self, joint_name: str, pid: robot_joints.PID) -> bool:
         return self.gympp_robot.setJointPID(joint_name, pid)
 
     def reset_joint(self, joint_name: str, position: float, velocity: float) -> bool:
