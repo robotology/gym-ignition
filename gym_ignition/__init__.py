@@ -10,10 +10,6 @@ if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
     sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 import gympp_bindings
 
-# Import abstract classes
-from gym_ignition.base.task import Task
-from gym_ignition.base.robot import Robot
-
 # =========================
 # REGISTER THE ENVIRONMENTS
 # =========================
