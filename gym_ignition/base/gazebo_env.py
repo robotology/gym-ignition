@@ -10,9 +10,10 @@ from gym_ignition import gympp_bindings as bindings
 
 
 class GazeboEnv(gym.Wrapper):
+
     def __init__(self,
-                 task: type,
-                 robot : type,
+                 task_cls: type,
+                 robot_cls : type,
                  sdf: str,
                  world: str,
                  rtf: float,
@@ -25,8 +26,8 @@ class GazeboEnv(gym.Wrapper):
         # to accept user-defined parameters.
         self._kwargs = kwargs
 
-        # Store the type of the class that provides gymppy.Robot interface
-        self._robot_cls = robot
+        # Store the type of the class that provides RobotABC interface
+        self._robot_cls = robot_cls
 
         # SDF files
         self._sdf = sdf
@@ -39,10 +40,10 @@ class GazeboEnv(gym.Wrapper):
         self._gazebo_wrapper = None
 
         # Build the environment
-        env = task(kwargs)
-        assert isinstance(env, base.task.Task), "'task' object must inherit from " \
-                                                "gymppy.Task"
-        assert isinstance(env, gym.Env), "'task' object must inherit from gym.Env"
+        env = task_cls(**kwargs)
+        assert isinstance(env, base.task.Task), \
+            "'task_cls' object must inherit from Task"
+        assert isinstance(env, gym.Env), "'task_cls' object must inherit from gym.Env"
 
         # Wrap the environment with this class
         super().__init__(env=env)
@@ -133,10 +134,10 @@ class GazeboEnv(gym.Wrapper):
         model_name = model_names[0]
 
         # Build the robot object
-        # TODO: robot_name arg is used only for the SingletonRobot implementation
+        # TODO: robot_name arg is used only for the FactoryRobot implementation
         self.env.robot = self._robot_cls(robot_name=model_name, **self._kwargs)
-        assert isinstance(self.env.robot, base.robot.Robot), \
-            "'robot' object must inherit from gymppy.Robot"
+        assert isinstance(self.env.robot, base.robot.robot_abc.RobotABC), \
+            "'robot' object must inherit from RobotABC"
 
         return self._gazebo_wrapper
 
@@ -165,7 +166,7 @@ class GazeboEnv(gym.Wrapper):
         # Get the reward
         # TODO: use the wrapper method?
         reward = self.env._get_reward()
-        assert reward, "Failed to get the reward"
+        assert reward is not None, "Failed to get the reward"
 
         # Check termination
         done = self.env._is_done()
