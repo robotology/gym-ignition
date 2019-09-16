@@ -12,6 +12,27 @@ from gym_ignition.utils.typing import Action, Observation, Reward, SeedList
 
 
 class Task(gym.Env, abc.ABC):
+    """
+    Interface to define a decision-making task.
+
+    The Task is the central interface of each environment.
+    It defines the logic of the environment in a format that is agnostic of both the
+    runtime (either simulated or real-time) and the robot.
+
+    Beyond containing the logic of the task, objects that inherit from this interface
+    expose an empty gym.Env interface. This is required because the real environment
+    exposed to the agent consists of a Task wrapped by a runtime wrapper, that inherits
+    from gym.Wrapper. Runtime wrappers implement the gym.Env interface, and particularly
+    gym.Env.step. This method, depending on the runtime, can interface with a physics
+    engine and step the simulator, or can handle real-time execution.
+
+    In order to make Task objects generic from the runtime, also the interfacing with the
+    robot needs to be abstracted. In fact, the access of robot data depends on the
+    selected runtime. For example, in simulation data can be directly gathered from the
+    physics engine, and in a real-time setting can be asked through a robotic middleware.
+    Tasks abstract this interfacing by operating on a Robot interface, which is then
+    specialized for the different runtimes.
+    """
 
     def __init__(self, robot: RobotFeatures = None) -> None:
         self._robot = robot
@@ -50,27 +71,76 @@ class Task(gym.Env, abc.ABC):
 
     @abc.abstractmethod
     def _create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
-        pass
+        """
+        Create the action and observations spaces.
+
+        Returns:
+            A tuple containing the action and observation spaces.
+        """
 
     @abc.abstractmethod
     def _reset(self) -> bool:
-        pass
+        """
+        Reset the task.
+
+        This method contains the logic of resetting the environment.
+        It is called in the gym.Env.reset method.
+
+        Returns:
+            True if successful, False otherwise.
+        """
 
     @abc.abstractmethod
     def _set_action(self, action: Action) -> bool:
-        pass
+        """
+        Set the task action.
+
+        This method contains the logic of setting the environment action.
+        It is called in the beginning of the gym.Env.step method.
+
+        Args:
+            action: The action to set.
+
+        Returns:
+            True if successful, False otherwise.
+        """
 
     @abc.abstractmethod
     def _get_observation(self) -> Observation:
-        pass
+        """
+        Return the task observation.
+
+        This method contains the logic of constructing the environment observation.
+        It is called in the end of both gym.Env.reset and gym.Env.step methods.
+
+        Returns:
+            The task observation.
+        """
 
     @abc.abstractmethod
     def _get_reward(self) -> Reward:
-        pass
+        """
+        Return the task reward.
+
+        This method contains the logic of computing the environment reward.
+        It is called in the end of the gym.Env.step method.
+
+        Returns:
+            The scalar reward.
+        """
 
     @abc.abstractmethod
     def _is_done(self) -> bool:
-        pass
+        """
+        Returns the task termination flag.
+
+        This method contains the logic of computing when the environment is terminated.
+        Subsequent actions should be preceded by an environment reset.
+        It is called in the end of the gym.Env.step method.
+
+        Returns:
+            True if the environment terminated, False otherwise.
+        """
 
     # =================
     # gym.Env INTERFACE
