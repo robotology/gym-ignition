@@ -7,6 +7,7 @@ import gym
 import numpy as np
 from typing import Tuple
 from gym_ignition.base.robot import robot_abc, RobotFeatures
+from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 from gym_ignition.utils.typing import Action, Observation, Reward, SeedList
 
 
@@ -46,6 +47,10 @@ class Task(gym.Env, abc.ABC):
     # ==============
     # TASK INTERFACE
     # ==============
+
+    @abc.abstractmethod
+    def _create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
+        pass
 
     @abc.abstractmethod
     def _reset(self) -> bool:
