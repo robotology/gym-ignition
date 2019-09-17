@@ -7,8 +7,5 @@ from gym_ignition.base import task
 from gym_ignition.base import robot
 from gym_ignition.base import runtime
 
-# Base Python environments
-from gym_ignition.base import rt_env
-
 # Base C++ environment
 from gym_ignition.base import gympp_env

@@ -3,3 +3,4 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from . import gazebo_runtime
+from . import realtime_runtime

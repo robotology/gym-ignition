@@ -3,14 +3,13 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
-# from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
 
 
-class RTEnv(gym.Wrapper):
+class RealTimeRuntime(gym.Wrapper):
     def __init__(self,
                  task: type,
-                 robot : type,
+                 robot: type,
                  agent_rate: float,
                  **kwargs):
         super().__init__(task)
