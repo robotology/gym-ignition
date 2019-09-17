@@ -39,8 +39,11 @@ class GazeboEnv(gym.Wrapper):
         self._physics_rate = physics_rate
         self._gazebo_wrapper = None
 
+        # Initialize the simulator and the robot
+        robot = self._get_robot()
+
         # Build the environment
-        env = task_cls(**kwargs)
+        env = task_cls(**kwargs, robot=robot)
         assert isinstance(env, base.task.Task), \
             "'task_cls' object must inherit from Task"
         assert isinstance(env, gym.Env), "'task_cls' object must inherit from gym.Env"
@@ -132,22 +135,25 @@ class GazeboEnv(gym.Wrapper):
         gazebo_initialized = self._gazebo_wrapper.initialize()
         assert gazebo_initialized, "Failed to initialize ignition gazebo"
 
-        # ==============================
-        # INITIALIZE THE ROBOT INTERFACE
-        # ==============================
+        return self._gazebo_wrapper
+
+    def _get_robot(self):
+        if not self.gazebo:
+            raise Exception("Failed to instantiate the gazebo simulator")
 
         # Get the robot name
-        model_names = self._gazebo_wrapper.getModelNames()
+        model_names = self.gazebo.getModelNames()
         assert len(model_names) == 1, "The environment has more than one model"
         model_name = model_names[0]
 
         # Build the robot object
         # TODO: robot_name arg is used only for the FactoryRobot implementation
-        self.env.robot = self._robot_cls(robot_name=model_name, **self._kwargs)
-        assert isinstance(self.env.robot, base.robot.robot_abc.RobotABC), \
+        logger.debug("Creating the robot object")
+        robot = self._robot_cls(robot_name=model_name, **self._kwargs)
+        assert isinstance(robot, base.robot.robot_abc.RobotABC), \
             "'robot' object must inherit from RobotABC"
 
-        return self._gazebo_wrapper
+        return robot
 
     # ===============
     # gym.Env METHODS
