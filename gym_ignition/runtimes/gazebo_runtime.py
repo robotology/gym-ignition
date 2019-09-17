@@ -9,7 +9,7 @@ from gym_ignition.base.robot import robot_abc
 from gym_ignition import gympp_bindings as bindings
 
 
-class GazeboEnv(runtime.Runtime):
+class GazeboRuntime(runtime.Runtime):
     metadata = {'render.modes': ['human']}
 
     def __init__(self,
