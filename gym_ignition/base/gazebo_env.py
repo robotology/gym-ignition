@@ -3,9 +3,10 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
-from gym_ignition import base
+from gym_ignition.base import task
 from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
+from gym_ignition.base.robot import robot_abc
 from gym_ignition import gympp_bindings as bindings
 
 
@@ -14,7 +15,7 @@ class GazeboEnv(gym.Wrapper):
 
     def __init__(self,
                  task_cls: type,
-                 robot_cls : type,
+                 robot_cls: type,
                  sdf: str,
                  world: str,
                  rtf: float,
@@ -44,10 +45,9 @@ class GazeboEnv(gym.Wrapper):
         robot = self._get_robot()
 
         # Build the environment
-        env = task_cls(**kwargs, robot=robot)
-        assert isinstance(env, base.task.Task), \
+        env = task_cls(robot=robot, **kwargs)
+        assert isinstance(env, task.Task), \
             "'task_cls' object must inherit from Task"
-        assert isinstance(env, gym.Env), "'task_cls' object must inherit from gym.Env"
 
         # Wrap the environment with this class
         super().__init__(env=env)
@@ -151,7 +151,7 @@ class GazeboEnv(gym.Wrapper):
         # TODO: robot_name arg is used only for the FactoryRobot implementation
         logger.debug("Creating the robot object")
         robot = self._robot_cls(robot_name=model_name, **self._kwargs)
-        assert isinstance(robot, base.robot.robot_abc.RobotABC), \
+        assert isinstance(robot, robot_abc.RobotABC), \
             "'robot' object must inherit from RobotABC"
 
         return robot
