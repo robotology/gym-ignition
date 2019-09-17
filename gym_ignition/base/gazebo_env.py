@@ -2,15 +2,14 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import gym
-from gym_ignition.base import task
 from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
+from gym_ignition.base import task, runtime
 from gym_ignition.base.robot import robot_abc
 from gym_ignition import gympp_bindings as bindings
 
 
-class GazeboEnv(gym.Wrapper):
+class GazeboEnv(runtime.Runtime):
     metadata = {'render.modes': ['human']}
 
     def __init__(self,
@@ -45,31 +44,15 @@ class GazeboEnv(gym.Wrapper):
         robot = self._get_robot()
 
         # Build the environment
-        env = task_cls(robot=robot, **kwargs)
-        assert isinstance(env, task.Task), \
+        task_object = task_cls(robot=robot, **kwargs)
+        assert isinstance(task_object, task.Task), \
             "'task_cls' object must inherit from Task"
 
         # Wrap the environment with this class
-        super().__init__(env=env)
+        super().__init__(task=task_object, agent_rate=agent_rate)
 
         # Seed the environment
         self.seed()
-
-    def __getattr__(self, name):
-        # We need to override this method because gym.Wrapper has a custom implementation
-        # that forwards all the asked attributes to the wrapped class.
-        # Due to this reason, regular wrappers cannot have new public methods and
-        # attributes. This is a workaround that requires specifying all the new ones in
-        # the list below.
-        #
-        # This fix is needed after https://github.com/openai/gym/issues/1554
-
-        exposed_public_attributes = ["gazebo"]
-
-        if name in exposed_public_attributes:
-            return self.__getattribute__(name)
-        else:
-            return getattr(self.env, name)
 
     # ==========
     # PROPERTIES
