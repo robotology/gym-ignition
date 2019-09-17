@@ -10,6 +10,7 @@ from gym_ignition import gympp_bindings as bindings
 
 
 class GazeboEnv(gym.Wrapper):
+    metadata = {'render.modes': ['human']}
 
     def __init__(self,
                  task_cls: type,
