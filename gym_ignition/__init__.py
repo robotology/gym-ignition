@@ -42,7 +42,7 @@ register(
 
 register(
     id='CartPoleGymppy-Discrete-v0',
-    entry_point='gym_ignition.base.gazebo_env:GazeboEnv',
+    entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
     max_episode_steps=5000,
     kwargs={'task_cls': cartpole_discrete.CartPoleDiscrete,
             'robot_cls': sim.cartpole.CartPoleRobot,
@@ -55,7 +55,7 @@ register(
 
 register(
     id='CartPoleGymppy-Continuous-v0',
-    entry_point='gym_ignition.base.gazebo_env:GazeboEnv',
+    entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
     max_episode_steps=5000,
     kwargs={'task_cls': cartpole_continuous.CartPoleContinuous,
             'robot_cls': sim.cartpole.CartPoleRobot,
