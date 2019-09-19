@@ -2,14 +2,15 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from typing import List, Union
-from gym_ignition.base import robot
+import numpy as np
+from typing import List, Union, Tuple
 from gym_ignition.utils import logger
-from gym_ignition.base.robot import robot_joints
+from gym_ignition.base.robot import robot_abc, robot_joints
 from gym_ignition import gympp_bindings as bindings
 
 
-class FactoryRobot(robot.robot_abc.RobotABC):
+class FactoryRobot(robot_abc.RobotABC,
+                   robot_joints.RobotJoints):
     def __init__(self, robot_name: str, controller_rate: float = None) -> None:
         super().__init__()
 
@@ -39,11 +40,39 @@ class FactoryRobot(robot.robot_abc.RobotABC):
 
         return self._gympp_robot
 
+    # ========
+    # RobotABC
+    # ========
+
     def valid(self) -> bool:
         return self.gympp_robot.valid()
 
+    # ===========
+    # RobotJoints
+    # ===========
+
+    def dofs(self) -> None:
+        raise NotImplementedError
+
     def joint_names(self) -> List[str]:
         return self.gympp_robot.jointNames()
+
+    def joint_type(self, joint_name: str) -> robot_joints.JointType:
+        raise NotImplementedError
+
+    def joint_control_mode(self, joint_name: str) -> robot_joints.JointControlMode:
+        raise NotImplementedError
+
+    def set_joint_control_mode(self,
+                               joint_name: str,
+                               mode: robot_joints.JointControlMode) -> bool:
+        raise NotImplementedError
+
+    def initial_positions(self) -> np.ndarray:
+        raise NotImplementedError
+
+    def set_initial_positions(self, positions: np.ndarray) -> bool:
+        raise NotImplementedError
 
     def joint_position(self, joint_name: str) -> float:
         return self.gympp_robot.jointPosition(joint_name)
@@ -57,37 +86,41 @@ class FactoryRobot(robot.robot_abc.RobotABC):
     def joint_velocities(self) -> List[float]:
         return self.gympp_robot.jointVelocities()
 
-    def dt(self) -> float:
-        return self.gympp_robot.dt()
-
     def joint_pid(self, joint_name: str) -> Union[robot_joints.PID, None]:
         return self.gympp_robot.jointPID()
+
+    def dt(self) -> float:
+        return self.gympp_robot.dt()
 
     def set_dt(self, step_size: float) -> bool:
         return self.gympp_robot.setdt(step_size)
 
-    def set_joint_force(self, joint_name: str, force: float) -> bool:
+    def set_joint_force(self, joint_name: str, force: float, clip: bool = False) -> bool:
         return self.gympp_robot.setJointForce(joint_name, force)
 
-    def set_joint_position_target(self, joint_name: str, position_reference: float) -> \
-            bool:
-        return self.gympp_robot.setJointPositionTarget(joint_name, position_reference)
-
-    def set_joint_velocity_target(self, joint_name: str, velocity_reference: float) -> \
-            bool:
-        return self.gympp_robot.setJointVelocityTarget(joint_name, velocity_reference)
-
     def set_joint_position(self, joint_name: str, position: float) -> bool:
-        return self.gympp_robot.setJointPosition(joint_name, position)
+        return self.gympp_robot.setJointPositionTarget(joint_name, position)
 
     def set_joint_velocity(self, joint_name: str, velocity: float) -> bool:
-        return self.gympp_robot.setJointVelocity(joint_name, velocity)
+        return self.gympp_robot.setJointVelocityTarget(joint_name, velocity)
+
+    def set_joint_interpolated_position(self, joint_name: str, position: float):
+        raise NotImplementedError
 
     def set_joint_pid(self, joint_name: str, pid: robot_joints.PID) -> bool:
         return self.gympp_robot.setJointPID(joint_name, pid)
 
-    def reset_joint(self, joint_name: str, position: float, velocity: float) -> bool:
+    def reset_joint(self,
+                    joint_name: str,
+                    position: float = None,
+                    velocity: float = None) -> bool:
         return self.gympp_robot.resetJoint(joint_name, position, velocity)
 
     def update(self, dt: float):
         return self.gympp_robot.update(dt)
+
+    def joint_position_limits(self, joint_name: str) -> Tuple[float, float]:
+        raise NotImplementedError
+
+    def joint_force_limit(self, joint_name: str) -> float:
+        raise NotImplementedError
