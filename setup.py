@@ -20,6 +20,7 @@ setup(name='gym_ignition',
       install_requires=[
             'gym >= 0.13.1',
             'numpy',
+            'pybullet',
             'icub-model-pybullet @ {}'.format(icub_model_zip),
       ],
       packages=find_packages(),
