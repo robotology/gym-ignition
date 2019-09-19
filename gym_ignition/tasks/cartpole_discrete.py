@@ -2,27 +2,46 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+import abc
 import gym
-import gym_ignition
+from gym_ignition.base import task
 from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
+from gym_ignition.base.robot import robot_abc, feature_detector, robot_joints
 
 
-class CartPoleDiscrete(gym_ignition.Task):
-    def __init__(self, robot: gym_ignition.Robot, reward_cart_at_center: bool = None) -> None:
+@feature_detector
+class RobotFeatures(robot_abc.RobotABC,
+                    robot_joints.RobotJoints,
+                    abc.ABC): ...
+
+
+class CartPoleDiscrete(task.Task, abc.ABC):
+
+    def __init__(self, robot: RobotFeatures, reward_cart_at_center: bool = None) -> None:
         super().__init__(robot=robot)
+
+        # Check that the robot has all the requested features
+        RobotFeatures.has_all_features(robot)
 
         # Private attributes
         self._force_mag = 20.0
         self._steps_beyond_done = None
         self._reward_cart_at_center = reward_cart_at_center
 
-        # Configure action space
-        self.action_space = gym.spaces.Discrete(2)
-
         # Variables limits
         self._x_threshold = 2.4
         self._theta_threshold_radians = np.deg2rad(12)
+
+        # Create the spaces
+        self.action_space, self.observation_space = self._create_spaces()
+
+        # Seed the environment
+        self.seed()
+
+    def _create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
+        # Configure action space
+        action_space = gym.spaces.Discrete(2)
 
         # Configure observation limits
         high = np.array([
@@ -33,10 +52,9 @@ class CartPoleDiscrete(gym_ignition.Task):
         ])
 
         # Configure the observation space
-        self.observation_space = gym.spaces.Box(-high, high, dtype=np.float32)
+        observation_space = gym.spaces.Box(-high, high, dtype=np.float32)
 
-        # Seed the environment
-        self.seed()
+        return action_space, observation_space
 
     def _set_action(self, action: Action) -> bool:
         assert self.action_space.contains(action), \
@@ -77,9 +95,6 @@ class CartPoleDiscrete(gym_ignition.Task):
         return observation
 
     def _get_reward(self) -> Reward:
-        # Initialize the reward
-        reward = None
-
         # Calculate the reward
         if not self._is_done():
             reward = 1.0
@@ -128,11 +143,26 @@ class CartPoleDiscrete(gym_ignition.Task):
         return done
 
     def _reset(self) -> bool:
-        # Initialize the environment with a new random state
+        # Initialize the environment with a new random state using the random number
+        # generator provided by the Task.
         new_state = self._np_random.uniform(low=-0.05, high=0.05, size=(4,))
         new_state[2] = self._np_random.uniform(low=-np.deg2rad(10),
                                                high=np.deg2rad(10))
 
+        # Set the joints in torque control mode
+        for joint in {"linear", "pivot"}:
+            desired_control_mode = robot_joints.JointControlMode.TORQUE
+
+            # TODO: temporary workaround for robot implementation without this method,
+            #       e.g. FactoryRobot, which does not need to call it at the moment.
+            try:
+                if self.robot.joint_control_mode(joint) != desired_control_mode:
+                    ok_mode = self.robot.set_joint_control_mode(joint, desired_control_mode)
+                    assert ok_mode, "Failed to set control mode for joint '{}'".format(joint)
+            except Exception:
+                pass
+
+        # Reset position and velocity
         ok1 = self.robot.reset_joint("linear", new_state[0], new_state[1])
         ok2 = self.robot.reset_joint("pivot", new_state[2], new_state[3])
 

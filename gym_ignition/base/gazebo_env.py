@@ -3,16 +3,19 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
-from gym_ignition import base
+from gym_ignition.base import task
 from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
+from gym_ignition.base.robot import robot_abc
 from gym_ignition import gympp_bindings as bindings
 
 
 class GazeboEnv(gym.Wrapper):
+    metadata = {'render.modes': ['human']}
+
     def __init__(self,
-                 task: type,
-                 robot : type,
+                 task_cls: type,
+                 robot_cls: type,
                  sdf: str,
                  world: str,
                  rtf: float,
@@ -25,8 +28,8 @@ class GazeboEnv(gym.Wrapper):
         # to accept user-defined parameters.
         self._kwargs = kwargs
 
-        # Store the type of the class that provides gymppy.Robot interface
-        self._robot_cls = robot
+        # Store the type of the class that provides RobotABC interface
+        self._robot_cls = robot_cls
 
         # SDF files
         self._sdf = sdf
@@ -38,11 +41,13 @@ class GazeboEnv(gym.Wrapper):
         self._physics_rate = physics_rate
         self._gazebo_wrapper = None
 
+        # Initialize the simulator and the robot
+        robot = self._get_robot()
+
         # Build the environment
-        env = task(kwargs)
-        assert isinstance(env, base.task.Task), "'task' object must inherit from " \
-                                                "gymppy.Task"
-        assert isinstance(env, gym.Env), "'task' object must inherit from gym.Env"
+        env = task_cls(robot=robot, **kwargs)
+        assert isinstance(env, task.Task), \
+            "'task_cls' object must inherit from Task"
 
         # Wrap the environment with this class
         super().__init__(env=env)
@@ -50,13 +55,21 @@ class GazeboEnv(gym.Wrapper):
         # Seed the environment
         self.seed()
 
-    @property
-    def unwrapped(self):
-        # The task is not a complete gym.Env environment since task objects implement
-        # the Task interface.
-        # This wrapper implements the step method using Ignition Gazebo. For this reason,
-        #  the unwrapped environment is the gym.Env interface provided by this wrapper.
-        return self
+    def __getattr__(self, name):
+        # We need to override this method because gym.Wrapper has a custom implementation
+        # that forwards all the asked attributes to the wrapped class.
+        # Due to this reason, regular wrappers cannot have new public methods and
+        # attributes. This is a workaround that requires specifying all the new ones in
+        # the list below.
+        #
+        # This fix is needed after https://github.com/openai/gym/issues/1554
+
+        exposed_public_attributes = ["gazebo"]
+
+        if name in exposed_public_attributes:
+            return self.__getattribute__(name)
+        else:
+            return getattr(self.env, name)
 
     # ==========
     # PROPERTIES
@@ -123,22 +136,25 @@ class GazeboEnv(gym.Wrapper):
         gazebo_initialized = self._gazebo_wrapper.initialize()
         assert gazebo_initialized, "Failed to initialize ignition gazebo"
 
-        # ==============================
-        # INITIALIZE THE ROBOT INTERFACE
-        # ==============================
+        return self._gazebo_wrapper
+
+    def _get_robot(self):
+        if not self.gazebo:
+            raise Exception("Failed to instantiate the gazebo simulator")
 
         # Get the robot name
-        model_names = self._gazebo_wrapper.getModelNames()
+        model_names = self.gazebo.getModelNames()
         assert len(model_names) == 1, "The environment has more than one model"
         model_name = model_names[0]
 
         # Build the robot object
-        # TODO: robot_name arg is used only for the SingletonRobot implementation
-        self.env.robot = self._robot_cls(robot_name=model_name, **self._kwargs)
-        assert isinstance(self.env.robot, base.robot.Robot), \
-            "'robot' object must inherit from gymppy.Robot"
+        # TODO: robot_name arg is used only for the FactoryRobot implementation
+        logger.debug("Creating the robot object")
+        robot = self._robot_cls(robot_name=model_name, **self._kwargs)
+        assert isinstance(robot, robot_abc.RobotABC), \
+            "'robot' object must inherit from RobotABC"
 
-        return self._gazebo_wrapper
+        return robot
 
     # ===============
     # gym.Env METHODS
@@ -165,7 +181,7 @@ class GazeboEnv(gym.Wrapper):
         # Get the reward
         # TODO: use the wrapper method?
         reward = self.env._get_reward()
-        assert reward, "Failed to get the reward"
+        assert reward is not None, "Failed to get the reward"
 
         # Check termination
         done = self.env._is_done()

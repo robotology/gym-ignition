@@ -10,10 +10,6 @@ if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
     sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 import gympp_bindings
 
-# Import abstract classes
-from gym_ignition.base.task import Task
-from gym_ignition.base.robot import Robot
-
 # =========================
 # REGISTER THE ENVIRONMENTS
 # =========================
@@ -48,8 +44,8 @@ register(
     id='CartPoleGymppy-Discrete-v0',
     entry_point='gym_ignition.base.gazebo_env:GazeboEnv',
     max_episode_steps=5000,
-    kwargs={'task': cartpole_discrete.CartPoleDiscrete,
-            'robot': sim.cartpole.CartPoleRobot,
+    kwargs={'task_cls': cartpole_discrete.CartPoleDiscrete,
+            'robot_cls': sim.cartpole.CartPoleRobot,
             'sdf': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
             'rtf': max_float,
@@ -61,8 +57,8 @@ register(
     id='CartPoleGymppy-Continuous-v0',
     entry_point='gym_ignition.base.gazebo_env:GazeboEnv',
     max_episode_steps=5000,
-    kwargs={'task': cartpole_continuous.CartPoleContinuous,
-            'robot': sim.cartpole.CartPoleRobot,
+    kwargs={'task_cls': cartpole_continuous.CartPoleContinuous,
+            'robot_cls': sim.cartpole.CartPoleRobot,
             'sdf': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
             'rtf': max_float,
