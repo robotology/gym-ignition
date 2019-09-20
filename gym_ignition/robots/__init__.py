@@ -4,6 +4,7 @@
 
 # Robot implementations
 from gym_ignition.robots.base import factory_robot
+from gym_ignition.robots.base import pybullet_robot
 # from gym_ignition.robots.base import ros_robot
 # from gym_ignition.robots.base import yarp_robot
 # from gym_ignition.robots.base import ignition_transport_robot
