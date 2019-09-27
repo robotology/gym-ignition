@@ -54,6 +54,10 @@ class Runtime(gym.Wrapper, abc.ABC):
             return super().__getattr__(name)
 
     @property
+    def task(self):
+        return self.env
+
+    @property
     def unwrapped(self):
         """
         Expose Runtime objects as real gym.Env objects.
