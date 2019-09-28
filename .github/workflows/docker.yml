@@ -1,6 +1,9 @@
 name: 'CI Docker Image'
 
 on:
+  push:
+    paths:
+      - ".ci/*"
   schedule:
     # Execute a weekly build on Monday at 2AM UTC
     - cron:  '0 2 * * 1'
