@@ -4,6 +4,8 @@
 
 from setuptools import setup, find_packages
 
+icub_model_zip = "https://github.com/diegoferigo/icub-model-pybullet/archive/master.zip"
+
 setup(name='gym_ignition',
       version='0.1',
       author="Diego Ferigo",
@@ -18,6 +20,8 @@ setup(name='gym_ignition',
       install_requires=[
             'gym >= 0.13.1',
             'numpy',
+            'pybullet',
+            'icub-model-pybullet @ {}'.format(icub_model_zip),
       ],
       packages=find_packages(),
       )

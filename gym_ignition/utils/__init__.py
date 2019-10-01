@@ -3,3 +3,4 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from gym_ignition.utils.typing import *
+from gym_ignition.utils import resource_finder

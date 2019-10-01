@@ -15,6 +15,7 @@ import gympp_bindings
 # =========================
 
 from gym.envs.registration import register
+from gym_ignition.utils import resource_finder
 
 # Import the robots
 from gym_ignition.robots import rt
@@ -64,4 +65,26 @@ register(
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
+            })
+
+# =====================
+# PYBULLET ENVIRONMENTS
+# =====================
+
+# Add the folders specified in IGN_GAZEBO_RESOURCE_PATH to the search path
+resource_finder.add_path_from_env_var("IGN_GAZEBO_RESOURCE_PATH")
+
+register(
+    id='CartPole-PyBullet-Discrete-v0',
+    entry_point='gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime',
+    max_episode_steps=5000,
+    kwargs={
+            # PyBulletRuntime
+            'task_cls': cartpole_discrete.CartPoleDiscrete,
+            'robot_cls': sim.pybullet.cartpole.CartPolePyBulletRobot,
+            'model': "CartPole/CartPole.urdf",
+            'world': "plane_implicit.urdf",
+            'rtf': 1.0,
+            'agent_rate': 250,
+            'physics_rate': 250,
             })

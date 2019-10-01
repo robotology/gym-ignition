@@ -4,7 +4,6 @@
 
 import gym
 import time
-import pytest
 import itertools
 import numpy as np
 import gym_ignition
@@ -162,8 +161,8 @@ def template_test(rtf: float,
 
 def test_rates():
     # Test matrix
-    rtf_list = [1, 2, 5, 10]
-    agent_rate_list = [100, 1000, 5000]
+    rtf_list = [0.5, 1, 2, 5, 10]
+    agent_rate_list = [100, 1000]
     physics_rate_list = [100, 500, 1000, 2000]
 
     for agent_rate in agent_rate_list:
@@ -172,6 +171,10 @@ def test_rates():
         combinations = list(itertools.product(rtf_list, physics_rate_list))
 
         for rtf, physics_rate in combinations:
+
+            # Remove some combination too demanding for a single process
+            if physics_rate * rtf >= 5000:
+                continue
 
             # This case is not allowed
             if agent_rate > physics_rate:
