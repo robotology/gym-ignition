@@ -14,6 +14,8 @@
         <real_time_factor>100</real_time_factor>
     </physics>
 
+    <atmosphere type="adiabatic"/>
+
     <gui fullscreen='0'>
       <!-- 3D scene -->
       <plugin filename='Scene3D' name='3D View'>
