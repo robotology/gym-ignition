@@ -77,6 +77,9 @@ target_link_libraries(GazeboWrapper
     PRIVATE
     EnvironmentCallbacks
     EnvironmentCallbacksSingleton
+    RobotSingleton
+    ECMSingleton
+    IgnitionRobot
     ignition-gazebo2::core
     tiny-process-library)
 

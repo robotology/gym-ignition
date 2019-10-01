@@ -25,9 +25,23 @@
 namespace gympp {
     namespace gazebo {
         struct PhysicsData;
+        struct ModelInitData;
         class GazeboWrapper;
     } // namespace gazebo
 } // namespace gympp
+
+struct gympp::gazebo::ModelInitData
+{
+    std::string sdfString;
+    std::string modelName = "";
+    std::array<double, 3> position = {0, 0, 0};
+    std::array<double, 4> orientation = {1, 0, 0, 0};
+
+    inline void setSdfString(const std::string& s) { sdfString = s; }
+    inline void setModelName(const std::string& m) { modelName = m; }
+    inline void setPosition(const std::array<double, 3> p) { position = p; }
+    inline void setOrientation(const std::array<double, 4> o) { orientation = o; }
+};
 
 class gympp::gazebo::GazeboWrapper
 {
@@ -36,9 +50,6 @@ private:
     std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
 
 public:
-    // TODO
-    using SdfModelName = std::string;
-
     GazeboWrapper(const size_t numOfIterations = 1,
                   const double desiredRTF = std::numeric_limits<double>::max(),
                   const double physicsUpdateRate = 1000);
@@ -50,13 +61,14 @@ public:
     bool close();
 
     PhysicsData getPhysicsData() const;
-
     static void setVerbosity(int level = DEFAULT_VERBOSITY);
-    std::vector<SdfModelName> getModelNames() const;
-    bool setupGazeboModel(const std::string& modelFile,
-                          std::array<double, 6> pose = {0, 0, 0, 0, 0, 0});
+
+    bool insertModel(const gympp::gazebo::ModelInitData& modelData) const;
+    bool removeModel(const std::string& modelName) const;
+    static std::string getModelNameFromSDF(const std::string& sdfString);
+
+    std::string getWorldName() const;
     bool setupGazeboWorld(const std::string& worldFile);
-    bool setupIgnitionPlugin(const std::string& libName, const std::string& className);
 };
 
 struct gympp::gazebo::PhysicsData

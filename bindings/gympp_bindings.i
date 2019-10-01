@@ -18,6 +18,7 @@
 
 %include <stdint.i>
 
+%include <std_array.i>
 %include <std_string.i>
 %include <std_vector.i>
 
@@ -27,6 +28,12 @@
 %template(Vector_f) std::vector<float>;
 %template(Vector_d) std::vector<double>;
 %template(Vector_s) std::vector<std::string>;
+
+// Convert python list to std::array
+%template(Array3d) std::array<double, 3>;
+%template(Array4d) std::array<double, 4>;
+%template(Array3f) std::array<float, 3>;
+%template(Array4f) std::array<float, 4>;
 
 %include "gympp/Common.h"
 %template(BufferContainer_i) gympp::BufferContainer<int>;
