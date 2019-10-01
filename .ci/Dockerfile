@@ -90,6 +90,25 @@ RUN cd /tmp &&\
     cmake --build . --target install -- -j8 &&\
     rm -r /tmp/ign-gazebo
 
+# Install idyntree
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends python3-numpy libxml2-dev coinor-libipopt-dev &&\
+    rm -rf /var/lib/apt/lists/* &&\
+    git clone --depth 1 -b feature/numpy-and-ik https://github.com/diegoferigo/idyntree /tmp/idyntree &&\
+    mkdir -p /tmp/idyntree/build && cd /tmp/idyntree/build &&\
+    cmake .. \
+        -GNinja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DIDYNTREE_USES_PYTHON=True \
+        -DPython_ADDITIONAL_VERSIONS=3.6 \
+        -DIDYNTREE_USES_PYTHON_VERSION=3.6 \
+        -DPYTHON_NUMPY_INCLUDE_DIR:PATH=/usr/lib/python3/dist-packages/numpy/core/include \
+        &&\
+    cmake --build . --target install &&\
+    rm -r /tmp/idyntree
+ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+ENV export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3/dist-packages
+
 # Setup gym-ignition
 ARG install_prefix="/usr/local"
 ENV IGN_GAZEBO_SYSTEM_PLUGIN_PATH="${install_prefix}/lib/gympp/plugins"
