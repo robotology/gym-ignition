@@ -81,7 +81,7 @@ def test_discrete_space():
         sample = discrete_space.sample()
         assert sample.getBuffer_i().size() == 1, \
             "Wrong size of the sample extracted from a discrete space"
-        assert type(sample.getBuffer_i()[0]) is int, \
+        assert isinstance(sample.getBuffer_i()[0], int), \
             "Wrong data type of the sample extracted from a discrete space"
         assert discrete_space.contains(sample), \
             "Sampled data is not contained in the discrete space object that created it"
@@ -105,7 +105,7 @@ def test_box_space():
         sample = box.sample()
         assert sample.getBuffer_d().size() == size, \
             "Wrong size of the sample extracted from a box space"
-        assert type(sample.getBuffer_d()[0]) is float, \
+        assert isinstance(sample.getBuffer_d()[0], float), \
             "Wrong data type of the sample extracted from the box space"
         assert box.contains(sample), \
             "Sampled data is not contained in the box space object that created it"
