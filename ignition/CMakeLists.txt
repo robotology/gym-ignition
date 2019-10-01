@@ -42,6 +42,29 @@ target_link_libraries(EnvironmentCallbacksSingleton
 set_target_properties(EnvironmentCallbacksSingleton PROPERTIES
     PUBLIC_HEADER include/gympp/gazebo/EnvironmentCallbacksSingleton.h)
 
+# =============
+# ECM SINGLETON
+# =============
+
+add_library(ECMSingleton SHARED
+    include/gympp/gazebo/ECMSingleton.h
+    src/ECMSingleton.cpp)
+
+target_include_directories(ECMSingleton PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_link_libraries(ECMSingleton
+    PUBLIC
+    ignition-gazebo2::core
+    PRIVATE
+    gympp)
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPy")
+    set_target_properties(ECMSingleton PROPERTIES
+        PUBLIC_HEADER include/gympp/gazebo/ECMSingleton.h)
+endif()
+
 # ==============
 # GAZEBO WRAPPER
 # ==============
@@ -140,6 +163,7 @@ install(
     IgnitionEnvironment
     GazeboWrapper
     RobotSingleton
+    ECMSingleton
     EnvironmentCallbacks
     EnvironmentCallbacksSingleton
     IgnitionRobot
