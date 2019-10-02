@@ -24,6 +24,7 @@
 
 namespace gympp {
     namespace gazebo {
+        struct PluginData;
         struct PhysicsData;
         struct ModelInitData;
         class GazeboWrapper;
@@ -47,6 +48,15 @@ struct gympp::gazebo::ModelInitData
     inline void setModelName(const std::string& m) { modelName = m; }
     inline void setPosition(const std::array<double, 3> p) { position = p; }
     inline void setOrientation(const std::array<double, 4> o) { orientation = o; }
+};
+
+struct gympp::gazebo::PluginData
+{
+    std::string libName;
+    std::string className;
+
+    inline void setLibName(const std::string& l) { libName = l; }
+    inline void setClassName(const std::string& c) { className = c; }
 };
 
 class gympp::gazebo::GazeboWrapper
@@ -74,7 +84,8 @@ public:
     PhysicsData getPhysicsData() const;
     static void setVerbosity(int level = DEFAULT_VERBOSITY);
 
-    bool insertModel(const gympp::gazebo::ModelInitData& modelData) const;
+    bool insertModel(const gympp::gazebo::ModelInitData& modelData,
+                     const gympp::gazebo::PluginData& pluginData = {}) const;
     bool removeModel(const std::string& modelName) const;
     static std::string getModelNameFromSDF(const std::string& sdfString);
 

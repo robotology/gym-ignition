@@ -20,20 +20,10 @@
 namespace gympp {
     class GymFactory;
     namespace gazebo {
-        struct PluginData;
         class IgnitionEnvironment;
         class EnvironmentCallbacks;
     } // namespace gazebo
 } // namespace gympp
-
-struct gympp::gazebo::PluginData
-{
-    std::string libName;
-    std::string className;
-
-    inline void setLibName(const std::string& l) { libName = l; }
-    inline void setClassName(const std::string& c) { className = c; }
-};
 
 class gympp::gazebo::IgnitionEnvironment
     : public gympp::Environment

@@ -73,34 +73,8 @@ bool IgnitionEnvironment::initializeSimulation()
     // Note that the real name substitutin will be done by the insertModel() method.
     pImpl->modelData.modelName = prefix + "::" + desiredModelNameWithoutPrefix;
 
-    // Add the environment plugin as model plugin.
-    // Parse the SDF first.
-    sdf::Root root;
-    auto errors = root.LoadSdfString(pImpl->modelData.sdfString);
-
-    if (!errors.empty()) {
-        for (const auto& err : errors) {
-            gymppError << err << std::endl;
-        }
-        return false;
-    }
-
-    // Create the plugin SDF element
-    sdf::ElementPtr pluginElement(new sdf::Element);
-    pluginElement->SetName("plugin");
-    pluginElement->AddAttribute("name", "string", pImpl->pluginData.className, true);
-    pluginElement->AddAttribute("filename", "string", pImpl->pluginData.libName, true);
-
-    // Store the plugin SDF element in the model SDF
-    assert(root.ModelCount() == 1);
-    auto model = const_cast<sdf::Model*>(root.ModelByIndex(0));
-    model->Element()->InsertElement(pluginElement);
-
-    // Serialize again the new model into the model initialization data
-    pImpl->modelData.sdfString = root.Element()->ToString("");
-
     // Insert the model in the world
-    if (!insertModel(pImpl->modelData)) {
+    if (!insertModel(pImpl->modelData, pImpl->pluginData)) {
         gymppError << "Failed to insert the model while resetting the environment" << std::endl;
         return false;
     }

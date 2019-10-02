@@ -400,7 +400,8 @@ std::string GazeboWrapper::getWorldName() const
     return pImpl->sdf.WorldByIndex(0)->Name();
 }
 
-bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData) const
+bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
+                                const gympp::gazebo::PluginData& pluginData) const
 {
     gymppDebug << "Inserting new model " << modelData.modelName << std::endl;
 
@@ -448,6 +449,25 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData) c
 
     // Update the name in the sdf model
     const_cast<sdf::Model*>(root.ModelByIndex(0))->SetName(finalEntityName);
+
+    // Add the model plugin, if defined. This is used to insert either the RobotController plugin
+    // for python environments, or the gympp plugin for C++ environments.
+
+    if (!pluginData.libName.empty() && !pluginData.className.empty()) {
+        gymppDebug << "Inserting SDF plugin '" << pluginData.libName << "@" << pluginData.className
+                   << "'" << std::endl;
+
+        // Create the plugin SDF element
+        sdf::ElementPtr pluginElement(new sdf::Element);
+        pluginElement->SetName("plugin");
+        pluginElement->AddAttribute("name", "string", pluginData.className, true);
+        pluginElement->AddAttribute("filename", "string", pluginData.libName, true);
+
+        // Store the plugin SDF element in the model SDF
+        assert(root.ModelCount() == 1);
+        auto model = const_cast<sdf::Model*>(root.ModelByIndex(0));
+        model->Element()->InsertElement(pluginElement);
+    }
 
     // To simplify debugging, use an environment variable to enable / disable
     // printing the SDF string
