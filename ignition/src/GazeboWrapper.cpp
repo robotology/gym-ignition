@@ -15,6 +15,7 @@
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/SystemPaths.hh>
+#include <ignition/common/Util.hh>
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/SdfEntityCreator.hh>
 #include <ignition/gazebo/Server.hh>
@@ -36,6 +37,7 @@
 #include <chrono>
 
 using namespace gympp::gazebo;
+const std::string GymppVerboseEnvVar = "GYMPP_VERBOSE";
 
 // =====
 // PIMPL
@@ -80,6 +82,14 @@ std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
         sdf::Root root;
         auto errors = root.LoadSdfString(sdf.Element()->ToString(""));
         assert(errors.empty()); // This should be already ok
+
+        // To simplify debugging, use an environment variable to enable / disable
+        // printing the SDF string
+        std::string envVarContent{};
+        if (ignition::common::env(GymppVerboseEnvVar, envVarContent) && envVarContent == "1") {
+            gymppDebug << "Loading the following SDF file in the gazebo server:" << std::endl;
+            std::cout << sdf.Element()->ToString("") << std::endl;
+        }
 
         // Store the sdf string in the gazebo configuration
         gazebo.config.SetSdfString(sdf.Element()->ToString(""));
@@ -438,6 +448,14 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData) c
 
     // Update the name in the sdf model
     const_cast<sdf::Model*>(root.ModelByIndex(0))->SetName(finalEntityName);
+
+    // To simplify debugging, use an environment variable to enable / disable
+    // printing the SDF string
+    std::string envVarContent{};
+    if (ignition::common::env(GymppVerboseEnvVar, envVarContent) && envVarContent == "1") {
+        gymppDebug << "Inserting a model from the following SDF:" << std::endl;
+        std::cout << root.Element()->ToString("") << std::endl;
+    }
 
     // Create the model entity
     gymppDebug << "Creating new entity for the model" << std::endl;
