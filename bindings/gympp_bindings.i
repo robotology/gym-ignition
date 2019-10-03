@@ -78,11 +78,15 @@
     bool setdt(const double dt) {
         return $self->setdt(std::chrono::duration<double>(dt));
     }
-    
+
     double dt() const {
         return $self->dt().count();
     }
 }
+
+%include "weak_ptr.i"
+%shared_ptr(gympp::Robot)
+%template(RobotWeakPtr) std::weak_ptr<gympp::Robot>;
 
 %ignore gympp::Robot::dt;
 %ignore gympp::Robot::setdt(const StepSize&);
@@ -92,7 +96,7 @@
     std::shared_ptr<gympp::gazebo::IgnitionEnvironment> envToIgnEnv(gympp::EnvironmentPtr env) {
         return std::dynamic_pointer_cast<gympp::gazebo::IgnitionEnvironment>(env);
     }
-    
+
     std::shared_ptr<gympp::gazebo::GazeboWrapper> envToGazeboWrapper(gympp::EnvironmentPtr env) {
         return std::dynamic_pointer_cast<gympp::gazebo::GazeboWrapper>(env);
     }
