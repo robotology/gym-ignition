@@ -36,12 +36,16 @@ public:
 
     static ECMSingleton& get();
 
-    bool valid() const;
+    void clean(const std::string& worldName);
+    bool valid(const std::string& worldName) const;
 
-    ignition::gazebo::EventManager* getEventManager() const;
-    ignition::gazebo::EntityComponentManager* getECM() const;
+    bool exist(const std::string& worldName) const;
 
-    bool storePtrs(ignition::gazebo::EntityComponentManager* ecm,
+    ignition::gazebo::EventManager* getEventManager(const std::string& worldName) const;
+    ignition::gazebo::EntityComponentManager* getECM(const std::string& worldName) const;
+
+    bool storePtrs(const std::string& worldName,
+                   ignition::gazebo::EntityComponentManager* ecm,
                    ignition::gazebo::EventManager* eventMgr);
 };
 

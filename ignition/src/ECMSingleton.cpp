@@ -16,12 +16,18 @@
 using namespace gympp::gazebo;
 using RobotName = std::string;
 
+struct Pointers
+{
+    ignition::gazebo::EventManager* eventMgr = nullptr;
+    ignition::gazebo::EntityComponentManager* ecm = nullptr;
+};
+
 class ECMSingleton::Impl
 {
 public:
+    using WorldName = std::string;
     mutable std::mutex mutex;
-    ignition::gazebo::EventManager* eventMgr = nullptr;
-    ignition::gazebo::EntityComponentManager* ecm = nullptr;
+    std::unordered_map<WorldName, Pointers> resources;
 };
 
 ECMSingleton::ECMSingleton()
@@ -34,19 +40,42 @@ ECMSingleton& ECMSingleton::get()
     return instance;
 }
 
-bool ECMSingleton::valid() const
+bool ECMSingleton::valid(const std::string& worldName) const
 {
     std::lock_guard(pImpl->mutex);
-    return pImpl->ecm;
+    return exist(worldName) && pImpl->resources.at(worldName).ecm
+           && pImpl->resources.at(worldName).eventMgr;
 }
 
-ignition::gazebo::EventManager* ECMSingleton::getEventManager() const
+bool ECMSingleton::exist(const std::string& worldName) const
+{
+    if (pImpl->resources.find(worldName) != pImpl->resources.end()) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
+ignition::gazebo::EventManager* ECMSingleton::getEventManager(const std::string& worldName) const
 {
     std::lock_guard(pImpl->mutex);
-    return pImpl->eventMgr;
+
+    if (!exist(worldName)) {
+        gymppError << "The event manager was never stored" << std::endl;
+        return nullptr;
+    }
+
+    if (!valid(worldName)) {
+        gymppError << "The pointers are not valid" << std::endl;
+        return nullptr;
+    }
+
+    return pImpl->resources.at(worldName).eventMgr;
 }
 
-bool ECMSingleton::storePtrs(ignition::gazebo::EntityComponentManager* ecm,
+bool ECMSingleton::storePtrs(const std::string& worldName,
+                             ignition::gazebo::EntityComponentManager* ecm,
                              ignition::gazebo::EventManager* eventMgr)
 {
     if (!ecm || !eventMgr) {
@@ -54,38 +83,40 @@ bool ECMSingleton::storePtrs(ignition::gazebo::EntityComponentManager* ecm,
         return false;
     }
 
-    assert((pImpl->ecm && pImpl->eventMgr) || (!pImpl->ecm && !pImpl->eventMgr));
-
-    if (pImpl->ecm) {
-        gymppWarning << "The ECM has been stored previously. This call will do nothing."
-                     << std::endl;
-        return true;
-    }
-
-    if (pImpl->ecm && pImpl->eventMgr) {
-        gymppWarning << "The ECM and EventManager are already stored. This call will do nothing."
-                     << std::endl;
+    if (exist(worldName)) {
+        gymppWarning << "The pointers for world '" << worldName << "' have already been stored."
+                     << " This method will do nothing" << std::endl;
         return true;
     }
 
     gymppDebug << "Storing the ECM and the EventManager in the singleton" << std::endl;
     {
         std::lock_guard(pImpl->mutex);
-        pImpl->ecm = ecm;
-        pImpl->eventMgr = eventMgr;
+        pImpl->resources[worldName].ecm = ecm;
+        pImpl->resources[worldName].eventMgr = eventMgr;
     }
 
     return true;
 }
 
-ignition::gazebo::EntityComponentManager* ECMSingleton::getECM() const
+ignition::gazebo::EntityComponentManager* ECMSingleton::getECM(const std::string& worldName) const
 {
     std::lock_guard(pImpl->mutex);
 
-    if (!pImpl->ecm) {
-        gymppError << "The ECM was never store in the singleton" << std::endl;
+    if (!exist(worldName)) {
+        gymppError << "The ECM of world '" << worldName << "' was never stored" << std::endl;
         return nullptr;
     }
 
-    return pImpl->ecm;
+    if (!valid(worldName)) {
+        gymppError << "The pointers are not valid" << std::endl;
+        return nullptr;
+    }
+
+    return pImpl->resources.at(worldName).ecm;
+}
+
+void ECMSingleton::clean(const std::string& worldName)
+{
+    pImpl->resources.erase(worldName);
 }
