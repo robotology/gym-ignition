@@ -168,14 +168,7 @@ IgnitionRobot::IgnitionRobot()
     : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {}
 
-IgnitionRobot::~IgnitionRobot()
-{
-    // Remove the robot from the singleton
-    if (bool removed = RobotSingleton::get().deleteRobot(name()); !removed) {
-        gymppError << "Failed to store the robot in the RobotSingleton" << std::endl;
-        assert(removed);
-    }
-};
+IgnitionRobot::~IgnitionRobot() = default;
 
 bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
                                  const std::shared_ptr<const sdf::Element>& sdf,
@@ -211,7 +204,7 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
             ignition::gazebo::components::Joint* /*joint*/,
             ignition::gazebo::components::Name* name,
             ignition::gazebo::components::JointType* type) -> bool {
-            gymppDebug << "Found joint: " << name->Data() << std::endl;
+            gymppDebug << "Found joint: " << name->Data() << " [" << entity << "]" << std::endl;
 
             // Find the entity of the joint in the ecm
             auto jointEntity = pImpl->model.JointByName(ecm, name->Data());
@@ -241,12 +234,12 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
     // Get all the model links
     ecm.Each<ignition::gazebo::components::Link,
              ignition::gazebo::components::Name,
-             ignition::gazebo::components::Pose>([&](const ignition::gazebo::Entity& /*_entity*/,
+             ignition::gazebo::components::Pose>([&](const ignition::gazebo::Entity& entity,
                                                      ignition::gazebo::components::Link* /*link*/,
                                                      ignition::gazebo::components::Name* name,
                                                      ignition::gazebo::components::Pose
                                                          * /*pose*/) -> bool {
-        gymppDebug << "Found link: " << name->Data() << std::endl;
+        gymppDebug << "Found link: " << name->Data() << " [" << entity << "]" << std::endl;
 
         // TODO: there is an extra link 'link', I suspect related to the <include><pose>
         if (name->Data() == "link") {
@@ -273,19 +266,17 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
         return false;
     }
 
-    // Store the name of the robot. In this way we don't have to access the ECM for that.
-    // It is useful because this information might be used after the deletion of the ECM.
+    // Store the name of the robot
     pImpl->name = pImpl->model.Name(ecm);
+
+    if (pImpl->name.empty()) {
+        gymppError << "The model entity has an empty name component" << std::endl;
+        return false;
+    }
 
     // Initialize the buffers
     pImpl->buffers.joints.positions.resize(pImpl->joints.size());
     pImpl->buffers.joints.velocities.resize(pImpl->joints.size());
-
-    // Register the robot in the singleton
-    if (!RobotSingleton::get().storeRobot(this)) {
-        gymppError << "Failed to store the robot in the RobotSingleton" << std::endl;
-        return false;
-    }
 
     return true;
 }

@@ -16,8 +16,7 @@
 
 namespace gympp {
     class Robot;
-    //    using RobotPtr = std::shared_ptr<gympp::Robot>;
-    using RobotPtr = gympp::Robot*;
+    using RobotPtr = std::shared_ptr<gympp::Robot>;
     struct PID;
 } // namespace gympp
 
