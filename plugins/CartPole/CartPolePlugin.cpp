@@ -12,8 +12,11 @@
 #include "gympp/Random.h"
 #include "gympp/Robot.h"
 #include "gympp/gazebo/EnvironmentCallbacksSingleton.h"
-#include "gympp/gazebo/IgnitionRobot.h"
+#include "gympp/gazebo/RobotSingleton.h"
 
+#include <ignition/gazebo/Model.hh>
+#include <ignition/gazebo/components/Model.hh>
+#include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/plugin/Register.hh>
 
 #include <cassert>
@@ -64,7 +67,9 @@ public:
     ObservationSample observationBuffer;
     std::optional<CartPoleAction> action;
 
-    std::shared_ptr<gympp::Robot> robot = nullptr;
+    std::string modelName;
+    gympp::RobotPtr robot;
+    static gympp::RobotPtr getRobotPtr(const std::string& robotName);
 
     double getRandomThetaInRad()
     {
@@ -72,6 +77,30 @@ public:
         return distr(gympp::Random::engine());
     }
 };
+
+gympp::RobotPtr CartPole::Impl::getRobotPtr(const std::string& robotName)
+{
+    // Get the robot interface
+    auto robotPtr = RobotSingleton::get().getRobot(robotName).lock();
+
+    // Check that is not a nullptr
+    if (!robotPtr) {
+        gymppError << "Failed to get the robot '" << robotName << "' from the singleton"
+                   << std::endl;
+        return {};
+    }
+
+    if (!robotPtr->valid()) {
+        gymppError << "The robot interface is not valid" << std::endl;
+        return {};
+    }
+
+    return robotPtr;
+}
+
+// ========
+// CARTPOLE
+// ========
 
 CartPole::CartPole()
     : System()
@@ -95,46 +124,52 @@ CartPole::~CartPole()
 }
 
 void CartPole::Configure(const ignition::gazebo::Entity& entity,
-                         const std::shared_ptr<const sdf::Element>& sdf,
+                         const std::shared_ptr<const sdf::Element>& /*sdf*/,
                          ignition::gazebo::EntityComponentManager& ecm,
                          ignition::gazebo::EventManager& /*eventMgr*/)
 {
-    // Create an IgnitionRobot object from the ecm
-    auto ignRobot = std::make_shared<gympp::gazebo::IgnitionRobot>();
-    if (!ignRobot->configureECM(entity, sdf, ecm)) {
-        gymppError << "Failed to configure the Robot interface" << std::endl;
+    // Create a model and check its validity
+    auto model = ignition::gazebo::Model(entity);
+    if (!model.Valid(ecm)) {
+        gymppError << "The entity of the parent model of the gympp plugin is not valid"
+                   << std::endl;
+        assert(false);
         return;
     }
 
-    if (!ignRobot->valid()) {
-        gymppError << "The Robot interface is not valid" << std::endl;
-        return;
-    }
-
-    // Store a pointer to gympp::Robot
-    pImpl->robot = ignRobot;
+    // Get the model name and ask the robot interface
+    pImpl->modelName = model.Name(ecm);
 
     // Auto-register the environment callbacks
-    gymppDebug << "Registering environment callbacks for robot '" << ignRobot->name() << "'"
+    gymppDebug << "Registering environment callbacks for robot '" << pImpl->modelName << "'"
                << std::endl;
     auto* ecSingleton = EnvironmentCallbacksSingleton::Instance();
 
-    if (bool registered = ecSingleton->storeEnvironmentCallback(ignRobot->name(), this);
-        !registered) {
+    if (!ecSingleton->storeEnvironmentCallback(pImpl->modelName, this)) {
         gymppError << "Failed to register the environment callbacks";
-        assert(registered);
+        assert(false);
         return;
     }
 }
 
 void CartPole::PreUpdate(const ignition::gazebo::UpdateInfo& info,
-                         ignition::gazebo::EntityComponentManager& /*manager*/)
+                         ignition::gazebo::EntityComponentManager& /*ecm*/)
 {
     if (info.paused) {
         return;
     }
 
-    assert(pImpl->robot);
+    // During the process of model creation, this plugin is loaded right after the creation of all
+    // the entities related to links, joints, etc, and before storing the robot interface in the
+    // singleton. This means that asking for the robot interface during the Configure step is still
+    // early. We do it lazily here at the first PreUpdate call.
+    if (!pImpl->robot) {
+        pImpl->robot = pImpl->getRobotPtr(pImpl->modelName);
+        assert(pImpl->robot);
+    }
+
+    // std::cerr << std::chrono::duration_cast<std::chrono::microseconds>(info.dt).count() << " ms"
+    //           << std::endl;
 
     // Actuate the action
     // ==================
@@ -210,7 +245,10 @@ bool CartPole::isDone()
 
 bool CartPole::reset()
 {
-    assert(pImpl->robot);
+    if (!pImpl->robot) {
+        pImpl->robot = pImpl->getRobotPtr(pImpl->modelName);
+        assert(pImpl->robot);
+    }
 
     // Reset the number of iterations
     pImpl->iterations = 0;
@@ -277,6 +315,9 @@ std::optional<gympp::gazebo::EnvironmentCallbacks::Reward> CartPole::computeRewa
 {
     std::lock_guard lock(pImpl->mutex);
     return 1.0;
+    //    return 1.0 - std::abs(pImpl->observationBuffer[ObservationIndex::CartPosition])
+    //           - std::abs(pImpl->observationBuffer[ObservationIndex::CartVelocity])
+    //           - std::abs(pImpl->observationBuffer[ObservationIndex::PoleVelocity]);
 }
 
 std::optional<gympp::gazebo::EnvironmentCallbacks::Observation> CartPole::getObservation()

@@ -15,7 +15,6 @@ target_link_libraries(CartPolePlugin
     EnvironmentCallbacks
     ignition-gazebo2::core
     PRIVATE
-    IgnitionRobot
     EnvironmentCallbacksSingleton
     RobotSingleton)
 
