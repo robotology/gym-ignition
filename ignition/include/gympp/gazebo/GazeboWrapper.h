@@ -30,6 +30,12 @@ namespace gympp {
     } // namespace gazebo
 } // namespace gympp
 
+namespace sdf {
+    inline namespace v8 {
+        class Root;
+    } // namespace v8
+} // namespace sdf
+
 struct gympp::gazebo::ModelInitData
 {
     std::string sdfString;
@@ -49,6 +55,9 @@ private:
     class Impl;
     std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
 
+protected:
+    bool findAndLoadSdf(const std::string& sdfFileName, sdf::Root& root);
+
 public:
     GazeboWrapper(const size_t numOfIterations = 1,
                   const double desiredRTF = std::numeric_limits<double>::max(),
@@ -59,6 +68,8 @@ public:
     bool run();
     bool gui();
     bool close();
+
+    bool initialized();
 
     PhysicsData getPhysicsData() const;
     static void setVerbosity(int level = DEFAULT_VERBOSITY);

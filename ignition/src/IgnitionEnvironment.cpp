@@ -13,6 +13,10 @@
 #include "gympp/gazebo/EnvironmentCallbacks.h"
 #include "gympp/gazebo/EnvironmentCallbacksSingleton.h"
 
+#include <sdf/Element.hh>
+#include <sdf/Model.hh>
+#include <sdf/Root.hh>
+
 #include <cassert>
 #include <ostream>
 
@@ -23,24 +27,107 @@ class IgnitionEnvironment::Impl
 public:
     size_t id;
     gympp::gazebo::EnvironmentCallbacks* cb = nullptr;
+
+    PluginData pluginData;
+    gympp::gazebo::ModelInitData modelData;
 };
 
 // ====================
 // IGNITION ENVIRONMENT
 // ====================
 
+bool IgnitionEnvironment::initializeSimulation()
+{
+    // If the server is already running it means that the simulation has been already initialized
+    if (GazeboWrapper::initialized()) {
+        return true;
+    }
+
+    gymppDebug << "Initializing the simulation" << std::endl;
+
+    // Initialize gazebo and load the world file
+    if (!GazeboWrapper::initialize()) {
+        gymppError << "Failed to either initialize gazebo or gather the server" << std::endl;
+        return false;
+    }
+
+    // Use the pointer to this object (which is unique and for sure is not shared with any other
+    // environment objects) as prefix.
+    std::string prefix = std::to_string(reinterpret_cast<int64_t>(this));
+
+    // Initialize the model name with the name specified in the initialization data
+    std::string desiredModelNameWithoutPrefix = pImpl->modelData.modelName;
+
+    // Use the name from the SDF if the initialization data does not specify it
+    if (desiredModelNameWithoutPrefix.empty()) {
+        // Get the name from the model SDF
+        desiredModelNameWithoutPrefix = getModelNameFromSDF(pImpl->modelData.sdfString);
+
+        if (desiredModelNameWithoutPrefix.empty()) {
+            gymppError << "Failed to extract the model name from the model SDF" << std::endl;
+            return false;
+        }
+    }
+
+    // Final model name.
+    // Note that the real name substitutin will be done by the insertModel() method.
+    pImpl->modelData.modelName = prefix + "::" + desiredModelNameWithoutPrefix;
+
+    // Add the environment plugin as model plugin.
+    // Parse the SDF first.
+    sdf::Root root;
+    auto errors = root.LoadSdfString(pImpl->modelData.sdfString);
+
+    if (!errors.empty()) {
+        for (const auto& err : errors) {
+            gymppError << err << std::endl;
+        }
+        return false;
+    }
+
+    // Create the plugin SDF element
+    sdf::ElementPtr pluginElement(new sdf::Element);
+    pluginElement->SetName("plugin");
+    pluginElement->AddAttribute("name", "string", pImpl->pluginData.className, true);
+    pluginElement->AddAttribute("filename", "string", pImpl->pluginData.libName, true);
+
+    // Store the plugin SDF element in the model SDF
+    assert(root.ModelCount() == 1);
+    auto model = const_cast<sdf::Model*>(root.ModelByIndex(0));
+    model->Element()->InsertElement(pluginElement);
+
+    // Serialize again the new model into the model initialization data
+    pImpl->modelData.sdfString = root.Element()->ToString("");
+
+    // Insert the model in the world
+    if (!insertModel(pImpl->modelData)) {
+        gymppError << "Failed to insert the model while resetting the environment" << std::endl;
+        return false;
+    }
+
+    gymppDebug << "Simulation initialized" << std::endl;
+    return true;
+}
+
 EnvironmentCallbacks* IgnitionEnvironment::envCallbacks()
 {
     if (!pImpl->cb) {
         auto* ecSingleton = EnvironmentCallbacksSingleton::Instance();
-        auto modelNames = getModelNames();
-        assert(modelNames.size() == 1);
-        std::string scopedModelName = modelNames.front();
-        pImpl->cb = ecSingleton->get(scopedModelName);
+        pImpl->cb = ecSingleton->get(pImpl->modelData.modelName);
         assert(pImpl->cb);
     }
 
     return pImpl->cb;
+}
+
+void IgnitionEnvironment::storeModelData(const gympp::gazebo::ModelInitData& modelData)
+{
+    pImpl->modelData = modelData;
+}
+
+void IgnitionEnvironment::storePluginData(const PluginData& pluginData)
+{
+    pImpl->pluginData = pluginData;
 }
 
 IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
@@ -72,10 +159,10 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     assert(action_space);
     assert(observation_space);
 
-    // Check if the gazebo server is running. It reset() is executed as first method,
+    // Check if the gazebo server is running. If reset() is executed as first method,
     // the server is initialized lazily.
-    if (!GazeboWrapper::initialize()) {
-        gymppError << "Failed to either initialize gazebo or gather the server" << std::endl;
+    if (!initializeSimulation()) {
+        gymppError << "Failed to initialize the simulation" << std::endl;
         return {};
     }
 
@@ -150,10 +237,10 @@ gympp::EnvironmentPtr IgnitionEnvironment::env()
 
 std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
 {
-    // Check if the gazebo server is running. It reset() is executed as first method,
+    // Check if the gazebo server is running. If reset() is executed as first method,
     // the server is initialized lazily.
-    if (!GazeboWrapper::initialize()) {
-        gymppError << "Failed to either initialize gazebo or gather the server" << std::endl;
+    if (!initializeSimulation()) {
+        gymppError << "Failed to initialize the simulation" << std::endl;
         return {};
     }
 
@@ -176,6 +263,13 @@ std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
 bool IgnitionEnvironment::render(RenderMode mode)
 {
     gymppDebug << "Rendering the environment" << std::endl;
+
+    // Check if the gazebo server is running. If render() is executed as first method,
+    // the server is initialized lazily.
+    if (!initializeSimulation()) {
+        gymppError << "Failed to initialize the simulation" << std::endl;
+        return {};
+    }
 
     if (mode == RenderMode::HUMAN) {
         return GazeboWrapper::gui();

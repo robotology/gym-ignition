@@ -8,11 +8,11 @@
 
 #include "gympp/gazebo/GazeboWrapper.h"
 #include "gympp/Log.h"
+#include "gympp/gazebo/ECMSingleton.h"
+#include "gympp/gazebo/IgnitionRobot.h"
+#include "gympp/gazebo/RobotSingleton.h"
 #include "process.hpp"
 
-#include <gympp/gazebo/ECMSingleton.h>
-#include <gympp/gazebo/IgnitionRobot.h>
-#include <gympp/gazebo/RobotSingleton.h>
 #include <ignition/common/Console.hh>
 #include <ignition/common/SystemPaths.hh>
 #include <ignition/gazebo/Model.hh>
@@ -54,15 +54,13 @@ class GazeboWrapper::Impl
 {
 public:
     size_t id;
+    sdf::Root sdf;
 
     GazeboData gazebo;
     std::shared_ptr<ignition::gazebo::Server> getServer();
 
     std::shared_ptr<ignition::gazebo::SdfEntityCreator> sdfEntityCreator;
     std::shared_ptr<ignition::gazebo::SdfEntityCreator> getSdfEntityCreator();
-
-    sdf::Root sdf;
-    bool findAndLoadSdf(const std::string& sdfFileName, sdf::Root& sdfRoot);
 
     PhysicsData getPhysicsData() const;
     bool setPhysics(const PhysicsData& physicsData);
@@ -123,22 +121,22 @@ std::shared_ptr<ignition::gazebo::SdfEntityCreator> GazeboWrapper::Impl::getSdfE
 }
 
 // TODO: there's a bug in the destructor of sdf::Physics that prevents returning std::optional
-bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Root& root)
+bool GazeboWrapper::findAndLoadSdf(const std::string& sdfFileName, sdf::Root& root)
 {
     if (sdfFileName.empty()) {
         gymppError << "The SDF file name of the gazebo model is empty" << std::endl;
-        return {};
+        return false;
     }
 
     // Find the file
     // TODO: add install directory of our world and model files
-    std::string sdfFilePath = systemPaths.FindFile(sdfFileName);
+    std::string sdfFilePath = pImpl->systemPaths.FindFile(sdfFileName);
 
     if (sdfFilePath.empty()) {
         gymppError << "Failed to find '" << sdfFileName << "'. "
                    << "Check that it's contained in the paths defined in IGN_GAZEBO_RESOURCE_PATH."
                    << std::endl;
-        return {};
+        return false;
     }
 
     // Load the sdf
@@ -149,7 +147,7 @@ bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Ro
         for (const auto& error : errors) {
             gymppError << error << std::endl;
         }
-        return {};
+        return false;
     }
     return true;
 }
@@ -342,6 +340,16 @@ bool GazeboWrapper::close()
     return true;
 }
 
+bool GazeboWrapper::initialized()
+{
+    if (pImpl->gazebo.server) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 PhysicsData GazeboWrapper::getPhysicsData() const
 {
     return pImpl->gazebo.physics;
@@ -428,6 +436,9 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData) c
         return false;
     }
 
+    // Update the name in the sdf model
+    const_cast<sdf::Model*>(root.ModelByIndex(0))->SetName(finalEntityName);
+
     // Create the model entity
     gymppDebug << "Creating new entity for the model" << std::endl;
     auto modelEntity = sdfEntityCreator->CreateEntities(root.ModelByIndex(0));
@@ -451,7 +462,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData) c
         ECMSingleton::get().getECM()->Component<ignition::gazebo::components::Pose>(modelEntity);
     *poseComp = ignition::gazebo::components::Pose(pose);
 
-    // Update name
+    // Update entity name
     auto nameComp =
         ECMSingleton::get().getECM()->Component<ignition::gazebo::components::Name>(modelEntity);
     *nameComp = ignition::gazebo::components::Name(finalEntityName);
@@ -504,13 +515,15 @@ bool GazeboWrapper::removeModel(const std::string& modelName) const
                      << std::endl;
     }
 
+    assert(!RobotSingleton::get().exists(modelName));
+
     return true;
 }
 
 bool GazeboWrapper::setupGazeboWorld(const std::string& worldFile)
 {
     // Find and load the sdf file that contains the world
-    if (!pImpl->findAndLoadSdf(worldFile, pImpl->sdf)) {
+    if (!findAndLoadSdf(worldFile, pImpl->sdf)) {
         gymppError << "Failed to find and load sdf file '" << worldFile << "'" << std::endl;
         return false;
     }

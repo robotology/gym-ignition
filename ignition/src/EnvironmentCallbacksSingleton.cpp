@@ -43,6 +43,7 @@ bool EnvironmentCallbacksSingleton::storeEnvironmentCallback(const std::string& 
                    << "' have been already registered" << std::endl;
     }
 
+    gymppDebug << "Storing environment callback of task '" << label << "'" << std::endl;
     m_callbacks[label] = cb;
 
     return true;
@@ -60,6 +61,7 @@ bool EnvironmentCallbacksSingleton::deleteEnvironmentCallback(const std::string&
         return false;
     }
 
+    gymppDebug << "Deleting environment callback of task '" << label << "'" << std::endl;
     m_callbacks.erase(label);
     return true;
 }
