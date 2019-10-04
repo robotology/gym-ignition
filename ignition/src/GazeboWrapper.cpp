@@ -430,6 +430,10 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
 {
     gymppDebug << "Inserting new model " << modelData.modelName << std::endl;
 
+    // ====================
+    // INITIALIZE RESOURCES
+    // ====================
+
     // Check that the ECM has been stored by the plugin
     if (!ECMSingleton::get().valid(getWorldName())) {
         gymppError << "No ECM found for world '" << getWorldName()
@@ -445,8 +449,8 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
     assert(sdfEntityCreator);
 
     // Parse the SDF string
-    sdf::Root root;
-    auto errors = root.LoadSdfString(modelData.sdfString);
+    sdf::Root modelSdfRoot;
+    auto errors = modelSdfRoot.LoadSdfString(modelData.sdfString);
 
     if (!errors.empty()) {
         for (const auto& err : errors) {
@@ -456,23 +460,51 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
     }
 
     // Get the world entity
-    auto worldEntities = ecm->EntitiesByComponents(ignition::gazebo::components::World());
+    auto worldEntities = ecm->EntitiesByComponents(
+        ignition::gazebo::components::World(), ignition::gazebo::components::Name(getWorldName()));
     assert(worldEntities.size() == 1);
     auto worldEntity = worldEntities[0];
+    assert(worldEntity != ignition::gazebo::kNullEntity);
+    gymppDebug << "Inserting the model in the world '" << getWorldName() << "' [" << worldEntity
+               << "]" << std::endl;
 
-    // Handle entity name
-    std::string finalEntityName;
+    // ============================
+    // RENAME THE MODEL NAME IN SDF
+    // ============================
 
+    std::string finalModelName;
+
+    // Handle model name
     if (modelData.modelName.empty()) {
-        assert(root.ModelCount() == 1);
-        finalEntityName = root.ModelByIndex(0)->Name();
+        assert(modelSdfRoot.ModelCount() == 1);
+        finalModelName = modelSdfRoot.ModelByIndex(0)->Name();
     }
     else {
-        finalEntityName = modelData.modelName;
+        finalModelName = modelData.modelName;
     }
 
+    // Create a new model with the scoped name
+    sdf::ElementPtr renamedModel(new sdf::Element);
+    renamedModel->SetName("model");
+    renamedModel->AddAttribute("name", "string", finalModelName, true);
+
+    sdf::ElementPtr child = modelSdfRoot.ModelByIndex(0)->Element()->GetFirstElement();
+
+    // Add all the children
+    while (child) {
+        renamedModel->InsertElement(child);
+        child = child->GetNextElement();
+    }
+    // Remove the old model and insert the renamed one
+    modelSdfRoot.ModelByIndex(0)->Element()->RemoveFromParent();
+    modelSdfRoot.Element()->InsertElement(renamedModel);
+
+    // =======================
+    // CREATE THE MODEL ENTITY
+    // =======================
+
     // Check that there is no entity name clashing
-    if (ecm->EntityByComponents(ignition::gazebo::components::Name(finalEntityName),
+    if (ecm->EntityByComponents(ignition::gazebo::components::Name(finalModelName),
                                 ignition::gazebo::components::ParentEntity(worldEntity))
         != ignition::gazebo::kNullEntity) {
         gymppError << "Failed to insert entity for model '" << modelData.modelName
@@ -481,7 +513,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
     }
 
     // Update the name in the sdf model
-    const_cast<sdf::Model*>(root.ModelByIndex(0))->SetName(finalEntityName);
+    const_cast<sdf::Model*>(modelSdfRoot.ModelByIndex(0))->SetName(finalModelName);
 
     // Add the model plugin, if defined. This is used to insert either the RobotController plugin
     // for python environments, or the gympp plugin for C++ environments.
@@ -496,8 +528,8 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         pluginElement->AddAttribute("filename", "string", pluginData.libName, true);
 
         // Store the plugin SDF element in the model SDF
-        assert(root.ModelCount() == 1);
-        auto model = const_cast<sdf::Model*>(root.ModelByIndex(0));
+        assert(modelSdfRoot.ModelCount() == 1);
+        auto model = const_cast<sdf::Model*>(modelSdfRoot.ModelByIndex(0));
         model->Element()->InsertElement(pluginElement);
     }
 
@@ -506,14 +538,11 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
     std::string envVarContent{};
     if (ignition::common::env(GymppVerboseEnvVar, envVarContent) && envVarContent == "1") {
         gymppDebug << "Inserting a model from the following SDF:" << std::endl;
-        std::cout << root.Element()->ToString("") << std::endl;
+        std::cout << modelSdfRoot.Element()->ToString("") << std::endl;
     }
 
-    gymppMessage << "ECM address " << ECMSingleton::get().getECM(getWorldName()) << std::endl;
-
     // Create the model entity
-    gymppDebug << "Creating new entity for the model" << std::endl;
-    auto modelEntity = sdfEntityCreator->CreateEntities(root.ModelByIndex(0));
+    auto modelEntity = sdfEntityCreator->CreateEntities(modelSdfRoot.ModelByIndex(0));
     gymppDebug << "Created entity [" << modelEntity << "] named [" << modelData.modelName << "]"
                << std::endl;
 
@@ -535,11 +564,15 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
 
     // Update entity name
     auto nameComp = ecm->Component<ignition::gazebo::components::Name>(modelEntity);
-    *nameComp = ignition::gazebo::components::Name(finalEntityName);
+    *nameComp = ignition::gazebo::components::Name(finalModelName);
+
+    // ========================================================
+    // CREATE THE ROBOT OBJECT AND REGISTER IT IN THE SINGLETON
+    // ========================================================
 
     // Create an IgnitionRobot object from the ecm
     auto ignRobot = std::make_shared<gympp::gazebo::IgnitionRobot>();
-    if (!ignRobot->configureECM(modelEntity, root.Element(), *ecm)) {
+    if (!ignRobot->configureECM(modelEntity, modelSdfRoot.Element(), *ecm)) {
         gymppError << "Failed to configure the Robot interface" << std::endl;
         return false;
     }
@@ -556,7 +589,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
     }
 
     // Add the model in a list of allocated models
-    pImpl->modelPendingToRemove.push_back(finalEntityName);
+    pImpl->modelPendingToRemove.push_back(finalModelName);
 
     return true;
 }
@@ -645,7 +678,7 @@ bool GazeboWrapper::setupGazeboWorld(const std::string& worldFile)
         child = child->GetNextElement();
     }
 
-    // Create a new root and insert the renamed world
+    // Remove the old world and insert the renamed one
     pImpl->sdf.WorldByIndex(0)->Element()->RemoveFromParent();
     pImpl->sdf.Element()->InsertElement(renamedWorld);
 
