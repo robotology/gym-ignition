@@ -15,4 +15,7 @@ class RobotABC(abc.ABC):
         self.model_file = model_file
 
     @abc.abstractmethod
+    def name(self) -> str: ...
+
+    @abc.abstractmethod
     def valid(self) -> bool: ...

@@ -178,6 +178,10 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     # robot.Robot INTERFACE
     # =====================
 
+    def name(self) -> str:
+        # TODO
+        pass
+
     def valid(self) -> bool:
         # TODO
         return True

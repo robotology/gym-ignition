@@ -44,6 +44,9 @@ class FactoryRobot(robot_abc.RobotABC,
     # RobotABC
     # ========
 
+    def name(self):
+        return self.gympp_robot.name()
+
     def valid(self) -> bool:
         return self.gympp_robot.valid()
 
