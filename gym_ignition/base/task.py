@@ -6,6 +6,7 @@ import abc
 import gym
 import numpy as np
 from typing import Tuple
+from gym.utils import seeding
 from gym_ignition.base.robot import robot_abc, RobotFeatures
 from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 from gym_ignition.utils.typing import Action, Observation, Reward, SeedList
@@ -162,12 +163,12 @@ class Task(gym.Env, abc.ABC):
         if not seed:
             seed = np.random.randint(2**32 - 1)
 
-        # Seed numpy
-        self._np_random = np.random
-        self._np_random.seed(seed)
+        # Get an instance of the random number generator from gym utils.
+        # This is necessary to have an independent rng for each environment.
+        self._np_random, new_seed = seeding.np_random(seed)
 
         # Seed the spaces
-        self.action_space.seed(seed)
-        self.observation_space.seed(seed)
+        self.action_space.seed(new_seed)
+        self.observation_space.seed(new_seed)
 
-        return SeedList([seed])
+        return SeedList([new_seed])
