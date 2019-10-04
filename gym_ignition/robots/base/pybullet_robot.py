@@ -96,13 +96,6 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         self._base_constraint = None
         self._initial_joint_positions = None
 
-        # Initialize all joints in position control
-        self._pybullet.setJointMotorControlArray(
-            bodyUniqueId=self._robot_id,
-            jointIndices=range(self.dofs()),
-            controlMode=pybullet.POSITION_CONTROL,
-            targetPositions=self.initial_positions())
-
         # Create a map from the joint name to its control info
         self._jointname2jointcontrolinfo = dict()
 
@@ -247,6 +240,14 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
         # Disable the default joint motorization setting a 0 maximum force
         if mode == JointControlMode.TORQUE:
+            # Disable the PID if was configured
+            self._pybullet.setJointMotorControl2(
+                bodyIndex=self._robot_id,
+                jointIndex=joint_idx_pybullet,
+                controlMode=pybullet.PD_CONTROL,
+                positionGain=0,
+                velocityGain=0)
+            # Put the motor in IDLE for torque control
             self._pybullet.setJointMotorControl2(
                 bodyIndex=self._robot_id,
                 jointIndex=joint_idx_pybullet,
