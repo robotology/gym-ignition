@@ -176,8 +176,12 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         pass
 
     def valid(self) -> bool:
-        # TODO
-        return True
+        try:
+            # TODO: improve the check
+            self._pybullet.getBasePositionAndOrientation(self._robot_id)
+            return True
+        except:
+            return False
 
     # ==================================
     # robot_joints.RobotJoints INTERFACE
