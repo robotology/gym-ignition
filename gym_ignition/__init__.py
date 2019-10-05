@@ -29,8 +29,8 @@ from gym_ignition.tasks import cartpole_continuous
 # GYMPP C++ ENVIRONMENTS
 # ======================
 
-import numpy as np
-max_float = float(np.finfo(np.float32).max)
+import numpy
+max_float = float(numpy.finfo(numpy.float32).max)
 
 register(
     id='CartPoleGympp-Discrete-v0',
@@ -46,12 +46,13 @@ register(
     entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
     max_episode_steps=5000,
     kwargs={'task_cls': cartpole_discrete.CartPoleDiscrete,
-            'robot_cls': sim.cartpole.CartPoleRobot,
-            'sdf': "CartPole/CartPole.sdf",
+            'robot_cls': sim.ignition.cartpole.CartPoleRobot,
+            'model': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
+            'hard_reset': False,
             })
 
 register(
@@ -59,12 +60,13 @@ register(
     entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
     max_episode_steps=5000,
     kwargs={'task_cls': cartpole_continuous.CartPoleContinuous,
-            'robot_cls': sim.cartpole.CartPoleRobot,
-            'sdf': "CartPole/CartPole.sdf",
+            'robot_cls': sim.ignition.cartpole.CartPoleRobot,
+            'model': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
+            'hard_reset': False,
             })
 
 # =====================
@@ -87,4 +89,5 @@ register(
             'rtf': 1.0,
             'agent_rate': 250,
             'physics_rate': 250,
+            'hard_reset': False,
             })
