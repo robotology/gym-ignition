@@ -54,7 +54,6 @@ class GazeboRuntime(runtime.Runtime):
         super().__init__(task=task_object, agent_rate=agent_rate)
 
         # Initialize the simulator and the robot
-        self._first_run = True
         robot = self._get_robot()
 
         # Store the robot in the task
@@ -186,16 +185,6 @@ class GazeboRuntime(runtime.Runtime):
         # (e.g. those related to the low-level PIDs) are correctly re-initialized.
         if self._hard_reset and self.task._robot:
             logger.debug("Hard reset: deleting the robot")
-
-            # TODO: the very first run is still not working correctly. The robot is
-            #  inserted in the object constructor and deleted right after in the first
-            #  reset() call. This causes problems with the first rollout. We run here
-            #  a dummy step that is useful to clean the ECM from the model entity.
-            if self._first_run:
-                self._first_run = False
-                self.gazebo.run()
-
-            # Delete the robot
             self.task.robot.delete_simulated_robot()
 
             logger.debug("Hard reset: creating new robot")
