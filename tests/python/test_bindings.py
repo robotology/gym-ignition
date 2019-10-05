@@ -221,7 +221,7 @@ def test_gymfactory():
     assert ign_env, "Failed to get the ignition environment"
 
     # Set verbosity
-    bindings.GazeboWrapper.setVerbosity(1)
+    bindings.GazeboWrapper.setVerbosity(4)
 
     # Use the environment
     env.reset()
@@ -243,6 +243,5 @@ def test_gymfactory():
     env2 = factory.make("CartPole")
     assert env2, "Failed to create CartPoleIgnition environment from the factory"
     assert env != env2, "Environment created from the factory are the same"
-    bindings.GazeboWrapper.setVerbosity(1)
     env2.reset()
     env2.step(action)
