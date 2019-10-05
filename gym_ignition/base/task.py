@@ -35,19 +35,12 @@ class Task(gym.Env, abc.ABC):
     specialized for the different runtimes.
     """
 
-    def __init__(self, robot: RobotFeatures = None) -> None:
-        self._robot = robot
+    def __init__(self) -> None:
+        self._robot = None
         self._np_random = None
 
-        # The parent class gym.Env has the following defined as class variables.
-        # Since they are hidden from the users, and child classes of Task need to fill
-        # their values, here we define them again as object variables.
-        #
-        # Note that object variables shadow class variables when accessed from an object
-        # instance. This is not a problem because accessing spaces from the class
-        # object is a not a common practice.
-        self.action_space = None
-        self.observation_space = None
+        # Optional public attribute to check robot features
+        self.robot_features = None
 
     # ==========
     # PROPERTIES
@@ -59,11 +52,14 @@ class Task(gym.Env, abc.ABC):
             assert self._robot.valid(), "The robot interface is not valid"
             return self._robot
 
-        assert False, "The robot interface object was never stored"
+        raise Exception("The robot interface object was never stored")
 
     @robot.setter
     def robot(self, robot: robot_abc.RobotABC) -> None:
         if not robot.valid(): raise Exception("Robot object is not valid")
+        if self.robot_features: self.robot_features.has_all_features(robot)
+
+        # Set the robot
         self._robot = robot
 
     # ==============

@@ -35,23 +35,6 @@ class Runtime(gym.Wrapper, abc.ABC):
         # TODO: should agent rate be the real one with rtf taken into account? Call it
         #  env_update_rate?
 
-    # Redefine this magic method since the Wrapper.__getattr__ is not compatible with
-    # the usage we want to achieve with Runtime objects. In fact, we want to resolve
-    # attributes in the following order:
-    #
-    # 1. All non-private attributes of the runtime implementation (example: get the
-    #    simulator object).
-    # 2. Get all the non-private attributes of the environment calling the Wrapper's
-    #    getattr implementation.
-    #
-    def __getattr__(self, name):
-        if name in self.__dict__:
-            # Hide private attributes
-            if not name.startswith('_'):
-                return __dict__[name]
-        else:
-            # Call the Wrapper getattr
-            return super().__getattr__(name)
 
     @property
     def task(self):

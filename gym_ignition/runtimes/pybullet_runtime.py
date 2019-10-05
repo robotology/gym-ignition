@@ -6,12 +6,11 @@ import os
 import time
 import pybullet
 import pybullet_data
-from pybullet_utils import bullet_client
-
-from gym_ignition import base, robots
 from gym_ignition.base import robot
-from gym_ignition.utils import logger, resource_finder
+from gym_ignition import base, robots
 from gym_ignition.utils.typing import *
+from pybullet_utils import bullet_client
+from gym_ignition.utils import logger, resource_finder
 
 
 class PyBulletRuntime(base.runtime.Runtime):
@@ -25,6 +24,7 @@ class PyBulletRuntime(base.runtime.Runtime):
                  agent_rate: float,
                  physics_rate: float,
                  world: str = "plane_implicit.urdf",
+                 hard_reset = False,
                  **kwargs):
 
         # Save the keyworded arguments.
@@ -34,6 +34,9 @@ class PyBulletRuntime(base.runtime.Runtime):
 
         # Store the type of the class that provides Robot interface
         self._robot_cls = robot_cls
+
+        # Delete and create a new robot every environment reset
+        self._hard_reset = hard_reset
 
         # URDF or SDF model files
         self._world = world
@@ -69,17 +72,17 @@ class PyBulletRuntime(base.runtime.Runtime):
         logger.debug("Physics rate = {} Hz".format(
             agent_rate * self._num_of_physics_steps))
 
-        # Initialize the simulator and the robot
-        robot_object = self._get_robot()
-
         logger.debug("Initializing the Task")
-        task = task_cls(robot=robot_object, **kwargs)
+        task = task_cls(**kwargs)
 
         assert isinstance(task, base.task.Task), \
             "'task_cls' object must inherit from Task"
 
         # Wrap the task with this runtime
         super().__init__(task=task, agent_rate=agent_rate)
+
+        # Initialize the simulator and the robot
+        self.task.robot = self._get_robot()
 
     # =======================
     # PyBulletRuntime METHODS
@@ -89,6 +92,8 @@ class PyBulletRuntime(base.runtime.Runtime):
     def pybullet(self) -> bullet_client.BulletClient:
         if self._pybullet is not None:
             return self._pybullet
+
+        logger.debug("Creating PyBullet simulator")
 
         if self._render_enabled:
             self._pybullet = bullet_client.BulletClient(pybullet.GUI)
@@ -125,32 +130,35 @@ class PyBulletRuntime(base.runtime.Runtime):
         step_time = 1.0 / self._physics_rate / self._rtf
         logger.info("Nominal step time: {} seconds".format(step_time))
 
+        logger.debug("PyBullet simulator created")
         return self._pybullet
 
     def _get_robot(self) -> robot.robot_abc.RobotABC:
         if not self.pybullet:
             raise Exception("Failed to instantiate the pybullet simulator")
 
-        # Find the model file
-        model_abs_path = resource_finder.find_resource(self._model)
-
-        # Load the model
-        robot_id = self._load_model(model_abs_path)
-        assert robot_id is not None, "Failed to load the robot model"
-
         if not issubclass(self._robot_cls, robots.pybullet_robot.PyBulletRobot):
             raise Exception("The 'robot_cls' must inherit from PyBulletRobot")
 
         # Build the robot object
         logger.debug("Creating the robot object")
-        robot = self._robot_cls(robot_id=robot_id,
-                                plane_id=self._plane_id,
-                                pybullet=self._pybullet,
+        robot = self._robot_cls(plane_id=self._plane_id,
+                                model_file=self._model,
+                                p=self._pybullet,
                                 **self._kwargs)
 
+        if self.task.robot_features:
+            self.task.robot_features.has_all_features(robot)
+
+        if not robot.valid():
+            raise Exception("The robot is not valid")
+
+        logger.debug("Robot object created")
         return robot
 
     def _load_model(self, filename: str, **kwargs) -> int:
+        logger.debug(f"Loading model {filename}")
+
         # Get the file extension
         extension = os.path.splitext(filename)[1][1:]
 
@@ -226,9 +234,13 @@ class PyBulletRuntime(base.runtime.Runtime):
 
     def reset(self) -> Observation:
         # Initialize pybullet if not yet done
-
         p = self.pybullet
         assert p, "PyBullet object not valid"
+
+        if self._hard_reset and self.task._robot:
+            logger.debug("Hard reset: deleting the robot")
+            self.task.robot.delete_simulated_robot()
+            self.task.robot = self._get_robot()
 
         # Reset the environment
         ok_reset = self.task._reset()
@@ -283,7 +295,7 @@ class PyBulletRuntime(base.runtime.Runtime):
             self.task.robot = self._get_robot()
 
         # Seed the wrapped environment (task)
-        seed = self.task.seed(seed)
+        seed = self.env.seed(seed)
 
         # Update the spaces of the wrapper
         self.action_space = self.task.action_space
