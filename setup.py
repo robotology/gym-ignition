@@ -21,5 +21,8 @@ setup(name='gym_ignition',
             'numpy',
             'pybullet',
       ],
+      setup_requires=[
+            'wheel',
+      ],
       packages=find_packages(),
       )
