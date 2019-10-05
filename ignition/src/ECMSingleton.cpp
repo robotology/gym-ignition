@@ -18,16 +18,26 @@ using RobotName = std::string;
 
 struct Pointers
 {
-    ignition::gazebo::EventManager* eventMgr = nullptr;
-    ignition::gazebo::EntityComponentManager* ecm = nullptr;
+    std::atomic<ignition::gazebo::EventManager*> eventMgr = nullptr;
+    std::atomic<ignition::gazebo::EntityComponentManager*> ecm = nullptr;
+};
+
+struct PreUpdateSynchronizationData
+{
+    bool isPreUpdate;
+    std::mutex preUpdateMutex;
+    std::mutex processingMutex;
+    std::condition_variable executorsCV;
+    std::condition_variable preUpdateCV;
+    std::atomic<size_t> nrExecutorsWaiting;
 };
 
 class ECMSingleton::Impl
 {
 public:
     using WorldName = std::string;
-    mutable std::mutex mutex;
     std::unordered_map<WorldName, Pointers> resources;
+    std::unordered_map<WorldName, PreUpdateSynchronizationData> synchronizationData;
 };
 
 ECMSingleton::ECMSingleton()
@@ -42,7 +52,6 @@ ECMSingleton& ECMSingleton::get()
 
 bool ECMSingleton::valid(const std::string& worldName) const
 {
-    std::lock_guard(pImpl->mutex);
     return exist(worldName) && pImpl->resources.at(worldName).ecm
            && pImpl->resources.at(worldName).eventMgr;
 }
@@ -59,8 +68,6 @@ bool ECMSingleton::exist(const std::string& worldName) const
 
 ignition::gazebo::EventManager* ECMSingleton::getEventManager(const std::string& worldName) const
 {
-    std::lock_guard(pImpl->mutex);
-
     if (!exist(worldName)) {
         gymppError << "The event manager was never stored" << std::endl;
         return nullptr;
@@ -90,19 +97,73 @@ bool ECMSingleton::storePtrs(const std::string& worldName,
     }
 
     gymppDebug << "Storing the ECM and the EventManager in the singleton" << std::endl;
-    {
-        std::lock_guard(pImpl->mutex);
-        pImpl->resources[worldName].ecm = ecm;
-        pImpl->resources[worldName].eventMgr = eventMgr;
-    }
+    pImpl->resources[worldName].ecm = ecm;
+    pImpl->resources[worldName].eventMgr = eventMgr;
 
     return true;
 }
 
+void ECMSingleton::notifyExecutorFinished(const std::string& worldName)
+{
+    pImpl->synchronizationData[worldName].executorsCV.notify_all();
+}
+
+void ECMSingleton::notifyAndWaitPreUpdate(const std::string& worldName)
+{
+    auto& syncroData = pImpl->synchronizationData[worldName];
+
+    // Temporarily lock the executors mutex (see the waitPreUpdate method).
+    std::unique_lock processingLock(syncroData.processingMutex);
+
+    // Notify to all executors that the simulation reached the PreUpdate step
+    syncroData.isPreUpdate = true;
+    syncroData.preUpdateCV.notify_all();
+
+    // If the are pending executors, they are waiting in their condition variable lambda.
+    // Unlock the executors mutex and wait that all executors are processed.
+    syncroData.executorsCV.wait(processingLock, [&] { return syncroData.nrExecutorsWaiting == 0; });
+    syncroData.isPreUpdate = false;
+}
+
+std::unique_lock<std::mutex> ECMSingleton::waitPreUpdate(const std::string& worldName)
+{
+    // Let's define 'executor' every function that calls this method.
+    // Executors want to wait to reach the PreUpdate step of the simulation, block its execution,
+    // and run some custom code (e.g. adding entities in the ECM).
+    // Executors run syncronously, one after the other. The simulation starts again when all
+    // executors finished.
+
+    auto& syncroData = pImpl->synchronizationData[worldName];
+
+    // Initialize the lock returned to the executor to wait for their processing
+    std::unique_lock processingLock(syncroData.processingMutex, std::defer_lock);
+
+    // Executors can arrive here in parallel. When this variable is back to 0, the simulation
+    // starts again.
+    syncroData.nrExecutorsWaiting++;
+
+    // Process one executor at time and wait to reach the PreUpdate step
+    std::unique_lock lock(syncroData.preUpdateMutex);
+    syncroData.preUpdateCV.wait(lock, [&] {
+        if (syncroData.isPreUpdate) {
+            // When the simulation reaches the PreUpdate step, this lambda is called.
+            // One executors aquires the lock and continues. The others are blocked here.
+            processingLock.lock();
+            return true;
+        }
+        return false;
+    });
+
+    // Decrease the counter
+    syncroData.nrExecutorsWaiting--;
+
+    // Return the lock. When it goes out of executor scope, the next executors (if any) will get
+    // unlocked from the condition variable lambda.
+    return processingLock;
+}
+
 ignition::gazebo::EntityComponentManager* ECMSingleton::getECM(const std::string& worldName) const
 {
-    std::lock_guard(pImpl->mutex);
-
     if (!exist(worldName)) {
         gymppError << "The ECM of world '" << worldName << "' was never stored" << std::endl;
         return nullptr;
@@ -119,4 +180,5 @@ ignition::gazebo::EntityComponentManager* ECMSingleton::getECM(const std::string
 void ECMSingleton::clean(const std::string& worldName)
 {
     pImpl->resources.erase(worldName);
+    pImpl->synchronizationData.erase(worldName);
 }

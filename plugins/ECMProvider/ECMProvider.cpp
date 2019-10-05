@@ -25,8 +25,15 @@
 using namespace gympp::gazebo;
 using namespace gympp::plugins;
 
+class ECMProvider::Impl
+{
+public:
+    std::string worldName;
+};
+
 ECMProvider::ECMProvider()
     : System()
+    , pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {}
 
 ECMProvider::~ECMProvider()
@@ -34,7 +41,7 @@ ECMProvider::~ECMProvider()
     gymppDebug << "Destroying the ECMProvider" << std::endl;
 };
 
-void ECMProvider::Configure(const ignition::gazebo::Entity& entity,
+void ECMProvider::Configure(const ignition::gazebo::Entity& /*entity*/,
                             const std::shared_ptr<const sdf::Element>& /*sdf*/,
                             ignition::gazebo::EntityComponentManager& ecm,
                             ignition::gazebo::EventManager& eventMgr)
@@ -51,20 +58,31 @@ void ECMProvider::Configure(const ignition::gazebo::Entity& entity,
     auto worldEntity = worldEntities[0];
 
     auto nameComponent = ecm.Component<ignition::gazebo::components::Name>(worldEntity);
-    assert(!nameComponent->Data().empty());
+    pImpl->worldName = nameComponent->Data();
+    assert(!pImpl->worldName.empty());
 
     // Register the EntityComponentManager and the EventManager in the singleton
-    if (!ECMSingleton::get().valid(nameComponent->Data())) {
-        gymppDebug << "Inserting ECM for world '" << nameComponent->Data() << "'" << std::endl;
+    if (!ECMSingleton::get().valid(pImpl->worldName)) {
+        gymppDebug << "Inserting ECM for world '" << pImpl->worldName << "'" << std::endl;
 
-        if (!ECMSingleton::get().storePtrs(nameComponent->Data(), &ecm, &eventMgr)) {
-            gymppError << "Failed to store ECM in the singleton for world '"
-                       << nameComponent->Data() << "'" << std::endl;
+        if (!ECMSingleton::get().storePtrs(pImpl->worldName, &ecm, &eventMgr)) {
+            gymppError << "Failed to store ECM in the singleton for world '" << pImpl->worldName
+                       << "'" << std::endl;
             return;
         }
     }
 }
 
+void ECMProvider::PreUpdate(const ignition::gazebo::UpdateInfo& info,
+                            ignition::gazebo::EntityComponentManager& /*ecm*/)
+{
+    // Syncronize entity creation only when the simulation is paused
+    if (info.paused) {
+        ECMSingleton::get().notifyAndWaitPreUpdate(pImpl->worldName);
+    }
+}
+
 IGNITION_ADD_PLUGIN(gympp::plugins::ECMProvider,
                     gympp::plugins::ECMProvider::System,
-                    gympp::plugins::ECMProvider::ISystemConfigure)
+                    gympp::plugins::ECMProvider::ISystemConfigure,
+                    gympp::plugins::ECMProvider::ISystemPreUpdate)

@@ -28,7 +28,12 @@ namespace gympp {
 class gympp::plugins::ECMProvider final
     : public ignition::gazebo::System
     , public ignition::gazebo::ISystemConfigure
+    , public ignition::gazebo::ISystemPreUpdate
 {
+private:
+    class Impl;
+    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl = nullptr;
+
 public:
     ECMProvider();
     ~ECMProvider() override;
@@ -37,6 +42,9 @@ public:
                    const std::shared_ptr<const sdf::Element>& sdf,
                    ignition::gazebo::EntityComponentManager& ecm,
                    ignition::gazebo::EventManager& eventMgr) override;
+
+    void PreUpdate(const ignition::gazebo::UpdateInfo& info,
+                   ignition::gazebo::EntityComponentManager& ecm) override;
 };
 
 #endif // GYMPP_PLUGINS_ECMPROVIDER

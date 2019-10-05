@@ -47,6 +47,10 @@ public:
     bool storePtrs(const std::string& worldName,
                    ignition::gazebo::EntityComponentManager* ecm,
                    ignition::gazebo::EventManager* eventMgr);
+
+    void notifyExecutorFinished(const std::string& worldName);
+    void notifyAndWaitPreUpdate(const std::string& worldName);
+    std::unique_lock<std::mutex> waitPreUpdate(const std::string& worldName);
 };
 
 #endif // GYMPP_GAZEBO_ECMSINGLETON_H
