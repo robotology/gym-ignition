@@ -22,6 +22,7 @@ from gym_ignition.robots import rt
 from gym_ignition.robots import sim
 
 # Import the tasks
+from gym_ignition.tasks import pendulum_swingup
 from gym_ignition.tasks import cartpole_discrete
 from gym_ignition.tasks import cartpole_continuous
 
@@ -37,9 +38,9 @@ register(
     max_episode_steps=5000,
     entry_point='gym_ignition.gympp.cartpole:CartPoleDiscrete')
 
-# ==========================
-# GYMPPY PYTHON ENVIRONMENTS
-# ==========================
+# ============================
+# IGNITION GAZEBO ENVIRONMENTS
+# ============================
 
 register(
     id='CartPoleDiscrete-Gazebo-v0',
