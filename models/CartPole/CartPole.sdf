@@ -1,9 +1,9 @@
 <sdf version='1.6'>
   <model name='cartpole_xacro'>
     <link name='rail'>
-      <pose frame=''>0 0 0.5 0 -0 0</pose>
+      <pose>0 0 0.5 0 -0 0</pose>
       <inertial>
-        <pose frame=''>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 -0 0</pose>
         <mass>5</mass>
         <inertia>
           <ixx>100</ixx>
@@ -15,7 +15,7 @@
         </inertia>
       </inertial>
       <visual name='rail_visual'>
-        <pose frame=''>0 0 0 1.5708 -0 0</pose>
+        <pose>0 0 0 1.5708 -0 0</pose>
         <geometry>
           <cylinder>
             <length>5</length>
@@ -27,10 +27,6 @@
           <diffuse>0 0 0 0.8</diffuse>
           <specular>0 0 0 0.8</specular>
           <emissive>0 0 0 0.8</emissive>
-          <!--<script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>-->
         </material>
       </visual>
       <gravity>1</gravity>
@@ -41,9 +37,9 @@
       <parent>world</parent>
     </joint>
     <link name='cart'>
-      <pose frame=''>0 0 0.5 0 -0 0</pose>
+      <pose>0 0 0.5 0 -0 0</pose>
       <inertial>
-        <pose frame=''>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 -0 0</pose>
         <mass>1</mass>
         <inertia>
           <ixx>0.00354167</ixx>
@@ -55,7 +51,7 @@
         </inertia>
       </inertial>
       <visual name='cart_visual'>
-        <pose frame=''>0 0 0 0 -0 0</pose>
+        <pose>0 0 0 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.1 0.2 0.05</size>
@@ -66,10 +62,6 @@
           <diffuse>0.2 0.2 0.2 0.8</diffuse>
           <specular>0.2 0.2 0.2 0.8</specular>
           <emissive>0.2 0.2 0.2 0.8</emissive>
-          <!--<script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>-->
         </material>
       </visual>
       <gravity>1</gravity>
@@ -94,21 +86,21 @@
       </axis>
     </joint>
     <link name='pole'>
-      <pose frame=''>0 0 0.525 0 -0 0</pose>
+      <pose>0 0 0.525 0 -0 0</pose>
       <inertial>
-        <pose frame=''>0 0 0.5 0 -0 0</pose>
+        <pose>0 0 0.5 0 -0 0</pose>
         <mass>0.1</mass>
         <inertia>
-          <ixx>1e-09</ixx>
+          <ixx>0.00833396</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>0.0333333</iyy>
+          <iyy>0.00833396</iyy>
           <iyz>0</iyz>
-          <izz>0.0333333</izz>
+          <izz>1.25e-06</izz>
         </inertia>
       </inertial>
       <visual name='pole_visual'>
-        <pose frame=''>0 0 0.5 0 -0 0</pose>
+        <pose>0 0 0.5 0 -0 0</pose>
         <geometry>
           <cylinder>
             <length>1</length>
@@ -120,10 +112,6 @@
           <diffuse>1 0 0 0.8</diffuse>
           <specular>1 0 0 0.8</specular>
           <emissive>1 0 0 0.8</emissive>
-          <!--<script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>-->
         </material>
       </visual>
       <gravity>1</gravity>

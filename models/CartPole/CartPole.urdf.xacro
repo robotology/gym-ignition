@@ -37,22 +37,14 @@
     </inertial>
   </xacro:macro>
 
-  <xacro:macro name="cylinder_inertia_around_edge" params="mass rotaxis length xyz rpy">
+  <xacro:macro name="cylinder_inertial_element"
+               params="mass rotaxis length radius xyz rpy">
     <inertial>
       <origin xyz="${xyz}" rpy="${rpy}"/>
       <mass value="${mass}"/>
-      <xacro:property name="ixx" value="${1/3*mass*length*length}"/>
-      <xacro:property name="iyy" value="${1/3*mass*length*length}"/>
-      <xacro:property name="izz" value="${1/3*mass*length*length}"/>
-      <xacro:if value="${rotaxis == 'x'}">
-        <xacro:property name="ixx" value="${epsilon}"/>
-      </xacro:if>
-      <xacro:if value="${rotaxis == 'y'}">
-        <xacro:property name="iyy" value="${epsilon}"/>
-      </xacro:if>
-      <xacro:if value="${rotaxis == 'z'}">
-        <xacro:property name="izz" value="${epsilon}"/>
-      </xacro:if>
+      <xacro:property name="ixx" value="${1/12*mass*(3*radius*radius+length*length)}"/>
+      <xacro:property name="iyy" value="${1/12*mass*(3*radius*radius+length*length)}"/>
+      <xacro:property name="izz" value="${0.5*mass*radius*radius}"/>
       <inertia ixx="${ixx}"  ixy="0"  ixz="0" iyy="${iyy}" iyz="0" izz="${izz}" />
     </inertial>
   </xacro:macro>
@@ -121,7 +113,12 @@
   </link>
 
   <link name="cart">
-    <xacro:box_inertia mass="${cart_mass}" dimx="${cart_size_x}" dimy="${cart_size_y}" dimz="${cart_size_z}" xyz="0 0 0" rpy="0 0 0"/>
+    <xacro:box_inertia mass="${cart_mass}"
+                       dimx="${cart_size_x}"
+                       dimy="${cart_size_y}"
+                       dimz="${cart_size_z}"
+                       xyz="0 0 0"
+                       rpy="0 0 0"/>
     <visual>
       <geometry>
         <box size="${cart_size_x} ${cart_size_y} ${cart_size_z}"/>
@@ -132,7 +129,12 @@
   </link>
 
   <link name="pole">
-    <xacro:cylinder_inertia_around_edge mass="${pole_mass}" rotaxis="x" length="${pole_length}" xyz="0 0 ${pole_length/2}" rpy="0 0 0"/>
+    <xacro:cylinder_inertial_element mass="${pole_mass}"
+                                     rotaxis="x"
+                                     length="${pole_length}"
+                                     radius="${pole_radius}"
+                                     xyz="0 0 ${pole_length/2}"
+                                     rpy="0 0 0"/>
     <visual>
       <geometry>
         <cylinder length="${pole_length}" radius="${pole_radius}"/>

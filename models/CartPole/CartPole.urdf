@@ -23,10 +23,6 @@
         <diffuse>0 0 0 0.8</diffuse>
         <specular>0 0 0 0.8</specular>
         <emissive>0 0 0 0.8</emissive>
-        <script>
-          <uri/>
-          <name/>
-        </script>
       </material>
     </visual>
   </gazebo>
@@ -37,10 +33,6 @@
         <diffuse>0.2 0.2 0.2 0.8</diffuse>
         <specular>0.2 0.2 0.2 0.8</specular>
         <emissive>0.2 0.2 0.2 0.8</emissive>
-        <script>
-          <uri/>
-          <name/>
-        </script>
       </material>
     </visual>
   </gazebo>
@@ -51,10 +43,6 @@
         <diffuse>1 0 0 0.8</diffuse>
         <specular>1 0 0 0.8</specular>
         <emissive>1 0 0 0.8</emissive>
-        <script>
-          <uri/>
-          <name/>
-        </script>
       </material>
     </visual>
   </gazebo>
@@ -99,7 +87,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0.5"/>
       <mass value="0.1"/>
-      <inertia ixx="1e-09" ixy="0" ixz="0" iyy="0.0333333333333" iyz="0" izz="0.0333333333333"/>
+      <inertia ixx="0.00833395833333" ixy="0" ixz="0" iyy="0.00833395833333" iyz="0" izz="1.25e-06"/>
     </inertial>
     <visual>
       <geometry>
