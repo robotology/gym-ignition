@@ -33,12 +33,12 @@ class CartPoleContinuous(task.Task, abc.ABC):
         self._x_threshold_reset = 2.4
 
         # Create the spaces
-        self.action_space, self.observation_space = self._create_spaces()
+        self.action_space, self.observation_space = self.create_spaces()
 
         # Seed the environment
         self.seed()
 
-    def _create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
+    def create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
         # Configure action space
         max_force = 50
         action_space = gym.spaces.Box(np.array([-max_force]),
@@ -58,7 +58,7 @@ class CartPoleContinuous(task.Task, abc.ABC):
 
         return action_space, observation_space
 
-    def _set_action(self, action: Action) -> bool:
+    def set_action(self, action: Action) -> bool:
         assert self.action_space.contains(action), \
             "%r (%s) invalid" % (action, type(action))
 
@@ -74,7 +74,7 @@ class CartPoleContinuous(task.Task, abc.ABC):
 
         return True
 
-    def _get_observation(self) -> Observation:
+    def get_observation(self) -> Observation:
         # Get the robot object
         robot = self.robot
 
@@ -92,12 +92,12 @@ class CartPoleContinuous(task.Task, abc.ABC):
         # Return the observation
         return observation
 
-    def _get_reward(self) -> Reward:
+    def get_reward(self) -> Reward:
         # Initialize the reward
         reward = None
 
         # Calculate the reward
-        if not self._is_done():
+        if not self.is_done():
             reward = 1.0
         else:
             if self._steps_beyond_done is None:
@@ -117,7 +117,7 @@ class CartPoleContinuous(task.Task, abc.ABC):
 
         if self._reward_cart_at_center:
             # Get the observation
-            observation = self._get_observation()
+            observation = self.get_observation()
             x = observation[0]
             x_dot = observation[1]
 
@@ -128,9 +128,9 @@ class CartPoleContinuous(task.Task, abc.ABC):
 
         return reward
 
-    def _is_done(self) -> bool:
+    def is_done(self) -> bool:
         # Get the observation
-        observation = self._get_observation()
+        observation = self.get_observation()
 
         # Get x and theta
         x = observation[0]
@@ -140,7 +140,7 @@ class CartPoleContinuous(task.Task, abc.ABC):
 
         return done
 
-    def _reset(self) -> bool:
+    def reset_task(self) -> bool:
         # Initialize the environment with a new random state using the random number
         # generator provided by the Task.
         new_state = self._np_random.uniform(low=-0.05, high=0.05, size=(4,))
