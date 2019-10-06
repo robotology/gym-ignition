@@ -3,7 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 # Robot implementations
-from .base import factory_robot
+from .base import gazebo_robot
 from .base import pybullet_robot
 # from .base import ros_robot
 # from .base import yarp_robot

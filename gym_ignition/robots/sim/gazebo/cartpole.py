@@ -2,10 +2,10 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from gym_ignition.robots import factory_robot
+from gym_ignition.robots import gazebo_robot
 
 
-class CartPoleRobot(factory_robot.FactoryRobot):
+class CartPoleRobot(gazebo_robot.GazeboRobot):
     def __init__(self, model_file: str, gazebo, **kwargs):
         # Initialize base class
         super().__init__(model_file=model_file,
