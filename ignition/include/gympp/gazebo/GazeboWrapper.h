@@ -85,8 +85,8 @@ public:
     static void setVerbosity(int level = DEFAULT_VERBOSITY);
 
     bool insertModel(const gympp::gazebo::ModelInitData& modelData,
-                     const gympp::gazebo::PluginData& pluginData = {}) const;
-    bool removeModel(const std::string& modelName) const;
+                     const gympp::gazebo::PluginData& pluginData = {});
+    bool removeModel(const std::string& modelName);
     static std::string getModelNameFromSDF(const std::string& sdfString);
 
     std::string getWorldName() const;
