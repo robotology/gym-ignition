@@ -141,8 +141,8 @@ class CartPoleDiscrete(task.Task, abc.ABC):
     def reset_task(self) -> bool:
         # Initialize the environment with a new random state using the random number
         # generator provided by the Task.
-        new_state = self._np_random.uniform(low=-0.05, high=0.05, size=(4,))
-        new_state[2] = self._np_random.uniform(low=-np.deg2rad(10),
+        new_state = self.np_random.uniform(low=-0.05, high=0.05, size=(4,))
+        new_state[2] = self.np_random.uniform(low=-np.deg2rad(10),
                                                high=np.deg2rad(10))
 
         # Set the joints in torque control mode

@@ -36,8 +36,11 @@ class Task(gym.Env, abc.ABC):
     """
 
     def __init__(self) -> None:
+        # Private attributes
         self._robot = None
-        self._np_random = None
+
+        # Random Number Generator
+        self.np_random = seeding.np_random()
 
         # Optional public attribute to check robot features
         self.robot_features = None
@@ -161,7 +164,7 @@ class Task(gym.Env, abc.ABC):
 
         # Get an instance of the random number generator from gym utils.
         # This is necessary to have an independent rng for each environment.
-        self._np_random, new_seed = seeding.np_random(seed)
+        self.np_random, new_seed = seeding.np_random(seed)
 
         # Seed the spaces
         self.action_space.seed(new_seed)
