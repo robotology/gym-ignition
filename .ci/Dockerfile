@@ -36,7 +36,7 @@ RUN apt-get update &&\
     rm -rf /var/lib/apt/lists/*
 
 # Enable CCACHE by default
-ENV PATH=/usr/lib/ccache:$PATH
+ENV PATH=/usr/lib/ccache:${PATH}
 RUN mkdir "$HOME/.ccache" &&\
     echo "max_size = 2.0G" > "$HOME/.ccache/ccache.conf"
 
@@ -111,8 +111,8 @@ RUN apt-get update &&\
         &&\
     cmake --build . --target install &&\
     rm -r /tmp/idyntree
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
-ENV PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3/dist-packages
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
+ENV PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python3/dist-packages
 
 # Setup gym-ignition
 ARG install_prefix="/usr/local"
