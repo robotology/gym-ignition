@@ -4,16 +4,20 @@
 
 import abc
 import gym
+import numpy as np
+from typing import Tuple
 from gym_ignition.base import task
 from gym_ignition.utils import logger
-from gym_ignition.utils.typing import *
+from gym_ignition.utils.typing import Action, Reward, Observation
+from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 from gym_ignition.base.robot import robot_abc, feature_detector, robot_joints
 
 
 @feature_detector
 class RobotFeatures(robot_abc.RobotABC,
                     robot_joints.RobotJoints,
-                    abc.ABC): ...
+                    abc.ABC):
+    pass
 
 
 class CartPoleContinuous(task.Task, abc.ABC):
@@ -93,9 +97,6 @@ class CartPoleContinuous(task.Task, abc.ABC):
         return observation
 
     def get_reward(self) -> Reward:
-        # Initialize the reward
-        reward = None
-
         # Calculate the reward
         if not self.is_done():
             reward = 1.0
@@ -153,8 +154,9 @@ class CartPoleContinuous(task.Task, abc.ABC):
             #       e.g. FactoryRobot, which does not need to call it at the moment.
             try:
                 if self.robot.joint_control_mode(joint) != desired_control_mode:
-                    ok_mode = self.robot.set_joint_control_mode(joint, desired_control_mode)
-                    assert ok_mode, "Failed to set control mode for joint '{}'".format(joint)
+                    ok_mode = self.robot.set_joint_control_mode(joint,
+                                                                desired_control_mode)
+                    assert ok_mode, f"Failed to set control mode for joint '{joint}'"
             except Exception:
                 logger.warn("This runtime does not support setting the control mode")
                 pass

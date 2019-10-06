@@ -12,7 +12,8 @@ class RobotFeatures(robot.robot_abc.RobotABC,
                     robot.robot_joints.RobotJoints,
                     robot.robot_links.RobotLinks,
                     robot.robot_contacts.RobotContacts,
-                    abc.ABC): ...
+                    abc.ABC):
+    pass
 
 
 def feature_detector(cls_to_patch):

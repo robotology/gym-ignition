@@ -2,11 +2,12 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+import gym
 from gym_ignition.utils import logger
-from gym_ignition.utils.typing import *
 from gym_ignition.base import task, runtime
 from gym_ignition.base.robot import robot_abc
 from gym_ignition import gympp_bindings as bindings
+from gym_ignition.utils.typing import State, Action, Observation, SeedList
 
 
 class GazeboRuntime(runtime.Runtime):
@@ -20,7 +21,7 @@ class GazeboRuntime(runtime.Runtime):
                  rtf: float,
                  agent_rate: float,
                  physics_rate: float,
-                 hard_reset: True,
+                 hard_reset: bool = True,
                  **kwargs):
 
         # Save the keyworded arguments.

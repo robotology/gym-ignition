@@ -32,9 +32,6 @@ class Runtime(gym.Wrapper, abc.ABC):
 
         # All runtimes provide to the user the nominal rate of their execution
         self.agent_rate = agent_rate
-        # TODO: should agent rate be the real one with rtf taken into account? Call it
-        #  env_update_rate?
-
 
     @property
     def task(self):

@@ -20,8 +20,8 @@ class JointControlMode(Enum):
     TORQUE = auto()
 
 
-class PID():
-    def __init__(self, p : float, i: float, d: float) -> None:
+class PID:
+    def __init__(self, p: float, i: float, d: float) -> None:
         self.p = p
         self.i = i
         self.d = d
@@ -195,7 +195,6 @@ class RobotJoints(ABC):
         Returns:
             True if successful, False otherwise.
         """
-
 
     @abstractmethod
     def set_joint_force(self, joint_name: str, force: float, clip: bool = False) -> bool:

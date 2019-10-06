@@ -34,7 +34,7 @@ def add_path(data_path: str) -> None:
 
 
 def add_path_from_env_var(env_variable: str) -> None:
-    if not env_variable in os.environ:
+    if env_variable not in os.environ:
         logger.warn("Failed to find '{}' environment variable".format(env_variable))
         return
 
@@ -61,7 +61,7 @@ def find_resource(file_name: str) -> str:
     # Handle if the path is relative
     for path in GYM_IGNITION_DATA_PATH:
         logger.debug("  Exploring folder '{}'".format(path))
-        path_with_slash = path if path[-1] is '/' else path + "/"
+        path_with_slash = path if path[-1] == '/' else path + "/"
         candidate_abs_path = path_with_slash + file_name
 
         if isfile(candidate_abs_path):

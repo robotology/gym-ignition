@@ -59,8 +59,11 @@ class Task(gym.Env, abc.ABC):
 
     @robot.setter
     def robot(self, robot: robot_abc.RobotABC) -> None:
-        if not robot.valid(): raise Exception("Robot object is not valid")
-        if self.robot_features: self.robot_features.has_all_features(robot)
+        if not robot.valid():
+            raise Exception("Robot object is not valid")
+
+        if self.robot_features:
+            self.robot_features.has_all_features(robot)
 
         # Set the robot
         self._robot = robot

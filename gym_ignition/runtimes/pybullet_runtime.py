@@ -5,12 +5,13 @@
 import os
 import time
 import pybullet
+import numpy as np
 import pybullet_data
-from gym_ignition.base import robot
 from gym_ignition import base, robots
-from gym_ignition.utils.typing import *
 from pybullet_utils import bullet_client
+from gym_ignition.base.robot import robot_abc
 from gym_ignition.utils import logger, resource_finder
+from gym_ignition.utils.typing import State, Action, Observation, SeedList
 
 
 class PyBulletRuntime(base.runtime.Runtime):
@@ -24,7 +25,7 @@ class PyBulletRuntime(base.runtime.Runtime):
                  agent_rate: float,
                  physics_rate: float,
                  world: str = "plane_implicit.urdf",
-                 hard_reset = False,
+                 hard_reset: bool = True,
                  **kwargs):
 
         # Save the keyworded arguments.
@@ -133,7 +134,7 @@ class PyBulletRuntime(base.runtime.Runtime):
         logger.debug("PyBullet simulator created")
         return self._pybullet
 
-    def _get_robot(self) -> robot.robot_abc.RobotABC:
+    def _get_robot(self) -> robot_abc.RobotABC:
         if not self.pybullet:
             raise Exception("Failed to instantiate the pybullet simulator")
 

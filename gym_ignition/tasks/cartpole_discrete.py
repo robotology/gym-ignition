@@ -4,21 +4,25 @@
 
 import abc
 import gym
+import numpy as np
+from typing import Tuple
 from gym_ignition.base import task
 from gym_ignition.utils import logger
-from gym_ignition.utils.typing import *
+from gym_ignition.utils.typing import Action, Reward, Observation
+from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 from gym_ignition.base.robot import robot_abc, feature_detector, robot_joints
 
 
 @feature_detector
 class RobotFeatures(robot_abc.RobotABC,
                     robot_joints.RobotJoints,
-                    abc.ABC): ...
+                    abc.ABC):
+    pass
 
 
 class CartPoleDiscrete(task.Task, abc.ABC):
 
-    def __init__(self, reward_cart_at_center: bool = False, **kwargs) -> None:
+    def __init__(self, reward_cart_at_center: bool = False) -> None:
         super().__init__()
 
         # Store the requested robot features for this task
@@ -133,8 +137,9 @@ class CartPoleDiscrete(task.Task, abc.ABC):
         theta = observation[2]
 
         # Calculate if the environment reached its termination
-        done = np.abs(x) > self._x_threshold or \
-               np.abs(theta) > np.rad2deg(self._theta_threshold_radians)
+        done = \
+            np.abs(x) > self._x_threshold or \
+            np.abs(theta) > np.rad2deg(self._theta_threshold_radians)
 
         return done
 
@@ -143,7 +148,7 @@ class CartPoleDiscrete(task.Task, abc.ABC):
         # generator provided by the Task.
         new_state = self.np_random.uniform(low=-0.05, high=0.05, size=(4,))
         new_state[2] = self.np_random.uniform(low=-np.deg2rad(10),
-                                               high=np.deg2rad(10))
+                                              high=np.deg2rad(10))
 
         # Set the joints in torque control mode
         for joint in {"linear", "pivot"}:
@@ -153,8 +158,9 @@ class CartPoleDiscrete(task.Task, abc.ABC):
             #       e.g. FactoryRobot, which does not need to call it at the moment.
             try:
                 if self.robot.joint_control_mode(joint) != desired_control_mode:
-                    ok_mode = self.robot.set_joint_control_mode(joint, desired_control_mode)
-                    assert ok_mode, "Failed to set control mode for joint '{}'".format(joint)
+                    ok_mode = self.robot.set_joint_control_mode(joint,
+                                                                desired_control_mode)
+                    assert ok_mode, f"Failed to set control mode for joint '{joint}'"
             except Exception:
                 logger.warn("This runtime does not support setting the control mode")
                 pass
