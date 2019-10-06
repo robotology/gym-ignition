@@ -52,7 +52,7 @@ register(
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
-            'hard_reset': False,
+            'hard_reset': True,
             })
 
 register(
@@ -86,8 +86,8 @@ register(
             'robot_cls': sim.pybullet.cartpole.CartPolePyBulletRobot,
             'model': "CartPole/CartPole.urdf",
             'world': "plane_implicit.urdf",
-            'rtf': 1.0,
-            'agent_rate': 250,
-            'physics_rate': 250,
-            'hard_reset': False,
+            'rtf': max_float,
+            'agent_rate': 1000,
+            'physics_rate': 1000,
+            'hard_reset': True,
             })
