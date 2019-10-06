@@ -19,14 +19,19 @@ RUN apt-get update &&\
         g++ \
         g++-8 \
         clang \
+        clang-7 \
+        clang-8 \
         make \
         cmake \
         ninja-build \
+        valgrind \
         ccache \
         libgflags-dev \
         python3-pip \
         python3.6 \
         python3.7 \
+        libpython3.6-dev \
+        libpython3.7-dev \
         &&\
     rm -rf /var/lib/apt/lists/*
 
