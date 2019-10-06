@@ -137,6 +137,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     // the server is initialized lazily.
     if (!initializeSimulation()) {
         gymppError << "Failed to initialize the simulation" << std::endl;
+        assert(false);
         return {};
     }
 
@@ -215,6 +216,7 @@ std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
     // the server is initialized lazily.
     if (!initializeSimulation()) {
         gymppError << "Failed to initialize the simulation" << std::endl;
+        assert(false);
         return {};
     }
 
@@ -242,6 +244,7 @@ bool IgnitionEnvironment::render(RenderMode mode)
     // the server is initialized lazily.
     if (!initializeSimulation()) {
         gymppError << "Failed to initialize the simulation" << std::endl;
+        assert(false);
         return {};
     }
 

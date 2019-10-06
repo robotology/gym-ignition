@@ -429,6 +429,11 @@ std::string GazeboWrapper::getWorldName() const
 bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
                                 const gympp::gazebo::PluginData& pluginData)
 {
+    if (!initialized()) {
+        gymppError << "The simulator was not initialized. Call initialize() first." << std::endl;
+        return false;
+    }
+
     gymppDebug << "Inserting new model " << modelData.modelName << std::endl;
 
     // ====================
@@ -593,6 +598,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         // In order to handle the particular state of the initial iteration, we need a rather
         // involved synchronization logic. This allows avoiding to use the UserCommands system
         // to create entities, giving us full power.
+        assert(pImpl->gazebo.server->Paused().has_value());
         if (pImpl->gazebo.server->Running() && pImpl->gazebo.server->Paused().value())
             auto lock = ecmSingleton.waitPreUpdate(getWorldName());
 
@@ -661,6 +667,11 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
 
 bool GazeboWrapper::removeModel(const std::string& modelName)
 {
+    if (!initialized()) {
+        gymppError << "The simulator was not initialized. Call initialize() first." << std::endl;
+        return false;
+    }
+
     gymppDebug << "Removing existing model '" << modelName << "'" << std::endl;
 
     // =======================
