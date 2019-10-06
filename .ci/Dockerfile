@@ -107,7 +107,7 @@ RUN apt-get update &&\
     cmake --build . --target install &&\
     rm -r /tmp/idyntree
 ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
-ENV export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3/dist-packages
+ENV PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3/dist-packages
 
 # Setup gym-ignition
 ARG install_prefix="/usr/local"
