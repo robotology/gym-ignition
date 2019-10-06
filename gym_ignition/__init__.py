@@ -33,7 +33,7 @@ import numpy
 max_float = float(numpy.finfo(numpy.float32).max)
 
 register(
-    id='CartPoleGympp-Discrete-v0',
+    id='CartPoleDiscrete-Gympp-v0',
     max_episode_steps=5000,
     entry_point='gym_ignition.gympp.cartpole:CartPoleDiscrete')
 
@@ -42,7 +42,7 @@ register(
 # ==========================
 
 register(
-    id='CartPoleGymppy-Discrete-v0',
+    id='CartPoleDiscrete-Gazebo-v0',
     entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
     max_episode_steps=5000,
     kwargs={'task_cls': cartpole_discrete.CartPoleDiscrete,
@@ -56,7 +56,7 @@ register(
             })
 
 register(
-    id='CartPoleGymppy-Continuous-v0',
+    id='CartPoleContinuous-Gazebo-v0',
     entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
     max_episode_steps=5000,
     kwargs={'task_cls': cartpole_continuous.CartPoleContinuous,
@@ -66,7 +66,7 @@ register(
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
-            'hard_reset': False,
+            'hard_reset': True,
             })
 
 # =====================
@@ -77,7 +77,7 @@ register(
 resource_finder.add_path_from_env_var("IGN_GAZEBO_RESOURCE_PATH")
 
 register(
-    id='CartPole-PyBullet-Discrete-v0',
+    id='CartPoleDiscrete-PyBullet-v0',
     entry_point='gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime',
     max_episode_steps=5000,
     kwargs={
