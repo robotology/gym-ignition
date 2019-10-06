@@ -5,7 +5,7 @@
 from gym_ignition.robots import gazebo_robot
 
 
-class CartPoleRobot(gazebo_robot.GazeboRobot):
+class CartPoleGazeboRobot(gazebo_robot.GazeboRobot):
     def __init__(self, model_file: str, gazebo, **kwargs):
         # Initialize base class
         super().__init__(model_file=model_file,
