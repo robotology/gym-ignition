@@ -15,9 +15,6 @@ except:
 
 
 def custom_formatwarning(msg, *args, **kwargs):
-    print(args)
-    print(kwargs)
-    # raise
     if logger.MIN_LEVEL is logger.DEBUG:
         warning = "{}:{} {}: {}\n".format(args[1], args[2], args[0].__name__, msg)
     else:
