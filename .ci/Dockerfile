@@ -116,6 +116,10 @@ ENV IGN_GAZEBO_RESOURCE_PATH="${install_prefix}/share/gympp/gazebo/worlds:${inst
 ENV SDF_PATH="${install_prefix}/share/gympp/gazebo/models"
 ENV PYTHONPATH="${PYTHONPATH}:${install_prefix}/lib/gympp/bindings"
 
+# Prepare virtualenv variables
+ENV VIRTUAL_ENV=/venv
+ENV PATH=${VIRTUAL_ENV}/bin:${PATH}
+
 COPY entrypoint.sh /entrypoint.sh
 COPY setup_virtualenv.sh /setup_virtualenv.sh
 ENTRYPOINT ["/entrypoint.sh"]
