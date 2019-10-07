@@ -11,8 +11,8 @@
 #include "gympp/Log.h"
 #include "gympp/Random.h"
 #include "gympp/Robot.h"
-#include "gympp/gazebo/EnvironmentCallbacksSingleton.h"
 #include "gympp/gazebo/RobotSingleton.h"
+#include "gympp/gazebo/TaskSingleton.h"
 
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/components/Model.hh>
@@ -115,11 +115,11 @@ CartPole::CartPole()
 
 CartPole::~CartPole()
 {
-    auto* ecSingleton = EnvironmentCallbacksSingleton::Instance();
+    auto* taskSingleton = TaskSingleton::Instance();
 
-    if (bool removed = ecSingleton->deleteEnvironmentCallback(pImpl->robot->name()); !removed) {
-        gymppError << "Failed to unregister the environment callbacks";
-        assert(removed);
+    if (!taskSingleton->removeTask(pImpl->robot->name())) {
+        gymppError << "Failed to unregister the Task interface";
+        assert(false);
     }
 }
 
@@ -140,13 +140,13 @@ void CartPole::Configure(const ignition::gazebo::Entity& entity,
     // Get the model name and ask the robot interface
     pImpl->modelName = model.Name(ecm);
 
-    // Auto-register the environment callbacks
-    gymppDebug << "Registering environment callbacks for robot '" << pImpl->modelName << "'"
+    // Auto-register the task
+    gymppDebug << "Registering the Task interface for robot '" << pImpl->modelName << "'"
                << std::endl;
-    auto* ecSingleton = EnvironmentCallbacksSingleton::Instance();
+    auto* taskSingleton = TaskSingleton::Instance();
 
-    if (!ecSingleton->storeEnvironmentCallback(pImpl->modelName, this)) {
-        gymppError << "Failed to register the environment callbacks";
+    if (!taskSingleton->storeTask(pImpl->modelName, this)) {
+        gymppError << "Failed to register the Task interface";
         assert(false);
         return;
     }
@@ -243,7 +243,7 @@ bool CartPole::isDone()
     return false;
 }
 
-bool CartPole::reset()
+bool CartPole::resetTask()
 {
     if (!pImpl->robot) {
         pImpl->robot = pImpl->getRobotPtr(pImpl->modelName);
@@ -284,7 +284,7 @@ bool CartPole::reset()
     return true;
 }
 
-bool CartPole::setAction(const EnvironmentCallbacks::Action& action)
+bool CartPole::setAction(const Task::Action& action)
 {
     std::lock_guard lock(pImpl->mutex);
 
@@ -311,7 +311,7 @@ bool CartPole::setAction(const EnvironmentCallbacks::Action& action)
     return true;
 }
 
-std::optional<gympp::gazebo::EnvironmentCallbacks::Reward> CartPole::computeReward()
+std::optional<gympp::gazebo::Task::Reward> CartPole::computeReward()
 {
     std::lock_guard lock(pImpl->mutex);
     return 1.0;
@@ -320,7 +320,7 @@ std::optional<gympp::gazebo::EnvironmentCallbacks::Reward> CartPole::computeRewa
     //           - std::abs(pImpl->observationBuffer[ObservationIndex::PoleVelocity]);
 }
 
-std::optional<gympp::gazebo::EnvironmentCallbacks::Observation> CartPole::getObservation()
+std::optional<gympp::gazebo::Task::Observation> CartPole::getObservation()
 {
     std::lock_guard lock(pImpl->mutex);
     return Observation(pImpl->observationBuffer);
@@ -331,4 +331,4 @@ IGNITION_ADD_PLUGIN(gympp::plugins::CartPole,
                     gympp::plugins::CartPole::ISystemConfigure,
                     gympp::plugins::CartPole::ISystemPreUpdate,
                     gympp::plugins::CartPole::ISystemPostUpdate,
-                    gympp::gazebo::EnvironmentCallbacks)
+                    gympp::gazebo::Task)
