@@ -33,7 +33,7 @@ import numpy
 max_float = float(numpy.finfo(numpy.float32).max)
 
 register(
-    id='CartPoleGympp-Discrete-v0',
+    id='CartPoleDiscrete-Gympp-v0',
     max_episode_steps=5000,
     entry_point='gym_ignition.gympp.cartpole:CartPoleDiscrete')
 
@@ -42,31 +42,31 @@ register(
 # ==========================
 
 register(
-    id='CartPoleGymppy-Discrete-v0',
+    id='CartPoleDiscrete-Gazebo-v0',
     entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
     max_episode_steps=5000,
     kwargs={'task_cls': cartpole_discrete.CartPoleDiscrete,
-            'robot_cls': sim.ignition.cartpole.CartPoleRobot,
+            'robot_cls': sim.gazebo.cartpole.CartPoleGazeboRobot,
             'model': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
-            'hard_reset': False,
+            'hard_reset': True,
             })
 
 register(
-    id='CartPoleGymppy-Continuous-v0',
+    id='CartPoleContinuous-Gazebo-v0',
     entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
     max_episode_steps=5000,
     kwargs={'task_cls': cartpole_continuous.CartPoleContinuous,
-            'robot_cls': sim.ignition.cartpole.CartPoleRobot,
+            'robot_cls': sim.gazebo.cartpole.CartPoleGazeboRobot,
             'model': "CartPole/CartPole.sdf",
             'world': "DefaultEmptyWorld.world",
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
-            'hard_reset': False,
+            'hard_reset': True,
             })
 
 # =====================
@@ -77,7 +77,7 @@ register(
 resource_finder.add_path_from_env_var("IGN_GAZEBO_RESOURCE_PATH")
 
 register(
-    id='CartPole-PyBullet-Discrete-v0',
+    id='CartPoleDiscrete-PyBullet-v0',
     entry_point='gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime',
     max_episode_steps=5000,
     kwargs={
@@ -86,8 +86,8 @@ register(
             'robot_cls': sim.pybullet.cartpole.CartPolePyBulletRobot,
             'model': "CartPole/CartPole.urdf",
             'world': "plane_implicit.urdf",
-            'rtf': 1.0,
-            'agent_rate': 250,
-            'physics_rate': 250,
-            'hard_reset': False,
+            'rtf': max_float,
+            'agent_rate': 1000,
+            'physics_rate': 1000,
+            'hard_reset': True,
             })

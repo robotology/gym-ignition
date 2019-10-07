@@ -4,21 +4,25 @@
 
 import abc
 import gym
+import numpy as np
+from typing import Tuple
 from gym_ignition.base import task
 from gym_ignition.utils import logger
-from gym_ignition.utils.typing import *
+from gym_ignition.utils.typing import Action, Reward, Observation
+from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 from gym_ignition.base.robot import robot_abc, feature_detector, robot_joints
 
 
 @feature_detector
 class RobotFeatures(robot_abc.RobotABC,
                     robot_joints.RobotJoints,
-                    abc.ABC): ...
+                    abc.ABC):
+    pass
 
 
 class CartPoleDiscrete(task.Task, abc.ABC):
 
-    def __init__(self, reward_cart_at_center: bool = False, **kwargs) -> None:
+    def __init__(self, reward_cart_at_center: bool = False) -> None:
         super().__init__()
 
         # Store the requested robot features for this task
@@ -34,12 +38,12 @@ class CartPoleDiscrete(task.Task, abc.ABC):
         self._theta_threshold_radians = np.deg2rad(12)
 
         # Create the spaces
-        self.action_space, self.observation_space = self._create_spaces()
+        self.action_space, self.observation_space = self.create_spaces()
 
         # Seed the environment
         self.seed()
 
-    def _create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
+    def create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
         # Configure action space
         action_space = gym.spaces.Discrete(2)
 
@@ -56,7 +60,7 @@ class CartPoleDiscrete(task.Task, abc.ABC):
 
         return action_space, observation_space
 
-    def _set_action(self, action: Action) -> bool:
+    def set_action(self, action: Action) -> bool:
         assert self.action_space.contains(action), \
             "%r (%s) invalid" % (action, type(action))
 
@@ -72,7 +76,7 @@ class CartPoleDiscrete(task.Task, abc.ABC):
 
         return True
 
-    def _get_observation(self) -> Observation:
+    def get_observation(self) -> Observation:
         # Get the robot object
         robot = self.robot
 
@@ -90,9 +94,9 @@ class CartPoleDiscrete(task.Task, abc.ABC):
         # Return the observation
         return observation
 
-    def _get_reward(self) -> Reward:
+    def get_reward(self) -> Reward:
         # Calculate the reward
-        if not self._is_done():
+        if not self.is_done():
             reward = 1.0
         else:
             if self._steps_beyond_done is None:
@@ -112,7 +116,7 @@ class CartPoleDiscrete(task.Task, abc.ABC):
 
         if self._reward_cart_at_center:
             # Get the observation
-            observation = self._get_observation()
+            observation = self.get_observation()
             x = observation[0]
             x_dot = observation[1]
 
@@ -124,26 +128,27 @@ class CartPoleDiscrete(task.Task, abc.ABC):
 
         return reward
 
-    def _is_done(self) -> bool:
+    def is_done(self) -> bool:
         # Get the observation
-        observation = self._get_observation()
+        observation = self.get_observation()
 
         # Get x and theta
         x = observation[0]
         theta = observation[2]
 
         # Calculate if the environment reached its termination
-        done = np.abs(x) > self._x_threshold or \
-               np.abs(theta) > np.rad2deg(self._theta_threshold_radians)
+        done = \
+            np.abs(x) > self._x_threshold or \
+            np.abs(theta) > np.rad2deg(self._theta_threshold_radians)
 
         return done
 
-    def _reset(self) -> bool:
+    def reset_task(self) -> bool:
         # Initialize the environment with a new random state using the random number
         # generator provided by the Task.
-        new_state = self._np_random.uniform(low=-0.05, high=0.05, size=(4,))
-        new_state[2] = self._np_random.uniform(low=-np.deg2rad(10),
-                                               high=np.deg2rad(10))
+        new_state = self.np_random.uniform(low=-0.05, high=0.05, size=(4,))
+        new_state[2] = self.np_random.uniform(low=-np.deg2rad(10),
+                                              high=np.deg2rad(10))
 
         # Set the joints in torque control mode
         for joint in {"linear", "pivot"}:
@@ -153,8 +158,9 @@ class CartPoleDiscrete(task.Task, abc.ABC):
             #       e.g. FactoryRobot, which does not need to call it at the moment.
             try:
                 if self.robot.joint_control_mode(joint) != desired_control_mode:
-                    ok_mode = self.robot.set_joint_control_mode(joint, desired_control_mode)
-                    assert ok_mode, "Failed to set control mode for joint '{}'".format(joint)
+                    ok_mode = self.robot.set_joint_control_mode(joint,
+                                                                desired_control_mode)
+                    assert ok_mode, f"Failed to set control mode for joint '{joint}'"
             except Exception:
                 logger.warn("This runtime does not support setting the control mode")
                 pass

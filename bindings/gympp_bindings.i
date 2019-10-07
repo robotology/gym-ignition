@@ -32,8 +32,6 @@
 // Convert python list to std::array
 %template(Array3d) std::array<double, 3>;
 %template(Array4d) std::array<double, 4>;
-%template(Array3f) std::array<float, 3>;
-%template(Array4f) std::array<float, 4>;
 
 %include "gympp/Common.h"
 %template(BufferContainer_i) gympp::BufferContainer<int>;

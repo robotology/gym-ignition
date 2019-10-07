@@ -11,8 +11,8 @@ from gym_ignition.base.robot import robot_abc, robot_joints
 from gym_ignition import gympp_bindings as bindings
 
 
-class FactoryRobot(robot_abc.RobotABC,
-                   robot_joints.RobotJoints):
+class GazeboRobot(robot_abc.RobotABC,
+                  robot_joints.RobotJoints):
     def __init__(self,
                  model_file: str,
                  gazebo: bindings.GazeboWrapper,

@@ -2,11 +2,12 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+import gym
 from gym_ignition.utils import logger
-from gym_ignition.utils.typing import *
 from gym_ignition.base import task, runtime
 from gym_ignition.base.robot import robot_abc
 from gym_ignition import gympp_bindings as bindings
+from gym_ignition.utils.typing import State, Action, Observation, SeedList
 
 
 class GazeboRuntime(runtime.Runtime):
@@ -20,7 +21,7 @@ class GazeboRuntime(runtime.Runtime):
                  rtf: float,
                  agent_rate: float,
                  physics_rate: float,
-                 hard_reset: True,
+                 hard_reset: bool = True,
                  **kwargs):
 
         # Save the keyworded arguments.
@@ -150,7 +151,7 @@ class GazeboRuntime(runtime.Runtime):
             logger.warn("The action does not belong to the action space")
 
         # Set the action
-        ok_action = self.task._set_action(action)
+        ok_action = self.task.set_action(action)
         assert ok_action, "Failed to set the action"
 
         # Step the simulator
@@ -158,18 +159,18 @@ class GazeboRuntime(runtime.Runtime):
         assert ok_gazebo, "Failed to step gazebo"
 
         # Get the observation
-        observation = self.task._get_observation()
+        observation = self.task.get_observation()
 
         if not self.observation_space.contains(observation):
             logger.warn("The observation does not belong to the observation space")
 
         # Get the reward
         # TODO: use the wrapper method?
-        reward = self.task._get_reward()
+        reward = self.task.get_reward()
         assert reward is not None, "Failed to get the reward"
 
         # Check termination
-        done = self.task._is_done()
+        done = self.task.is_done()
 
         return State((observation, reward, done, {}))
 
@@ -191,11 +192,11 @@ class GazeboRuntime(runtime.Runtime):
             self.task.robot = self._get_robot()
 
         # Reset the environment
-        ok_reset = self.task._reset()
+        ok_reset = self.task.reset_task()
         assert ok_reset, "Failed to reset the task"
 
         # Get the observation
-        observation = self.task._get_observation()
+        observation = self.task.get_observation()
 
         if not self.observation_space.contains(observation):
             logger.warn("The observation does not belong to the observation space")

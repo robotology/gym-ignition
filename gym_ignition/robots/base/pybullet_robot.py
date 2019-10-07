@@ -415,8 +415,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         assert mode != JointControlMode.POSITION_INTERPOLATED
 
         if mode == JointControlMode.TORQUE:
-            logger.warn("Joint '{}' is torque controlled. Setting the PID has no effect"
-                    .format(joint_name))
+            logger.warn(
+                f"Joint '{joint_name}' is torque controlled. "
+                f"Setting the PID has no effect")
             return False
 
         if mode == JointControlMode.POSITION and pid.i != 0.0:

@@ -36,8 +36,11 @@ class Task(gym.Env, abc.ABC):
     """
 
     def __init__(self) -> None:
+        # Private attributes
         self._robot = None
-        self._np_random = None
+
+        # Random Number Generator
+        self.np_random = seeding.np_random()
 
         # Optional public attribute to check robot features
         self.robot_features = None
@@ -56,8 +59,11 @@ class Task(gym.Env, abc.ABC):
 
     @robot.setter
     def robot(self, robot: robot_abc.RobotABC) -> None:
-        if not robot.valid(): raise Exception("Robot object is not valid")
-        if self.robot_features: self.robot_features.has_all_features(robot)
+        if not robot.valid():
+            raise Exception("Robot object is not valid")
+
+        if self.robot_features:
+            self.robot_features.has_all_features(robot)
 
         # Set the robot
         self._robot = robot
@@ -67,7 +73,7 @@ class Task(gym.Env, abc.ABC):
     # ==============
 
     @abc.abstractmethod
-    def _create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
+    def create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
         """
         Create the action and observations spaces.
 
@@ -76,7 +82,7 @@ class Task(gym.Env, abc.ABC):
         """
 
     @abc.abstractmethod
-    def _reset(self) -> bool:
+    def reset_task(self) -> bool:
         """
         Reset the task.
 
@@ -88,7 +94,7 @@ class Task(gym.Env, abc.ABC):
         """
 
     @abc.abstractmethod
-    def _set_action(self, action: Action) -> bool:
+    def set_action(self, action: Action) -> bool:
         """
         Set the task action.
 
@@ -103,7 +109,7 @@ class Task(gym.Env, abc.ABC):
         """
 
     @abc.abstractmethod
-    def _get_observation(self) -> Observation:
+    def get_observation(self) -> Observation:
         """
         Return the task observation.
 
@@ -115,7 +121,7 @@ class Task(gym.Env, abc.ABC):
         """
 
     @abc.abstractmethod
-    def _get_reward(self) -> Reward:
+    def get_reward(self) -> Reward:
         """
         Return the task reward.
 
@@ -127,7 +133,7 @@ class Task(gym.Env, abc.ABC):
         """
 
     @abc.abstractmethod
-    def _is_done(self) -> bool:
+    def is_done(self) -> bool:
         """
         Returns the task termination flag.
 
@@ -161,7 +167,7 @@ class Task(gym.Env, abc.ABC):
 
         # Get an instance of the random number generator from gym utils.
         # This is necessary to have an independent rng for each environment.
-        self._np_random, new_seed = seeding.np_random(seed)
+        self.np_random, new_seed = seeding.np_random(seed)
 
         # Seed the spaces
         self.action_space.seed(new_seed)

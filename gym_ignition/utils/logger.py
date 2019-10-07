@@ -15,9 +15,6 @@ except:
 
 
 def custom_formatwarning(msg, *args, **kwargs):
-    print(args)
-    print(kwargs)
-    # raise
     if logger.MIN_LEVEL is logger.DEBUG:
         warning = "{}:{} {}: {}\n".format(args[1], args[2], args[0].__name__, msg)
     else:
@@ -27,9 +24,8 @@ def custom_formatwarning(msg, *args, **kwargs):
 
 
 def warn(msg: str, *args) -> None:
-    global MIN_LEVEL
     if logger.MIN_LEVEL <= logger.WARN:
-        warnings.warn(colorize('%s: %s'%('WARN', msg % args), 'yellow'), stacklevel=2)
+        warnings.warn(colorize('%s: %s' % ('WARN', msg % args), 'yellow'), stacklevel=2)
 
 
 # Monkey patch warning formatting

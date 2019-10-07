@@ -31,8 +31,8 @@ def template_run_environment(env_name):
 
 
 @pytest.mark.parametrize("env_name",
-                         ["CartPoleGymppy-Discrete-v0",
-                          "CartPoleGymppy-Continuous-v0"])
+                         ["CartPoleDiscrete-Gazebo-v0",
+                          "CartPoleContinuous-Gazebo--v0"])
 def test_environment(env_name: str):
     args = (env_name)
     p = Process(target=template_run_environment, args=args)

@@ -2,5 +2,5 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from gym_ignition.utils.typing import *
-from gym_ignition.utils import resource_finder
+from .typing import *
+from . import resource_finder

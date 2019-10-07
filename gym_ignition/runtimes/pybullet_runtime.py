@@ -5,12 +5,13 @@
 import os
 import time
 import pybullet
+import numpy as np
 import pybullet_data
-from gym_ignition.base import robot
 from gym_ignition import base, robots
-from gym_ignition.utils.typing import *
 from pybullet_utils import bullet_client
+from gym_ignition.base.robot import robot_abc
 from gym_ignition.utils import logger, resource_finder
+from gym_ignition.utils.typing import State, Action, Observation, SeedList
 
 
 class PyBulletRuntime(base.runtime.Runtime):
@@ -24,7 +25,7 @@ class PyBulletRuntime(base.runtime.Runtime):
                  agent_rate: float,
                  physics_rate: float,
                  world: str = "plane_implicit.urdf",
-                 hard_reset = False,
+                 hard_reset: bool = True,
                  **kwargs):
 
         # Save the keyworded arguments.
@@ -133,7 +134,7 @@ class PyBulletRuntime(base.runtime.Runtime):
         logger.debug("PyBullet simulator created")
         return self._pybullet
 
-    def _get_robot(self) -> robot.robot_abc.RobotABC:
+    def _get_robot(self) -> robot_abc.RobotABC:
         if not self.pybullet:
             raise Exception("Failed to instantiate the pybullet simulator")
 
@@ -208,24 +209,24 @@ class PyBulletRuntime(base.runtime.Runtime):
             logger.warn("The action does not belong to the action space")
 
         # Set the action
-        ok_action = self.task._set_action(action)
+        ok_action = self.task.set_action(action)
         assert ok_action, "Failed to set the action"
 
         # Step the simulator
         self.pybullet.stepSimulation()
 
         # Get the observation
-        observation = self.task._get_observation()
+        observation = self.task.get_observation()
 
         if not self.observation_space.contains(observation):
             logger.warn("The observation does not belong to the observation space")
 
         # Get the reward
-        reward = self.task._get_reward()
+        reward = self.task.get_reward()
         assert reward is not None, "Failed to get the reward"
 
         # Check termination
-        done = self.task._is_done()
+        done = self.task.is_done()
 
         # Enforce the real-time factor
         self._enforce_rtf()
@@ -243,11 +244,11 @@ class PyBulletRuntime(base.runtime.Runtime):
             self.task.robot = self._get_robot()
 
         # Reset the environment
-        ok_reset = self.task._reset()
+        ok_reset = self.task.reset_task()
         assert ok_reset, "Failed to reset the task"
 
         # Get the observation
-        observation = self.task._get_observation()
+        observation = self.task.get_observation()
 
         if not self.observation_space.contains(observation):
             logger.warn("The observation does not belong to the observation space")

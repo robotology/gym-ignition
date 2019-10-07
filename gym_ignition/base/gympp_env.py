@@ -3,11 +3,13 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
+import numpy as np
 from gym import spaces
 from numbers import Number
+from typing import Union, Tuple
 from gym_ignition.utils import logger
-from gym_ignition.utils.typing import *
 from gym_ignition import gympp_bindings as bindings
+from gym_ignition.utils.typing import State, Action, Observation, SeedList
 
 
 class GymppEnv(gym.Env):
@@ -113,7 +115,8 @@ class GymppEnv(gym.Env):
         return self._robot
 
     def step(self, action: Action) -> State:
-        assert self.action_space.contains(action), "The action does not belong to the action space"
+        assert self.action_space.contains(action), \
+            "The action does not belong to the action space"
 
         # The bindings do not accept yet numpy types as arguments. We need to covert
         # numpy variables to the closer python type.
@@ -261,11 +264,11 @@ class GymppEnv(gym.Env):
             else:
                 assert len(low) == 1, "The size of the limit is not valid"
                 assert len(high) == 1, "The size of the limit is not valid"
-                return (spaces.Box(low[0], high[0], dims), "_d")
+                return spaces.Box(low[0], high[0], dims), "_d"
 
         elif space_type is bindings.SpaceType_Discrete:
             assert len(dims) == 1, "The specified space dimension is not valid"
-            return (spaces.Discrete(dims[0]), "_i")
+            return spaces.Discrete(dims[0]), "_i"
 
         else:
             assert False, "This space type is not supported"

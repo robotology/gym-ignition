@@ -3,5 +3,5 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 # Import the robots
-from . import ignition
+from . import gazebo
 from . import pybullet
