@@ -8,12 +8,23 @@
 
 #include "gympp/gazebo/GazeboWrapper.h"
 #include "gympp/Log.h"
+#include "gympp/gazebo/ECMSingleton.h"
+#include "gympp/gazebo/IgnitionRobot.h"
+#include "gympp/gazebo/RobotSingleton.h"
 #include "process.hpp"
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/SystemPaths.hh>
+#include <ignition/common/Util.hh>
+#include <ignition/gazebo/Model.hh>
+#include <ignition/gazebo/SdfEntityCreator.hh>
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
+#include <ignition/gazebo/components/Model.hh>
+#include <ignition/gazebo/components/Name.hh>
+#include <ignition/gazebo/components/ParentEntity.hh>
+#include <ignition/gazebo/components/Pose.hh>
+#include <ignition/gazebo/components/World.hh>
 #include <ignition/gazebo/config.hh>
 #include <sdf/Element.hh>
 #include <sdf/Error.hh>
@@ -26,6 +37,7 @@
 #include <chrono>
 
 using namespace gympp::gazebo;
+const std::string GymppVerboseEnvVar = "GYMPP_VERBOSE";
 
 // =====
 // PIMPL
@@ -44,19 +56,22 @@ class GazeboWrapper::Impl
 {
 public:
     size_t id;
+    sdf::Root sdf;
+    std::string worldName;
 
     GazeboData gazebo;
     std::shared_ptr<ignition::gazebo::Server> getServer();
 
-    sdf::Root sdf;
-    bool findAndLoadSdf(const std::string& sdfFileName, sdf::Root& sdfRoot);
+    std::shared_ptr<ignition::gazebo::SdfEntityCreator> sdfEntityCreator;
+    std::shared_ptr<ignition::gazebo::SdfEntityCreator>
+    getSdfEntityCreator(const std::string& worldName);
 
     PhysicsData getPhysicsData() const;
     bool setPhysics(const PhysicsData& physicsData);
 
-    ignition::common::SystemPaths systemPaths;
+    std::vector<std::string> modelPendingToRemove;
 
-    std::string scopedModelName;
+    ignition::common::SystemPaths systemPaths;
 };
 
 std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
@@ -72,6 +87,14 @@ std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
         auto errors = root.LoadSdfString(sdf.Element()->ToString(""));
         assert(errors.empty()); // This should be already ok
 
+        // To simplify debugging, use an environment variable to enable / disable
+        // printing the SDF string
+        std::string envVarContent{};
+        if (ignition::common::env(GymppVerboseEnvVar, envVarContent) && envVarContent == "1") {
+            gymppDebug << "Loading the following SDF file in the gazebo server:" << std::endl;
+            std::cout << sdf.Element()->ToString("") << std::endl;
+        }
+
         // Store the sdf string in the gazebo configuration
         gazebo.config.SetSdfString(sdf.Element()->ToString(""));
 
@@ -80,35 +103,55 @@ std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
         gazebo.server = std::make_shared<ignition::gazebo::Server>(gazebo.config);
         assert(gazebo.server);
 
-        // The GUI needs the server already up. Warming up the first iteration and pausing the
-        // server. It will be unpaused at the step() call.
-        gymppDebug << "Starting the server as paused" << std::endl;
-        if (!gazebo.server->Run(/*blocking=*/false, gazebo.numOfIterations, /*paused=*/true)) {
-            gymppError << "Failed to warm up the gazebo server in paused state" << std::endl;
-            return nullptr;
+        // Running a dummy initial step to start the server. This is necessary because the GUI needs
+        // the server already running.
+        gymppDebug << "Starting the gazebo server" << std::endl;
+        if (!gazebo.server->Run(/*blocking=*/false, /*iterations=*/1, /*paused=*/true)) {
+            gymppError << "Failed to run the first gazebo server step" << std::endl;
+            return {};
         }
     }
 
     return gazebo.server;
 }
 
+std::shared_ptr<ignition::gazebo::SdfEntityCreator>
+GazeboWrapper::Impl::getSdfEntityCreator(const std::string& worldName)
+{
+    if (sdfEntityCreator) {
+        return sdfEntityCreator;
+    }
+
+    if (!ECMSingleton::get().valid(worldName)) {
+        gymppError << "ECMSingleton not yet initialized. Failed to get the SdfEntityCreator"
+                   << std::endl;
+        return {};
+    }
+
+    // Create the SdfEntityCreator
+    sdfEntityCreator = std::make_unique<ignition::gazebo::SdfEntityCreator>(
+        *ECMSingleton::get().getECM(worldName), *ECMSingleton::get().getEventManager(worldName));
+
+    return sdfEntityCreator;
+}
+
 // TODO: there's a bug in the destructor of sdf::Physics that prevents returning std::optional
-bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Root& root)
+bool GazeboWrapper::findAndLoadSdf(const std::string& sdfFileName, sdf::Root& root)
 {
     if (sdfFileName.empty()) {
         gymppError << "The SDF file name of the gazebo model is empty" << std::endl;
-        return {};
+        return false;
     }
 
     // Find the file
     // TODO: add install directory of our world and model files
-    std::string sdfFilePath = systemPaths.FindFile(sdfFileName);
+    std::string sdfFilePath = pImpl->systemPaths.FindFile(sdfFileName);
 
     if (sdfFilePath.empty()) {
         gymppError << "Failed to find '" << sdfFileName << "'. "
                    << "Check that it's contained in the paths defined in IGN_GAZEBO_RESOURCE_PATH."
                    << std::endl;
-        return {};
+        return false;
     }
 
     // Load the sdf
@@ -119,7 +162,7 @@ bool GazeboWrapper::Impl::findAndLoadSdf(const std::string& sdfFileName, sdf::Ro
         for (const auto& error : errors) {
             gymppError << error << std::endl;
         }
-        return {};
+        return false;
     }
     return true;
 }
@@ -144,7 +187,7 @@ bool GazeboWrapper::Impl::setPhysics(const PhysicsData& physicsData)
 
     gymppDebug << "Setting physics profile" << std::endl;
     gymppDebug << "Desired RTF: " << physicsData.rtf << std::endl;
-    gymppDebug << "Max physics step size:" << physicsData.maxStepSize << std::endl;
+    gymppDebug << "Max physics step size: " << physicsData.maxStepSize << std::endl;
     gymppDebug << "Real time update rate: " << physicsData.realTimeUpdateRate << std::endl;
 
     if (physicsData.rtf <= 0) {
@@ -251,28 +294,24 @@ bool GazeboWrapper::run()
     assert((server->Running() && server->Paused().value())
            || (!server->Running() && !server->Paused().value()));
 
-    // Handle first iteration
+    // Handle first dummy iteration
     if (server->Running() && server->Paused().value()) {
-        gymppDebug << "Unpausing the server. Running the first simulation run." << std::endl;
+        gymppDebug << "Unpausing the server. Running the first dummy iteration." << std::endl;
         bool ok = server->SetPaused(false);
         assert(ok);
 
-        // Since the server was started in non-blocking mode, we have to wait that this first
-        // iteration finishes
         while (server->Running()) {
-            gymppDebug << "Waiting the first simulation run to finish..." << std::endl;
+            gymppDebug << "Waiting the first iteration run to finish..." << std::endl;
             assert(!server->Paused().value());
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
         }
-
-        gymppDebug << "First run ok" << std::endl;
+        gymppDebug << "First dummy iteration executed" << std::endl;
     }
-    // Run regular iteration
-    else {
-        if (!server->Run(/*blocking=*/true, pImpl->gazebo.numOfIterations, /*paused=*/false)) {
-            gymppError << "The server couldn't execute the step" << std::endl;
-            return false;
-        }
+
+    // Run the simulation
+    if (!server->Run(/*blocking=*/true, pImpl->gazebo.numOfIterations, /*paused=*/false)) {
+        gymppError << "The server couldn't execute the step" << std::endl;
+        return false;
     }
 
     return true;
@@ -309,7 +348,38 @@ bool GazeboWrapper::close()
         pImpl->gazebo.gui->kill(force);
     }
 
+    // Get the names of all the pending models.
+    // We need to make a copy because in the following for loop the elements of the vector are
+    // iterated and, in the removeModel, erased. This messes up iterators.
+    std::vector<std::string> pendingModels = pImpl->modelPendingToRemove;
+
+    // Remove all models
+    for (const auto& modelName : pendingModels) {
+        gymppDebug << "Removing model '" << modelName << "' added through the wrapper" << std::endl;
+        if (!removeModel(modelName)) {
+            gymppWarning << "Failed to remove model '" << modelName
+                         << "' while closing the gazebo wrapper" << std::endl;
+        }
+    }
+
+    // Remove the ECM from the singleton
+    if (ECMSingleton::get().valid(getWorldName())) {
+        gymppDebug << "Cleaning the ECM singleton from world '" << getWorldName() << "'"
+                   << std::endl;
+        ECMSingleton::get().clean(getWorldName());
+    }
+
     return true;
+}
+
+bool GazeboWrapper::initialized()
+{
+    if (pImpl->gazebo.server) {
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 PhysicsData GazeboWrapper::getPhysicsData() const
@@ -322,70 +392,337 @@ void GazeboWrapper::setVerbosity(int level)
     ignition::common::Console::SetVerbosity(level);
 }
 
-std::vector<GazeboWrapper::SdfModelName> GazeboWrapper::getModelNames() const
+std::string GazeboWrapper::getModelNameFromSDF(const std::string& sdfString)
 {
-    return {pImpl->scopedModelName};
+    sdf::Root root;
+
+    // Load the sdf
+    if (auto errors = root.LoadSdfString(sdfString); !errors.empty()) {
+        gymppError << "Failed to load SDF string" << std::endl;
+        for (const auto& error : errors) {
+            gymppError << error << std::endl;
+        }
+        return {};
+    }
+
+    assert(root.ModelCount() == 1);
+    return root.ModelByIndex(0)->Name();
 }
 
-bool GazeboWrapper::setupGazeboModel(const std::string& modelFile, std::array<double, 6> /*pose*/)
+std::string GazeboWrapper::getWorldName() const
 {
-    if (!pImpl->scopedModelName.empty()) {
-        gymppError << "The model has been already configured previously" << std::endl;
+    if (pImpl->sdf.WorldCount() == 0) {
+        gymppError << "Failed to find any world. Has the world been configured?" << std::endl;
+        return {};
+    }
+
+    assert(pImpl->sdf.WorldCount() == 1);
+
+    // We get the world from the SDF file.
+    // TODO: this does not read the updated name
+    //    gymppWarning << pImpl->sdf.WorldByIndex(0)->Name() << std::endl;
+    //    return pImpl->sdf.WorldByIndex(0)->Name();
+
+    return pImpl->worldName;
+}
+
+bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
+                                const gympp::gazebo::PluginData& pluginData)
+{
+    if (!initialized()) {
+        gymppError << "The simulator was not initialized. Call initialize() first." << std::endl;
         return false;
     }
 
-    if (pImpl->sdf.WorldCount() <= 0) {
-        gymppError << "The gazebo world was not properly configured" << std::endl;
+    gymppDebug << "Inserting new model " << modelData.modelName << std::endl;
+
+    // ====================
+    // INITIALIZE RESOURCES
+    // ====================
+
+    // Check that the ECM has been stored by the plugin
+    if (!ECMSingleton::get().valid(getWorldName())) {
+        gymppError << "No ECM found for world '" << getWorldName()
+                   << "'. Does your world file have the ECMProvider plugin?" << std::endl;
         return false;
     }
 
-    // Find and load the sdf file that contains the model
-    sdf::Root sdfRoot;
-    if (!pImpl->findAndLoadSdf(modelFile, sdfRoot)) {
-        gymppError << "Failed to find and load sdf file '" << modelFile << "'" << std::endl;
+    // Get the ECM
+    ignition::gazebo::EntityComponentManager* ecm = ECMSingleton::get().getECM(getWorldName());
+
+    // Get the SdfEntityCreator that abstracts the ECM to easily create entities
+    auto sdfEntityCreator = pImpl->getSdfEntityCreator(getWorldName());
+    assert(sdfEntityCreator);
+
+    // Parse the SDF string
+    sdf::Root modelSdfRoot;
+    auto errors = modelSdfRoot.LoadSdfString(modelData.sdfString);
+
+    if (!errors.empty()) {
+        for (const auto& err : errors) {
+            gymppError << err << std::endl;
+        }
         return false;
     }
 
-    if (sdfRoot.ModelCount() == 0) {
-        gymppError << "Failed to find any model in '" << modelFile << "' sdf file" << std::endl;
+    // Get the world entity
+    auto worldEntities = ecm->EntitiesByComponents(
+        ignition::gazebo::components::World(), ignition::gazebo::components::Name(getWorldName()));
+    assert(worldEntities.size() == 1);
+    auto worldEntity = worldEntities[0];
+    assert(worldEntity != ignition::gazebo::kNullEntity);
+    gymppDebug << "Inserting the model in the world '" << getWorldName() << "' [" << worldEntity
+               << "]" << std::endl;
+
+    // ============================
+    // RENAME THE MODEL NAME IN SDF
+    // ============================
+
+    std::string finalModelEntityName;
+
+    // Handle model entity name
+    if (modelData.modelName.empty()) {
+        assert(modelSdfRoot.ModelCount() == 1);
+        finalModelEntityName = modelSdfRoot.ModelByIndex(0)->Name();
+    }
+    else {
+        finalModelEntityName = modelData.modelName;
+    }
+
+    // Check that there is no entity name clashing
+    if (ecm->EntityByComponents(ignition::gazebo::components::Name(finalModelEntityName),
+                                ignition::gazebo::components::ParentEntity(worldEntity))
+        != ignition::gazebo::kNullEntity) {
+        gymppError << "Failed to insert entity for model '" << finalModelEntityName
+                   << "'. Another entity with the same name already exists." << std::endl;
         return false;
     }
 
-    // Get the models names included in the sdf file.
-    // In order to allow multithreading, the name of the model contained in the sdf must be scoped.
-    // We use the id of the IgnitionEnvironment object as scope.
-    for (unsigned i = 0; i < sdfRoot.ModelCount(); ++i) {
-        // Get the model name
-        std::string modelName = sdfRoot.ModelByIndex(i)->Name();
-        gymppDebug << "Found model '" << modelName << "' in the sdf file" << std::endl;
+    // Update the name in the sdf model. This is necessary because model plugins are loaded right
+    // before the creation of the model entity and, instead of receiving the model entity name, the
+    // receive the model sdf name.
+    // NOTE: The following is not enough because the name is not serialized to string. We need also
+    //       to operate directly on the raw element.
+    const_cast<sdf::Model*>(modelSdfRoot.ModelByIndex(0))->SetName(finalModelEntityName);
 
-        // Create a scoped name
-        std::string scopedModelName =
-            std::to_string(reinterpret_cast<uint64_t>(this)) + "::" + modelName;
-        gymppDebug << "Registering scoped '" << scopedModelName << "' model" << std::endl;
+    // Create a new model with the scoped name
+    sdf::ElementPtr renamedModel(new sdf::Element);
+    renamedModel->SetName("model");
+    renamedModel->AddAttribute("name", "string", finalModelEntityName, true);
 
-        // Copy the content of the model in another sdf element.
-        // This has to be done because it is not possible to change in-place the name of the model,
-        // so we create a new element and we copy all the children.
-        sdf::ElementPtr renamedModel(new sdf::Element);
-        renamedModel->SetName("model");
-        renamedModel->AddAttribute("name", "string", scopedModelName, true);
+    sdf::ElementPtr child = modelSdfRoot.ModelByIndex(0)->Element()->GetFirstElement();
 
-        sdf::ElementPtr child = sdfRoot.ModelByIndex(i)->Element()->GetFirstElement();
+    // Add all the children
+    while (child) {
+        renamedModel->InsertElement(child);
+        child = child->GetNextElement();
+    }
 
-        while (child) {
-            renamedModel->InsertElement(child);
-            child = child->GetNextElement();
+    // Remove the old model
+    auto originalModelElement = modelSdfRoot.ModelByIndex(0)->Element();
+    originalModelElement->RemoveFromParent();
+
+    // Insert the renamed model
+    renamedModel->SetParent(modelSdfRoot.Element());
+    modelSdfRoot.Element()->InsertElement(renamedModel);
+    assert(modelSdfRoot.ModelCount() == 1);
+    assert(modelSdfRoot.ModelNameExists(finalModelEntityName));
+
+    // ==============
+    // ADD THE PLUGIN
+    // ==============
+
+    // Add the model plugin, if defined. This is used to insert either the RobotController plugin
+    // for python environments, or the gympp plugin for C++ environments.
+    if (!pluginData.libName.empty() && !pluginData.className.empty()) {
+        gymppDebug << "Inserting SDF plugin '" << pluginData.libName << "@" << pluginData.className
+                   << "'" << std::endl;
+
+        // Create the plugin SDF element
+        auto pluginElement = std::make_shared<sdf::Element>();
+        pluginElement->SetName("plugin");
+        pluginElement->AddAttribute("name", "string", "pluginname", true, "plugin name");
+        pluginElement->AddAttribute(
+            "filename", "string", "pluginfilename", true, "plugin filename");
+
+        sdf::ParamPtr pluginNameParam = pluginElement->GetAttribute("name");
+        pluginNameParam->SetFromString(pluginData.className);
+        assert(pluginNameParam->GetSet());
+
+        sdf::ParamPtr pluginFileNameParam = pluginElement->GetAttribute("filename");
+        pluginFileNameParam->SetFromString(pluginData.libName);
+        assert(pluginNameParam->GetSet());
+
+        // Store the plugin SDF element in the model SDF
+        assert(modelSdfRoot.ModelCount() == 1);
+        pluginElement->SetParent(modelSdfRoot.ModelByIndex(0)->Element());
+        modelSdfRoot.ModelByIndex(0)->Element()->InsertElement(pluginElement);
+
+        assert(pluginElement->GetParent() == modelSdfRoot.ModelByIndex(0)->Element());
+        assert(modelSdfRoot.ModelByIndex(0)->Element()->HasElement("plugin"));
+    }
+
+    // =======================
+    // CREATE THE MODEL ENTITY
+    // =======================
+
+    // To simplify debugging, use an environment variable to enable / disable
+    // printing the final SDF model string
+    std::string envVarContent{};
+    if (ignition::common::env(GymppVerboseEnvVar, envVarContent) && envVarContent == "1") {
+        gymppDebug << "Inserting a model from the following SDF:" << std::endl;
+        std::cout << modelSdfRoot.Element()->ToString("") << std::endl;
+    }
+
+    ignition::gazebo::Entity modelEntity;
+
+    {
+        auto& ecmSingleton = ECMSingleton::get();
+
+        // The first iteration is quite delicate for two reasons:
+        //
+        // 1) The GUI needs the simulator running and it needs to receive the state to draw the
+        //    world. For this reason, we need to start the simulator with a dummy iteration and
+        //    pause its execution. Gazebo in paused state runs anyway all the systems, without
+        //    the need to step it (the simulated time does not progress).
+        //
+        // 2) Typically models are inserted right after the server creation, and we want to be
+        //    able to visualize them without advancing the physics. Using a first dummy iteration
+        //    in paused state allow inserting the model entities in the physics. The problem is
+        //    that we need to be sure that this happens in the PreUpdate step.
+        //
+        // When the first run() command is executed, the simulation switches to syncronous mode.
+        // This means that all the PreUpdate and PostUpdate calls are executed only when run() is
+        // called.
+        //
+        // In order to handle the particular state of the initial iteration, we need a rather
+        // involved synchronization logic. This allows avoiding to use the UserCommands system
+        // to create entities, giving us full power.
+        assert(pImpl->gazebo.server->Paused().has_value());
+        if (pImpl->gazebo.server->Running() && pImpl->gazebo.server->Paused().value())
+            auto lock = ecmSingleton.waitPreUpdate(getWorldName());
+
+        // Create the model entity. It will create a model with the name specified in the SDF.
+        modelEntity = sdfEntityCreator->CreateEntities(modelSdfRoot.ModelByIndex(0));
+
+        // Rename the model entity name. We want a scoped model name so that we can add multiple
+        // models from the same model SDF file.
+        ecm->RemoveComponent<ignition::gazebo::components::Name>(modelEntity);
+        ecm->CreateComponent(modelEntity, ignition::gazebo::components::Name(finalModelEntityName));
+
+        auto modelNameComponent = ecm->Component<ignition::gazebo::components::Name>(modelEntity);
+        gymppDebug << "Created entity [" << modelEntity << "] named [" << modelNameComponent->Data()
+                   << "]" << std::endl;
+        assert(modelNameComponent->Data() == finalModelEntityName);
+
+        // Attach the model entity to the world entity
+        sdfEntityCreator->SetParent(modelEntity, worldEntity);
+
+        // Create pose data
+        ignition::math::Pose3d pose;
+        pose.Pos() = ignition::math::Vector3<double>(
+            modelData.position[0], modelData.position[1], modelData.position[2]);
+        pose.Rot() = ignition::math::Quaternion<double>(modelData.orientation[0],
+                                                        modelData.orientation[1],
+                                                        modelData.orientation[2],
+                                                        modelData.orientation[3]);
+
+        // Create a pose component
+        auto poseComp = ecm->Component<ignition::gazebo::components::Pose>(modelEntity);
+        *poseComp = ignition::gazebo::components::Pose(pose);
+
+        // ========================================================
+        // CREATE THE ROBOT OBJECT AND REGISTER IT IN THE SINGLETON
+        // ========================================================
+
+        // Create an IgnitionRobot object from the ecm
+        auto ignRobot = std::make_shared<gympp::gazebo::IgnitionRobot>();
+        if (!ignRobot->configureECM(modelEntity, modelSdfRoot.Element(), *ecm)) {
+            gymppError << "Failed to configure the Robot interface" << std::endl;
+            return false;
         }
 
-        // TODO: Temporarily support only one model, and it must be the one to which the gympp
-        //       plugin will be attached to.
-        assert(sdfRoot.ModelCount() == 1);
-        pImpl->scopedModelName = scopedModelName;
+        if (!ignRobot->valid()) {
+            gymppError << "The Robot interface is not valid" << std::endl;
+            return false;
+        }
 
-        // Attach the model to the sdf world
-        assert(pImpl->sdf.WorldCount() == 1);
-        pImpl->sdf.WorldByIndex(0)->Element()->InsertElement(renamedModel);
+        // Store the robot in the singleton
+        if (!RobotSingleton::get().storeRobot(ignRobot)) {
+            gymppError << "Failed to store the robot in the singleton" << std::endl;
+            return false;
+        }
+
+        // In the first iteration, we need to notify the we finished to operate on the ECM
+        if (pImpl->gazebo.server->Running() && pImpl->gazebo.server->Paused().value()) {
+            ecmSingleton.notifyExecutorFinished(getWorldName());
+        }
+    }
+
+    // Add the model in a list of allocated models
+    pImpl->modelPendingToRemove.push_back(finalModelEntityName);
+
+    return true;
+}
+
+bool GazeboWrapper::removeModel(const std::string& modelName)
+{
+    if (!initialized()) {
+        gymppError << "The simulator was not initialized. Call initialize() first." << std::endl;
+        return false;
+    }
+
+    gymppDebug << "Removing existing model '" << modelName << "'" << std::endl;
+
+    // =======================
+    // DELETE THE MODEL ENTITY
+    // =======================
+
+    // Check that the ECM has been stored by the plugin
+    if (!ECMSingleton::get().valid(getWorldName())) {
+        gymppError << "No ECM found for world '" << getWorldName()
+                   << "'. Does your world file have the ECMProvider plugin?" << std::endl;
+        return false;
+    }
+
+    // Get the ECM
+    ignition::gazebo::EntityComponentManager* ecm = ECMSingleton::get().getECM(getWorldName());
+
+    // Get the SdfEntityCreator that abstracts the ECM to easily create entities
+    auto sdfEntityCreator = pImpl->getSdfEntityCreator(getWorldName());
+    assert(sdfEntityCreator);
+
+    // Try to find a matching entity
+    auto modelEntity = ecm->EntityByComponents(ignition::gazebo::components::Model(),
+                                               ignition::gazebo::components::Name(modelName));
+
+    if (modelEntity == ignition::gazebo::kNullEntity) {
+        gymppError << "Failed to find model '" << modelName << "' in the ECM. Model not removed."
+                   << std::endl;
+        return false;
+    }
+
+    // Request the removal of the model
+    gymppDebug << "Requesting removal of entity [" << modelEntity << "]" << std::endl;
+    sdfEntityCreator->RequestRemoveEntity(modelEntity);
+
+    // ===================================
+    // DELETE THE ROBOT FROM THE SINGLETON
+    // ===================================
+
+    // Remove the robot from the singleton
+    if (!RobotSingleton::get().deleteRobot(modelName)) {
+        gymppError << "The Robot object associated to the model was not in the singleton"
+                   << std::endl;
+    }
+
+    assert(!RobotSingleton::get().exists(modelName));
+
+    // Remove the model from the list of models pending to be removed
+    auto it = std::find(
+        pImpl->modelPendingToRemove.begin(), pImpl->modelPendingToRemove.end(), modelName);
+    if (it != pImpl->modelPendingToRemove.end()) {
+        pImpl->modelPendingToRemove.erase(it);
     }
 
     return true;
@@ -394,35 +731,55 @@ bool GazeboWrapper::setupGazeboModel(const std::string& modelFile, std::array<do
 bool GazeboWrapper::setupGazeboWorld(const std::string& worldFile)
 {
     // Find and load the sdf file that contains the world
-    if (!pImpl->findAndLoadSdf(worldFile, pImpl->sdf)) {
+    if (!findAndLoadSdf(worldFile, pImpl->sdf)) {
         gymppError << "Failed to find and load sdf file '" << worldFile << "'" << std::endl;
         return false;
     }
 
+    if (pImpl->sdf.WorldCount() != 1) {
+        gymppError << "Only one world per world file is currently supported" << std::endl;
+        return false;
+    }
+
+    // Assign to the world an unique name in order to avoid collisions with other instances
+    // that run in the same process
+    std::string worldName = pImpl->sdf.WorldByIndex(0)->Name();
+    std::string suffix = std::to_string(reinterpret_cast<int64_t>(this));
+    std::string newWorldName = worldName + "_" + suffix;
+    const_cast<sdf::World*>(pImpl->sdf.WorldByIndex(0))->SetName(newWorldName);
+    gymppDebug << "Configuring new simulation with the world '" << newWorldName << "'" << std::endl;
+
+    // Create a new world with the scoped name
+    auto renamedWorld = std::make_shared<sdf::Element>();
+    renamedWorld->SetName("world");
+    renamedWorld->AddAttribute("name", "string", "worldname", true, "world name");
+
+    sdf::ParamPtr worldNameParam = renamedWorld->GetAttribute("name");
+    worldNameParam->SetFromString(newWorldName);
+    assert(worldNameParam->GetSet());
+
+    sdf::ElementPtr child = pImpl->sdf.WorldByIndex(0)->Element()->GetFirstElement();
+
+    // Add all the children
+    while (child) {
+        renamedWorld->InsertElement(child);
+        child = child->GetNextElement();
+    }
+
+    // Remove the old world and insert the renamed one
+    pImpl->sdf.WorldByIndex(0)->Element()->RemoveFromParent();
+    pImpl->sdf.Element()->InsertElement(renamedWorld);
+    assert(pImpl->sdf.WorldNameExists(newWorldName));
+
+    // TODO: reading the update name from the SDFRoot does not work (similarly to the Model).
+    //       Storing it in the Impl.
+    pImpl->worldName = newWorldName;
+
+    // Configure the physics profile
     if (!pImpl->setPhysics(pImpl->gazebo.physics)) {
         gymppError << "Failed to set physics profile" << std::endl;
         return false;
     }
-
-    return true;
-}
-
-bool GazeboWrapper::setupIgnitionPlugin(const std::string& libName, const std::string& className)
-{
-    assert(!pImpl->scopedModelName.empty());
-
-    // Create the plugin sdf element
-    sdf::ElementPtr sdf(new sdf::Element);
-    sdf->SetName("plugin");
-    sdf->AddAttribute("name", "string", className, true);
-    sdf->AddAttribute("filename", "string", libName, true);
-
-    // Store the plugin information
-    ignition::gazebo::ServerConfig::PluginInfo pluginInfo{
-        pImpl->scopedModelName, "model", libName, className, sdf};
-
-    // Insert the plugin context into the server configuration
-    pImpl->gazebo.config.AddPlugin(pluginInfo);
 
     return true;
 }

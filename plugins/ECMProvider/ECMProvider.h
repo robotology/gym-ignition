@@ -6,8 +6,8 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_PLUGINS_ROBOTCONTROLLER
-#define GYMPP_PLUGINS_ROBOTCONTROLLER
+#ifndef GYMPP_PLUGINS_ECMPROVIDER
+#define GYMPP_PLUGINS_ECMPROVIDER
 
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
@@ -21,22 +21,22 @@
 
 namespace gympp {
     namespace plugins {
-        class RobotController;
+        class ECMProvider;
     } // namespace plugins
 } // namespace gympp
 
-class gympp::plugins::RobotController final
+class gympp::plugins::ECMProvider final
     : public ignition::gazebo::System
-    , public ignition::gazebo::ISystemPreUpdate
     , public ignition::gazebo::ISystemConfigure
+    , public ignition::gazebo::ISystemPreUpdate
 {
 private:
     class Impl;
     std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl = nullptr;
 
 public:
-    RobotController();
-    ~RobotController() override;
+    ECMProvider();
+    ~ECMProvider() override;
 
     void Configure(const ignition::gazebo::Entity& entity,
                    const std::shared_ptr<const sdf::Element>& sdf,
@@ -47,4 +47,4 @@ public:
                    ignition::gazebo::EntityComponentManager& ecm) override;
 };
 
-#endif // GYMPP_PLUGINS_ROBOTCONTROLLER
+#endif // GYMPP_PLUGINS_ECMPROVIDER

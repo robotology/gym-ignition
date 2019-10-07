@@ -22,6 +22,7 @@
 #include <ignition/gazebo/components/JointVelocityReset.hh>
 #include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Name.hh>
+#include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/math/PID.hh>
 #include <sdf/Joint.hh>
@@ -39,7 +40,7 @@ using JointName = std::string;
 using LinkEntity = ignition::gazebo::Entity;
 using JointEntity = ignition::gazebo::Entity;
 
-const ignition::math::PID DefaultPID(1, 0.1, 0.1, 1, -1, 10000, -10000);
+const ignition::math::PID DefaultPID(1, 0.1, 0.01, 1, -1, 10000, -10000);
 
 enum class ControlType
 {
@@ -168,14 +169,7 @@ IgnitionRobot::IgnitionRobot()
     : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {}
 
-IgnitionRobot::~IgnitionRobot()
-{
-    // Remove the robot from the singleton
-    if (bool removed = RobotSingleton::get().deleteRobot(name()); !removed) {
-        gymppError << "Failed to store the robot in the RobotSingleton" << std::endl;
-        assert(removed);
-    }
-};
+IgnitionRobot::~IgnitionRobot() = default;
 
 bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
                                  const std::shared_ptr<const sdf::Element>& sdf,
@@ -206,24 +200,33 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
     // Get all the model joints
     ecm.Each<ignition::gazebo::components::Joint,
              ignition::gazebo::components::Name,
-             ignition::gazebo::components::JointType>(
+             ignition::gazebo::components::JointType,
+             ignition::gazebo::components::ParentEntity>(
         [&](const ignition::gazebo::Entity& entity,
             ignition::gazebo::components::Joint* /*joint*/,
             ignition::gazebo::components::Name* name,
-            ignition::gazebo::components::JointType* type) -> bool {
-            gymppDebug << "Found joint: " << name->Data() << std::endl;
+            ignition::gazebo::components::JointType* type,
+            ignition::gazebo::components::ParentEntity* parentEntityComponent) -> bool {
+            // Skip all the joints not belonging to this model
+            if (parentEntityComponent->Data() != pImpl->model.Entity()) {
+                return true;
+            }
+
+            gymppDebug << "  Found joint: " << pImpl->model.Name(ecm) << "::" << name->Data()
+                       << " [" << entity << "]" << std::endl;
 
             // Find the entity of the joint in the ecm
             auto jointEntity = pImpl->model.JointByName(ecm, name->Data());
             if (jointEntity == ignition::gazebo::kNullEntity) {
-                gymppError << "Failed to find entity for joint '" << name->Data() << "'"
-                           << std::endl;
+                gymppError << "Failed to find entity for joint '" << pImpl->model.Name(ecm)
+                           << "::" << name->Data() << "'" << std::endl;
                 return false;
             }
 
             // Ignore fixed joints
             if (type->Data() == sdf::JointType::FIXED) {
-                gymppDebug << "Skipping fixed joint '" << name->Data() << "'" << std::endl;
+                gymppDebug << "  Skipping fixed joint '" << pImpl->model.Name(ecm)
+                           << "::" << name->Data() << "'" << std::endl;
                 return true;
             }
 
@@ -241,30 +244,39 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
     // Get all the model links
     ecm.Each<ignition::gazebo::components::Link,
              ignition::gazebo::components::Name,
-             ignition::gazebo::components::Pose>([&](const ignition::gazebo::Entity& /*_entity*/,
-                                                     ignition::gazebo::components::Link* /*link*/,
-                                                     ignition::gazebo::components::Name* name,
-                                                     ignition::gazebo::components::Pose
-                                                         * /*pose*/) -> bool {
-        gymppDebug << "Found link: " << name->Data() << std::endl;
+             ignition::gazebo::components::Pose,
+             ignition::gazebo::components::ParentEntity>(
+        [&](const ignition::gazebo::Entity& entity,
+            ignition::gazebo::components::Link* /*link*/,
+            ignition::gazebo::components::Name* name,
+            ignition::gazebo::components::Pose* /*pose*/,
+            ignition::gazebo::components::ParentEntity* parentEntityComponent) -> bool {
+            // Skip all the joints not belonging to this model
+            if (parentEntityComponent->Data() != pImpl->model.Entity()) {
+                return true;
+            }
 
-        // TODO: there is an extra link 'link', I suspect related to the <include><pose>
-        if (name->Data() == "link") {
-            gymppDebug << "Skipping dummy link 'link'" << std::endl;
+            gymppDebug << "  Found link: " << pImpl->model.Name(ecm) << "::" << name->Data() << " ["
+                       << entity << "]" << std::endl;
+
+            // TODO: there is an extra link 'link', I suspect related to the <include><pose>
+            if (name->Data() == "link") {
+                gymppDebug << "  Skipping dummy link 'link'" << std::endl;
+                return true;
+            }
+
+            // Find the entity of the link in the ecm
+            auto linkEntity = pImpl->model.LinkByName(ecm, name->Data());
+            if (linkEntity == ignition::gazebo::kNullEntity) {
+                gymppError << "Failed to find entity for link '" << pImpl->model.Name(ecm)
+                           << "::" << name->Data() << "'" << std::endl;
+                return false;
+            }
+
+            // Store the link entity
+            pImpl->links[name->Data()] = linkEntity;
             return true;
-        }
-
-        // Find the entity of the link in the ecm
-        auto linkEntity = pImpl->model.LinkByName(ecm, name->Data());
-        if (linkEntity == ignition::gazebo::kNullEntity) {
-            gymppError << "Failed to find entity for link '" << name->Data() << "'" << std::endl;
-            return false;
-        }
-
-        // Store the link entity
-        pImpl->links[name->Data()] = linkEntity;
-        return true;
-    });
+        });
 
     // Check that the created object is valid
     if (!valid()) {
@@ -273,19 +285,17 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
         return false;
     }
 
-    // Store the name of the robot. In this way we don't have to access the ECM for that.
-    // It is useful because this information might be used after the deletion of the ECM.
+    // Store the name of the robot
     pImpl->name = pImpl->model.Name(ecm);
+
+    if (pImpl->name.empty()) {
+        gymppError << "The model entity has an empty name component" << std::endl;
+        return false;
+    }
 
     // Initialize the buffers
     pImpl->buffers.joints.positions.resize(pImpl->joints.size());
     pImpl->buffers.joints.velocities.resize(pImpl->joints.size());
-
-    // Register the robot in the singleton
-    if (!RobotSingleton::get().storeRobot(this)) {
-        gymppError << "Failed to store the robot in the RobotSingleton" << std::endl;
-        return false;
-    }
 
     return true;
 }

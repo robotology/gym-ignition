@@ -6,7 +6,8 @@ from gym_ignition.robots import factory_robot
 
 
 class CartPoleRobot(factory_robot.FactoryRobot):
-    def __init__(self, **kwargs):
+    def __init__(self, model_file: str, gazebo, **kwargs):
         # Initialize base class
-        super().__init__(robot_name=kwargs["robot_name"],
+        super().__init__(model_file=model_file,
+                         gazebo=gazebo,
                          controller_rate=kwargs.get("controller_rate"))

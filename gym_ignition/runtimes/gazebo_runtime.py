@@ -15,11 +15,12 @@ class GazeboRuntime(runtime.Runtime):
     def __init__(self,
                  task_cls: type,
                  robot_cls: type,
-                 sdf: str,
+                 model: str,
                  world: str,
                  rtf: float,
                  agent_rate: float,
                  physics_rate: float,
+                 hard_reset: True,
                  **kwargs):
 
         # Save the keyworded arguments.
@@ -30,8 +31,11 @@ class GazeboRuntime(runtime.Runtime):
         # Store the type of the class that provides RobotABC interface
         self._robot_cls = robot_cls
 
+        # Delete and create a new robot every environment reset
+        self._hard_reset = hard_reset
+
         # SDF files
-        self._sdf = sdf
+        self._model = model
         self._world = world
 
         # Gazebo simulation attributes
@@ -40,16 +44,20 @@ class GazeboRuntime(runtime.Runtime):
         self._physics_rate = physics_rate
         self._gazebo_wrapper = None
 
-        # Initialize the simulator and the robot
-        robot = self._get_robot()
-
         # Build the environment
-        task_object = task_cls(robot=robot, **kwargs)
+        task_object = task_cls(**kwargs)
+
         assert isinstance(task_object, task.Task), \
             "'task_cls' object must inherit from Task"
 
         # Wrap the environment with this class
         super().__init__(task=task_object, agent_rate=agent_rate)
+
+        # Initialize the simulator and the robot
+        robot = self._get_robot()
+
+        # Store the robot in the task
+        self.task.robot = robot
 
         # Seed the environment
         self.seed()
@@ -63,7 +71,8 @@ class GazeboRuntime(runtime.Runtime):
         if self._gazebo_wrapper:
             assert self._gazebo_wrapper.getPhysicsData().rtf == self._rtf, \
                 "The RTF of gazebo does not match the configuration"
-            assert 1 / self._gazebo_wrapper.getPhysicsData().maxStepSize == self._physics_rate, \
+            assert 1 / self._gazebo_wrapper.getPhysicsData().maxStepSize == \
+                self._physics_rate, \
                 "The physics rate of gazebo does not match the configuration"
 
             return self._gazebo_wrapper
@@ -105,16 +114,6 @@ class GazeboRuntime(runtime.Runtime):
         world_ok = self._gazebo_wrapper.setupGazeboWorld(self._world)
         assert world_ok, "Failed to initialize the gazebo world"
 
-        # Initialize the model
-        model_ok = self._gazebo_wrapper.setupGazeboModel(self._sdf)
-        assert model_ok, "Failed to initialize the gazebo model"
-
-        # Initialize the robot controller plugin
-        lib_name = "RobotController"
-        class_name = "gympp::plugins::RobotController"
-        wrapper_ok = self._gazebo_wrapper.setupIgnitionPlugin(lib_name, class_name)
-        assert wrapper_ok, "Failed to setup the ignition plugin"
-
         # Initialize the ignition gazebo wrapper
         gazebo_initialized = self._gazebo_wrapper.initialize()
         assert gazebo_initialized, "Failed to initialize ignition gazebo"
@@ -125,17 +124,20 @@ class GazeboRuntime(runtime.Runtime):
         if not self.gazebo:
             raise Exception("Failed to instantiate the gazebo simulator")
 
-        # Get the robot name
-        model_names = self.gazebo.getModelNames()
-        assert len(model_names) == 1, "The environment has more than one model"
-        model_name = model_names[0]
-
         # Build the robot object
-        # TODO: robot_name arg is used only for the FactoryRobot implementation
         logger.debug("Creating the robot object")
-        robot = self._robot_cls(robot_name=model_name, **self._kwargs)
+        robot = self._robot_cls(model_file=self._model,
+                                gazebo=self.gazebo,
+                                **self._kwargs)
         assert isinstance(robot, robot_abc.RobotABC), \
             "'robot' object must inherit from RobotABC"
+
+        # Check the requested robot features
+        if self.task.robot_features:
+            self.task.robot_features.has_all_features(robot)
+
+        if not robot.valid():
+            raise Exception("The robot is not valid")
 
         return robot
 
@@ -144,12 +146,11 @@ class GazeboRuntime(runtime.Runtime):
     # ===============
 
     def step(self, action: Action) -> State:
-        # Validate action and robot
-        assert self.action_space.contains(action), \
-            "%r (%s) invalid" % (action, type(action))
+        if not self.action_space.contains(action):
+            logger.warn("The action does not belong to the action space")
 
         # Set the action
-        ok_action = self.env._set_action(action)
+        ok_action = self.task._set_action(action)
         assert ok_action, "Failed to set the action"
 
         # Step the simulator
@@ -157,17 +158,18 @@ class GazeboRuntime(runtime.Runtime):
         assert ok_gazebo, "Failed to step gazebo"
 
         # Get the observation
-        observation = self.env._get_observation()
-        assert self.observation_space.contains(observation), \
-            "%r (%s) invalid" % (observation, type(observation))
+        observation = self.task._get_observation()
+
+        if not self.observation_space.contains(observation):
+            logger.warn("The observation does not belong to the observation space")
 
         # Get the reward
         # TODO: use the wrapper method?
-        reward = self.env._get_reward()
+        reward = self.task._get_reward()
         assert reward is not None, "Failed to get the reward"
 
         # Check termination
-        done = self.env._is_done()
+        done = self.task._is_done()
 
         return State((observation, reward, done, {}))
 
@@ -176,14 +178,27 @@ class GazeboRuntime(runtime.Runtime):
         gazebo = self.gazebo
         assert gazebo, "Gazebo object not valid"
 
+        # Remove the model and insert it again. This is the reset strategy for
+        # floating-base robots. Resetting the joint state, instead, is sufficient to
+        # reset fixed-based robots. Though, while avoiding the model deletion might
+        # provide better performance, we should be sure that all the internal buffers
+        # (e.g. those related to the low-level PIDs) are correctly re-initialized.
+        if self._hard_reset and self.task._robot:
+            logger.debug("Hard reset: deleting the robot")
+            self.task.robot.delete_simulated_robot()
+
+            logger.debug("Hard reset: creating new robot")
+            self.task.robot = self._get_robot()
+
         # Reset the environment
-        ok_reset = self.env._reset()
+        ok_reset = self.task._reset()
         assert ok_reset, "Failed to reset the task"
 
         # Get the observation
-        observation = self.env._get_observation()
-        assert self.observation_space.contains(observation), \
-            "%r (%s) invalid" % (observation, type(observation))
+        observation = self.task._get_observation()
+
+        if not self.observation_space.contains(observation):
+            logger.warn("The observation does not belong to the observation space")
 
         return Observation(observation)
 

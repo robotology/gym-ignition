@@ -19,19 +19,24 @@ RUN apt-get update &&\
         g++ \
         g++-8 \
         clang \
+        clang-7 \
+        clang-8 \
         make \
         cmake \
         ninja-build \
+        valgrind \
         ccache \
         libgflags-dev \
         python3-pip \
         python3.6 \
         python3.7 \
+        libpython3.6-dev \
+        libpython3.7-dev \
         &&\
     rm -rf /var/lib/apt/lists/*
 
 # Enable CCACHE by default
-ENV PATH=/usr/lib/ccache:$PATH
+ENV PATH=/usr/lib/ccache:${PATH}
 RUN mkdir "$HOME/.ccache" &&\
     echo "max_size = 2.0G" > "$HOME/.ccache/ccache.conf"
 
@@ -106,8 +111,8 @@ RUN apt-get update &&\
         &&\
     cmake --build . --target install &&\
     rm -r /tmp/idyntree
-ENV LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
-ENV export PYTHONPATH=$PYTHONPATH:/usr/local/lib/python3/dist-packages
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
+ENV PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python3/dist-packages
 
 # Setup gym-ignition
 ARG install_prefix="/usr/local"
@@ -115,6 +120,10 @@ ENV IGN_GAZEBO_SYSTEM_PLUGIN_PATH="${install_prefix}/lib/gympp/plugins"
 ENV IGN_GAZEBO_RESOURCE_PATH="${install_prefix}/share/gympp/gazebo/worlds:${install_prefix}/share/gympp/gazebo/models"
 ENV SDF_PATH="${install_prefix}/share/gympp/gazebo/models"
 ENV PYTHONPATH="${PYTHONPATH}:${install_prefix}/lib/gympp/bindings"
+
+# Prepare virtualenv variables
+ENV VIRTUAL_ENV=/venv
+ENV PATH=${VIRTUAL_ENV}/bin:${PATH}
 
 COPY entrypoint.sh /entrypoint.sh
 COPY setup_virtualenv.sh /setup_virtualenv.sh

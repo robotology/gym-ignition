@@ -9,17 +9,11 @@ if [[ ! -x $(type -P ${PYTHON_EXE}) ]] ; then
     exit 1
 fi
 
-# Folder of the virtualenv
-VIRTUAL_ENV=/ve
-
 # Install virtualenv
 pip3 install virtualenv
 
 # Create an empty virtualenv and enable it by default
 virtualenv -p $PYTHON_EXE ${VIRTUAL_ENV}
 
-# Enable the virtualenv without the need to activate it
-export PATH=${VIRTUAL_ENV}/bin:${PATH}
-
-# Install setuptools
-pip3 install setuptools pytest
+# Install pytest in the virtual environment
+${VIRTUAL_ENV}/bin/pip3 install pytest

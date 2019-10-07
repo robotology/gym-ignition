@@ -36,7 +36,9 @@ public:
 
     static RobotSingleton& get();
 
-    RobotPtr getRobot(const std::string& robotName) const;
+    bool exists(const std::string& robotName) const;
+
+    std::weak_ptr<gympp::Robot> getRobot(const std::string& robotName) const;
 
     bool storeRobot(RobotPtr robot);
     bool deleteRobot(const std::string& robotName);

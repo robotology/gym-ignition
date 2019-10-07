@@ -2,10 +2,11 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+import os
 import pybullet
 import numpy as np
 from gym_ignition.base import robot
-from gym_ignition.utils import logger
+from gym_ignition.utils import logger, resource_finder
 from typing import List, Tuple, Dict, Union, NamedTuple
 from gym_ignition.base.robot.robot_joints import JointControlMode
 
@@ -68,24 +69,32 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     A "class"`Robot` implementation for the PyBullet simulator.
 
     Args:
-        robot_id: The pybullet ID associated with the robot model
-        p: An instance of the pybullet simulator
+        p: An instance of the pybullet simulator.
+        model_file: The file (URDF, SDF) containing the robot model.
         plane_id: the pybullet ID associated with the plane model. It is used to
             compute contacts between the robot and the plane.
     """
 
     def __init__(self,
-                 robot_id: int,
                  p: pybullet,
+                 model_file: str,
                  plane_id: int = None,
                  keep_fixed_joints: bool = False) -> None:
 
-        super().__init__()
-
         self._pybullet = p
-        self._robot_id = robot_id
         self._plane_id = plane_id
         self._keep_fixed_joints = keep_fixed_joints
+
+        # Find the model file
+        model_abs_path = resource_finder.find_resource(model_file)
+
+        # Initialize the parent classes
+        super().__init__()
+        self.model_file = model_abs_path
+
+        # Load the model
+        self._robot_id = self._load_model(self.model_file)
+        assert self._robot_id is not None, "Failed to load the robot model"
 
         # Other private attributes
         self._links_name2index_dict = None
@@ -95,13 +104,6 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         self._base_frame = None
         self._base_constraint = None
         self._initial_joint_positions = None
-
-        # Initialize all joints in position control
-        self._pybullet.setJointMotorControlArray(
-            bodyUniqueId=self._robot_id,
-            jointIndices=range(self.dofs()),
-            controlMode=pybullet.POSITION_CONTROL,
-            targetPositions=self.initial_positions())
 
         # Create a map from the joint name to its control info
         self._jointname2jointcontrolinfo = dict()
@@ -117,6 +119,10 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     # ==============================
     # PRIVATE METHODS AND PROPERTIES
     # ==============================
+
+    def delete_simulated_robot(self):
+        # Remove the robot from the simulation
+        self._pybullet.removeBody(self._robot_id)
 
     @property
     def _joints_name2index(self) -> Dict[str, int]:
@@ -144,6 +150,20 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             self._links_name2index_dict[info.linkName.decode()] = info.jointIndex
 
         return self._links_name2index_dict
+
+    def _load_model(self, filename: str, **kwargs) -> int:
+        # Get the file extension
+        extension = os.path.splitext(filename)[1][1:]
+
+        if extension == "sdf":
+            model_id = self._pybullet.loadSDF(filename, **kwargs)[0]
+        else:
+            model_id = self._pybullet.loadURDF(
+                filename,
+                flags=pybullet.URDF_USE_INERTIA_FROM_FILE,
+                **kwargs)
+
+        return model_id
 
     def _get_joints_info(self) -> Dict[str, JointInfoPyBullet]:
         joints_info = {}
@@ -178,9 +198,17 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     # robot.Robot INTERFACE
     # =====================
 
-    def valid(self) -> bool:
+    def name(self) -> str:
         # TODO
-        return True
+        pass
+
+    def valid(self) -> bool:
+        try:
+            # TODO: improve the check
+            self._pybullet.getBasePositionAndOrientation(self._robot_id)
+            return True
+        except:
+            return False
 
     # ==================================
     # robot_joints.RobotJoints INTERFACE
@@ -243,6 +271,14 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
         # Disable the default joint motorization setting a 0 maximum force
         if mode == JointControlMode.TORQUE:
+            # Disable the PID if was configured
+            self._pybullet.setJointMotorControl2(
+                bodyIndex=self._robot_id,
+                jointIndex=joint_idx_pybullet,
+                controlMode=pybullet.PD_CONTROL,
+                positionGain=0,
+                velocityGain=0)
+            # Put the motor in IDLE for torque control
             self._pybullet.setJointMotorControl2(
                 bodyIndex=self._robot_id,
                 jointIndex=joint_idx_pybullet,

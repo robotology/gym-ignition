@@ -18,6 +18,7 @@
 #include <vector>
 
 namespace gympp {
+    class GymFactory;
     namespace gazebo {
         class IgnitionEnvironment;
         class EnvironmentCallbacks;
@@ -33,6 +34,12 @@ private:
     class Impl;
     std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
     gympp::gazebo::EnvironmentCallbacks* envCallbacks();
+
+    friend class gympp::GymFactory;
+    bool initializeSimulation();
+    void storeSDFModelFile(const std::string& modelSDF);
+    void storeModelData(const gympp::gazebo::ModelInitData& modelData);
+    void storePluginData(const gympp::gazebo::PluginData& pluginData);
 
 protected:
 public:

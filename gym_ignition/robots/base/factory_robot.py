@@ -2,47 +2,108 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+import string
+import random
 import numpy as np
 from typing import List, Union, Tuple
-from gym_ignition.utils import logger
+from gym_ignition.utils import logger, resource_finder
 from gym_ignition.base.robot import robot_abc, robot_joints
 from gym_ignition import gympp_bindings as bindings
 
 
 class FactoryRobot(robot_abc.RobotABC,
                    robot_joints.RobotJoints):
-    def __init__(self, robot_name: str, controller_rate: float = None) -> None:
-        super().__init__()
+    def __init__(self,
+                 model_file: str,
+                 gazebo: bindings.GazeboWrapper,
+                 controller_rate: float = None) -> None:
 
+        # Find the model file
+        model_abs_path = resource_finder.find_resource(model_file)
+
+        # Initialize the parent classes
+        super().__init__()
+        self.model_file = model_abs_path
+
+        # Private attributes
+        self._gazebo = gazebo
+        self._robot_name = None
         self._gympp_robot = None
-        self._robot_name = robot_name
         self._controller_rate = controller_rate
 
-        robot_ok = self.gympp_robot
-        assert robot_ok, "Failed to create robot"
+        # Create a random prefix that will be used for the robot name
+        letters_and_digits = string.ascii_letters + string.digits
+        self._prefix = ''.join(random.choice(letters_and_digits) for _ in range(6))
+
+    # ==============================
+    # PRIVATE METHODS AND PROPERTIES
+    # ==============================
+
+    def delete_simulated_robot(self) -> None:
+        # Remove the robot from the simulation
+        ok_model = self._gazebo.removeModel(self._robot_name)
+        assert ok_model, f"Failed to remove the model '{self._robot_name}' from gazebo"
 
     @property
     def gympp_robot(self):
         if self._gympp_robot:
-            assert self._gympp_robot.valid(), "The Robot object is not valid"
-            return self._gympp_robot
+            assert not self._gympp_robot.expired(), "The Robot object has expired"
+            assert self._gympp_robot.lock(), "The Robot object is empty"
+            assert self._gympp_robot.lock().valid(), "The Robot object is not valid"
+            return self._gympp_robot.lock()
 
-        assert self._robot_name, "Robot name was not set"
+        # Find and load the model SDF file
+        sdf_file = resource_finder.find_resource(self.model_file)
+        with open(sdf_file, "r") as stream:
+            sdf_string = stream.read()
+
+        # Get the model name
+        original_name = bindings.GazeboWrapper.getModelNameFromSDF(sdf_string)
+        assert original_name, f"Failed to get model name from file {self.model_file}"
+
+        # Create a unique robot name
+        self._robot_name = self._prefix + "::" + original_name
+
+        # Initialize the model data
+        model_data = bindings.ModelInitData()
+        model_data.setModelName(self._robot_name)
+        model_data.setSdfString(sdf_string)
+        model_data.setPosition([0., 0, 0])  # TODO: default initial position
+        model_data.setOrientation([1., 0, 0, 0])  # TODO: default initial orientation
+
+        # Initialize robot controller plugin
+        plugin_data = bindings.PluginData()
+        plugin_data.setLibName("RobotController")
+        plugin_data.setClassName("gympp::plugins::RobotController")
+
+        # Insert the model
+        ok_model = self._gazebo.insertModel(model_data, plugin_data)
+        assert ok_model, "Failed to insert the model"
+
+        # Extract the robot from the singleton
         self._gympp_robot = bindings.RobotSingleton_get().getRobot(self._robot_name)
 
-        assert self._gympp_robot, "Failed to get the Robot object"
-        assert self._gympp_robot.valid(), "The Robot object is not valid"
+        # The robot is a weak pointer. Check that it is valid.
+        assert not self._gympp_robot.expired(), "The Robot object has expired"
+        assert self._gympp_robot.lock(), \
+            "The returned Robot object does not contain a valid interface"
+        assert self._gympp_robot.lock().valid(), "The Robot object is not valid"
 
         if self._controller_rate:
             logger.debug("Robot controller rate: {} Hz".format(self._controller_rate))
-            ok_dt = self._gympp_robot.setdt(1 / self._controller_rate)
+            ok_dt = self._gympp_robot.lock().setdt(1 / self._controller_rate)
             assert ok_dt, "Failed to set the robot controller period"
 
-        return self._gympp_robot
+        logger.debug(f"IgnitionRobot '{self._gympp_robot.lock().name()}' added to the "
+                     "simulation")
+        return self._gympp_robot.lock()
 
     # ========
     # RobotABC
     # ========
+
+    def name(self):
+        return self.gympp_robot.name()
 
     def valid(self) -> bool:
         return self.gympp_robot.valid()

@@ -18,11 +18,11 @@ class RobotFeatures(robot_abc.RobotABC,
 
 class CartPoleDiscrete(task.Task, abc.ABC):
 
-    def __init__(self, robot: RobotFeatures, reward_cart_at_center: bool = None) -> None:
-        super().__init__(robot=robot)
+    def __init__(self, reward_cart_at_center: bool = False, **kwargs) -> None:
+        super().__init__()
 
-        # Check that the robot has all the requested features
-        RobotFeatures.has_all_features(robot)
+        # Store the requested robot features for this task
+        self.robot_features = RobotFeatures
 
         # Private attributes
         self._force_mag = 20.0
@@ -45,10 +45,10 @@ class CartPoleDiscrete(task.Task, abc.ABC):
 
         # Configure observation limits
         high = np.array([
-            self._x_threshold * 2,
-            np.finfo(np.float32).max,
-            np.rad2deg(self._theta_threshold_radians * 2),
-            np.finfo(np.float32).max
+            self._x_threshold * 2,                          # x
+            np.finfo(np.float32).max,                       # x_dot
+            np.rad2deg(self._theta_threshold_radians * 2),  # theta
+            np.finfo(np.float32).max                        # theta_dot
         ])
 
         # Configure the observation space
@@ -86,10 +86,6 @@ class CartPoleDiscrete(task.Task, abc.ABC):
 
         # Create the observation object
         observation = Observation(np.array([x, x_dot, theta, theta_dot]))
-
-        # Validate the observation
-        assert self.observation_space.contains(observation), \
-            "%r (%s) invalid" % (observation, type(observation))
 
         # Return the observation
         return observation
@@ -160,6 +156,7 @@ class CartPoleDiscrete(task.Task, abc.ABC):
                     ok_mode = self.robot.set_joint_control_mode(joint, desired_control_mode)
                     assert ok_mode, "Failed to set control mode for joint '{}'".format(joint)
             except Exception:
+                logger.warn("This runtime does not support setting the control mode")
                 pass
 
         # Reset position and velocity
