@@ -10,8 +10,8 @@
 #include "gympp/Log.h"
 #include "gympp/Random.h"
 #include "gympp/Space.h"
-#include "gympp/gazebo/EnvironmentCallbacks.h"
-#include "gympp/gazebo/EnvironmentCallbacksSingleton.h"
+#include "gympp/gazebo/Task.h"
+#include "gympp/gazebo/TaskSingleton.h"
 
 #include <sdf/Element.hh>
 #include <sdf/Model.hh>
@@ -26,7 +26,7 @@ class IgnitionEnvironment::Impl
 {
 public:
     size_t id;
-    gympp::gazebo::EnvironmentCallbacks* cb = nullptr;
+    gympp::gazebo::Task* cb = nullptr;
 
     PluginData pluginData;
     gympp::gazebo::ModelInitData modelData;
@@ -83,10 +83,10 @@ bool IgnitionEnvironment::initializeSimulation()
     return true;
 }
 
-EnvironmentCallbacks* IgnitionEnvironment::envCallbacks()
+Task* IgnitionEnvironment::getTask()
 {
     if (!pImpl->cb) {
-        auto* ecSingleton = EnvironmentCallbacksSingleton::Instance();
+        auto* ecSingleton = TaskSingleton::Instance();
         pImpl->cb = ecSingleton->get(pImpl->modelData.modelName);
         assert(pImpl->cb);
     }
@@ -141,10 +141,10 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
         return {};
     }
 
-    // Get the environment callbacks
-    auto callbacks = envCallbacks();
-    if (!callbacks) {
-        gymppError << "Failed to get the environment callbacks from the plugin" << std::endl;
+    // Get the task
+    auto task = getTask();
+    if (!task) {
+        gymppError << "Failed to get the Task interface from the plugin" << std::endl;
         return {};
     }
 
@@ -154,7 +154,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Set the action to the environment
-    if (!callbacks->setAction(action)) {
+    if (!task->setAction(action)) {
         gymppError << "Failed to set the action" << std::endl;
         return {};
     }
@@ -166,7 +166,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Get the observation from the environment
-    std::optional<Observation> observation = callbacks->getObservation();
+    std::optional<Observation> observation = task->getObservation();
 
     if (!observation) {
         gymppError << "The gympp plugin didn't return the observation" << std::endl;
@@ -180,7 +180,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Get the reward from the environment
-    std::optional<Reward> reward = callbacks->computeReward();
+    std::optional<Reward> reward = task->computeReward();
 
     if (!reward) {
         gymppError << "The gympp plugin didn't return the reward" << std::endl;
@@ -193,7 +193,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
         return {};
     }
 
-    return IgnitionEnvironment::State{callbacks->isDone(), {}, reward.value(), observation.value()};
+    return IgnitionEnvironment::State{task->isDone(), {}, reward.value(), observation.value()};
 }
 
 std::vector<size_t> IgnitionEnvironment::seed(size_t seed)
@@ -220,20 +220,20 @@ std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
         return {};
     }
 
-    // Get the environment callbacks
-    auto* callbacks = envCallbacks();
-    if (!callbacks) {
-        gymppError << "Failed to get the environment callbacks from the plugin" << std::endl;
+    // Get the task
+    auto* task = getTask();
+    if (!task) {
+        gymppError << "Failed to get the Task interface from the plugin" << std::endl;
         return {};
     }
 
-    if (!callbacks->reset()) {
+    if (!task->resetTask()) {
         gymppError << "Failed to reset plugin" << std::endl;
         return {};
     }
 
     gymppDebug << "Retrieving the initial observation after reset" << std::endl;
-    return callbacks->getObservation();
+    return task->getObservation();
 }
 
 bool IgnitionEnvironment::render(RenderMode mode)

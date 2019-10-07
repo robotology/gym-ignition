@@ -9,7 +9,7 @@
 #ifndef GYMPP_PLUGINS_CARTPOLE
 #define GYMPP_PLUGINS_CARTPOLE
 
-#include "gympp/gazebo/EnvironmentCallbacks.h"
+#include "gympp/gazebo/Task.h"
 
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
@@ -32,7 +32,7 @@ class gympp::plugins::CartPole final
     , public ignition::gazebo::ISystemConfigure
     , public ignition::gazebo::ISystemPreUpdate
     , public ignition::gazebo::ISystemPostUpdate
-    , public gympp::gazebo::EnvironmentCallbacks
+    , public gympp::gazebo::Task
 {
 private:
     class Impl;
@@ -54,7 +54,7 @@ public:
                     const ignition::gazebo::EntityComponentManager& manager) override;
 
     bool isDone() override;
-    bool reset() override;
+    bool resetTask() override;
     bool setAction(const Action& action) override;
     std::optional<Reward> computeReward() override;
     std::optional<Observation> getObservation() override;
