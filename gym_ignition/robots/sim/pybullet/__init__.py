@@ -3,4 +3,5 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from . import icub
+from . import pendulum
 from . import cartpole

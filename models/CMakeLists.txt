@@ -17,7 +17,12 @@ install(
 install(
     DIRECTORY CartPole
     DESTINATION ${CMAKE_INSTALL_DATADIR}/gympp/gazebo/models
-    FILES_MATCHING PATTERN "*.sdf" PATTERN "*.config")
+    FILES_MATCHING PATTERN "*.sdf" PATTERN "*.urdf" PATTERN "*.config")
+
+install(
+    DIRECTORY Pendulum
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/gympp/gazebo/models
+    FILES_MATCHING PATTERN "*.sdf" PATTERN "*.urdf" PATTERN "*.config")
 
 install(
     DIRECTORY iCubGazebo
