@@ -107,7 +107,7 @@ find_package(ignition-gazebo2 COMPONENTS all)
 if(ignition-gazebo2_FOUND)
     add_subdirectory(ignition)
     add_subdirectory(plugins)
-    add_subdirectory(models)
+    add_subdirectory(gym_ignition_data)
     add_subdirectory(examples/cpp)
 
     option(ENABLE_BINDINGS "Enable swig bindings" ON)

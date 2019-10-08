@@ -2,6 +2,10 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+if(CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    return()
+endif()
+
 # ===========
 # WORLD FILES
 # ===========
