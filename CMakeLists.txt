@@ -92,8 +92,6 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
     add_install_rpath_support(BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
                               LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
                                        "${CMAKE_INSTALL_FULL_LIBDIR}/lib"
-                                       "${CMAKE_INSTALL_FULL_LIBDIR}/gympp/bindings"
-                                       "${CMAKE_INSTALL_FULL_LIBDIR}/gympp/plugins"
                               INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
                               DEPENDS ENABLE_RPATH
                               USE_LINK_PATH)
