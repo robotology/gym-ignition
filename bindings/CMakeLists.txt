@@ -2,8 +2,12 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-set(Python_ADDITIONAL_VERSIONS "3.6" CACHE STRING "Python to use for binding")
 find_package(PythonLibs REQUIRED)
+
+if(${PYTHONLIBS_VERSION_STRING} VERSION_LESS 3.6)
+    message(FATAL_ERROR
+        "Python libs must be >= v3.6 (found: ${PYTHONLIBS_VERSION_STRING})")
+endif()
 
 if(${CMAKE_VERSION} VERSION_GREATER 3.13)
     cmake_policy(SET CMP0078 NEW)
@@ -35,6 +39,7 @@ target_link_libraries(${swig_name} PUBLIC
     IgnitionEnvironment
     RobotSingleton
     GazeboWrapper
+    IgnitionRobot
     ${PYTHON_LIBRARIES})
 
 set_property(TARGET ${swig_name} PROPERTY
@@ -43,13 +48,30 @@ set_property(TARGET ${swig_name} PROPERTY
 target_include_directories(${swig_name} PRIVATE
     ${PYTHON_INCLUDE_PATH})
 
-install(
-    TARGETS ${swig_name}
-    EXPORT gympp
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp/bindings)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    install(
+        TARGETS ${swig_name}
+        EXPORT gympp
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp/bindings)
 
-install(
-    FILES ${CMAKE_CURRENT_BINARY_DIR}/${swig_name}.py
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings)
+    install(
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/${swig_name}.py
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings)
+else()
+    set(PYTHON_PACKAGE_IMPORT_NAME "gym_ignition" CACHE STRING
+        "Name of the installed package matching the desired 'import <package_name>'")
+
+    install(
+        TARGETS ${swig_name}
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+    install(
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/${swig_name}.py
+        DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+    install(
+        TARGETS ECMProvider RobotController CartPolePlugin
+        LIBRARY DESTINATION ${PYTHON_PACKAGE_IMPORT_NAME}/plugins)
+endif()

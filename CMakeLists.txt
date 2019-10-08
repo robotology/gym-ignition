@@ -22,9 +22,27 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${GYMPP_BUILD_TYPES})
 endif()
 
-# Build all libraries as shared. Plugins and singleton do not play well
-# together if libraries are static.
-set(BUILD_SHARED_LIBS ON)
+# This new build mode configures the CMake project to be compatible with the pipeline to
+# create the PyPI linux wheel
+include(cmake/AddNewBuildMode.cmake)
+add_new_build_mode(NAME "PyPI" TEMPLATE "Release")
+
+if(CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    # Check that is Linux
+    if(NOT (UNIX AND NOT APPLE))
+        message(FATAL_ERROR "PyPI packages can be only created for Linux at the moment")
+    endif()
+
+    # Compile libraries as static, if possible
+    set(GYMPP_BUILD_SHARED_LIBRARY FALSE
+        CACHE BOOL "Compile libraries as shared libraries" FORCE)
+else()
+    set(GYMPP_BUILD_SHARED_LIBRARY TRUE BOOL
+        CACHE BOOL "Compile libraries as shared libraries")
+endif()
+
+# Set the final option for shared / static libraries
+set(BUILD_SHARED_LIBS ${GYMPP_BUILD_SHARED_LIBRARY})
 
 # Tweak linker flags in Linux
 if(UNIX AND NOT APPLE)
@@ -70,13 +88,16 @@ endif()
 
 # Configure RPATH
 include(AddInstallRPATHSupport)
-add_install_rpath_support(BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
-                          LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
-                                   "${CMAKE_INSTALL_FULL_LIBDIR}/gympp/bindings"
-                                   "${CMAKE_INSTALL_FULL_LIBDIR}/gympp/plugins"
-                          INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
-                          DEPENDS ENABLE_RPATH
-                          USE_LINK_PATH)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    add_install_rpath_support(BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
+                              LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
+                                       "${CMAKE_INSTALL_FULL_LIBDIR}/lib"
+                                       "${CMAKE_INSTALL_FULL_LIBDIR}/gympp/bindings"
+                                       "${CMAKE_INSTALL_FULL_LIBDIR}/gympp/plugins"
+                              INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
+                              DEPENDS ENABLE_RPATH
+                              USE_LINK_PATH)
+endif()
 
 # Dependencies
 add_subdirectory(deps)
