@@ -7,7 +7,7 @@ if [ ! -x "/setup_virtualenv.sh" ] ; then
 fi
 
 # Setup the python virtualenv
-source /setup_virtualenv.sh
+bash /setup_virtualenv.sh
 
 # If a CMD is passed, execute it
 exec "$@"
