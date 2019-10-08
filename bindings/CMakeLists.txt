@@ -49,16 +49,21 @@ target_include_directories(${swig_name} PRIVATE
     ${PYTHON_INCLUDE_PATH})
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    set(PYTHON_FULL_VERSION "${PYTHONLIBS_VERSION_STRING}")
+    string(REPLACE "." ";" PYTHON_FULL_VERSION ${PYTHON_FULL_VERSION})
+    list(GET PYTHON_FULL_VERSION 0 PYTHON_MAJOR)
+    list(GET PYTHON_FULL_VERSION 1 PYTHON_MINOR)
+
     install(
         TARGETS ${swig_name}
         EXPORT gympp
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp/bindings)
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/python${PYTHON_MAJOR}.${PYTHON_MINOR}/site-packages
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/python${PYTHON_MAJOR}.${PYTHON_MINOR}/site-packages
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/python${PYTHON_MAJOR}.${PYTHON_MINOR}/site-packages)
 
     install(
         FILES ${CMAKE_CURRENT_BINARY_DIR}/${swig_name}.py
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/bindings)
+        DESTINATION ${CMAKE_INSTALL_LIBDIR}/python${PYTHON_MAJOR}.${PYTHON_MINOR}/site-packages)
 else()
     set(PYTHON_PACKAGE_IMPORT_NAME "gym_ignition" CACHE STRING
         "Name of the installed package matching the desired 'import <package_name>'")
