@@ -57,7 +57,7 @@ jobs:
           docker exec -i ci sh -c 'cmake --build build --target install'
 
       - name: Setup Python Package
-        run: docker exec -i ci sh -c 'pip3 install .'
+        run: docker exec -i ci sh -c 'pip3 install -e .'
 
       - name: Python Tests
         run: docker exec -i ci sh -c 'pytest tests/python'
