@@ -110,18 +110,21 @@ At the time of writing, Gym-Ignition offers the following features:
 
 ## Setup
 
-The installation of Gym-Ignition, given the early status of development, is still not very user-friendly. We are actively working on it for improving the user experience.
+You can start exploring the project opening the [RandomPolicy.ipynb](examples/colab/RandomPolicy.ipynb).
+
+⚠️ The local installation of Gym-Ignition, given the early status of development, is still not very user-friendly. We are actively working on it for improving the user experience.
+
+Follow these initial common steps, and then select the type of installation that you prefer.
+
+1. Install all the Ignition Robotics suit excluding `ign-gazebo` following the [official documentation](https://ignitionrobotics.org/docs/latest/install).
+1. Install `ign-gazebo` from our [temporary fork](https://github.com/diegoferigo/ign-gazebo).
+1. Install SWIG with `apt install swig`.
+1. Update CMake if you have a version < 3.12 from the [official ppa](https://apt.kitware.com/).
 
 ### Are you a user?
 
-1. Install all the Ignition Robotics suit excluding `ign-gazebo` following the [official documentation](https://ignitionrobotics.org/docs/latest/install)
-
-2. Install `ign-gazebo` from our [temporary fork](https://github.com/diegoferigo/ign-gazebo) 
-
-3. Install Gym-Ignition with `pip install gym-ignition` (preferably in a [virtual environment](https://docs.python.org/3.6/tutorial/venv.html))
-
-4. Execute the following to export the required environment variables:
-
+1. Install Gym-Ignition with `pip install gym-ignition` (preferably in a [virtual environment](https://docs.python.org/3.6/tutorial/venv.html))
+1. Execute the following to export the required environment variables:
    ```sh
    # Worlds and models path
    data_path=$(python -c "import gym_ignition_data ; (gym_ignition_data.__path__[0])")
@@ -139,14 +142,8 @@ After these steps, you should be able to execute the example [`launch_cartpole.p
 
 Developers should install separately the C++ and Python components.
 
-1. Install all the Ignition Robotics suit excluding `ign-gazebo` following the [official documentation](https://ignitionrobotics.org/docs/latest/install)
-
-2. Install `ign-gazebo` from our [temporary fork](https://github.com/diegoferigo/ign-gazebo)
-
-3. Clone this repository
-
-4. Build and install the CMake project
-
+1. Clone this repository
+1. Build and install the CMake project
    ```sh
    mkdir build
    cd build
@@ -154,15 +151,11 @@ Developers should install separately the C++ and Python components.
    cmake --build .
    cmake --build . --target install
    ```
-
-5. Install the Python package in [editable mode](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs):
-
+1. Install the Python package in [editable mode](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs):
    ```sh
    pip3 install -e .
    ```
-
-6. Export the following environment variables:
-
+1. Export the following environment variables:
    ```sh
    # Worlds and models path
    export IGN_GAZEBO_RESOURCE_PATH=<installprefix>/share/gympp/gazebo/worlds:<installprefix>/share/gympp/gazebo/models
