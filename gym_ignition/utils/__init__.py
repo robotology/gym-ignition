@@ -4,3 +4,13 @@
 
 from .typing import *
 from . import resource_finder
+
+# If not installed in editable mode, insert gym_ignition_data path to the search path
+try:
+    import gym_ignition_data
+    resource_finder.add_path(gym_ignition_data.get_data_path())
+    resource_finder.add_path(gym_ignition_data.get_data_path() + "/worlds")
+except ModuleNotFoundError:
+    pass
+
+import contextlib
