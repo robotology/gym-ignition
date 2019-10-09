@@ -119,7 +119,7 @@ ARG install_prefix="/usr/local"
 ENV IGN_GAZEBO_SYSTEM_PLUGIN_PATH="${install_prefix}/lib/gympp/plugins"
 ENV IGN_GAZEBO_RESOURCE_PATH="${install_prefix}/share/gympp/gazebo/worlds:${install_prefix}/share/gympp/gazebo/models"
 ENV SDF_PATH="${install_prefix}/share/gympp/gazebo/models"
-ENV PYTHONPATH="${PYTHONPATH}:${install_prefix}/lib/gympp/bindings"
+ENV PYTHONPATH="${PYTHONPATH}:${install_prefix}/lib/python3.6/site-packages:${install_prefix}/lib/python3.7/site-packages"
 
 # Prepare virtualenv variables
 ENV VIRTUAL_ENV=/venv

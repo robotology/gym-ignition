@@ -20,9 +20,11 @@ target_link_libraries(RobotController
 target_include_directories(RobotController PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
-install(
-    TARGETS RobotController
-    EXPORT gympp
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp/plugins)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    install(
+        TARGETS RobotController
+        EXPORT gympp
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp/plugins)
+endif()

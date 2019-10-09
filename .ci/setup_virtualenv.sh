@@ -4,7 +4,7 @@ set -eu
 # Read the env variable if exists, otherwise fall back to 3.6
 PYTHON_EXE=python${PYTHON_VERSION:-3.6}
 
-if [[ ! -x $(type -P ${PYTHON_EXE}) ]] ; then
+if [ ! -x $(type -P ${PYTHON_EXE}) ] ; then
     echo "Failed to find ${PYTHON_EXE} in PATH"
     exit 1
 fi

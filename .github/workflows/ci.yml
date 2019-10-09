@@ -53,11 +53,15 @@ jobs:
             diegoferigo/gym-ignition:ci bash
           docker exec -i ci sh -c 'mkdir -p build'
           docker exec -i ci sh -c \
-            'cd build && cmake -GNinja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} ..'
+            'cd build &&\
+             cmake .. \
+                 -GNinja \
+                 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+                 -DPython_ADDITIONAL_VERSIONS=$PYTHON_VERSION'
           docker exec -i ci sh -c 'cmake --build build --target install'
 
       - name: Setup Python Package
-        run: docker exec -i ci sh -c 'pip3 install .'
+        run: docker exec -i ci sh -c 'pip3 install -e .'
 
       - name: Python Tests
         run: docker exec -i ci sh -c 'pytest tests/python'

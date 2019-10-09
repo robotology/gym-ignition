@@ -26,9 +26,11 @@ if(MSVC)
     target_compile_definitions(CartPolePlugin PRIVATE "_USE_MATH_DEFINES")
 endif()
 
-install(
-    TARGETS CartPolePlugin
-    EXPORT gympp
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp/plugins)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    install(
+        TARGETS CartPolePlugin
+        EXPORT gympp
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp/plugins)
+endif()

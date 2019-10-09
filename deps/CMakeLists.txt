@@ -26,13 +26,15 @@ if(NOT ${tiny-process-library_FOUND})
             PUBLIC_HEADER ${tinyprocesslibrary_SOURCE_DIR}/process.hpp
             POSITION_INDEPENDENT_CODE ON)
 
-        # Install the target
-        install(
-            TARGETS tiny-process-library
-            LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-            RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-            PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+            # Install the target
+            install(
+                TARGETS tiny-process-library
+                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+                PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        endif()
     endif()
 endif()
 

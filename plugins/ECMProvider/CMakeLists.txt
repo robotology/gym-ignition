@@ -16,26 +16,15 @@ target_link_libraries(ECMProvider
     PRIVATE
     gympp
     ECMSingleton)
-#    EnvironmentCallbacks
-#    PRIVATE
-#    IgnitionRobot
-#    RobotSingleton
-#    EnvironmentCallbacksSingleton)
 
 target_include_directories(ECMProvider PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPy")
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
 install(
     TARGETS ECMProvider
     EXPORT gympp
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/gympp/plugins
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/gympp/plugins)
-else()
-    install(
-        TARGETS ECMProvider
-        LIBRARY DESTINATION ${PLUGINS_DEST_DIR}
-        ARCHIVE DESTINATION ${PLUGINS_DEST_DIR}
-        RUNTIME DESTINATION ${PLUGINS_DEST_DIR})
 endif()
