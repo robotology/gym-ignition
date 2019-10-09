@@ -43,6 +43,20 @@ register(
 # ============================
 
 register(
+    id='Pendulum-Gazebo-v0',
+    entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
+    max_episode_steps=5000,
+    kwargs={'task_cls': pendulum_swingup.PendulumSwingUp,
+            'robot_cls': sim.gazebo.pendulum.PendulumGazeboRobot,
+            'model': "Pendulum/Pendulum.sdf",
+            'world': "DefaultEmptyWorld.world",
+            'rtf': max_float,
+            'agent_rate': 1000,
+            'physics_rate': 1000,
+            'hard_reset': True,
+            })
+
+register(
     id='CartPoleDiscrete-Gazebo-v0',
     entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
     max_episode_steps=5000,
@@ -76,6 +90,20 @@ register(
 
 # Add the folders specified in IGN_GAZEBO_RESOURCE_PATH to the search path
 resource_finder.add_path_from_env_var("IGN_GAZEBO_RESOURCE_PATH")
+
+register(
+    id='Pendulum-PyBullet-v0',
+    entry_point='gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime',
+    max_episode_steps=5000,
+    kwargs={'task_cls': pendulum_swingup.PendulumSwingUp,
+            'robot_cls': sim.pybullet.pendulum.PendulumPyBulletRobot,
+            'model': "Pendulum/Pendulum.urdf",
+            'world': "plane_implicit.urdf",
+            'rtf': max_float,
+            'agent_rate': 1000,
+            'physics_rate': 1000,
+            'hard_reset': True,
+            })
 
 register(
     id='CartPoleDiscrete-PyBullet-v0',
