@@ -19,17 +19,24 @@ RUN apt-get update &&\
         g++ \
         g++-8 \
         clang \
+        clang-7 \
+        clang-8 \
         make \
         cmake \
         ninja-build \
+        valgrind \
         ccache \
         libgflags-dev \
         python3-pip \
+        python3.6 \
+        python3.7 \
+        libpython3.6-dev \
+        libpython3.7-dev \
         &&\
     rm -rf /var/lib/apt/lists/*
 
 # Enable CCACHE by default
-ENV PATH=/usr/lib/ccache:$PATH
+ENV PATH=/usr/lib/ccache:${PATH}
 RUN mkdir "$HOME/.ccache" &&\
     echo "max_size = 2.0G" > "$HOME/.ccache/ccache.conf"
 
@@ -76,31 +83,49 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_releas
         &&\
     rm -rf /var/lib/apt/lists/*
 
-# Install ign-gazebo
+# Install ign-gazebo from my fork
 RUN cd /tmp &&\
     git clone --depth 1 https://github.com/diegoferigo/ign-gazebo  &&\
     cd ign-gazebo && mkdir -p build && cd build &&\
     cmake \
         -DCMAKE_BUILD_TYPE="Release" \
         -DBUILD_TESTING:BOOL=OFF \
+        -DCMAKE_INSTALL_PREFIX="/usr" \
         .. &&\
     cmake --build . --target install -- -j8 &&\
     rm -r /tmp/ign-gazebo
 
-# Install python packages in a virtualenv and enable it by default
-ENV VIRTUAL_ENV=/ve
-ENV PATH=${VIRTUAL_ENV}/bin:${PATH}
-RUN pip3 install virtualenv &&\
-    virtualenv ${VIRTUAL_ENV} &&\
-    ${VIRTUAL_ENV}/bin/pip3 install \
-        gym \
-        numpy \
-        pytest
-    
+# Install idyntree
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends python3-numpy libxml2-dev coinor-libipopt-dev &&\
+    rm -rf /var/lib/apt/lists/* &&\
+    git clone --depth 1 -b feature/numpy-and-ik https://github.com/diegoferigo/idyntree /tmp/idyntree &&\
+    mkdir -p /tmp/idyntree/build && cd /tmp/idyntree/build &&\
+    cmake .. \
+        -GNinja \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DIDYNTREE_USES_PYTHON=True \
+        -DPython_ADDITIONAL_VERSIONS=3.6 \
+        -DIDYNTREE_USES_PYTHON_VERSION=3.6 \
+        -DPYTHON_NUMPY_INCLUDE_DIR:PATH=/usr/lib/python3/dist-packages/numpy/core/include \
+        &&\
+    cmake --build . --target install &&\
+    rm -r /tmp/idyntree
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
+ENV PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python3/dist-packages
+
 # Setup gym-ignition
 ARG install_prefix="/usr/local"
-ARG INSTALL_PREFIX=${install_prefix}
-ENV IGN_GAZEBO_SYSTEM_PLUGIN_PATH="${INSTALL_PREFIX}/lib/gympp/plugins"
-ENV IGN_GAZEBO_RESOURCE_PATH="${INSTALL_PREFIX}/share/gympp/gazebo/worlds:${INSTALL_PREFIX}/share/gympp/gazebo/models"
-ENV SDF_PATH="${INSTALL_PREFIX}/share/gympp/gazebo/models"
-ENV PYTHONPATH="${PYTHONPATH}:${INSTALL_PREFIX}/lib/gympp/bindings"
+ENV IGN_GAZEBO_SYSTEM_PLUGIN_PATH="${install_prefix}/lib/gympp/plugins"
+ENV IGN_GAZEBO_RESOURCE_PATH="${install_prefix}/share/gympp/gazebo/worlds:${install_prefix}/share/gympp/gazebo/models"
+ENV SDF_PATH="${install_prefix}/share/gympp/gazebo/models"
+ENV PYTHONPATH="${PYTHONPATH}:${install_prefix}/lib/python3.6/site-packages:${install_prefix}/lib/python3.7/site-packages"
+
+# Prepare virtualenv variables
+ENV VIRTUAL_ENV=/venv
+ENV PATH=${VIRTUAL_ENV}/bin:${PATH}
+
+COPY entrypoint.sh /entrypoint.sh
+COPY setup_virtualenv.sh /setup_virtualenv.sh
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]

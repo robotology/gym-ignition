@@ -2,5 +2,6 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from gym_ignition.tasks import cartpole_discrete
-from gym_ignition.tasks import cartpole_continuous
+from . import pendulum_swingup
+from . import cartpole_discrete
+from . import cartpole_continuous

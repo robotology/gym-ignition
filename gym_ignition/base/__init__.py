@@ -3,12 +3,9 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 # Abstract classes
-from gym_ignition.base import task
-from gym_ignition.base import robot
-
-# Base Python environments
-from gym_ignition.base import rt_env
-from gym_ignition.base import gazebo_env
+from . import task
+from . import robot
+from . import runtime
 
 # Base C++ environment
-from gym_ignition.base import gympp_env
+from . import gympp_env

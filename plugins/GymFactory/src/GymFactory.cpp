@@ -11,6 +11,7 @@
 #include "gympp/Metadata.h"
 #include "gympp/Space.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
+#include "sdf/Root.hh"
 
 #include <cassert>
 #include <ostream>
@@ -89,18 +90,30 @@ gympp::EnvironmentPtr gympp::GymFactory::make(const std::string& envName)
         return nullptr;
     }
 
-    // Setup the model
-    if (!ignGym->setupGazeboModel(md.modelFileName)) {
-        gymppError << "Failed to setup the gazebo model" << std::endl;
+    // Find and load the SDF file
+    sdf::Root root;
+    if (!ignGym->findAndLoadSdf(md.modelFileName, root)) {
+        gymppError << "Failed to find and load the SDF file" << std::endl;
         return nullptr;
     }
 
-    // Setup the plugin
-    if (!ignGym->setupIgnitionPlugin(md.libraryName, md.className)) {
-        gymppError << "Failed to setup the ignition plugin" << std::endl;
-        return nullptr;
-    }
+    // Create the model initialization data
+    gazebo::ModelInitData modelData;
+    modelData.sdfString = root.Element()->ToString("");
+    // TODO: expose position and orientation?
 
+    // Store the model data in the environment
+    ignGym->storeModelData(modelData);
+
+    // Create the gympp plugin data
+    gympp::gazebo::PluginData pluginData;
+    pluginData.libName = md.libraryName;
+    pluginData.className = md.className;
+
+    // Store the gympp plugin data
+    ignGym->storePluginData(pluginData);
+
+    // Return the pointer to the gympp::Environment interface
     return ignGym->env();
 }
 
@@ -112,8 +125,8 @@ bool gympp::GymFactory::registerPlugin(const PluginMetadata& md)
     }
 
     if (pImpl->exists(md.environmentName)) {
-        gymppDebug << "Environment '" << md.environmentName << "' has been already registered"
-                   << std::endl;
+        gymppWarning << "Environment '" << md.environmentName
+                     << "' has been already registered. This operation will be no-op." << std::endl;
         return true;
     }
 

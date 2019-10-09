@@ -1,0 +1,74 @@
+name: 'Continuous Integration'
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  ubuntu:
+    name: Ubuntu
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python:
+          - 3.6
+          # - 3.7
+        compiler:
+          - gcc7
+          # - gcc8
+          # - clang
+          # - clang8
+        build_type:
+          # - Release
+          - Debug
+
+    steps:
+      - uses: actions/checkout@master
+
+      # Workaround to export environment variables that persist in next steps
+      # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+      - name: Setup Environment
+        run: |
+          case ${{ matrix.compiler }} in
+              gcc7) CC=gcc ; CXX=g++ ;;
+              gcc8) CC=gcc-8 ; CXX=g++-8 ;;
+              clang6) CC=clang; CXX=clang++ ;;
+              clang8) CC=clang-8; CXX=clang++-8 ;;
+              *) echo "Compiler not supported" && exit 1 ;;
+          esac
+          echo "::set-env name=CC::$CC"
+          echo "::set-env name=CXX::$CXX"
+          echo "::set-env name=PYTHON_VERSION::${{ matrix.python }}"
+          env
+
+      - name: Pull CI Docker Image
+        run: 'docker pull diegoferigo/gym-ignition:ci'
+
+      - name: Build and Install C++
+        run: |
+          set -u
+          docker run \
+            -d -i --name ci -v $(pwd):/github -w /github \
+            -e PYTHON_VERSION=$PYTHON_VERSION -e CC=$CC -e CXX=$CXX \
+            diegoferigo/gym-ignition:ci bash
+          docker exec -i ci sh -c 'mkdir -p build'
+          docker exec -i ci sh -c \
+            'cd build &&\
+             cmake .. \
+                 -GNinja \
+                 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+                 -DPython_ADDITIONAL_VERSIONS=$PYTHON_VERSION'
+          docker exec -i ci sh -c 'cmake --build build --target install'
+
+      - name: Setup Python Package
+        run: docker exec -i ci sh -c 'pip3 install -e .'
+
+      - name: Python Tests
+        run: docker exec -i ci sh -c 'pytest tests/python'
+
+      - name: Python Tests with Valgrind
+        if: failure()
+        run: |
+          docker exec -i ci sh -c 'pip3 install colour-valgrind'
+          docker exec -i ci sh -c 'valgrind --log-file=/tmp/valgrind pytest tests/python'
+          docker exec -i ci sh -c 'colour-valgrind -t /tmp/valgrind'

@@ -9,8 +9,6 @@
 #ifndef GYMPP_PLUGINS_ROBOTCONTROLLER
 #define GYMPP_PLUGINS_ROBOTCONTROLLER
 
-#include "gympp/gazebo/EnvironmentCallbacks.h"
-
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
 #include <ignition/gazebo/EventManager.hh>
@@ -31,7 +29,6 @@ class gympp::plugins::RobotController final
     : public ignition::gazebo::System
     , public ignition::gazebo::ISystemPreUpdate
     , public ignition::gazebo::ISystemConfigure
-    , public gympp::gazebo::EnvironmentCallbacks
 {
 private:
     class Impl;
@@ -48,12 +45,6 @@ public:
 
     void PreUpdate(const ignition::gazebo::UpdateInfo& info,
                    ignition::gazebo::EntityComponentManager& ecm) override;
-
-    bool isDone() override;
-    bool reset() override;
-    bool setAction(const Action& action) override;
-    std::optional<Reward> computeReward() override;
-    std::optional<Observation> getObservation() override;
 };
 
 #endif // GYMPP_PLUGINS_ROBOTCONTROLLER

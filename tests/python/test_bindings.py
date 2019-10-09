@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 # Copyright (C) 2019 Istituto Italiano di Tecnologia (IIT). All rights reserved.
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
@@ -54,7 +52,8 @@ def test_sample(create_std_vector):
     sample = bindings.Sample(vector)
 
     for i in range(0, vector.size()-1):
-        assert sample.getBuffer_d()[i] == vector[i], "Sample object does not contain correct data"
+        assert sample.getBuffer_d()[i] == vector[i], \
+            "Sample object does not contain correct data"
 
     sample.getBuffer_d()[2] = 42
     assert sample.get_d(2).value() == 42, "Failed to insert data in the Sample object"
@@ -73,14 +72,19 @@ def test_range():
 def test_discrete_space():
     discrete_space = bindings.Discrete(12)
 
-    assert not discrete_space.contains(bindings.Sample([-1])), "Discrete object failed to verify if a sample belongs to its space"
-    assert not discrete_space.contains(bindings.Sample([13])), "Discrete object failed to verify if a sample belongs to its space"
+    assert not discrete_space.contains(bindings.Sample([-1])), \
+        "Discrete object failed to verify if a sample belongs to its space"
+    assert not discrete_space.contains(bindings.Sample([13])), \
+        "Discrete object failed to verify if a sample belongs to its space"
 
     for n in range(50):
         sample = discrete_space.sample()
-        assert sample.getBuffer_i().size() == 1, "Wrong size of the sample extracted from a discrete space"
-        assert type(sample.getBuffer_i()[0]) is int, "Wrong data type of the sample extracted from a discrete space"
-        assert discrete_space.contains(sample), "Sampled data is not contained in the discrete space object that created it"
+        assert sample.getBuffer_i().size() == 1, \
+            "Wrong size of the sample extracted from a discrete space"
+        assert isinstance(sample.getBuffer_i()[0], int), \
+            "Wrong data type of the sample extracted from a discrete space"
+        assert discrete_space.contains(sample), \
+            "Sampled data is not contained in the discrete space object that created it"
 
 
 def test_box_space():
@@ -88,16 +92,23 @@ def test_box_space():
     box = bindings.Box(-1, 42, [size])
 
     # By default the data precision of python list is float. Force double.
-    assert box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 42]))), "Box object failed to verify if a sample belongs to its space"
-    assert not box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 43]))), "Box object failed to verify if a sample belongs to its space"
-    assert not box.contains(bindings.Sample(bindings.Vector_d([0]))), "Box object failed to verify if a sample belongs to its space"
-    assert not box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 43, 0]))), "Box object failed to verify if a sample belongs to its space"
+    assert box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 42]))), \
+        "Box object failed to verify if a sample belongs to its space"
+    assert not box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 43]))), \
+        "Box object failed to verify if a sample belongs to its space"
+    assert not box.contains(bindings.Sample(bindings.Vector_d([0]))), \
+        "Box object failed to verify if a sample belongs to its space"
+    assert not box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 43, 0]))), \
+        "Box object failed to verify if a sample belongs to its space"
 
     for n in range(50):
         sample = box.sample()
-        assert sample.getBuffer_d().size() == size, "Wrong size of the sample extracted from a box space"
-        assert type(sample.getBuffer_d()[0]) is float, "Wrong data type of the sample extracted from the box space"
-        assert box.contains(sample), "Sampled data is not contained in the box space object that created it"
+        assert sample.getBuffer_d().size() == size, \
+            "Wrong size of the sample extracted from a box space"
+        assert isinstance(sample.getBuffer_d()[0], float), \
+            "Wrong data type of the sample extracted from the box space"
+        assert box.contains(sample), \
+            "Sampled data is not contained in the box space object that created it"
     
 
 def test_space_box_metadata(create_space_box_md):
@@ -162,7 +173,8 @@ def test_gymfactory():
     assert not env, "The environment should not be valid"
 
     # Check that the CartPole plugin exists
-    assert "IGN_GAZEBO_SYSTEM_PLUGIN_PATH" in os.environ, "Variable IGN_GAZEBO_SYSTEM_PLUGIN_PATH not set in the environment"
+    assert "IGN_GAZEBO_SYSTEM_PLUGIN_PATH" in os.environ, \
+        "Variable IGN_GAZEBO_SYSTEM_PLUGIN_PATH not set in the environment"
     directories = os.environ['IGN_GAZEBO_SYSTEM_PLUGIN_PATH'].split(os.pathsep)
 
     found = False
@@ -209,7 +221,7 @@ def test_gymfactory():
     assert ign_env, "Failed to get the ignition environment"
 
     # Set verbosity
-    bindings.GazeboWrapper.setVerbosity(1)
+    bindings.GazeboWrapper.setVerbosity(4)
 
     # Use the environment
     env.reset()
@@ -231,6 +243,5 @@ def test_gymfactory():
     env2 = factory.make("CartPole")
     assert env2, "Failed to create CartPoleIgnition environment from the factory"
     assert env != env2, "Environment created from the factory are the same"
-    bindings.GazeboWrapper.setVerbosity(1)
     env2.reset()
     env2.step(action)

@@ -1,0 +1,79 @@
+name: PyPI Release
+
+# Visit the following page for more details:
+# https://packaging.python.org/tutorials/packaging-projects/
+
+on:
+  release:
+    types:
+      - published
+      - prereleased
+
+jobs:
+  # =============
+  # SDIST PACKAGE
+  # =============
+
+  sdist:
+    name: sdist
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version:
+          - 3.6
+    container:
+      image: diegoferigo/gym-ignition:ci
+      env:
+        CC: gcc
+        CXX: g++
+        PYTHON_VERSION: ${{ matrix.python_version }}
+
+    steps:
+      - uses: actions/checkout@master
+
+      # Validate the last tag accordingly to PEP440
+      # From https://stackoverflow.com/a/37972030/12150968
+      - name: Validate Tag for PEP440 compliance
+        run: |
+          apt-get update
+          apt-get install -y source-highlight
+          last_tag="$(git describe --abbrev=0 --tags)"
+          rel_regexp='^(\d+!)?(\d+)(\.\d+)+([\.\-\_])?((a(lpha)?|b(eta)?|c|r(c|ev)?|pre(view)?)\d*)?(\.?(post|dev)\d*)?$'
+          echo ""
+          echo $last_tag
+          echo ""
+          check-regexp ${rel_regexp} ${last_tag}
+          match=$(check-regexp ${rel_regexp} ${last_tag} | grep matches | cut -d ' ' -f 5)
+          test $match -eq 1 && true
+
+      # The entrypoint is not called because it is overridden by GH Actions.
+      # Even using the 'jobs.<job_id>.container.options' does not work because the
+      # entrypoint of GH Actions overrides the one passed through YAML.
+      - name: Execute entrypoint
+        run: . /entrypoint.sh
+
+      - name: Create package
+        run: python setup.py sdist
+
+      - name: Install and test
+        run: |
+          cd dist
+          pip install $(find . -name gym-ignition-*.zip -o -name gym-ignition-*.gz)
+          cd ../tests/python
+          module_path=$(python -c "import gym_ignition ; print(gym_ignition.__path__[0])")
+          module_path=$(echo $module_path | cut -d ' ' -f 1)
+          export IGN_GAZEBO_SYSTEM_PLUGIN_PATH=${module_path}/plugins
+          data_path=$(python -c "import gym_ignition_data ; print(gym_ignition_data.__path__[0])")
+          export IGN_GAZEBO_RESOURCE_PATH=${data_path}:${data_path}/worlds
+          pytest || true
+
+      - name: Install twine
+        if: github.event.action == 'published'
+        run: pip install twine
+
+      - name: Push to PyPI
+        if: github.event.action == 'published'
+        run: twine upload --verbose dist/*
+        env:
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}

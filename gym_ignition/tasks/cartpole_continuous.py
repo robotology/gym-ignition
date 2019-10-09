@@ -2,45 +2,67 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+import abc
 import gym
-import gym_ignition
+import numpy as np
+from typing import Tuple
+from gym_ignition.base import task
 from gym_ignition.utils import logger
-from gym_ignition.utils.typing import *
+from gym_ignition.utils.typing import Action, Reward, Observation
+from gym_ignition.utils.typing import ActionSpace, ObservationSpace
+from gym_ignition.base.robot import robot_abc, feature_detector, robot_joints
 
 
-class CartPoleContinuous(gym_ignition.Task):
-    def __init__(self, robot: gym_ignition.Robot, reward_cart_at_center: bool = None) -> None:
-        super().__init__(robot=robot)
+@feature_detector
+class RobotFeatures(robot_abc.RobotABC,
+                    robot_joints.RobotJoints,
+                    abc.ABC):
+    pass
+
+
+class CartPoleContinuous(task.Task, abc.ABC):
+
+    def __init__(self, reward_cart_at_center: bool = False) -> None:
+        super().__init__()
+
+        # Store the requested robot features for this task
+        self.robot_features = RobotFeatures
 
         # Private attributes
         self._steps_beyond_done = None
         self._reward_cart_at_center = reward_cart_at_center
 
-        # Configure action space
-        max_force = 50
-        self.action_space = gym.spaces.Box(np.array([-max_force]),
-                                           np.array([max_force]),
-                                           dtype=np.float32)
-
         # Variables limits
         self._x_threshold = 2.5
         self._x_threshold_reset = 2.4
 
-        # Configure observation limits
-        high = np.array([
-            self._x_threshold,        # x
-            np.finfo(np.float32).max, # x_dot
-            np.finfo(np.float32).max, # theta
-            np.finfo(np.float32).max  # theta_dot
-        ])
-
-        # Configure the observation space
-        self.observation_space = gym.spaces.Box(-high, high, dtype=np.float32)
+        # Create the spaces
+        self.action_space, self.observation_space = self.create_spaces()
 
         # Seed the environment
         self.seed()
 
-    def _set_action(self, action: Action) -> bool:
+    def create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
+        # Configure action space
+        max_force = 50
+        action_space = gym.spaces.Box(np.array([-max_force]),
+                                      np.array([max_force]),
+                                      dtype=np.float32)
+
+        # Configure observation limits
+        high = np.array([
+            self._x_threshold,         # x
+            np.finfo(np.float32).max,  # x_dot
+            np.finfo(np.float32).max,  # theta
+            np.finfo(np.float32).max   # theta_dot
+        ])
+
+        # Configure the observation space
+        observation_space = gym.spaces.Box(-high, high, dtype=np.float32)
+
+        return action_space, observation_space
+
+    def set_action(self, action: Action) -> bool:
         assert self.action_space.contains(action), \
             "%r (%s) invalid" % (action, type(action))
 
@@ -56,7 +78,7 @@ class CartPoleContinuous(gym_ignition.Task):
 
         return True
 
-    def _get_observation(self) -> Observation:
+    def get_observation(self) -> Observation:
         # Get the robot object
         robot = self.robot
 
@@ -71,19 +93,12 @@ class CartPoleContinuous(gym_ignition.Task):
         # Create the observation object
         observation = Observation(np.array([x, x_dot, theta, theta_dot]))
 
-        # Validate the observation
-        assert self.observation_space.contains(observation), \
-            "%r (%s) invalid" % (observation, type(observation))
-
         # Return the observation
         return observation
 
-    def _get_reward(self) -> Reward:
-        # Initialize the reward
-        reward = None
-
+    def get_reward(self) -> Reward:
         # Calculate the reward
-        if not self._is_done():
+        if not self.is_done():
             reward = 1.0
         else:
             if self._steps_beyond_done is None:
@@ -103,7 +118,7 @@ class CartPoleContinuous(gym_ignition.Task):
 
         if self._reward_cart_at_center:
             # Get the observation
-            observation = self._get_observation()
+            observation = self.get_observation()
             x = observation[0]
             x_dot = observation[1]
 
@@ -114,9 +129,9 @@ class CartPoleContinuous(gym_ignition.Task):
 
         return reward
 
-    def _is_done(self) -> bool:
+    def is_done(self) -> bool:
         # Get the observation
-        observation = self._get_observation()
+        observation = self.get_observation()
 
         # Get x and theta
         x = observation[0]
@@ -126,9 +141,25 @@ class CartPoleContinuous(gym_ignition.Task):
 
         return done
 
-    def _reset(self) -> bool:
-        new_state = self._np_random.uniform(low=-0.05, high=0.05, size=(4,))
+    def reset_task(self) -> bool:
+        # Initialize the environment with a new random state using the random number
+        # generator provided by the Task.
+        new_state = self.np_random.uniform(low=-0.05, high=0.05, size=(4,))
         new_state[2] += np.pi
+
+        for joint in {"linear", "pivot"}:
+            desired_control_mode = robot_joints.JointControlMode.TORQUE
+
+            # TODO: temporary workaround for robot implementation without this method,
+            #       e.g. FactoryRobot, which does not need to call it at the moment.
+            try:
+                if self.robot.joint_control_mode(joint) != desired_control_mode:
+                    ok_mode = self.robot.set_joint_control_mode(joint,
+                                                                desired_control_mode)
+                    assert ok_mode, f"Failed to set control mode for joint '{joint}'"
+            except Exception:
+                logger.warn("This runtime does not support setting the control mode")
+                pass
 
         ok1 = self.robot.reset_joint("linear", new_state[0], new_state[1])
         ok2 = self.robot.reset_joint("pivot", new_state[2], new_state[3])

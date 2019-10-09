@@ -6,41 +6,62 @@
 # ENVIRONMENT CALLBACKS
 # =====================
 
-add_library(EnvironmentCallbacks INTERFACE)
-target_sources(EnvironmentCallbacks INTERFACE
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/EnvironmentCallbacks.h)
+add_library(Task INTERFACE)
+target_sources(Task INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/Task.h)
 
-target_include_directories(EnvironmentCallbacks INTERFACE
+target_include_directories(Task INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(EnvironmentCallbacks INTERFACE gympp)
+target_link_libraries(Task INTERFACE gympp)
 
-install(
-    FILES include/gympp/gazebo/EnvironmentCallbacks.h
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp/gazebo)
+# ==============
+# TASK SINGLETON
+# ==============
 
-# ===============================
-# ENVIRONMENT CALLBACKS SINGLETON
-# ===============================
+add_library(TaskSingleton
+    include/gympp/gazebo/TaskSingleton.h
+    src/TaskSingleton.cpp)
 
-add_library(EnvironmentCallbacksSingleton SHARED
-    include/gympp/gazebo/EnvironmentCallbacksSingleton.h
-    src/EnvironmentCallbacksSingleton.cpp)
-
-target_include_directories(EnvironmentCallbacksSingleton PUBLIC
+target_include_directories(TaskSingleton PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(EnvironmentCallbacksSingleton
+target_link_libraries(TaskSingleton
     PUBLIC
     gympp
     ignition-gazebo2::core
     PRIVATE
-    EnvironmentCallbacks)
+    Task)
 
-set_target_properties(EnvironmentCallbacksSingleton PROPERTIES
-    PUBLIC_HEADER include/gympp/gazebo/EnvironmentCallbacksSingleton.h)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    set_target_properties(TaskSingleton PROPERTIES
+        PUBLIC_HEADER include/gympp/gazebo/TaskSingleton.h)
+endif()
+
+# =============
+# ECM SINGLETON
+# =============
+
+add_library(ECMSingleton
+    include/gympp/gazebo/ECMSingleton.h
+    src/ECMSingleton.cpp)
+
+target_include_directories(ECMSingleton PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_link_libraries(ECMSingleton
+    PUBLIC
+    ignition-gazebo2::core
+    PRIVATE
+    gympp)
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    set_target_properties(ECMSingleton PROPERTIES
+        PUBLIC_HEADER include/gympp/gazebo/ECMSingleton.h)
+endif()
 
 # ==============
 # GAZEBO WRAPPER
@@ -52,8 +73,11 @@ add_library(GazeboWrapper
 
 target_link_libraries(GazeboWrapper
     PRIVATE
-    EnvironmentCallbacks
-    EnvironmentCallbacksSingleton
+    Task
+    TaskSingleton
+    RobotSingleton
+    ECMSingleton
+    IgnitionRobot
     ignition-gazebo2::core
     tiny-process-library)
 
@@ -77,8 +101,8 @@ target_link_libraries(IgnitionEnvironment
     gympp
     GazeboWrapper
     PRIVATE
-    EnvironmentCallbacks
-    EnvironmentCallbacksSingleton)
+    Task
+    TaskSingleton)
 
 set_target_properties(IgnitionEnvironment PROPERTIES
     PUBLIC_HEADER include/gympp/gazebo/IgnitionEnvironment.h)
@@ -94,7 +118,7 @@ target_include_directories(IgnitionEnvironment PUBLIC
 # This class must be shared, otherwise plugins do not share static objects like singletons
 # with the memory of the program that loaded them
 
-add_library(RobotSingleton SHARED
+add_library(RobotSingleton
     include/gympp/gazebo/RobotSingleton.h
     src/RobotSingleton.cpp)
 
@@ -103,8 +127,10 @@ target_link_libraries(RobotSingleton
     gympp
     ignition-gazebo2::core)
 
-set_target_properties(RobotSingleton PROPERTIES
-    PUBLIC_HEADER include/gympp/gazebo/RobotSingleton.h)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    set_target_properties(RobotSingleton PROPERTIES
+        PUBLIC_HEADER include/gympp/gazebo/RobotSingleton.h)
+endif()
 
 target_include_directories(RobotSingleton PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
@@ -114,7 +140,7 @@ target_include_directories(RobotSingleton PUBLIC
 # IGNITION ROBOT
 # ==============
 
-add_library(IgnitionRobot SHARED
+add_library(IgnitionRobot
     include/gympp/gazebo/IgnitionRobot.h
     src/IgnitionRobot.cpp)
 
@@ -135,16 +161,24 @@ target_include_directories(IgnitionRobot PUBLIC
 # INSTALL THE TARGETS
 # ===================
 
-install(
-    TARGETS
-    IgnitionEnvironment
-    GazeboWrapper
-    RobotSingleton
-    EnvironmentCallbacks
-    EnvironmentCallbacksSingleton
-    IgnitionRobot
-    EXPORT gympp
-    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-    RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-    PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp/gazebo)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    install(
+        FILES include/gympp/gazebo/Task.h
+        DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp/gazebo)
+
+    install(
+        TARGETS
+        IgnitionEnvironment
+        GazeboWrapper
+        RobotSingleton
+        ECMSingleton
+        Task
+        TaskSingleton
+        IgnitionRobot
+        EXPORT gympp
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/gympp/gazebo)
+endif()
+

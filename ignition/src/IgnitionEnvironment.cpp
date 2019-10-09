@@ -10,8 +10,12 @@
 #include "gympp/Log.h"
 #include "gympp/Random.h"
 #include "gympp/Space.h"
-#include "gympp/gazebo/EnvironmentCallbacks.h"
-#include "gympp/gazebo/EnvironmentCallbacksSingleton.h"
+#include "gympp/gazebo/Task.h"
+#include "gympp/gazebo/TaskSingleton.h"
+
+#include <sdf/Element.hh>
+#include <sdf/Model.hh>
+#include <sdf/Root.hh>
 
 #include <cassert>
 #include <ostream>
@@ -22,25 +26,82 @@ class IgnitionEnvironment::Impl
 {
 public:
     size_t id;
-    gympp::gazebo::EnvironmentCallbacks* cb = nullptr;
+    gympp::gazebo::Task* cb = nullptr;
+
+    PluginData pluginData;
+    gympp::gazebo::ModelInitData modelData;
 };
 
 // ====================
 // IGNITION ENVIRONMENT
 // ====================
 
-EnvironmentCallbacks* IgnitionEnvironment::envCallbacks()
+bool IgnitionEnvironment::initializeSimulation()
+{
+    // If the server is already running it means that the simulation has been already initialized
+    if (GazeboWrapper::initialized()) {
+        return true;
+    }
+
+    gymppDebug << "Initializing the simulation" << std::endl;
+
+    // Initialize gazebo and load the world file
+    if (!GazeboWrapper::initialize()) {
+        gymppError << "Failed to either initialize gazebo or gather the server" << std::endl;
+        return false;
+    }
+
+    // Use the pointer to this object (which is unique and for sure is not shared with any other
+    // environment objects) as prefix.
+    std::string prefix = std::to_string(reinterpret_cast<int64_t>(this));
+
+    // Initialize the model name with the name specified in the initialization data
+    std::string desiredModelNameWithoutPrefix = pImpl->modelData.modelName;
+
+    // Use the name from the SDF if the initialization data does not specify it
+    if (desiredModelNameWithoutPrefix.empty()) {
+        // Get the name from the model SDF
+        desiredModelNameWithoutPrefix = getModelNameFromSDF(pImpl->modelData.sdfString);
+
+        if (desiredModelNameWithoutPrefix.empty()) {
+            gymppError << "Failed to extract the model name from the model SDF" << std::endl;
+            return false;
+        }
+    }
+
+    // Final model name.
+    // Note that the real name substitutin will be done by the insertModel() method.
+    pImpl->modelData.modelName = prefix + "::" + desiredModelNameWithoutPrefix;
+
+    // Insert the model in the world
+    if (!insertModel(pImpl->modelData, pImpl->pluginData)) {
+        gymppError << "Failed to insert the model while resetting the environment" << std::endl;
+        return false;
+    }
+
+    gymppDebug << "Simulation initialized" << std::endl;
+    return true;
+}
+
+Task* IgnitionEnvironment::getTask()
 {
     if (!pImpl->cb) {
-        auto* ecSingleton = EnvironmentCallbacksSingleton::Instance();
-        auto modelNames = getModelNames();
-        assert(modelNames.size() == 1);
-        std::string scopedModelName = modelNames.front();
-        pImpl->cb = ecSingleton->get(scopedModelName);
+        auto* ecSingleton = TaskSingleton::Instance();
+        pImpl->cb = ecSingleton->get(pImpl->modelData.modelName);
         assert(pImpl->cb);
     }
 
     return pImpl->cb;
+}
+
+void IgnitionEnvironment::storeModelData(const gympp::gazebo::ModelInitData& modelData)
+{
+    pImpl->modelData = modelData;
+}
+
+void IgnitionEnvironment::storePluginData(const PluginData& pluginData)
+{
+    pImpl->pluginData = pluginData;
 }
 
 IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
@@ -72,17 +133,18 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     assert(action_space);
     assert(observation_space);
 
-    // Check if the gazebo server is running. It reset() is executed as first method,
+    // Check if the gazebo server is running. If reset() is executed as first method,
     // the server is initialized lazily.
-    if (!GazeboWrapper::initialize()) {
-        gymppError << "Failed to either initialize gazebo or gather the server" << std::endl;
+    if (!initializeSimulation()) {
+        gymppError << "Failed to initialize the simulation" << std::endl;
+        assert(false);
         return {};
     }
 
-    // Get the environment callbacks
-    auto callbacks = envCallbacks();
-    if (!callbacks) {
-        gymppError << "Failed to get the environment callbacks from the plugin" << std::endl;
+    // Get the task
+    auto task = getTask();
+    if (!task) {
+        gymppError << "Failed to get the Task interface from the plugin" << std::endl;
         return {};
     }
 
@@ -92,7 +154,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Set the action to the environment
-    if (!callbacks->setAction(action)) {
+    if (!task->setAction(action)) {
         gymppError << "Failed to set the action" << std::endl;
         return {};
     }
@@ -104,7 +166,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Get the observation from the environment
-    std::optional<Observation> observation = callbacks->getObservation();
+    std::optional<Observation> observation = task->getObservation();
 
     if (!observation) {
         gymppError << "The gympp plugin didn't return the observation" << std::endl;
@@ -118,7 +180,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
     }
 
     // Get the reward from the environment
-    std::optional<Reward> reward = callbacks->computeReward();
+    std::optional<Reward> reward = task->computeReward();
 
     if (!reward) {
         gymppError << "The gympp plugin didn't return the reward" << std::endl;
@@ -131,7 +193,7 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
         return {};
     }
 
-    return IgnitionEnvironment::State{callbacks->isDone(), {}, reward.value(), observation.value()};
+    return IgnitionEnvironment::State{task->isDone(), {}, reward.value(), observation.value()};
 }
 
 std::vector<size_t> IgnitionEnvironment::seed(size_t seed)
@@ -150,32 +212,41 @@ gympp::EnvironmentPtr IgnitionEnvironment::env()
 
 std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
 {
-    // Check if the gazebo server is running. It reset() is executed as first method,
+    // Check if the gazebo server is running. If reset() is executed as first method,
     // the server is initialized lazily.
-    if (!GazeboWrapper::initialize()) {
-        gymppError << "Failed to either initialize gazebo or gather the server" << std::endl;
+    if (!initializeSimulation()) {
+        gymppError << "Failed to initialize the simulation" << std::endl;
+        assert(false);
         return {};
     }
 
-    // Get the environment callbacks
-    auto* callbacks = envCallbacks();
-    if (!callbacks) {
-        gymppError << "Failed to get the environment callbacks from the plugin" << std::endl;
+    // Get the task
+    auto* task = getTask();
+    if (!task) {
+        gymppError << "Failed to get the Task interface from the plugin" << std::endl;
         return {};
     }
 
-    if (!callbacks->reset()) {
+    if (!task->resetTask()) {
         gymppError << "Failed to reset plugin" << std::endl;
         return {};
     }
 
     gymppDebug << "Retrieving the initial observation after reset" << std::endl;
-    return callbacks->getObservation();
+    return task->getObservation();
 }
 
 bool IgnitionEnvironment::render(RenderMode mode)
 {
     gymppDebug << "Rendering the environment" << std::endl;
+
+    // Check if the gazebo server is running. If render() is executed as first method,
+    // the server is initialized lazily.
+    if (!initializeSimulation()) {
+        gymppError << "Failed to initialize the simulation" << std::endl;
+        assert(false);
+        return {};
+    }
 
     if (mode == RenderMode::HUMAN) {
         return GazeboWrapper::gui();

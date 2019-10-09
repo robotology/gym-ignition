@@ -10,13 +10,17 @@ from gym_ignition.utils import logger
 
 # Set gym verbosity
 logger.set_level(gym.logger.INFO)
-assert(logger.set_level(gym.logger.DEBUG) or True)
+assert logger.set_level(gym.logger.DEBUG) or True
 
 # Create the environment
 # env = gym.make("CartPole-v1")
-# env = gym.make("CartPoleGympp-Discrete-v0")
-# env = gym.make("CartPoleGymppy-Discrete-v0")
-env = gym.make("CartPoleGymppy-Continuous-v0")
+# env = gym.make("CartPoleDiscrete-Gympp-v0")
+env = gym.make("CartPoleDiscrete-Gazebo-v0")
+# env = gym.make("CartPoleContinuous-Gazebo-v0")
+# env = gym.make("CartPole-PyBullet-Discrete-v0")
+
+# Enable the rendering
+env.render('human')
 
 # Initialize the seed
 env.seed(42)
@@ -35,7 +39,8 @@ for epoch in range(10):
         observation, reward, done, _ = env.step(action)
 
         # Render the environment
-        env.render('human')
+        # It is not required to call this in the loop
+        # env.render('human')
 
         # Accumulate the reward
         totalReward += reward
