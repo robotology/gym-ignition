@@ -47,6 +47,12 @@
     </a>
 </p>
 
+<p align="center">
+    <a href="https://colab.research.google.com/github/robotology/gym-ignition/blob/master/examples/colab/RandomPolicy.ipynb">
+    <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
+    </a>
+</p>
+
 <p align="center">⚠️ Warning, <a href="https://en.wikipedia.org/wiki/Here_be_dragons">Here be Dragons</a> ⚠️</p>
 <p align="center">You just reached a very unstable corner.<br/>Welcome, but mind your step. </p>
 
@@ -110,19 +116,15 @@ At the time of writing, Gym-Ignition offers the following features:
 
 ## Setup
 
-You can start exploring the project opening the [RandomPolicy.ipynb](examples/colab/RandomPolicy.ipynb).
+The setup instructions expect a **Ubuntu** distribution with at least **Python 3.6**.
 
-⚠️ The local installation of Gym-Ignition, given the early status of development, is still not very user-friendly. We are actively working on it for improving the user experience.
+The process is different whether you're an _user_ that wants to create environments using Gym-Ignition or you are a _developer_ that wants to edit the Python and C++ code. Common steps:
 
-Follow these initial common steps, and then select the type of installation that you prefer.
-
-1. Install all the Ignition Robotics suit excluding `ign-gazebo` following the [official documentation](https://ignitionrobotics.org/docs/latest/install).
-1. Install `ign-gazebo` from our [temporary fork](https://github.com/diegoferigo/ign-gazebo).
-1. Install SWIG with `apt install swig`.
-1. Update CMake if you have a version < 3.12 from the [official ppa](https://apt.kitware.com/).
+1. Install [SWIG](https://github.com/swig/swig) with `apt install swig`
 
 ### Are you a user?
 
+1. Install the Ignition Robotics suite following the [official documentation](https://ignitionrobotics.org/docs/latest/install)
 1. Install Gym-Ignition with `pip install gym-ignition` (preferably in a [virtual environment](https://docs.python.org/3.6/tutorial/venv.html))
 1. Execute the following to export the required environment variables:
    ```sh
@@ -139,8 +141,8 @@ After these steps, you should be able to execute the example [`launch_cartpole.p
 
 ### Are you a developer?
 
-Developers should install separately the C++ and Python components.
-
+1. Install all the Ignition Robotics suite except `ignition-gazebo2` following the [official documentation](https://ignitionrobotics.org/docs/latest/install)
+1. Install `ign-gazebo` from our [temporary fork](https://github.com/diegoferigo/ign-gazebo)
 1. Clone this repository
 1. Build and install the CMake project
    ```sh

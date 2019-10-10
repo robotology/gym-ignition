@@ -106,6 +106,10 @@ add_subdirectory(deps)
 # Add the C++ sources subdirectory
 add_subdirectory(gympp)
 
+# This target is not found automatically when searching for 'all' components and
+# ign-gazebo is statically compiled. Adding this find_package here solves the problem.
+find_package(ignition-gazebo2-gui)
+
 find_package(ignition-gazebo2 COMPONENTS all)
 if(ignition-gazebo2_FOUND)
     add_subdirectory(ignition)

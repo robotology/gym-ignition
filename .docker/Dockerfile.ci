@@ -23,39 +23,18 @@ RUN apt-get update &&\
         clang-8 \
         make \
         cmake \
+        cmake-curses-gui \
         ninja-build \
         valgrind \
-        ccache \
         libgflags-dev \
         python3-pip \
         python3.6 \
         python3.7 \
         libpython3.6-dev \
         libpython3.7-dev \
+        swig \
         &&\
     rm -rf /var/lib/apt/lists/*
-
-# Enable CCACHE by default
-ENV PATH=/usr/lib/ccache:${PATH}
-RUN mkdir "$HOME/.ccache" &&\
-    echo "max_size = 2.0G" > "$HOME/.ccache/ccache.conf"
-
-# Install swig
-RUN apt-get update &&\
-    apt-get install -y --no-install-recommends \
-        autotools-dev \
-        automake \
-        bison \
-        libpcre3-dev &&\
-    rm -rf /var/lib/apt/lists/* &&\
-    cd /tmp/ &&\
-    git clone --depth 1 -b rel-4.0.0 https://github.com/swig/swig.git &&\
-    cd swig &&\
-    sh autogen.sh &&\
-    ./configure &&\
-    make -j8 &&\
-    make install &&\
-    rm -r /tmp/swig
 
 # Install ignition robotics
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
@@ -114,7 +93,7 @@ RUN apt-get update &&\
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
 ENV PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python3/dist-packages
 
-# Setup gym-ignition
+# Setup gym-ignition if installed from source
 ARG install_prefix="/usr/local"
 ENV IGN_GAZEBO_SYSTEM_PLUGIN_PATH="${install_prefix}/lib/gympp/plugins"
 ENV IGN_GAZEBO_RESOURCE_PATH="${install_prefix}/share/gympp/gazebo/worlds:${install_prefix}/share/gympp/gazebo/models"
@@ -124,6 +103,11 @@ ENV PYTHONPATH="${PYTHONPATH}:${install_prefix}/lib/python3.6/site-packages:${in
 # Prepare virtualenv variables
 ENV VIRTUAL_ENV=/venv
 ENV PATH=${VIRTUAL_ENV}/bin:${PATH}
+
+# Setup gym-ignition if installed from pip
+ARG site_pkgs="${VIRTUAL_ENV}/lib/python3.6/site-packages"
+ENV IGN_GAZEBO_SYSTEM_PLUGIN_PATH="${IGN_GAZEBO_SYSTEM_PLUGIN_PATH}:${site_pkgs}/gym_ignition/plugins"
+ENV IGN_GAZEBO_RESOURCE_PATH="${IGN_GAZEBO_RESOURCE_PATH}:${site_pkgs}/gym_ignition_data:${site_pkgs}/gym_ignition_data/worlds"
 
 COPY entrypoint.sh /entrypoint.sh
 COPY setup_virtualenv.sh /setup_virtualenv.sh
