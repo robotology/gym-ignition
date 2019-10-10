@@ -131,8 +131,7 @@ Follow these initial common steps, and then select the type of installation that
    export IGN_GAZEBO_RESOURCE_PATH=${data_path}:${data_path}/worlds
    
    # Gazebo plugins
-   module_path=$(python -c "import gym_ignition ; print(gym_ignition.__path__[0])")
-   module_path=$(echo $module_path | cut -d ' ' -f 1)
+   module_path=$(python -c "import gym_ignition ; print(gym_ignition.__path__[0])" | grep gym_ignition)
    export IGN_GAZEBO_SYSTEM_PLUGIN_PATH=${module_path}/plugins
    ```
 
