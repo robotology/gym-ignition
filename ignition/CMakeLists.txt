@@ -31,7 +31,6 @@ target_include_directories(TaskSingleton PUBLIC
 target_link_libraries(TaskSingleton
     PUBLIC
     gympp
-    ignition-gazebo2::core
     PRIVATE
     Task)
 
@@ -102,7 +101,8 @@ target_link_libraries(IgnitionEnvironment
     GazeboWrapper
     PRIVATE
     Task
-    TaskSingleton)
+    TaskSingleton
+    ignition-gazebo2::core)
 
 set_target_properties(IgnitionEnvironment PROPERTIES
     PUBLIC_HEADER include/gympp/gazebo/IgnitionEnvironment.h)

@@ -9,8 +9,8 @@
 #ifndef GYMPP_ROBOT_TASKSINGLETON_H
 #define GYMPP_ROBOT_TASKSINGLETON_H
 
-#include <ignition/common/SingletonT.hh>
-
+#include <functional>
+#include <memory>
 #include <string>
 #include <unordered_map>
 
@@ -21,19 +21,24 @@ namespace gympp {
     } // namespace gazebo
 } // namespace gympp
 
-class gympp::gazebo::TaskSingleton : public ignition::common::SingletonT<TaskSingleton>
+class gympp::gazebo::TaskSingleton
 {
 private:
-    static std::unordered_map<std::string, Task*> m_tasks;
+    class Impl;
+    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
 
 protected:
 public:
     using TaskName = std::string;
 
-    TaskSingleton() = default;
-    ~TaskSingleton() override = default;
+    TaskSingleton();
+    ~TaskSingleton() = default;
+    TaskSingleton(TaskSingleton&) = delete;
+    void operator=(const TaskSingleton&) = delete;
 
-    gympp::gazebo::Task* get(const TaskName& taskName);
+    static TaskSingleton& get();
+
+    gympp::gazebo::Task* getTask(const TaskName& taskName);
 
     bool storeTask(const TaskName& taskName, gympp::gazebo::Task* task);
     bool removeTask(const TaskName& taskName);
