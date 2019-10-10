@@ -126,16 +126,6 @@ The process is different whether you're an _user_ that wants to create environme
 
 1. Install the Ignition Robotics suite following the [official documentation](https://ignitionrobotics.org/docs/latest/install)
 1. Install Gym-Ignition with `pip install gym-ignition` (preferably in a [virtual environment](https://docs.python.org/3.6/tutorial/venv.html))
-1. Execute the following to export the required environment variables:
-   ```sh
-   # Worlds and models path
-   data_path=$(python -c "import gym_ignition_data ; (gym_ignition_data.__path__[0])")
-   export IGN_GAZEBO_RESOURCE_PATH=${data_path}:${data_path}/worlds
-   
-   # Gazebo plugins
-   module_path=$(python -c "import gym_ignition ; print(gym_ignition.__path__[0])" | grep gym_ignition)
-   export IGN_GAZEBO_SYSTEM_PLUGIN_PATH=${module_path}/plugins
-   ```
 
 After these steps, you should be able to execute the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
 
@@ -156,14 +146,8 @@ After these steps, you should be able to execute the example [`launch_cartpole.p
    ```sh
    pip3 install -e .
    ```
-1. Export the following environment variables:
+1. Export the following environment variable:
    ```sh
-   # Worlds and models path
-   export IGN_GAZEBO_RESOURCE_PATH=<installprefix>/share/gympp/gazebo/worlds:<installprefix>/share/gympp/gazebo/models
-   
-   # Gazebo plugins
-   export IGN_GAZEBO_SYSTEM_PLUGIN_PATH=<installprefix>/lib/gympp/plugins
-   
    # C++ bindings
    export PYTHONPATH=<installprefix>/lib/python3.6/site-packages
    ```
