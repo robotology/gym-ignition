@@ -5,6 +5,10 @@ on:
     paths:
       - ".ci/*"
       - ".github/workflows/docker.yml"
+  pull_request:
+    paths:
+      - ".ci/*"
+      - ".github/workflows/docker.yml"
   schedule:
     # Execute a weekly build on Monday at 2AM UTC
     - cron:  '0 2 * * 1'
@@ -29,7 +33,6 @@ jobs:
             --rm -t diegoferigo/gym-ignition:ci .
 
       - name: Login
-        uses: actions/docker/login@master
         if: |
           github.repository == 'robotology/gym-ignition' &&
           github.event_name != 'pull_request' &&
@@ -37,13 +40,11 @@ jobs:
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-          DOCKER_REGISTRY_URL: docker.io
+        run: echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin
 
       - name: Push
-        uses: actions/docker/cli@master
         if: |
           github.repository == 'robotology/gym-ignition' &&
           github.event_name != 'pull_request' &&
           github.ref == 'refs/heads/master'
-        with:
-          args: 'push diegoferigo/gym-ignition:ci'
+        run: docker push diegoferigo/gym-ignition:ci
