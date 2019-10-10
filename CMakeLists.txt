@@ -44,6 +44,9 @@ endif()
 # Set the final option for shared / static libraries
 set(BUILD_SHARED_LIBS ${GYMPP_BUILD_SHARED_LIBRARY})
 
+# Use -fPIC even if statically compiled
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 # Tweak linker flags in Linux
 if(UNIX AND NOT APPLE)
     if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
