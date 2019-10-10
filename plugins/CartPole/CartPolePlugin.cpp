@@ -115,9 +115,7 @@ CartPole::CartPole()
 
 CartPole::~CartPole()
 {
-    auto* taskSingleton = TaskSingleton::Instance();
-
-    if (!taskSingleton->removeTask(pImpl->robot->name())) {
+    if (!TaskSingleton::get().removeTask(pImpl->robot->name())) {
         gymppError << "Failed to unregister the Task interface";
         assert(false);
     }
@@ -143,9 +141,9 @@ void CartPole::Configure(const ignition::gazebo::Entity& entity,
     // Auto-register the task
     gymppDebug << "Registering the Task interface for robot '" << pImpl->modelName << "'"
                << std::endl;
-    auto* taskSingleton = TaskSingleton::Instance();
+    auto& taskSingleton = TaskSingleton::get();
 
-    if (!taskSingleton->storeTask(pImpl->modelName, this)) {
+    if (!taskSingleton.storeTask(pImpl->modelName, dynamic_cast<gympp::gazebo::Task*>(this))) {
         gymppError << "Failed to register the Task interface";
         assert(false);
         return;

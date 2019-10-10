@@ -26,7 +26,7 @@ class IgnitionEnvironment::Impl
 {
 public:
     size_t id;
-    gympp::gazebo::Task* cb = nullptr;
+    gympp::gazebo::Task* task = nullptr;
 
     PluginData pluginData;
     gympp::gazebo::ModelInitData modelData;
@@ -85,13 +85,12 @@ bool IgnitionEnvironment::initializeSimulation()
 
 Task* IgnitionEnvironment::getTask()
 {
-    if (!pImpl->cb) {
-        auto* ecSingleton = TaskSingleton::Instance();
-        pImpl->cb = ecSingleton->get(pImpl->modelData.modelName);
-        assert(pImpl->cb);
+    if (!pImpl->task) {
+        auto& taskSingleton = TaskSingleton::get();
+        pImpl->task = taskSingleton.getTask(pImpl->modelData.modelName);
     }
 
-    return pImpl->cb;
+    return pImpl->task;
 }
 
 void IgnitionEnvironment::storeModelData(const gympp::gazebo::ModelInitData& modelData)

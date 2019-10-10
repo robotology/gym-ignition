@@ -15,17 +15,31 @@
 
 using namespace gympp::gazebo;
 
-std::unordered_map<TaskSingleton::TaskName, Task*> gympp::gazebo::TaskSingleton::m_tasks = {};
-
-Task* TaskSingleton::get(const TaskName& taskName)
+class TaskSingleton::Impl
 {
-    if (m_tasks.find(taskName) == m_tasks.end()) {
+public:
+    std::unordered_map<TaskName, Task*> tasks;
+};
+
+TaskSingleton::TaskSingleton()
+    : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
+{}
+
+gympp::gazebo::TaskSingleton& TaskSingleton::get()
+{
+    static TaskSingleton instance;
+    return instance;
+}
+
+Task* TaskSingleton::getTask(const TaskName& taskName)
+{
+    if (pImpl->tasks.find(taskName) == pImpl->tasks.end()) {
         gymppError << "Failed to find Task '" << taskName << "'" << std::endl;
         return nullptr;
     }
 
-    assert(m_tasks.at(taskName));
-    return m_tasks.at(taskName);
+    assert(pImpl->tasks.at(taskName));
+    return pImpl->tasks.at(taskName);
 }
 
 bool TaskSingleton::storeTask(const TaskName& taskName, Task* task)
@@ -35,12 +49,12 @@ bool TaskSingleton::storeTask(const TaskName& taskName, Task* task)
         return false;
     }
 
-    if (m_tasks.find(taskName) != m_tasks.end()) {
+    if (pImpl->tasks.find(taskName) != pImpl->tasks.end()) {
         gymppError << "Task '" << taskName << "' have been already registered" << std::endl;
     }
 
     gymppDebug << "Storing Task '" << taskName << "'" << std::endl;
-    m_tasks[taskName] = task;
+    pImpl->tasks[taskName] = task;
 
     return true;
 }
@@ -52,12 +66,12 @@ bool TaskSingleton::removeTask(const TaskName& taskName)
         return false;
     }
 
-    if (m_tasks.find(taskName) == m_tasks.end()) {
+    if (pImpl->tasks.find(taskName) == pImpl->tasks.end()) {
         gymppError << "The task '" << taskName << "' have never been stored" << std::endl;
         return false;
     }
 
     gymppDebug << "Deleting task '" << taskName << "'" << std::endl;
-    m_tasks.erase(taskName);
+    pImpl->tasks.erase(taskName);
     return true;
 }
