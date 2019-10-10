@@ -23,39 +23,18 @@ RUN apt-get update &&\
         clang-8 \
         make \
         cmake \
+        cmake-curses-gui \
         ninja-build \
         valgrind \
-        ccache \
         libgflags-dev \
         python3-pip \
         python3.6 \
         python3.7 \
         libpython3.6-dev \
         libpython3.7-dev \
+        swig \
         &&\
     rm -rf /var/lib/apt/lists/*
-
-# Enable CCACHE by default
-ENV PATH=/usr/lib/ccache:${PATH}
-RUN mkdir "$HOME/.ccache" &&\
-    echo "max_size = 2.0G" > "$HOME/.ccache/ccache.conf"
-
-# Install swig
-RUN apt-get update &&\
-    apt-get install -y --no-install-recommends \
-        autotools-dev \
-        automake \
-        bison \
-        libpcre3-dev &&\
-    rm -rf /var/lib/apt/lists/* &&\
-    cd /tmp/ &&\
-    git clone --depth 1 -b rel-4.0.0 https://github.com/swig/swig.git &&\
-    cd swig &&\
-    sh autogen.sh &&\
-    ./configure &&\
-    make -j8 &&\
-    make install &&\
-    rm -r /tmp/swig
 
 # Install ignition robotics
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
