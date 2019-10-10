@@ -3,11 +3,13 @@ name: 'CI Docker Image'
 on:
   push:
     paths:
-      - ".ci/*"
+      - ".docker/*.sh"
+      - ".docker/Dockerfile.ci"
       - ".github/workflows/docker.yml"
   pull_request:
     paths:
-      - ".ci/*"
+      - ".docker/*.sh"
+      - ".docker/Dockerfile.ci"
       - ".github/workflows/docker.yml"
   schedule:
     # Execute a weekly build on Monday at 2AM UTC
@@ -27,10 +29,10 @@ jobs:
 
       - name: 'Build'
         run: |
-          cd .ci
+          cd .docker/
           docker build \
             --pull --build-arg from=${{ matrix.baseimage }} \
-            --rm -t diegoferigo/gym-ignition:ci .
+            --rm -t diegoferigo/gym-ignition:ci -f Dockerfile.ci .
 
       - name: Login
         if: |
