@@ -186,11 +186,11 @@ jobs:
 
       - name: Install Twine
         if: github.repository == 'robotology/gym-ignition'
-        run: pip install twine
+        run: docker exec -i test sh -c 'pip install twine'
 
       - name: PyPI Release
         if: github.repository == 'robotology/gym-ignition'
-        run: twine upload --verbose dist/*
+        run: docker exec -i test sh -c 'twine upload --verbose dist/*'
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
