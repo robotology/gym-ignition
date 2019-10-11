@@ -5,28 +5,30 @@ on:
   pull_request:
 
 jobs:
-  ubuntu:
-    name: Ubuntu
+  developer:
+    name: Developer installation
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python:
-          - 3.6
-          # - 3.7
-        compiler:
-          - gcc7
-          # - gcc8
-          # - clang
-          # - clang8
-        build_type:
-          # - Release
-          - Debug
+        python: [3.6]
+        build_type: [Debug]
+        compiler: [gcc7]
+    container:
+      image: diegoferigo/gym-ignition:ci
+      env:
+        PYTHON_VERSION: ${{ matrix.python }}
 
     steps:
       - uses: actions/checkout@master
 
-      # Workaround to export environment variables that persist in next steps
-      # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+      # The entrypoint is not called because it is overridden by GH Actions.
+      # Even using the 'jobs.<job_id>.container.options' does not work because the
+      # entrypoint of GH Actions overrides the one passed through YAML.
+      - name: Execute entrypoint
+        run: . /entrypoint.sh
+
+#      # Workaround to export environment variables that persist in next steps
+#      # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
       - name: Setup Environment
         run: |
           case ${{ matrix.compiler }} in
@@ -41,34 +43,73 @@ jobs:
           echo "::set-env name=PYTHON_VERSION::${{ matrix.python }}"
           env
 
-      - name: Pull CI Docker Image
-        run: 'docker pull diegoferigo/gym-ignition:ci'
-
       - name: Build and Install C++
         run: |
-          set -u
-          docker run \
-            -d -i --name ci -v $(pwd):/github -w /github \
-            -e PYTHON_VERSION=$PYTHON_VERSION -e CC=$CC -e CXX=$CXX \
-            diegoferigo/gym-ignition:ci bash
-          docker exec -i ci sh -c 'mkdir -p build'
-          docker exec -i ci sh -c \
-            'cd build &&\
-             cmake .. \
-                 -GNinja \
-                 -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-                 -DPython_ADDITIONAL_VERSIONS=$PYTHON_VERSION'
-          docker exec -i ci sh -c 'cmake --build build --target install'
+          env
+          mkdir -p build
+          cd build
+          cmake .. \
+            -GNinja \
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+            -DPython_ADDITIONAL_VERSIONS=$PYTHON_VERSION
+          cmake --build . --target install
 
       - name: Setup Python Package
-        run: docker exec -i ci sh -c 'pip3 install -e .'
+        run: pip3 install -e .
 
       - name: Python Tests
-        run: docker exec -i ci sh -c 'pytest tests/python'
+        run: |
+          cd tests/python
+          pytest -v
 
       - name: Python Tests with Valgrind
         if: failure()
         run: |
-          docker exec -i ci sh -c 'pip3 install colour-valgrind'
-          docker exec -i ci sh -c 'valgrind --log-file=/tmp/valgrind pytest tests/python'
-          docker exec -i ci sh -c 'colour-valgrind -t /tmp/valgrind'
+          pip3 install colour-valgrind
+          cd tests/python
+          valgrind --log-file=/tmp/valgrind.log pytest -v -s
+          colour-valgrind -t /tmp/valgrind.log
+
+  user:
+    name: User installation
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python:
+          - 3.6
+        os:
+          - ubuntu-18.04
+    container:
+      image: diegoferigo/gym-ignition:ci
+      env:
+        PYTHON_VERSION: ${{ matrix.python }}
+
+    steps:
+      - uses: actions/checkout@master
+
+      # The entrypoint is not called because it is overridden by GH Actions.
+      # Even using the 'jobs.<job_id>.container.options' does not work because the
+      # entrypoint of GH Actions overrides the one passed through YAML.
+      - name: Execute entrypoint
+        run: . /entrypoint.sh
+
+      - name: Create wheel
+        run: python setup.py bdist_wheel
+
+      - name: Install local wheel
+        run: |
+          cd dist
+          pip install -v *.whl
+
+      - name: Python Tests
+        run: |
+          cd tests/python
+          pytest -v
+
+      - name: Python Tests with Valgrind
+        if: failure()
+        run: |
+          pip3 install colour-valgrind
+          cd tests/python
+          valgrind --log-file=/tmp/valgrind.log pytest -v -s
+          colour-valgrind -t /tmp/valgrind.log

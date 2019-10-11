@@ -57,23 +57,31 @@ jobs:
       - name: Create package
         run: python setup.py sdist
 
-      - name: Install and test
-        run: |
-          cd dist
-          pip install $(find . -name gym-ignition-*.zip -o -name gym-ignition-*.gz)
-          cd ../tests/python
-          module_path=$(python -c "import gym_ignition ; print(gym_ignition.__path__[0])" | grep gym_ignition)
-          export IGN_GAZEBO_SYSTEM_PLUGIN_PATH=${module_path}/plugins
-          data_path=$(python -c "import gym_ignition_data ; print(gym_ignition_data.__path__[0])")
-          export IGN_GAZEBO_RESOURCE_PATH=${data_path}:${data_path}/worlds
-          pytest
-
-      - name: Install twine
-        if: github.event.action == 'published'
+      - name: Install Twine
         run: pip install twine
 
-      - name: Push to PyPI
-        if: github.event.action == 'published'
+      - name: TestPyPI Upload
+        run: |
+          twine upload --verbose --repository-url https://test.pypi.org/legacy/ dist/*
+          sleep 15
+        env:
+          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME_TESTPYPI }}
+          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_TESTPYPI }}
+
+      - name: Install and test
+        run: |
+          cd tests/python
+          RELEASE_TAG=$(git describe --abbrev=0 --tags)
+          pip install \
+            --index-url https://test.pypi.org/simple/ \
+            --extra-index-url https://pypi.org/simple \
+            gym-ignition==$RELEASE_TAG
+          pytest -v
+
+      - name: PyPI Release
+        if: |
+          github.event.action == 'published' &&
+          github.repository == 'robotology/gym-ignition'
         run: twine upload --verbose dist/*
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
@@ -149,11 +157,13 @@ jobs:
           docker exec -i -w /github/dist pypi \
             sh -c 'find -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +'
 
-      - name: Install twine
+      - name: Install Twine
         run: pip install twine
 
-      - name: Upload it to Test PiPY
-        run: twine upload --verbose --repository-url https://test.pypi.org/legacy/ dist/*
+      - name: TestPyPI Upload
+        run: |
+          twine upload --verbose --repository-url https://test.pypi.org/legacy/ dist/*
+          sleep 15
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME_TESTPYPI }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_TESTPYPI }}
@@ -174,10 +184,12 @@ jobs:
               --extra-index-url https://pypi.org/simple \
               gym-ignition==$RELEASE_TAG'
           docker exec -i test sh -c "git clone https://github.com/robotology/gym-ignition"
-          docker exec -i test sh -c "cd gym-ignition/tests/python && pytest"
+          docker exec -i test sh -c "cd gym-ignition/tests/python && pytest -v"
 
-      - name: Push to PyPI
-        if: github.event.action == 'published'
+      - name: PyPI Release
+        if: |
+          github.event.action == 'published' &&
+          github.repository == 'robotology/gym-ignition'
         run: twine upload --verbose dist/*
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
