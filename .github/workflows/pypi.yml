@@ -82,7 +82,7 @@ jobs:
       - name: TestPyPI Upload
         run: |
           twine upload --verbose --repository-url https://test.pypi.org/legacy/ dist/*
-          sleep 15
+          sleep 30
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME_TESTPYPI }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_TESTPYPI }}
@@ -208,7 +208,7 @@ jobs:
           docker run \
             -d -i --name test -e PYTHON_VERSION=$PYTHON_VERSION \
             diegoferigo/gym-ignition:ci bash
-          sleep 15
+          sleep 30
 
       - name: Install and test
         run: |
