@@ -17,28 +17,34 @@ def get_search_paths() -> List[str]:
 
 def add_path(data_path: str) -> None:
     if not exists(data_path):
-        logger.warn("The path '{}' does not exist. Not added to the data path.".format(
-            data_path))
+        logger.warn(f"The path '{data_path}' does not exist. Not added to the data path.")
         return
 
     global GYM_IGNITION_DATA_PATH
 
     for path in GYM_IGNITION_DATA_PATH:
         if path == data_path:
-            logger.debug("The path '{}' is already present in the data path".format(
-                data_path))
+            logger.debug(f"The path '{data_path}' is already present in the data path")
             return
 
-    logger.debug("Adding new search path: '{}'".format(data_path))
+    logger.debug(f"Adding new search path: '{data_path}'")
     GYM_IGNITION_DATA_PATH.append(data_path)
 
 
 def add_path_from_env_var(env_variable: str) -> None:
     if env_variable not in os.environ:
-        logger.warn("Failed to find '{}' environment variable".format(env_variable))
+        logger.warn(f"Failed to find '{env_variable}' environment variable")
         return
 
-    env_var_paths = os.environ[env_variable].split(":")
+    # Get the environment variable
+    env_var_content = os.environ[env_variable]
+
+    # Remove leading ':' characters
+    if env_var_content[0] == ':':
+        env_var_content = env_var_content[1:]
+
+    # Split multiple value
+    env_var_paths = env_var_content.split(":")
 
     for path in env_var_paths:
         add_path(path)
@@ -48,28 +54,28 @@ def find_resource(file_name: str) -> str:
     file_abs_path = ""
     global GYM_IGNITION_DATA_PATH
 
-    logger.debug("Looking for file '{}'".format(file_name))
+    logger.debug(f"Looking for file '{file_name}'")
 
     # Handle if the path is absolute
     if os.path.isabs(file_name):
         if isfile(file_name):
-            logger.debug("  Found resource: '{}'".format(file_name))
+            logger.debug(f"  Found resource: '{file_name}'")
             return file_name
         else:
-            raise Exception("Failed to find resource '{}'".format(file_name))
+            raise Exception(f"Failed to find resource '{file_name}'")
 
     # Handle if the path is relative
     for path in GYM_IGNITION_DATA_PATH:
-        logger.debug("  Exploring folder '{}'".format(path))
+        logger.debug(f"  Exploring folder '{path}'")
         path_with_slash = path if path[-1] == '/' else path + "/"
         candidate_abs_path = path_with_slash + file_name
 
         if isfile(candidate_abs_path):
-            logger.debug("  Found resource: '{}'".format(candidate_abs_path))
+            logger.debug(f"  Found resource: '{candidate_abs_path}'")
             file_abs_path = candidate_abs_path
             break
 
     if not file_abs_path:
-        raise Exception("Failed to find resource '{}'".format(file_name))
+        raise Exception(f"Failed to find resource '{file_name}'")
 
     return file_abs_path
