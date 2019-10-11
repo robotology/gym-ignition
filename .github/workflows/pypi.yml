@@ -82,7 +82,7 @@ jobs:
       - name: TestPyPI Upload
         run: |
           twine upload --verbose --repository-url https://test.pypi.org/legacy/ dist/*
-          sleep 30
+          sleep 60
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME_TESTPYPI }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_TESTPYPI }}
