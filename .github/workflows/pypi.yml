@@ -111,13 +111,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      # Configure the host ubuntu system. It will be used as clean system for the
-      - name: Setup python
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python_version }}
-          architecture: x64
-
       # Validate the last tag accordingly to PEP440
       # From https://stackoverflow.com/a/37972030/12150968
       - name: Validate Tag for PEP440 compliance
@@ -149,7 +142,7 @@ jobs:
         run: |
           echo "::set-env name=CC::gcc"
           echo "::set-env name=CXX::g++"
-          echo "::set-env name=PYTHON_VERSION::${{ matrix.python }}"
+          echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
           env
 
       - name: Download diegoferigo/gym-ignition:pypi
