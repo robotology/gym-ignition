@@ -6,7 +6,6 @@ import gym
 import pytest
 import numpy as np
 from gym.envs import registry
-from multiprocessing import Process
 from gym_ignition.utils import logger
 from gym.envs.registration import register
 from gym_ignition.robots.sim import gazebo, pybullet
@@ -23,7 +22,7 @@ if "Pendulum-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all()
         max_episode_steps=1000,
         kwargs={'task_cls': PendulumSwingUp,
                 'robot_cls': gazebo.pendulum.PendulumGazeboRobot,
-                'sdf': "Pendulum/Pendulum.sdf",
+                'model': "Pendulum/Pendulum.sdf",
                 'world': "DefaultEmptyWorld.world",
                 'rtf': 100,
                 'agent_rate': 4000,
@@ -53,7 +52,7 @@ if "CartPoleDiscrete-Ignition-PyTest-v0" not in [spec.id for spec in list(regist
         max_episode_steps=500,
         kwargs={'task_cls': CartPoleDiscrete,
                 'robot_cls': gazebo.cartpole.CartPoleGazeboRobot,
-                'sdf': "CartPole/CartPole.sdf",
+                'model': "CartPole/CartPole.sdf",
                 'world': "DefaultEmptyWorld.world",
                 'rtf': 100,
                 'agent_rate': 4000,
@@ -101,15 +100,13 @@ def template_compare_environments(env_name_a: str, env_name_b: str, max_error: f
         # Reset the environments
         observation_a = env_a.reset()
         observation_b = env_b.reset()
-        print(observation_a)
-        print(observation_b)
+
         assert np.allclose(observation_a, observation_b), \
             "Observations after reset don't match"
 
         # Initialize intermediate variables
         iteration = 0
         done_a = False
-        done_b = False
 
         while not done_a:
             iteration += 1
@@ -135,13 +132,13 @@ def template_compare_environments(env_name_a: str, env_name_b: str, max_error: f
                 print("===================")
                 assert False, "The error is bigger than the threshold"
 
+    env_a.close()
+    env_b.close()
+
 
 @pytest.mark.parametrize("env_name_a, env_name_b, max_error", [
-    ("Pendulum-Ignition-PyTest-v0", "Pendulum-PyBullet-PyTest-v0", 0.02),
+    ("Pendulum-Ignition-PyTest-v0", "Pendulum-PyBullet-PyTest-v0", 0.05),
     ("CartPoleDiscrete-Ignition-PyTest-v0", "CartPoleDiscrete-PyBullet-PyTest-v0", 0.03),
 ])
 def test_compare_environments(env_name_a: str, env_name_b: str, max_error: float):
-    args = (env_name_a, env_name_b, max_error)
-    p = Process(target=template_compare_environments, args=args)
-    p.start()
-    p.join()
+    template_compare_environments(env_name_a, env_name_b, max_error)

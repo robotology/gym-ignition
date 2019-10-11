@@ -4,7 +4,6 @@
 
 import gym
 import pytest
-from multiprocessing import Process
 from gym_ignition.utils import logger
 
 # Set verbosity
@@ -32,9 +31,6 @@ def template_run_environment(env_name):
 
 @pytest.mark.parametrize("env_name",
                          ["CartPoleDiscrete-Gazebo-v0",
-                          "CartPoleContinuous-Gazebo--v0"])
+                          "CartPoleContinuous-Gazebo-v0"])
 def test_environment(env_name: str):
-    args = (env_name)
-    p = Process(target=template_run_environment, args=args)
-    p.start()
-    p.join()
+    template_run_environment(env_name)
