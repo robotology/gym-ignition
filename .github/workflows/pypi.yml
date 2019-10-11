@@ -1,4 +1,4 @@
-name: PyPI Release
+name: PyPI Continuous Delivery
 
 # Visit the following page for more details:
 # https://packaging.python.org/tutorials/packaging-projects/
@@ -20,9 +20,6 @@ jobs:
   sdist:
     name: sdist
     runs-on: ubuntu-latest
-    if: |
-      (github.event.action != 'push' ) ||
-      (github.event.action == 'push' && github.repository == 'robotology/gym-ignition')
     strategy:
       matrix:
         python_version:
@@ -102,9 +99,6 @@ jobs:
   # host that should mostly match the user setup
   bdist:
     name: bdist_wheel
-    if: |
-      (github.event_name != 'push' ) ||
-      (github.event_name == 'push' && github.repository == 'robotology/gym-ignition')
     needs: sdist
     strategy:
       matrix:
@@ -170,19 +164,22 @@ jobs:
           sleep 15
 
       - name: Create bdist_wheel
-        run: docker exec -i pypi sh -c 'python setup.py bdist_wheel'
+        run: |
+          docker exec -i pypi sh -c 'python setup.py bdist_wheel'
+          docker exec -i pypi sh -c 'ls dist/'
 
       - name: Rename wheel
         run: |
           docker exec -i -w /github/dist pypi \
             sh -c 'find -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +'
+          ls dist/
 
       - name: Download and start clean system
         run : |
           docker pull diegoferigo/gym-ignition:ci
           docker run \
             -d -i --name test -e PYTHON_VERSION=$PYTHON_VERSION \
-            -v dist:/dist \
+            -v $(pwd)/dist:/dist \
             diegoferigo/gym-ignition:ci bash
           sleep 15
 
