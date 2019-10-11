@@ -10,6 +10,11 @@ if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
     sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 import gympp_bindings
 
+# Configure OS environment variables
+from gym_ignition.utils import gazebo_env_vars, resource_finder
+gazebo_env_vars.setup_gazebo_env_vars()
+resource_finder.add_path_from_env_var("IGN_GAZEBO_RESOURCE_PATH")
+
 # =========================
 # REGISTER THE ENVIRONMENTS
 # =========================
@@ -87,9 +92,6 @@ register(
 # =====================
 # PYBULLET ENVIRONMENTS
 # =====================
-
-# Add the folders specified in IGN_GAZEBO_RESOURCE_PATH to the search path
-resource_finder.add_path_from_env_var("IGN_GAZEBO_RESOURCE_PATH")
 
 register(
     id='Pendulum-PyBullet-v0',
