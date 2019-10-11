@@ -213,13 +213,13 @@ jobs:
       - name: Install and test
         run: |
           docker exec -i \
-            -e RELEASE_TAG=$(git describe --abbrev=0 --tags) \
+            -e VERSION=$(python setup.py --version) \
             -e PACKAGE_NAME=$PACKAGE_NAME \
             test sh -c \
             'pip install \
               --index-url https://test.pypi.org/simple/ \
               --extra-index-url https://pypi.org/simple \
-              $PACKAGE_NAME==$RELEASE_TAG'
+              $PACKAGE_NAME==$VERSION'
           docker exec -i test sh -c "git clone https://github.com/robotology/gym-ignition"
           docker exec -i test sh -c "cd gym-ignition/tests/python && pytest -v"
 
