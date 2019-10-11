@@ -4,12 +4,11 @@
 
 import gym
 import numpy as np
-from multiprocessing import Process
 from gym_ignition import gympp_bindings as bindings
 from gym_ignition.utils import logger, resource_finder
 
 
-def run_joint_controller():
+def test_joint_controller():
     # ==========
     # PARAMETERS
     # ==========
@@ -107,9 +106,3 @@ def run_joint_controller():
     # Check that the trajectory was followed correctly
     assert np.abs(pos_cart_buffer - cart_ref).sum() / cart_ref.size < 5E-3, \
         "The reference trajectory was not tracked correctly"
-
-
-def test_joint_controller():
-    p = Process(target=run_joint_controller())
-    p.start()
-    p.join()
