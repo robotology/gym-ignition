@@ -68,38 +68,27 @@ jobs:
             git config --global user.name "Your Name"
             git config --global user.email "you@example.com"
             git commit -a -m "Renamed for nightly release"
-            echo "::set-env name=PACKAGE_NAME::gym-ignition-nightly"
-          else
-            echo "::set-env name=PACKAGE_NAME::gym-ignition"
           fi
 
-      - name: Create package
+      - name: Create sdist
         run: python setup.py sdist
 
-      - name: Install Twine
-        run: pip install twine
-
-      - name: TestPyPI Upload
+      - name: Install sdist
         run: |
-          twine upload --verbose --repository-url https://test.pypi.org/legacy/ dist/*
-          sleep 60
-        env:
-          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME_TESTPYPI }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_TESTPYPI }}
+          cd dist
+          pip install *.tar.gz
 
-      - name: Install and test
+      - name: Python tests
         run: |
-          VERSION=$(python setup.py --version)
           cd tests/python
-          pip install --pre \
-            --index-url https://test.pypi.org/simple/ \
-            --extra-index-url https://pypi.org/simple \
-            $PACKAGE_NAME==$VERSION
           pytest
 
+      - name: Install Twine
+        if: github.repository == 'robotology/gym-ignition'
+        run: pip install twine
+
       - name: PyPI Release
-        if: |
-          github.repository == 'robotology/gym-ignition'
+        if: github.repository == 'robotology/gym-ignition'
         run: twine upload --verbose dist/*
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
@@ -158,11 +147,7 @@ jobs:
             git config --global user.name "Your Name"
             git config --global user.email "you@example.com"
             git commit -a -m "Renamed for nightly release"
-            echo "::set-env name=PACKAGE_NAME::gym-ignition-nightly"
-          else
-            echo "::set-env name=PACKAGE_NAME::gym-ignition"
           fi
-          echo "::set-env name=PACKAGE_VERSION::$(python setup.py --version)"
 
       # Workaround to export environment variables that persist in next steps
       # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
@@ -184,7 +169,7 @@ jobs:
             diegoferigo/gym-ignition:pypi bash
           sleep 15
 
-      - name: Create package
+      - name: Create bdist_wheel
         run: docker exec -i pypi sh -c 'python setup.py bdist_wheel'
 
       - name: Rename wheel
@@ -192,41 +177,28 @@ jobs:
           docker exec -i -w /github/dist pypi \
             sh -c 'find -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +'
 
-      - name: Install Twine
-        run: pip install twine
-
-      - name: TestPyPI Upload
-        run: |
-          twine upload --verbose --repository-url https://test.pypi.org/legacy/ dist/*
-          sleep 15
-        env:
-          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME_TESTPYPI }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_TESTPYPI }}
-
       - name: Download and start clean system
         run : |
           docker pull diegoferigo/gym-ignition:ci
           docker run \
             -d -i --name test -e PYTHON_VERSION=$PYTHON_VERSION \
+            -v dist:/dist \
             diegoferigo/gym-ignition:ci bash
-          sleep 30
 
-      - name: Install and test
+      - name: Install bdist
+        run: docker exec -i -w /dist test sh -c 'pip install *.whl'
+
+      - name: Python tests
         run: |
-          docker exec -i \
-            -e PACKAGE_VERSION=$PACKAGE_VERSION \
-            -e PACKAGE_NAME=$PACKAGE_NAME \
-            test sh -c \
-            'pip install --pre \
-              --index-url https://test.pypi.org/simple/ \
-              --extra-index-url https://pypi.org/simple \
-              $PACKAGE_NAME==$PACKAGE_VERSION'
           docker exec -i test sh -c "git clone https://github.com/robotology/gym-ignition"
           docker exec -i test sh -c "cd gym-ignition/tests/python && pytest -v"
 
+      - name: Install Twine
+        if: github.repository == 'robotology/gym-ignition'
+        run: pip install twine
+
       - name: PyPI Release
-        if: |
-          github.repository == 'robotology/gym-ignition'
+        if: github.repository == 'robotology/gym-ignition'
         run: twine upload --verbose dist/*
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
