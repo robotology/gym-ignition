@@ -184,6 +184,7 @@ jobs:
             -d -i --name test -e PYTHON_VERSION=$PYTHON_VERSION \
             -v dist:/dist \
             diegoferigo/gym-ignition:ci bash
+          sleep 15
 
       - name: Install bdist
         run: docker exec -i -w /dist test sh -c 'pip install *.whl'
