@@ -162,6 +162,7 @@ jobs:
           else
             echo "::set-env name=PACKAGE_NAME::gym-ignition"
           fi
+          echo "::set-env name=PACKAGE_VERSION::$(python setup.py --version)"
 
       # Workaround to export environment variables that persist in next steps
       # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
@@ -213,13 +214,13 @@ jobs:
       - name: Install and test
         run: |
           docker exec -i \
-            -e VERSION=$(python setup.py --version) \
+            -e PACKAGE_VERSION=$PACKAGE_VERSION \
             -e PACKAGE_NAME=$PACKAGE_NAME \
             test sh -c \
             'pip install \
               --index-url https://test.pypi.org/simple/ \
               --extra-index-url https://pypi.org/simple \
-              $PACKAGE_NAME==$VERSION'
+              $PACKAGE_NAME==$PACKAGE_VERSION'
           docker exec -i test sh -c "git clone https://github.com/robotology/gym-ignition"
           docker exec -i test sh -c "cd gym-ignition/tests/python && pytest -v"
 
