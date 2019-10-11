@@ -1,4 +1,4 @@
-name: 'CI Docker Image'
+name: 'Docker Images'
 
 on:
   push:
@@ -23,6 +23,7 @@ jobs:
         tag:
           - ci
           - pypi
+          - latest
 
     steps:
       - uses: actions/checkout@master
