@@ -5,8 +5,8 @@ on:
   pull_request:
 
 jobs:
-  ubuntu:
-    name: Ubuntu
+  developer:
+    name: Developer installation
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -72,3 +72,47 @@ jobs:
           docker exec -i ci sh -c 'pip3 install colour-valgrind'
           docker exec -i ci sh -c 'valgrind --log-file=/tmp/valgrind pytest tests/python'
           docker exec -i ci sh -c 'colour-valgrind -t /tmp/valgrind'
+
+  user:
+    name: User installation
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        python:
+          - 3.6
+        os:
+          - ubuntu-18.04
+    container:
+      image: diegoferigo/gym-ignition:ci
+      env:
+        PYTHON_VERSION: ${{ matrix.python }}
+
+    steps:
+      - uses: actions/checkout@master
+
+      # The entrypoint is not called because it is overridden by GH Actions.
+      # Even using the 'jobs.<job_id>.container.options' does not work because the
+      # entrypoint of GH Actions overrides the one passed through YAML.
+      - name: Execute entrypoint
+        run: . /entrypoint.sh
+
+      - name: Create wheel
+        run: python setup.py bdist_wheel
+
+      - name: Install local wheel
+        run: |
+          cd dist
+          pip install -v *.whl
+
+      - name: Python Tests
+        run: |
+          cd tests/python
+          pytest -v
+
+      - name: Python Tests with Valgrind
+        if: failure()
+        run: |
+          pip3 install colour-valgrind
+          cd tests/python
+          valgrind --log-file=/tmp/valgrind.log pytest -v -s
+          colour-valgrind -t /tmp/valgrind.log
