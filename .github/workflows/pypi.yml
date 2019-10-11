@@ -8,6 +8,9 @@ on:
     types:
       - published
       - prereleased
+  # Nightly builds
+  push:
+    branches: devel
 
 jobs:
   # =============
@@ -17,6 +20,9 @@ jobs:
   sdist:
     name: sdist
     runs-on: ubuntu-latest
+    if: |
+      (github.event.action != 'push' ) ||
+      (github.event.action == 'push' && github.repository == 'robotology/gym-ignition')
     strategy:
       matrix:
         python_version:
@@ -36,6 +42,7 @@ jobs:
       # Validate the last tag accordingly to PEP440
       # From https://stackoverflow.com/a/37972030/12150968
       - name: Validate Tag for PEP440 compliance
+        if: github.event_name != 'push'
         run: |
           apt-get update
           apt-get install -y source-highlight
@@ -54,6 +61,18 @@ jobs:
       - name: Execute entrypoint
         run: . /entrypoint.sh
 
+      - name: Setup package name
+        run: |
+          if [ "${{ github.event_name == 'push' }}" = "true" ] ; then
+            sed -i "s/name='gym-ignition'/name='gym-ignition-nightly'/g" setup.py
+            git config --global user.name "Your Name"
+            git config --global user.email "you@example.com"
+            git commit -a -m "Renamed for nightly release"
+            echo "::set-env name=PACKAGE_NAME::gym-ignition-nightly"
+          else
+            echo "::set-env name=PACKAGE_NAME::gym-ignition"
+          fi
+
       - name: Create package
         run: python setup.py sdist
 
@@ -70,17 +89,16 @@ jobs:
 
       - name: Install and test
         run: |
+          VERSION=$(python setup.py --version)
           cd tests/python
-          RELEASE_TAG=$(git describe --abbrev=0 --tags)
           pip install \
             --index-url https://test.pypi.org/simple/ \
             --extra-index-url https://pypi.org/simple \
-            gym-ignition==$RELEASE_TAG
-          pytest -v
+            $PACKAGE_NAME==$VERSION
+          pytest
 
       - name: PyPI Release
         if: |
-          github.event.action == 'published' &&
           github.repository == 'robotology/gym-ignition'
         run: twine upload --verbose dist/*
         env:
@@ -95,6 +113,9 @@ jobs:
   # host that should mostly match the user setup
   bdist:
     name: bdist_wheel
+    if: |
+      (github.event_name != 'push' ) ||
+      (github.event_name == 'push' && github.repository == 'robotology/gym-ignition')
     needs: sdist
     strategy:
       matrix:
@@ -117,6 +138,7 @@ jobs:
       # Validate the last tag accordingly to PEP440
       # From https://stackoverflow.com/a/37972030/12150968
       - name: Validate Tag for PEP440 compliance
+        if: github.event_name != 'push'
         run: |
           sudo apt-get update
           sudo apt-get install -y source-highlight
@@ -128,6 +150,18 @@ jobs:
           check-regexp ${rel_regexp} ${last_tag}
           match=$(check-regexp ${rel_regexp} ${last_tag} | grep matches | cut -d ' ' -f 5)
           test $match -eq 1 && true
+
+      - name: Setup package name
+        run: |
+          if [ "${{ github.event_name == 'push' }}" == "true" ] ; then
+            sed -i "s/name='gym-ignition'/name='gym-ignition-nightly'/g" setup.py
+            git config --global user.name "Your Name"
+            git config --global user.email "you@example.com"
+            git commit -a -m "Renamed for nightly release"
+            echo "::set-env name=PACKAGE_NAME::gym-ignition-nightly"
+          else
+            echo "::set-env name=PACKAGE_NAME::gym-ignition"
+          fi
 
       # Workaround to export environment variables that persist in next steps
       # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
@@ -178,17 +212,19 @@ jobs:
 
       - name: Install and test
         run: |
-          docker exec -i -e RELEASE_TAG=$(git describe --abbrev=0 --tags) test sh -c \
+          docker exec -i \
+            -e RELEASE_TAG=$(git describe --abbrev=0 --tags) \
+            -e PACKAGE_NAME=$PACKAGE_NAME \
+            test sh -c \
             'pip install \
               --index-url https://test.pypi.org/simple/ \
               --extra-index-url https://pypi.org/simple \
-              gym-ignition==$RELEASE_TAG'
+              $PACKAGE_NAME==$RELEASE_TAG'
           docker exec -i test sh -c "git clone https://github.com/robotology/gym-ignition"
           docker exec -i test sh -c "cd gym-ignition/tests/python && pytest -v"
 
       - name: PyPI Release
         if: |
-          github.event.action == 'published' &&
           github.repository == 'robotology/gym-ignition'
         run: twine upload --verbose dist/*
         env:
