@@ -3,8 +3,9 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
+from gym_ignition import base
 from gym_ignition.utils import logger
-from gym_ignition.base import task, runtime
+from gym_ignition.base import runtime
 from gym_ignition.base.robot import robot_abc
 from gym_ignition import gympp_bindings as bindings
 from gym_ignition.utils.typing import State, Action, Observation, SeedList
@@ -46,13 +47,13 @@ class GazeboRuntime(runtime.Runtime):
         self._gazebo_wrapper = None
 
         # Build the environment
-        task_object = task_cls(**kwargs)
+        task = task_cls(**kwargs)
 
-        assert isinstance(task_object, task.Task), \
+        assert isinstance(task, base.task.Task), \
             "'task_cls' object must inherit from Task"
 
         # Wrap the environment with this class
-        super().__init__(task=task_object, agent_rate=agent_rate)
+        super().__init__(task=task, agent_rate=agent_rate)
 
         # Initialize the simulator and the robot
         self.task.robot = self._get_robot()

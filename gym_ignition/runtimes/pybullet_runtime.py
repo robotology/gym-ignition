@@ -68,10 +68,9 @@ class PyBulletRuntime(base.runtime.Runtime):
             logger.warn("The real physics rate will be {} Hz".format(
                 agent_rate * self._num_of_physics_steps))
 
-        logger.debug("RTF = {}".format(rtf))
-        logger.debug("Agent rate = {} Hz".format(agent_rate))
-        logger.debug("Physics rate = {} Hz".format(
-            agent_rate * self._num_of_physics_steps))
+        logger.debug(f"RTF = {rtf}")
+        logger.debug(f"Agent rate = {agent_rate} Hz")
+        logger.debug(f"Physics rate = {agent_rate * self._num_of_physics_steps} Hz")
 
         logger.debug("Initializing the Task")
         task = task_cls(**kwargs)
@@ -132,7 +131,7 @@ class PyBulletRuntime(base.runtime.Runtime):
         logger.info(str(self._pybullet.getPhysicsEngineParameters()))
 
         step_time = 1.0 / self._physics_rate / self._rtf
-        logger.info("Nominal step time: {} seconds".format(step_time))
+        logger.info(f"Nominal step time: {step_time} seconds")
 
         logger.debug("PyBullet simulator created")
         return self._pybullet
@@ -260,7 +259,7 @@ class PyBulletRuntime(base.runtime.Runtime):
 
     def render(self, mode: str = 'human', **kwargs) -> None:
         if mode != "human":
-            raise Exception("Render mode '{}' not yet supported".format(mode))
+            raise Exception(f"Render mode '{mode}' not yet supported")
 
         # If render has been already called once, and the simulator is ok, return
         if self._render_enabled and self._pybullet:
