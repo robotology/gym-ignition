@@ -37,6 +37,7 @@ class PyBulletRuntime(base.runtime.Runtime):
         self._robot_cls = robot_cls
 
         # Delete and create a new robot every environment reset
+        self._first_run = True
         self._hard_reset = hard_reset
 
         # URDF or SDF model files
@@ -244,9 +245,14 @@ class PyBulletRuntime(base.runtime.Runtime):
         assert p, "PyBullet object not valid"
 
         if self._hard_reset and self.task._robot:
-            logger.debug("Hard reset: deleting the robot")
-            self.task.robot.delete_simulated_robot()
-            self.task.robot = self._get_robot()
+            if not self._first_run:
+                logger.debug("Hard reset: deleting the robot")
+                self.task.robot.delete_simulated_robot()
+
+                logger.debug("Hard reset: creating new robot")
+                self.task.robot = self._get_robot()
+            else:
+                self._first_run = False
 
         # Reset the environment
         ok_reset = self.task.reset_task()

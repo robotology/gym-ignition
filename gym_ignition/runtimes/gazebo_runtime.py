@@ -34,6 +34,7 @@ class GazeboRuntime(runtime.Runtime):
         self._robot_cls = robot_cls
 
         # Delete and create a new robot every environment reset
+        self._first_run = True
         self._hard_reset = hard_reset
 
         # SDF files
@@ -186,11 +187,14 @@ class GazeboRuntime(runtime.Runtime):
         # provide better performance, we should be sure that all the internal buffers
         # (e.g. those related to the low-level PIDs) are correctly re-initialized.
         if self._hard_reset and self.task._robot:
-            logger.debug("Hard reset: deleting the robot")
-            self.task.robot.delete_simulated_robot()
+            if not self._first_run:
+                logger.debug("Hard reset: deleting the robot")
+                self.task.robot.delete_simulated_robot()
 
-            logger.debug("Hard reset: creating new robot")
-            self.task.robot = self._get_robot()
+                logger.debug("Hard reset: creating new robot")
+                self.task.robot = self._get_robot()
+            else:
+                self._first_run = False
 
         # Reset the environment
         ok_reset = self.task.reset_task()
