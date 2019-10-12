@@ -244,7 +244,7 @@ class PyBulletRuntime(base.runtime.Runtime):
         p = self.pybullet
         assert p, "PyBullet object not valid"
 
-        if self._hard_reset and self.task._robot:
+        if self._hard_reset and self.task.has_robot():
             if not self._first_run:
                 logger.debug("Hard reset: deleting the robot")
                 self.task.robot.delete_simulated_robot()
@@ -301,10 +301,9 @@ class PyBulletRuntime(base.runtime.Runtime):
             self.task._robot = None
 
     def seed(self, seed: int = None) -> SeedList:
-        # Tasks in most cases need the robot object to create the spaces.
-        # We initialize it lazily here.
-        if not self.task._robot:
-            self.task.robot = self._get_robot()
+        # This method also seeds the spaces. To create them, the robot object is often
+        # needed. Here we check that is has been created.
+        assert self.task.has_robot(), "The robot has not yet been created"
 
         # Seed the wrapped environment (task)
         seed = self.env.seed(seed)

@@ -186,7 +186,7 @@ class GazeboRuntime(runtime.Runtime):
         # reset fixed-based robots. Though, while avoiding the model deletion might
         # provide better performance, we should be sure that all the internal buffers
         # (e.g. those related to the low-level PIDs) are correctly re-initialized.
-        if self._hard_reset and self.task._robot:
+        if self._hard_reset and self.task.has_robot():
             if not self._first_run:
                 logger.debug("Hard reset: deleting the robot")
                 self.task.robot.delete_simulated_robot()
@@ -224,6 +224,10 @@ class GazeboRuntime(runtime.Runtime):
         self.gazebo.close()
 
     def seed(self, seed: int = None) -> SeedList:
+        # This method also seeds the spaces. To create them, the robot object is often
+        # needed. Here we check that is has been created.
+        assert self.task.has_robot(), "The robot has not yet been created"
+
         # Seed the wrapped environment (task)
         seed = self.env.seed(seed)
 
