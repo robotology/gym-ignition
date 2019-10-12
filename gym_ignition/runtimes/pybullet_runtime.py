@@ -85,6 +85,9 @@ class PyBulletRuntime(base.runtime.Runtime):
         # Initialize the simulator and the robot
         self.task.robot = self._get_robot()
 
+        # Initialize the spaces
+        self.task.action_space, self.task.observation_space = self.task.create_spaces()
+
     # =======================
     # PyBulletRuntime METHODS
     # =======================

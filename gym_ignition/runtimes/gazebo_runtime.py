@@ -55,10 +55,10 @@ class GazeboRuntime(runtime.Runtime):
         super().__init__(task=task_object, agent_rate=agent_rate)
 
         # Initialize the simulator and the robot
-        robot = self._get_robot()
+        self.task.robot = self._get_robot()
 
-        # Store the robot in the task
-        self.task.robot = robot
+        # Initialize the spaces
+        self.task.action_space, self.task.observation_space = self.task.create_spaces()
 
         # Seed the environment
         self.seed()
