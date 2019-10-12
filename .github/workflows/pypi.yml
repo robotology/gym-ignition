@@ -190,7 +190,9 @@ jobs:
 
       - name: PyPI Release
         if: github.repository == 'robotology/gym-ignition'
-        run: docker exec -i test sh -c 'twine upload --verbose dist/*'
+        run: |
+          docker exec -i -e TWINE_USERNAME -e TWINE_PASSWORD test
+            sh -c 'twine upload --verbose dist/*'
         env:
           TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
           TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
