@@ -1,0 +1,45 @@
+ARG from=ubuntu:bionic
+FROM ${from}
+
+# Install dependencies
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends \
+        wget \
+        software-properties-common \
+        apt-transport-https \
+        apt-utils \
+        gnupg2 \
+        nano \
+        git \
+        gcc \
+        g++ \
+        virtualenv \
+        python3-pip \
+        python3.6 \
+        libpython3.6-dev \
+        &&\
+    rm -rf /var/lib/apt/lists/*
+
+# Install ignition gazebo
+RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
+        > /etc/apt/sources.list.d/gazebo-stable.list &&\
+    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" \
+        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
+    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-nightly `lsb_release -cs` main" \
+        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
+    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
+    apt-get update &&\
+    apt-get install -y --no-install-recommends \
+        libignition-gazebo2-dev \
+        &&\
+    rm -rf /var/lib/apt/lists/*
+
+# Install gym-ignition bdist in a virtualenv
+# Download also gym-ignition for the examples
+ENV VIRTUAL_ENV=/venv
+ENV PATH=/venv/bin:$PATH
+RUN virtualenv -p python3.6 ${VIRTUAL_ENV} &&\
+    pip install --pre gym-ignition &&\
+    git clone https://github.com/robotology/gym-ignition /github
+
+CMD ["bash"]
