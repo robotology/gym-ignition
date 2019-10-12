@@ -87,6 +87,9 @@ class PyBulletRuntime(base.runtime.Runtime):
         # Initialize the spaces
         self.task.action_space, self.task.observation_space = self.task.create_spaces()
 
+        # Seed the environment
+        self.seed()
+
     # =======================
     # PyBulletRuntime METHODS
     # =======================
