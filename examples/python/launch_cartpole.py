@@ -5,19 +5,21 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
-import gym_ignition
-from gym_ignition.utils import logger
 
 # Set gym verbosity
-logger.set_level(gym.logger.INFO)
-assert logger.set_level(gym.logger.DEBUG) or True
+gym.logger.set_level(gym.logger.INFO)
+assert gym.logger.set_level(gym.logger.DEBUG) or True
+
+# Register gym-ignition environments
+import gym_ignition
+from gym_ignition.utils import logger
 
 # Create the environment
 # env = gym.make("CartPole-v1")
 # env = gym.make("CartPoleDiscrete-Gympp-v0")
 env = gym.make("CartPoleDiscrete-Gazebo-v0")
 # env = gym.make("CartPoleContinuous-Gazebo-v0")
-# env = gym.make("CartPole-PyBullet-Discrete-v0")
+# env = gym.make("CartPoleDiscrete-PyBullet-v0")
 
 # Enable the rendering
 env.render('human')

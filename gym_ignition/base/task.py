@@ -68,6 +68,13 @@ class Task(gym.Env, abc.ABC):
         # Set the robot
         self._robot = robot
 
+    def has_robot(self) -> bool:
+        if not self._robot:
+            return False
+        else:
+            assert self._robot.valid(), "The robot object is not valid"
+            return True
+
     # ==============
     # TASK INTERFACE
     # ==============

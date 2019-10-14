@@ -19,6 +19,8 @@ def setup_gazebo_env_vars() -> None:
         ign_gazebo_system_plugin_path = ""
 
     if misc.installed_in_editable_mode():
+        logger.debug("Developer setup")
+
         # Detect the install prefix
         import gympp_bindings
         site_packages_path = Path(gympp_bindings.__file__).parent
@@ -32,6 +34,8 @@ def setup_gazebo_env_vars() -> None:
         ign_gazebo_resource_path += f":{install_prefix}/share/gympp/gazebo/worlds"
         ign_gazebo_resource_path += f":{install_prefix}/share/gympp/gazebo/models"
     else:
+        logger.debug("User setup")
+
         # Add the plugins path
         import gym_ignition
         ign_gazebo_system_plugin_path += f":{gym_ignition.__path__[0]}/plugins"

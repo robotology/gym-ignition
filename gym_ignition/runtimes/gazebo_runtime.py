@@ -3,8 +3,9 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
+from gym_ignition import base
 from gym_ignition.utils import logger
-from gym_ignition.base import task, runtime
+from gym_ignition.base import runtime
 from gym_ignition.base.robot import robot_abc
 from gym_ignition import gympp_bindings as bindings
 from gym_ignition.utils.typing import State, Action, Observation, SeedList
@@ -33,6 +34,7 @@ class GazeboRuntime(runtime.Runtime):
         self._robot_cls = robot_cls
 
         # Delete and create a new robot every environment reset
+        self._first_run = True
         self._hard_reset = hard_reset
 
         # SDF files
@@ -46,19 +48,19 @@ class GazeboRuntime(runtime.Runtime):
         self._gazebo_wrapper = None
 
         # Build the environment
-        task_object = task_cls(**kwargs)
+        task = task_cls(**kwargs)
 
-        assert isinstance(task_object, task.Task), \
+        assert isinstance(task, base.task.Task), \
             "'task_cls' object must inherit from Task"
 
         # Wrap the environment with this class
-        super().__init__(task=task_object, agent_rate=agent_rate)
+        super().__init__(task=task, agent_rate=agent_rate)
 
         # Initialize the simulator and the robot
-        robot = self._get_robot()
+        self.task.robot = self._get_robot()
 
-        # Store the robot in the task
-        self.task.robot = robot
+        # Initialize the spaces
+        self.task.action_space, self.task.observation_space = self.task.create_spaces()
 
         # Seed the environment
         self.seed()
@@ -184,12 +186,15 @@ class GazeboRuntime(runtime.Runtime):
         # reset fixed-based robots. Though, while avoiding the model deletion might
         # provide better performance, we should be sure that all the internal buffers
         # (e.g. those related to the low-level PIDs) are correctly re-initialized.
-        if self._hard_reset and self.task._robot:
-            logger.debug("Hard reset: deleting the robot")
-            self.task.robot.delete_simulated_robot()
+        if self._hard_reset and self.task.has_robot():
+            if not self._first_run:
+                logger.debug("Hard reset: deleting the robot")
+                self.task.robot.delete_simulated_robot()
 
-            logger.debug("Hard reset: creating new robot")
-            self.task.robot = self._get_robot()
+                logger.debug("Hard reset: creating new robot")
+                self.task.robot = self._get_robot()
+            else:
+                self._first_run = False
 
         # Reset the environment
         ok_reset = self.task.reset_task()
@@ -219,6 +224,10 @@ class GazeboRuntime(runtime.Runtime):
         self.gazebo.close()
 
     def seed(self, seed: int = None) -> SeedList:
+        # This method also seeds the spaces. To create them, the robot object is often
+        # needed. Here we check that is has been created.
+        assert self.task.has_robot(), "The robot has not yet been created"
+
         # Seed the wrapped environment (task)
         seed = self.env.seed(seed)
 
