@@ -16,47 +16,71 @@
 <b><a href="https://github.com/robotology/gym-ignition#Citation">Citation</a></b>
 </p>
 
-<p align="center">
-    <a href="https://github.com/robotology/gym-ignition/actions">
-    <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/docker.yml/badge.svg" alt="CI Docker Image" />
-    </a>
-    <a href="https://github.com/robotology/gym-ignition/actions">
-    <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/ci.yml/badge.svg" alt="Continuous Integration" />
-    </a>
-    <a href="https://github.com/robotology/gym-ignition/actions">
-    <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/pypi.yml/badge.svg" alt="PyPI Release" />
-    </a>
-    <a href="https://www.codacy.com/app/diegoferigo/gym-ignition?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=diegoferigo/gym-ignition&amp;utm_campaign=Badge_Grade">
-    <img src="https://api.codacy.com/project/badge/Grade/899a7c8304e14ed9b2330eb309cdad15" alt="Codacy Badge" />
-    </a>
-    <a href="https://github.com/robotology/gym-ignition/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/license-LGPL-19c2d8.svg" alt="License" />
-    </a>
-</p>
-
-<p align="center">
-	<a href="https://pypi.org/project/gym-ignition/">
-    <img src="https://img.shields.io/pypi/v/gym-ignition.svg" />
-    </a>
-    <a href="https://pypi.org/project/gym-ignition/">
-    <img src="https://img.shields.io/pypi/pyversions/gym-ignition.svg" />
-    </a>
-    <a href="https://pypi.org/project/gym-ignition/">
-    <img src="https://img.shields.io/pypi/status/gym-ignition.svg" />
-    </a>
-    <a href="https://pypi.org/project/gym-ignition/">
-    <img src="https://img.shields.io/pypi/format/gym-ignition.svg" />
-    </a>
-</p>
-
-<p align="center">
-    <a href="https://colab.research.google.com/github/robotology/gym-ignition/blob/master/examples/colab/RandomPolicy.ipynb">
-    <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    </a>
-</p>
-
-<p align="center">⚠️ Warning, <a href="https://en.wikipedia.org/wiki/Here_be_dragons">Here be Dragons</a> ⚠️</p>
-<p align="center">You just reached a very unstable corner.<br/>Welcome, but mind your step. </p>
+<div align="center">
+<p><br/></p>
+<table>
+    <tbody>
+         <tr>
+            <td align="left">CI/CD</td>
+            <td align="center">
+                <a href="https://github.com/robotology/gym-ignition/actions">
+                <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/docker.yml/badge.svg" alt="Docker Images" />
+                </a>
+                <a href="https://github.com/robotology/gym-ignition/actions">
+                <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/ci.yml/badge.svg" alt="CI" />
+                </a>
+                <a href="https://github.com/robotology/gym-ignition/actions">
+                <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/pypi.yml/badge.svg" alt="PyPI CD" />
+                </a>
+                <a href="https://www.codacy.com/app/diegoferigo/gym-ignition?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=diegoferigo/gym-ignition&amp;utm_campaign=Badge_Grade">
+                <img src="https://api.codacy.com/project/badge/Grade/899a7c8304e14ed9b2330eb309cdad15" alt="Codacy Badge" />
+                </a>
+            </td>
+        </tr>   
+        <tr>
+            <td align="left"><code>gym-ignition</code></td>
+            <td align="center">
+                <a href="https://pypi.org/project/gym-ignition/">
+                <img src="https://img.shields.io/pypi/v/gym-ignition.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition/">
+                <img src="https://img.shields.io/pypi/pyversions/gym-ignition.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition/">
+                <img src="https://img.shields.io/pypi/status/gym-ignition.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition/">
+                <img src="https://img.shields.io/pypi/format/gym-ignition.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition/">
+                <img src="https://img.shields.io/pypi/l/gym-ignition.svg" />
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td align="left"><code>gym-ignition-nightly</code></td>
+            <td align="center">
+                <a href="https://pypi.org/project/gym-ignition-nightly/">
+                <img src="https://img.shields.io/pypi/v/gym-ignition-nightly.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition-nightly/">
+                <img src="https://img.shields.io/pypi/pyversions/gym-ignition-nightly.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition-nightly/">
+                <img src="https://img.shields.io/pypi/status/gym-ignition-nightly.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition-nightly/">
+                <img src="https://img.shields.io/pypi/format/gym-ignition-nightly.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition-nightly/">
+                <img src="https://img.shields.io/pypi/l/gym-ignition-nightly.svg" />
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p><br/></p>
+</div>
 
 ## What
 
