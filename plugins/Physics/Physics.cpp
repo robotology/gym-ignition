@@ -115,8 +115,6 @@ public:
     using MinimumFeatureList = ignition::physics::FeatureList< //
         ignition::physics::FindFreeGroupFeature,
         ignition::physics::SetFreeGroupWorldPose,
-        ignition::physics::FreeGroupFrameSemantics,
-        ignition::physics::LinkFrameSemantics,
         ignition::physics::AddLinkExternalForceTorque,
         ignition::physics::ForwardStep,
         ignition::physics::GetEntities,
@@ -131,7 +129,6 @@ public:
         ignition::physics::sdf::ConstructSdfJoint,
         ignition::physics::sdf::ConstructSdfLink,
         ignition::physics::sdf::ConstructSdfModel,
-        ignition::physics::sdf::ConstructSdfVisual,
         ignition::physics::sdf::ConstructSdfWorld>;
 
     using EnginePtrType =
