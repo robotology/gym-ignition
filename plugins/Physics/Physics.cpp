@@ -23,29 +23,50 @@
  *
  */
 
+#include "Physics.h"
+
+#include <ignition/common/MeshManager.hh>
+#include <ignition/gazebo/EntityComponentManager.hh>
+#include <ignition/gazebo/components/AngularAcceleration.hh>
+#include <ignition/gazebo/components/AngularVelocity.hh>
+#include <ignition/gazebo/components/BatterySoC.hh>
+#include <ignition/gazebo/components/CanonicalLink.hh>
+#include <ignition/gazebo/components/ChildLinkName.hh>
+#include <ignition/gazebo/components/Collision.hh>
+#include <ignition/gazebo/components/ContactSensorData.hh>
+#include <ignition/gazebo/components/ExternalWorldWrenchCmd.hh>
+#include <ignition/gazebo/components/Geometry.hh>
+#include <ignition/gazebo/components/Gravity.hh>
+#include <ignition/gazebo/components/Inertial.hh>
+#include <ignition/gazebo/components/Joint.hh>
+#include <ignition/gazebo/components/JointAxis.hh>
+#include <ignition/gazebo/components/JointForceCmd.hh>
+#include <ignition/gazebo/components/JointPosition.hh>
+#include <ignition/gazebo/components/JointType.hh>
+#include <ignition/gazebo/components/JointVelocity.hh>
+#include <ignition/gazebo/components/JointVelocityCmd.hh>
+#include <ignition/gazebo/components/LinearAcceleration.hh>
+#include <ignition/gazebo/components/LinearVelocity.hh>
+#include <ignition/gazebo/components/Link.hh>
+#include <ignition/gazebo/components/Model.hh>
+#include <ignition/gazebo/components/Name.hh>
+#include <ignition/gazebo/components/ParentEntity.hh>
+#include <ignition/gazebo/components/ParentLinkName.hh>
+#include <ignition/gazebo/components/Pose.hh>
+#include <ignition/gazebo/components/PoseCmd.hh>
+#include <ignition/gazebo/components/Static.hh>
+#include <ignition/gazebo/components/ThreadPitch.hh>
+#include <ignition/gazebo/components/Visual.hh>
+#include <ignition/gazebo/components/World.hh>
+#include <ignition/math/eigen3/Conversions.hh>
 #include <ignition/msgs/Utility.hh>
 #include <ignition/msgs/contact.pb.h>
 #include <ignition/msgs/contacts.pb.h>
 #include <ignition/msgs/entity.pb.h>
-
-#include <deque>
-#include <iostream>
-#include <unordered_map>
-
-#include <ignition/common/MeshManager.hh>
-#include <ignition/common/Profiler.hh>
-#include <ignition/math/eigen3/Conversions.hh>
-#include <ignition/physics/FeatureList.hh>
-#include <ignition/physics/FeaturePolicy.hh>
-#include <ignition/physics/RelativeQuantity.hh>
-#include <ignition/physics/RequestEngine.hh>
-#include <ignition/plugin/Loader.hh>
-#include <ignition/plugin/PluginPtr.hh>
-#include <ignition/plugin/Register.hh>
-
-// Features
 #include <ignition/physics/BoxShape.hh>
 #include <ignition/physics/CylinderShape.hh>
+#include <ignition/physics/FeatureList.hh>
+#include <ignition/physics/FeaturePolicy.hh>
 #include <ignition/physics/ForwardStep.hh>
 #include <ignition/physics/FrameSemantics.hh>
 #include <ignition/physics/FreeGroup.hh>
@@ -53,7 +74,9 @@
 #include <ignition/physics/GetEntities.hh>
 #include <ignition/physics/Joint.hh>
 #include <ignition/physics/Link.hh>
+#include <ignition/physics/RelativeQuantity.hh>
 #include <ignition/physics/RemoveEntities.hh>
+#include <ignition/physics/RequestEngine.hh>
 #include <ignition/physics/Shape.hh>
 #include <ignition/physics/SphereShape.hh>
 #include <ignition/physics/mesh/MeshShape.hh>
@@ -63,8 +86,9 @@
 #include <ignition/physics/sdf/ConstructModel.hh>
 #include <ignition/physics/sdf/ConstructVisual.hh>
 #include <ignition/physics/sdf/ConstructWorld.hh>
-
-// SDF
+#include <ignition/plugin/Loader.hh>
+#include <ignition/plugin/PluginPtr.hh>
+#include <ignition/plugin/Register.hh>
 #include <sdf/Collision.hh>
 #include <sdf/Joint.hh>
 #include <sdf/Link.hh>
@@ -73,52 +97,20 @@
 #include <sdf/Visual.hh>
 #include <sdf/World.hh>
 
-#include "ignition/gazebo/EntityComponentManager.hh"
-// Components
-#include "ignition/gazebo/components/AngularAcceleration.hh"
-#include "ignition/gazebo/components/AngularVelocity.hh"
-#include "ignition/gazebo/components/BatterySoC.hh"
-#include "ignition/gazebo/components/CanonicalLink.hh"
-#include "ignition/gazebo/components/ChildLinkName.hh"
-#include "ignition/gazebo/components/Collision.hh"
-#include "ignition/gazebo/components/ContactSensorData.hh"
-#include "ignition/gazebo/components/ExternalWorldWrenchCmd.hh"
-#include "ignition/gazebo/components/Geometry.hh"
-#include "ignition/gazebo/components/Gravity.hh"
-#include "ignition/gazebo/components/Inertial.hh"
-#include "ignition/gazebo/components/Joint.hh"
-#include "ignition/gazebo/components/JointAxis.hh"
-#include "ignition/gazebo/components/JointForceCmd.hh"
-#include "ignition/gazebo/components/JointPosition.hh"
-#include "ignition/gazebo/components/JointType.hh"
-#include "ignition/gazebo/components/JointVelocity.hh"
-#include "ignition/gazebo/components/JointVelocityCmd.hh"
-#include "ignition/gazebo/components/LinearAcceleration.hh"
-#include "ignition/gazebo/components/LinearVelocity.hh"
-#include "ignition/gazebo/components/Link.hh"
-#include "ignition/gazebo/components/Model.hh"
-#include "ignition/gazebo/components/Name.hh"
-#include "ignition/gazebo/components/ParentEntity.hh"
-#include "ignition/gazebo/components/ParentLinkName.hh"
-#include "ignition/gazebo/components/Pose.hh"
-#include "ignition/gazebo/components/PoseCmd.hh"
-#include "ignition/gazebo/components/Static.hh"
-#include "ignition/gazebo/components/ThreadPitch.hh"
-#include "ignition/gazebo/components/Visual.hh"
-#include "ignition/gazebo/components/World.hh"
-
-#include "Physics.h"
+#include <deque>
+#include <iostream>
+#include <unordered_map>
 
 using namespace ignition;
+using namespace gympp::plugins;
+using namespace ignition::gazebo;
 using namespace ignition::gazebo::systems;
 namespace components = ignition::gazebo::components;
 
-// Private data class.
-class ignition::gazebo::systems::PhysicsPrivate
+class Physics::Impl
 {
 public:
-    using MinimumFeatureList = ignition::physics::FeatureList<
-        // FreeGroup
+    using MinimumFeatureList = ignition::physics::FeatureList< //
         ignition::physics::FindFreeGroupFeature,
         ignition::physics::SetFreeGroupWorldPose,
         ignition::physics::FreeGroupFrameSemantics,
@@ -140,126 +132,100 @@ public:
         ignition::physics::sdf::ConstructSdfVisual,
         ignition::physics::sdf::ConstructSdfWorld>;
 
-public:
     using EnginePtrType =
         ignition::physics::EnginePtr<ignition::physics::FeaturePolicy3d, MinimumFeatureList>;
 
-public:
     using WorldType =
         ignition::physics::World<ignition::physics::FeaturePolicy3d, MinimumFeatureList>;
 
-public:
     using WorldPtrType =
         ignition::physics::WorldPtr<ignition::physics::FeaturePolicy3d, MinimumFeatureList>;
 
-public:
     using ModelPtrType =
         ignition::physics::ModelPtr<ignition::physics::FeaturePolicy3d, MinimumFeatureList>;
 
-public:
     using LinkPtrType =
         ignition::physics::LinkPtr<ignition::physics::FeaturePolicy3d, MinimumFeatureList>;
 
-public:
     using ShapePtrType =
         ignition::physics::ShapePtr<ignition::physics::FeaturePolicy3d, MinimumFeatureList>;
 
-public:
     using JointPtrType =
         ignition::physics::JointPtr<ignition::physics::FeaturePolicy3d, MinimumFeatureList>;
 
-public:
     using FreeGroupPtrType =
         ignition::physics::FreeGroupPtr<ignition::physics::FeaturePolicy3d, MinimumFeatureList>;
 
     /// \brief Create physics entities
     /// \param[in] _ecm Constant reference to ECM.
-public:
     void CreatePhysicsEntities(const EntityComponentManager& _ecm);
 
     /// \brief Remove physics entities if they are removed from the ECM
     /// \param[in] _ecm Constant reference to ECM.
-public:
     void RemovePhysicsEntities(const EntityComponentManager& _ecm);
 
     /// \brief Update physics from components
     /// \param[in] _ecm Constant reference to ECM.
-public:
     void UpdatePhysics(EntityComponentManager& _ecm);
 
     /// \brief Step the simulationrfor each world
     /// \param[in] _dt Duration
-public:
     void Step(const std::chrono::steady_clock::duration& _dt);
 
     /// \brief Update components from physics simulation
     /// \param[in] _ecm Mutable reference to ECM.
-public:
     void UpdateSim(EntityComponentManager& _ecm) const;
 
     /// \brief Update collision components from physics simulation
     /// \param[in] _ecm Mutable reference to ECM.
-public:
     void UpdateCollisions(EntityComponentManager& _ecm) const;
 
     /// \brief FrameData relative to world at a given offset pose
     /// \param[in] _link ign-physics link
     /// \param[in] _pose Offset pose in which to compute the frame data
     /// \returns FrameData at the given offset pose
-public:
     physics::FrameData3d LinkFrameDataAtOffset(const LinkPtrType& _link,
                                                const math::Pose3d& _pose) const;
 
     /// \brief A map between world entity ids in the ECM to World Entities in
     /// ign-physics.
-public:
     std::unordered_map<Entity, WorldPtrType> entityWorldMap;
 
     /// \brief A map between model entity ids in the ECM to Model Entities in
     /// ign-physics.
-public:
     std::unordered_map<Entity, ModelPtrType> entityModelMap;
 
     /// \brief A map between link entity ids in the ECM to Link Entities in
     /// ign-physics.
-public:
     std::unordered_map<Entity, LinkPtrType> entityLinkMap;
 
     /// \brief A map between collision entity ids in the ECM to Shape Entities in
     /// ign-physics.
-public:
     std::unordered_map<Entity, ShapePtrType> entityCollisionMap;
 
     /// \brief A map between shape entities in ign-physics to collision entities
     /// in the ECM. This is the reverse map of entityCollisionMap.
-public:
     std::unordered_map<ShapePtrType, Entity> collisionEntityMap;
 
     /// \brief A map between joint entity ids in the ECM to Joint Entities in
     /// ign-physics
-public:
     std::unordered_map<Entity, JointPtrType> entityJointMap;
 
     /// \brief A map between model entity ids in the ECM to whether its battery
     /// has drained.
-public:
     std::unordered_map<Entity, bool> entityOffMap;
 
     /// \brief used to store whether physics objects have been created.
-public:
     bool initialized = false;
 
     /// \brief Pointer to the underlying ign-physics Engine entity.
-public:
     EnginePtrType engine = nullptr;
 
     /// \brief Vector3d equality comparison function.
-public:
     std::function<bool(const math::Vector3d&, const math::Vector3d&)> vec3Eql{
         [](const math::Vector3d& _a, const math::Vector3d& _b) { return _a.Equal(_b, 1e-6); }};
 
     /// \brief Pose3d equality comparison function.
-public:
     std::function<bool(const math::Pose3d&, const math::Pose3d&)> pose3Eql{
         [](const math::Pose3d& _a, const math::Pose3d& _b) {
             return _a.Pos().Equal(_b.Pos(), 1e-6) && math::equal(_a.Rot().X(), _b.Rot().X(), 1e-6)
@@ -269,10 +235,9 @@ public:
         }};
 };
 
-//////////////////////////////////////////////////
 Physics::Physics()
     : System()
-    , dataPtr(std::make_unique<PhysicsPrivate>())
+    , pImpl(std::make_unique<Impl>())
 {
     ignition::plugin::Loader pl;
     // dartsim_plugin_LIB is defined by cmake
@@ -282,9 +247,9 @@ Physics::Physics()
         ignition::plugin::PluginPtr plugin = pl.Instantiate(className);
 
         if (plugin) {
-            this->dataPtr->engine =
+            this->pImpl->engine =
                 ignition::physics::RequestEngine<ignition::physics::FeaturePolicy3d,
-                                                 PhysicsPrivate::MinimumFeatureList>::From(plugin);
+                                                 Impl::MinimumFeatureList>::From(plugin);
         }
         else {
             ignerr << "Unable to instantiate " << className << ".\n";
@@ -296,14 +261,10 @@ Physics::Physics()
     }
 }
 
-//////////////////////////////////////////////////
 Physics::~Physics() = default;
 
-//////////////////////////////////////////////////
 void Physics::Update(const UpdateInfo& _info, EntityComponentManager& _ecm)
 {
-    IGN_PROFILE("Physics::Update");
-
     // \TODO(anyone) Support rewind
     if (_info.dt < std::chrono::steady_clock::duration::zero()) {
         ignwarn << "Detected jump back in time ["
@@ -311,24 +272,23 @@ void Physics::Update(const UpdateInfo& _info, EntityComponentManager& _ecm)
                 << "s]. System may not work properly." << std::endl;
     }
 
-    if (this->dataPtr->engine) {
-        this->dataPtr->CreatePhysicsEntities(_ecm);
+    if (this->pImpl->engine) {
+        this->pImpl->CreatePhysicsEntities(_ecm);
         // Only step if not paused.
         if (!_info.paused) {
-            this->dataPtr->UpdatePhysics(_ecm);
-            this->dataPtr->Step(_info.dt);
-            this->dataPtr->UpdateSim(_ecm);
+            this->pImpl->UpdatePhysics(_ecm);
+            this->pImpl->Step(_info.dt);
+            this->pImpl->UpdateSim(_ecm);
         }
 
         // Entities scheduled to be removed should be removed from physics after the
         // simulation step. Otherwise, since the to-be-removed entity still shows up
         // in the ECM::Each the UpdatePhysics and UpdateSim calls will have an error
-        this->dataPtr->RemovePhysicsEntities(_ecm);
+        this->pImpl->RemovePhysicsEntities(_ecm);
     }
 }
 
-//////////////////////////////////////////////////
-void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager& _ecm)
+void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
 {
     // Get all the new worlds
     _ecm.EachNew<components::World, components::Name, components::Gravity>(
@@ -558,8 +518,7 @@ void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager& _ecm)
         });
 }
 
-//////////////////////////////////////////////////
-void PhysicsPrivate::RemovePhysicsEntities(const EntityComponentManager& _ecm)
+void Physics::Impl::RemovePhysicsEntities(const EntityComponentManager& _ecm)
 {
     // Assume the world will not be erased
     // Only removing models is supported by ign-physics right now so we only
@@ -598,10 +557,8 @@ void PhysicsPrivate::RemovePhysicsEntities(const EntityComponentManager& _ecm)
     });
 }
 
-//////////////////////////////////////////////////
-void PhysicsPrivate::UpdatePhysics(EntityComponentManager& _ecm)
+void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
 {
-    IGN_PROFILE("PhysicsPrivate::UpdatePhysics");
     // Battery state
     _ecm.Each<components::BatterySoC>(
         [&](const Entity& _entity, const components::BatterySoC* _bat) {
@@ -740,10 +697,8 @@ void PhysicsPrivate::UpdatePhysics(EntityComponentManager& _ecm)
     }
 }
 
-//////////////////////////////////////////////////
-void PhysicsPrivate::Step(const std::chrono::steady_clock::duration& _dt)
+void Physics::Impl::Step(const std::chrono::steady_clock::duration& _dt)
 {
-    IGN_PROFILE("PhysicsPrivate::Step");
     ignition::physics::ForwardStep::Input input;
     ignition::physics::ForwardStep::State state;
     ignition::physics::ForwardStep::Output output;
@@ -755,11 +710,8 @@ void PhysicsPrivate::Step(const std::chrono::steady_clock::duration& _dt)
     }
 }
 
-//////////////////////////////////////////////////
-void PhysicsPrivate::UpdateSim(EntityComponentManager& _ecm) const
+void Physics::Impl::UpdateSim(EntityComponentManager& _ecm) const
 {
-    IGN_PROFILE("PhysicsPrivate::UpdateSim");
-
     // local pose
     _ecm.Each<components::Link, components::Pose, components::ParentEntity>(
         [&](const Entity& _entity,
@@ -1068,10 +1020,8 @@ void PhysicsPrivate::UpdateSim(EntityComponentManager& _ecm) const
     this->UpdateCollisions(_ecm);
 }
 
-//////////////////////////////////////////////////
-void PhysicsPrivate::UpdateCollisions(EntityComponentManager& _ecm) const
+void Physics::Impl::UpdateCollisions(EntityComponentManager& _ecm) const
 {
-    IGN_PROFILE("PhysicsPrivate::UpdateCollisions");
     // Quit early if the ContactData component hasn't been created. This means
     // there are no systems that need contact information
     if (!_ecm.HasComponentType(components::ContactSensorData::typeId))
@@ -1151,8 +1101,8 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager& _ecm) const
         });
 }
 
-physics::FrameData3d PhysicsPrivate::LinkFrameDataAtOffset(const LinkPtrType& _link,
-                                                           const math::Pose3d& _pose) const
+physics::FrameData3d Physics::Impl::LinkFrameDataAtOffset(const LinkPtrType& _link,
+                                                          const math::Pose3d& _pose) const
 {
     physics::FrameData3d parent;
     parent.pose = math::eigen3::convert(_pose);

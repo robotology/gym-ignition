@@ -23,46 +23,32 @@
  *
  */
 
-#ifndef IGNITION_GAZEBO_SYSTEMS_PHYSICS_HH_
-#define IGNITION_GAZEBO_SYSTEMS_PHYSICS_HH_
+#ifndef GYMPP_PLUGINS_PHYSICS
+#define GYMPP_PLUGINS_PHYSICS
 
-#include <ignition/gazebo/Export.hh>
 #include <ignition/gazebo/System.hh>
-#include <ignition/gazebo/config.hh>
 #include <memory>
 
-namespace ignition {
-    namespace gazebo {
-        // Inline bracket to help doxygen filtering.
-        inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
-            namespace systems {
-                // Forward declarations.
-                class PhysicsPrivate;
+namespace gympp {
+    namespace plugins {
+        class Physics;
+    } // namespace plugins
+} // namespace gympp
 
-                /// \class Physics Physics.hh ignition/gazebo/systems/Physics.hh
-                /// \brief Base class for a System.
-                class IGNITION_GAZEBO_VISIBLE Physics
-                    : public System
-                    , public ISystemUpdate
-                {
-                    /// \brief Constructor
-                public:
-                    explicit Physics();
+class gympp::plugins::Physics final
+    : public ignition::gazebo::System
+    , public ignition::gazebo::ISystemUpdate
+{
+public:
+    explicit Physics();
+    ~Physics() override;
 
-                    /// \brief Destructor
-                public:
-                    ~Physics() override;
+    void Update(const ignition::gazebo::UpdateInfo& info,
+                ignition::gazebo::EntityComponentManager& ecm) override;
 
-                    /// Documentation inherited
-                public:
-                    void Update(const UpdateInfo& _info, EntityComponentManager& _ecm) final;
+private:
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
+};
 
-                    /// \brief Private data pointer.
-                private:
-                    std::unique_ptr<PhysicsPrivate> dataPtr;
-                };
-            } // namespace systems
-        } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
-    } // namespace gazebo
-} // namespace ignition
-#endif
+#endif // GYMPP_PLUGINS_PHYSICS
