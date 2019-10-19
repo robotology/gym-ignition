@@ -12,7 +12,7 @@ jobs:
       matrix:
         python: [3.6]
         build_type: [Debug]
-        compiler: [gcc7]
+        compiler: [gcc8]
     container:
       image: diegoferigo/gym-ignition:ci
       env:
@@ -83,6 +83,8 @@ jobs:
       image: diegoferigo/gym-ignition:ci
       env:
         PYTHON_VERSION: ${{ matrix.python }}
+        CC: gcc-8
+        CXX: g++-8
 
     steps:
       - uses: actions/checkout@master
