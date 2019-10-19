@@ -4,8 +4,8 @@
         <physics default="true" type="dart">
         </physics>
         <plugin
-                filename="libignition-gazebo-physics-system.so"
-                name="ignition::gazebo::systems::Physics">
+                filename="libPhysicsSystem.so"
+                name="gympp::plugins::Physics">
         </plugin>
         <plugin
                 filename="libignition-gazebo-user-commands-system.so"
