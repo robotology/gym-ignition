@@ -24,6 +24,8 @@
  */
 
 #include "Physics.h"
+#include "gympp/gazebo/components/JointPositionReset.h"
+#include "gympp/gazebo/components/JointVelocityReset.h"
 
 #include <ignition/common/MeshManager.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
@@ -588,7 +590,52 @@ void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
                 return true;
             }
 
+            auto posReset = _ecm.Component<components::JointPositionReset>(_entity);
+            auto velReset = _ecm.Component<components::JointVelocityReset>(_entity);
+
+            // Reset the velocity
+            if (velReset) {
+                auto& jointVelocity = velReset->Data();
+
+                if (jointVelocity.size() != jointIt->second->GetDegreesOfFreedom()) {
+                    ignwarn << "There is a mismatch in the degrees of freedom "
+                            << "between Joint [" << _name->Data() << "(Entity=" << _entity
+                            << ")] and its JointVelocityReset "
+                            << "component. The joint has " << jointVelocity.size()
+                            << " while the component has " << jointIt->second->GetDegreesOfFreedom()
+                            << ".\n";
+                }
+
+                std::size_t nDofs =
+                    std::min(jointVelocity.size(), jointIt->second->GetDegreesOfFreedom());
+
+                for (std::size_t i = 0; i < nDofs; ++i) {
+                    jointIt->second->SetVelocity(i, jointVelocity[i]);
+                }
+            }
+
+            // Reset the position
+            if (posReset) {
+                auto& jointPosition = posReset->Data();
+
+                if (jointPosition.size() != jointIt->second->GetDegreesOfFreedom()) {
+                    ignwarn << "There is a mismatch in the degrees of freedom "
+                            << "between Joint [" << _name->Data() << "(Entity=" << _entity
+                            << ")] and its JointPositionyReset "
+                            << "component. The joint has " << jointPosition.size()
+                            << " while the component has " << jointIt->second->GetDegreesOfFreedom()
+                            << ".\n";
+                }
+                std::size_t nDofs =
+                    std::min(jointPosition.size(), jointIt->second->GetDegreesOfFreedom());
+                for (std::size_t i = 0; i < nDofs; ++i) {
+                    jointIt->second->SetPosition(i, jointPosition[i]);
+                }
+            }
+
             auto force = _ecm.Component<components::JointForceCmd>(_entity);
+            auto velCmd = _ecm.Component<components::JointVelocityCmd>(_entity);
+
             if (force) {
                 if (force->Data().size() != jointIt->second->GetDegreesOfFreedom()) {
                     ignwarn << "There is a mismatch in the degrees of freedom between "
@@ -605,19 +652,32 @@ void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
             }
             else {
                 // Only set joint velocity if joint force is not set.
-                auto velCmd = _ecm.Component<components::JointVelocityCmd>(_entity);
+                // If both the cmd and reset components are found, cmd is ignored.
                 if (velCmd) {
-                    if (velCmd->Data().size() != jointIt->second->GetDegreesOfFreedom()) {
-                        ignwarn << "There is a mismatch in the degrees of freedom between"
-                                << " Joint [" << _name->Data() << "(Entity=" << _entity
-                                << ")] and its JointVelocityCmd component. The joint has "
-                                << velCmd->Data().size() << " while the component has "
-                                << jointIt->second->GetDegreesOfFreedom() << ".\n";
+                    auto velocityCmd = velCmd->Data();
+
+                    if (velReset) {
+                        ignwarn << "Found both JointVelocityReset and "
+                                << "JointVelocityCmd components "
+                                << "for Joint [" << _name->Data() << "(Entity=" << _entity
+                                << "]). Ignoring JointVelocityReset component." << std::endl;
                     }
-                    std::size_t nDofs =
-                        std::min(velCmd->Data().size(), jointIt->second->GetDegreesOfFreedom());
-                    for (std::size_t i = 0; i < nDofs; ++i) {
-                        jointIt->second->SetVelocityCommand(i, velCmd->Data()[i]);
+                    else {
+                        if (velocityCmd.size() != jointIt->second->GetDegreesOfFreedom()) {
+                            ignwarn << "There is a mismatch in the degrees of freedom"
+                                    << " between Joint [" << _name->Data() << "(Entity=" << _entity
+                                    << ")] and its "
+                                    << "JointVelocityCmd component. The joint has "
+                                    << velocityCmd.size() << " while the component has "
+                                    << jointIt->second->GetDegreesOfFreedom() << ".\n";
+                        }
+
+                        std::size_t nDofs =
+                            std::min(velocityCmd.size(), jointIt->second->GetDegreesOfFreedom());
+
+                        for (std::size_t i = 0; i < nDofs; ++i) {
+                            jointIt->second->SetVelocityCommand(i, velocityCmd[i]);
+                        }
                     }
                 }
             }
@@ -966,6 +1026,19 @@ void Physics::Impl::UpdateSim(EntityComponentManager& _ecm) const
                 *_linearAcc = components::LinearAcceleration(entityBodyLinearAcc);
             }
 
+            return true;
+        });
+
+    // Clear reset components
+    _ecm.Each<components::JointPositionReset>(
+        [&](const Entity& _entity, components::JointPositionReset*) -> bool {
+            _ecm.RemoveComponent<components::JointPositionReset>(_entity);
+            return true;
+        });
+
+    _ecm.Each<components::JointVelocityReset>(
+        [&](const Entity& _entity, components::JointVelocityReset*) -> bool {
+            _ecm.RemoveComponent<components::JointVelocityReset>(_entity);
             return true;
         });
 

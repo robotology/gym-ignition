@@ -15,7 +15,9 @@ add_library(PhysicsSystem SHARED
 target_link_libraries(PhysicsSystem
     PUBLIC
     ignition-gazebo2::core
-    ignition-physics1::ignition-physics1-all)
+    ignition-physics1::ignition-physics1-all
+    PRIVATE
+    ExtraComponents)
 
 target_include_directories(PhysicsSystem PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
