@@ -113,9 +113,11 @@ We designed Gym-Ignition driven by the following reasons:
 
 ## How
 
-This project interfaces with the new generation of the [Gazebo](http://gazebosim.org) simulator, called [Ignition Gazebo](https://ignitionrobotics.org/libs/gazebo). It is part of the new [Ignition Robotics](http://ignitionrobotics.org) suite developed by [Open Robotics](https://www.openrobotics.org/).
+This project interfaces with the new generation of the [Gazebo](http://gazebosim.org) simulator, called [Ignition Gazebo](https://ignitionrobotics.org/libs/gazebo).
+It is part of the new [Ignition Robotics](http://ignitionrobotics.org) suite developed by [Open Robotics](https://www.openrobotics.org/).
 
-Ignition Robotics is currently under heavy development and is not yet stable. Though, it already offers enough functionalities for this project's aims:
+Ignition Robotics is currently under heavy development and is not yet stable.
+Though, it already offers enough functionalities for this project's aims:
 
 - Simulator-as-a-library
 - New modular architecture
@@ -148,7 +150,7 @@ We provide two different methods to test Gym-Ignition without the need to instal
 1. **Docker image**:
    ```sh
    docker pull diegoferigo/gym-ignition:latest
-   pip install rocker
+   pip3 install rocker
    
    # Intel GPU
    rocker --x11 diegoferigo/gym-ignition ./github/examples/python/launch_cartpole.py
@@ -159,23 +161,55 @@ We provide two different methods to test Gym-Ignition without the need to instal
 
 ## Setup
 
-The setup instructions expect a **Ubuntu** distribution with at least **Python 3.6**. Gym-Ignition is compatible also with other distributions (and, also, other OSs) under the assumption that the Ignition Robotics suite can be installed either from repos or source. Though, to keep the instruction simple, we only report the steps for the Ubuntu distro.
+The setup instructions expect a **Ubuntu** distribution with at least **Python 3.6**.
+Gym-Ignition is compatible also with other distributions (and, also, other OSs) under the assumption that the Ignition Robotics suite can be installed either from repos or source.
+Though, to keep the instructions simple, we only report the steps for the Ubuntu distro.
 
-The process is different whether you're an _user_ that wants to create environments using Gym-Ignition or you are a _developer_ that wants to edit the Python and C++ code.
+The process is different whether you're an _user_ that wants to create environments using Gym-Ignition or you are a _developer_ that wants to edit the Python and C++ upstream code.
+
+Execute all the setup commands in the same terminal.
+
+#### Common Steps
+
+1. Install the supported version of **Ignition Gazebo**:
+
+   ```sh
+   sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+   wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+   sudo apt update
+   sudo apt install ignition-gazebo2
+   ```
+
+   We currently require the development version, that will be ABI-compatible with the upcoming **Citadel** release.
+   Refer to the [official documentation](https://ignitionrobotics.org/docs/latest/install) for more detailed information.
+
+1. Create a Python [virtual environment](https://docs.python.org/3.6/tutorial/venv.html) as follows:
+   ```sh
+   sudo apt install virtualenv
+   virtualenv -p python3.6 $HOME/venv
+   source $HOME/venv/bin/activate
+   ```
 
 ### User setup
 
-1. Install the Ignition Robotics suite following the [official documentation](https://ignitionrobotics.org/docs/latest/install)
-1. Install Gym-Ignition with `pip install gym-ignition` (preferably in a [virtual environment](https://docs.python.org/3.6/tutorial/venv.html))
-
-After these steps, you should be able to execute the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
+Check that the last release [includes a wheel](https://pypi.org/project/gym-ignition/#files).
+Then install Gym-Ignition with `pip3 install gym-ignition`.
+After this step, you should be able to execute the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
 
 ### Developer setup
 
+1. Install gcc 8 with `apt install gcc-8`.
+   Export the following environment variables to enable it temporarily:
+
+   ```sh
+   export CC=gcc-8
+   export CXX=g++-8
+   ```
+
 1. Install [SWIG](https://github.com/swig/swig) with `apt install swig`
-1. Install all the Ignition Robotics suite except `ignition-gazebo2` following the [official documentation](https://ignitionrobotics.org/docs/latest/install)
-1. Install `ign-gazebo` from our [temporary fork](https://github.com/diegoferigo/ign-gazebo)
+
 1. Clone this repository
+
 1. Build and install the CMake project
    ```sh
    mkdir build
@@ -184,10 +218,12 @@ After these steps, you should be able to execute the example [`launch_cartpole.p
    cmake --build .
    cmake --build . --target install
    ```
+   
 1. Install the Python package in [editable mode](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs):
    ```sh
    pip3 install -e .
    ```
+   
 1. Export the following environment variable:
    ```sh
    # C++ bindings
@@ -198,11 +234,14 @@ After these steps, you should be able to execute the example [`launch_cartpole.p
 
 ### Unstable builds
 
-Gym-Ignition still doesn't have a steady release cycle strategy. This project targets mainly research, and its development is very active. In order to quickly deliver new features, we do our best to have a fast release cycle.
+Gym-Ignition still doesn't have a steady release cycle strategy.
+This project targets mainly research, and its development is very active.
+In order to quickly deliver new features, we do our best to have a fast release cycle.
 
-Though, if you find interesting [PRs](https://github.com/robotology/gym-ignition/pulls) that are not yet included in the [most recent release](https://github.com/robotology/gym-ignition/releases), you can get the most recent version as follows:
+If you find interesting [PRs](https://github.com/robotology/gym-ignition/pulls) that are not yet included in the [most recent release](https://github.com/robotology/gym-ignition/releases), you can get the latest unstable version as follows:
 
 1. **User installation**: install [`gym-ignition-nightly`](https://pypi.org/project/gym-ignition-nightly/). Be sure that the last release [includes a wheel](https://pypi.org/project/gym-ignition-nightly/#files).
+
 1. **Developer installation**: check-out the `devel` branch after cloning the repository.
 
 ## Citation
