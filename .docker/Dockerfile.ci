@@ -10,6 +10,8 @@ RUN apt-get update &&\
         apt-utils \
         gnupg2 \
         nano \
+        rename \
+        source-highlight \
         &&\
     wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add - && \
     apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' &&\
