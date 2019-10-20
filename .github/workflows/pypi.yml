@@ -13,9 +13,9 @@ on:
     branches: devel
 
 jobs:
-  # =============
-  # SDIST PACKAGE
-  # =============
+  # ==================
+  # TEST SDIST PACKAGE
+  # ==================
 
   sdist:
     name: sdist
@@ -36,36 +36,11 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      # Validate the last tag accordingly to PEP440
-      # From https://stackoverflow.com/a/37972030/12150968
-      - name: Validate Tag for PEP440 compliance
-        if: github.event_name != 'push'
-        run: |
-          apt-get update
-          apt-get install -y source-highlight
-          last_tag="$(git describe --abbrev=0 --tags)"
-          rel_regexp='^(\d+!)?(\d+)(\.\d+)+([\.\-\_])?((a(lpha)?|b(eta)?|c|r(c|ev)?|pre(view)?)\d*)?(\.?(post|dev)\d*)?$'
-          echo ""
-          echo $last_tag
-          echo ""
-          check-regexp ${rel_regexp} ${last_tag}
-          match=$(check-regexp ${rel_regexp} ${last_tag} | grep matches | cut -d ' ' -f 5)
-          test $match -eq 1 && true
-
       # The entrypoint is not called because it is overridden by GH Actions.
       # Even using the 'jobs.<job_id>.container.options' does not work because the
       # entrypoint of GH Actions overrides the one passed through YAML.
       - name: Execute entrypoint
         run: . /entrypoint.sh
-
-      - name: Setup package name
-        run: |
-          if [ "${{ github.event_name == 'push' }}" = "true" ] ; then
-            sed -i "s/name='gym-ignition'/name='gym-ignition-nightly'/g" setup.py
-            git config --global user.name "Your Name"
-            git config --global user.email "you@example.com"
-            git commit -a -m "Renamed for nightly release"
-          fi
 
       - name: Create sdist
         run: python setup.py sdist
@@ -80,26 +55,14 @@ jobs:
           cd tests/python
           pytest
 
-      - name: Install Twine
-        if: github.repository == 'robotology/gym-ignition'
-        run: pip install twine
-
-      - name: PyPI Release
-        if: github.repository == 'robotology/gym-ignition'
-        run: twine upload --verbose dist/*
-        env:
-          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-
-  # ===================
-  # BDIST_WHEEL PACKAGE
-  # ===================
+  # ========================
+  # TEST BDIST_WHEEL PACKAGE
+  # ========================
 
   # The bdist is created using the :pypi image and tested in the ubuntu:bionic
   # host that should mostly match the user setup
   bdist:
     name: bdist_wheel
-    needs: sdist
     strategy:
       matrix:
         os:
@@ -110,31 +73,6 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
-
-      # Validate the last tag accordingly to PEP440
-      # From https://stackoverflow.com/a/37972030/12150968
-      - name: Validate Tag for PEP440 compliance
-        if: github.event_name != 'push'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y source-highlight
-          last_tag="$(git describe --abbrev=0 --tags)"
-          rel_regexp='^(\d+!)?(\d+)(\.\d+)+([\.\-\_])?((a(lpha)?|b(eta)?|c|r(c|ev)?|pre(view)?)\d*)?(\.?(post|dev)\d*)?$'
-          echo ""
-          echo $last_tag
-          echo ""
-          check-regexp ${rel_regexp} ${last_tag}
-          match=$(check-regexp ${rel_regexp} ${last_tag} | grep matches | cut -d ' ' -f 5)
-          test $match -eq 1 && true
-
-      - name: Setup package name
-        run: |
-          if [ "${{ github.event_name == 'push' }}" == "true" ] ; then
-            sed -i "s/name='gym-ignition'/name='gym-ignition-nightly'/g" setup.py
-            git config --global user.name "Your Name"
-            git config --global user.email "you@example.com"
-            git commit -a -m "Renamed for nightly release"
-          fi
 
       # Workaround to export environment variables that persist in next steps
       # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
@@ -157,15 +95,7 @@ jobs:
           sleep 15
 
       - name: Create bdist_wheel
-        run: |
-          docker exec -i pypi sh -c 'python setup.py bdist_wheel'
-          docker exec -i pypi sh -c 'ls dist/'
-
-      - name: Rename wheel
-        run: |
-          docker exec -i -w /github/dist pypi \
-            sh -c 'find -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +'
-          ls dist/
+        run: docker exec -i pypi sh -c 'python setup.py bdist_wheel'
 
       - name: Download and start clean system
         run : |
@@ -184,15 +114,74 @@ jobs:
           docker exec -i test sh -c "git clone https://github.com/robotology/gym-ignition"
           docker exec -i test sh -c "cd gym-ignition/tests/python && pytest -v"
 
-      - name: Install Twine
-        if: github.repository == 'robotology/gym-ignition'
-        run: docker exec -i test sh -c 'pip install twine'
+  # =============
+  # PUSH PACKAGES
+  # =============
 
-      - name: PyPI Release
-        if: github.repository == 'robotology/gym-ignition'
+  push:
+    name: PyPI Release
+    if: github.repository == 'robotology/gym-ignition'
+    needs:
+      - sdist
+      - bdist
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version:
+          - 3.6
+    container:
+      image: diegoferigo/gym-ignition:ci
+      env:
+        CC: gcc-8
+        CXX: g++-8
+        PYTHON_VERSION: ${{ matrix.python_version }}
+
+    steps:
+      - uses: actions/checkout@master
+
+      # Validate the last tag accordingly to PEP440
+      # From https://stackoverflow.com/a/37972030/12150968
+      - name: Check PEP440 compliance
+        if: github.event_name != 'push'
         run: |
-          docker exec -i -e TWINE_USERNAME -e TWINE_PASSWORD test \
-            sh -c 'twine upload --verbose dist/*'
-        env:
-          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+          last_tag_with_v="$(git describe --abbrev=0 --tags)"
+          last_tag=${last_tag_with_v#v}
+          rel_regexp='^(\d+!)?(\d+)(\.\d+)+([\.\-\_])?((a(lpha)?|b(eta)?|c|r(c|ev)?|pre(view)?)\d*)?(\.?(post|dev)\d*)?$'
+          echo ""
+          echo $last_tag
+          echo ""
+          check-regexp ${rel_regexp} ${last_tag}
+          match=$(check-regexp ${rel_regexp} ${last_tag} | grep matches | cut -d ' ' -f 5)
+          test $match -eq 1 && true
+
+      # The entrypoint is not called because it is overridden by GH Actions.
+      # Even using the 'jobs.<job_id>.container.options' does not work because the
+      # entrypoint of GH Actions overrides the one passed through YAML.
+      - name: Execute entrypoint
+        run: . /entrypoint.sh
+
+      - name: Setup package name
+        if: github.event_name == 'push'
+        run: |
+          sed -i "s/name='gym-ignition'/name='gym-ignition-nightly'/g" setup.py
+          git config --global user.name "Your Name"
+          git config --global user.email "you@example.com"
+          git commit -a -m "Renamed for nightly release"
+
+      - name: Create packages
+        run: python setup.py sdist bdist_wheel
+
+      - name: Rename wheel
+        run: |
+          ls dist/
+          find -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +
+
+      - name: Inspect dist folder
+        run: ls -alh dist/
+
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}
+
