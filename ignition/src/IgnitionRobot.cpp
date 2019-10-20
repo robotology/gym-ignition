@@ -9,17 +9,15 @@
 #include "gympp/gazebo/IgnitionRobot.h"
 #include "gympp/Log.h"
 #include "gympp/gazebo/RobotSingleton.h"
+#include "gympp/gazebo/components/JointPositionReset.h"
+#include "gympp/gazebo/components/JointVelocityReset.h"
 
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
-#include <ignition/gazebo/components/JointPositionCmd.hh>
-#include <ignition/gazebo/components/JointPositionReset.hh>
 #include <ignition/gazebo/components/JointType.hh>
 #include <ignition/gazebo/components/JointVelocity.hh>
-#include <ignition/gazebo/components/JointVelocityCmd.hh>
-#include <ignition/gazebo/components/JointVelocityReset.hh>
 #include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>

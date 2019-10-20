@@ -163,7 +163,8 @@ target_link_libraries(IgnitionRobot
     PUBLIC
     gympp
     PRIVATE
-    RobotSingleton)
+    RobotSingleton
+    ExtraComponents)
 
 set_target_properties(IgnitionRobot PROPERTIES
     PUBLIC_HEADER include/gympp/gazebo/IgnitionRobot.h)
