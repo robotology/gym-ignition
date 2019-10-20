@@ -24,13 +24,13 @@
             <td align="left">CI/CD</td>
             <td align="center">
                 <a href="https://github.com/robotology/gym-ignition/actions">
-                <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/docker.yml/badge.svg" alt="Docker Images" />
+                <img src="https://github.com/robotology/gym-ignition/workflows/Docker%20Images/badge.svg" alt="Docker Images" />
                 </a>
                 <a href="https://github.com/robotology/gym-ignition/actions">
-                <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/ci.yml/badge.svg" alt="CI" />
+                <img src="https://github.com/robotology/gym-ignition/workflows/Continuous%20Integration/badge.svg" alt="CI" />
                 </a>
                 <a href="https://github.com/robotology/gym-ignition/actions">
-                <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/pypi.yml/badge.svg" alt="PyPI CD" />
+                <img src="https://github.com/robotology/gym-ignition/workflows/PyPI%20Continuous%20Delivery/badge.svg" alt="PyPI CD" />
                 </a>
                 <a href="https://www.codacy.com/app/diegoferigo/gym-ignition?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=diegoferigo/gym-ignition&amp;utm_campaign=Badge_Grade">
                 <img src="https://api.codacy.com/project/badge/Grade/899a7c8304e14ed9b2330eb309cdad15" alt="Codacy Badge" />
