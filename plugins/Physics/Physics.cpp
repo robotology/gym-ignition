@@ -28,6 +28,7 @@
 #include "gympp/gazebo/components/JointVelocityReset.h"
 
 #include <ignition/common/MeshManager.hh>
+#include <ignition/common/SystemPaths.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
 #include <ignition/gazebo/components/AngularAcceleration.hh>
 #include <ignition/gazebo/components/AngularVelocity.hh>
@@ -237,30 +238,85 @@ public:
 Physics::Physics()
     : System()
     , pImpl(std::make_unique<Impl>())
-{
-    ignition::plugin::Loader pl;
-    // dartsim_plugin_LIB is defined by cmake
-    std::unordered_set<std::string> plugins = pl.LoadLib(dartsim_plugin_LIB);
-    if (!plugins.empty()) {
-        const std::string className = "ignition::physics::dartsim::Plugin";
-        ignition::plugin::PluginPtr plugin = pl.Instantiate(className);
-
-        if (plugin) {
-            this->pImpl->engine =
-                ignition::physics::RequestEngine<ignition::physics::FeaturePolicy3d,
-                                                 Impl::MinimumFeatureList>::From(plugin);
-        }
-        else {
-            ignerr << "Unable to instantiate " << className << ".\n";
-        }
-    }
-    else {
-        ignerr << "Unable to load the " << dartsim_plugin_LIB << " library.\n";
-        return;
-    }
-}
+{}
 
 Physics::~Physics() = default;
+
+void Physics::Configure(const ignition::gazebo::Entity& /*entity*/,
+                        const std::shared_ptr<const sdf::Element>& /*sdf*/,
+                        EntityComponentManager& /*ecm*/,
+                        EventManager& /*eventMgr*/)
+{
+    // TODO: get the engine from the SDF
+    std::string engineName = "dartsim";
+
+    // The plugin library from ign-physics should:
+    //   1) Be contained in a folder specified by IGN_GAZEBO_SYSTEM_PLUGIN_PATH
+    //   2) Have the name "ignition-physics1-<engine>-plugin"
+
+    // TODO: this works only on GNU/Linux
+    auto getLibName = [](const std::string& engineName) -> std::string {
+        return "libignition-physics1-" + engineName + "-plugin.so";
+    };
+
+    ignition::common::SystemPaths systemPaths;
+    systemPaths.SetFilePathEnv("IGN_GAZEBO_SYSTEM_PLUGIN_PATH");
+    std::string pluginFile = systemPaths.FindFile(getLibName(engineName));
+
+    if (pluginFile.empty()) {
+        ignerr << "Failed to find plugin for the engine '" << engineName << "'. "
+               << "Reverting to the default 'dartsim'." << std::endl;
+        pluginFile = systemPaths.FindFile(getLibName("dartsim"));
+        assert(!pluginFile.empty());
+    }
+
+    ignition::plugin::Loader loader;
+    std::unordered_set<std::string> plugins = loader.LoadLib(pluginFile);
+
+    if (plugins.empty()) {
+        ignerr << "Unable to load the '" << pluginFile << "' library" << std::endl;
+        assert(false);
+        return;
+    }
+
+    // Get the class name of the first plugin
+    std::string pluginClassName = plugins.extract(plugins.begin()).value();
+
+    if (plugins.size() > 1) {
+        ignwarn << "Found more than one plugin in the '" << pluginFile << "' library. "
+                << "This is not supported, loading only the first one "
+                << "(" << pluginClassName << ")." << std::endl;
+    }
+
+    ignition::plugin::PluginPtr plugin = loader.Instantiate(pluginClassName);
+
+    if (!plugin) {
+        ignerr << "Unable to instantiate " << pluginClassName << std::endl;
+        assert(false);
+        return;
+    }
+
+    // Request the features
+    this->pImpl->engine = ignition::physics::RequestEngine<ignition::physics::FeaturePolicy3d,
+                                                           Impl::MinimumFeatureList>::From(plugin);
+
+    // Check that all the features exist and, if not, print the missing ones
+    if (!this->pImpl->engine) {
+        auto missingFeatures =
+            ignition::physics::RequestEngine3d<Impl::MinimumFeatureList>::MissingFeatureNames(
+                plugin);
+        ignerr << "Failed to request engine from '" << pluginClassName << "' plugin" << std::endl;
+        ignerr << "Missing features:" << std::endl;
+        for (auto feature : missingFeatures) {
+            ignerr << "  - " << feature << std::endl;
+        }
+        assert(false);
+        return;
+    }
+    else {
+        igndbg << "Active physics engine: '" << engineName << "'" << std::endl;
+    }
+}
 
 void Physics::Update(const UpdateInfo& _info, EntityComponentManager& _ecm)
 {
@@ -1180,6 +1236,9 @@ physics::FrameData3d Physics::Impl::LinkFrameDataAtOffset(const LinkPtrType& _li
     return this->engine->Resolve(relFrameData, physics::FrameID::World());
 }
 
-IGNITION_ADD_PLUGIN(Physics, ignition::gazebo::System, Physics::ISystemUpdate)
+IGNITION_ADD_PLUGIN(Physics,
+                    ignition::gazebo::System,
+                    Physics::ISystemConfigure,
+                    Physics::ISystemUpdate)
 
-IGNITION_ADD_PLUGIN_ALIAS(Physics, "ignition::gazebo::systems::Physics")
+IGNITION_ADD_PLUGIN_ALIAS(Physics, "gympp::plugins::Physics")

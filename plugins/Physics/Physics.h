@@ -37,6 +37,7 @@ namespace gympp {
 
 class gympp::plugins::Physics final
     : public ignition::gazebo::System
+    , public ignition::gazebo::ISystemConfigure
     , public ignition::gazebo::ISystemUpdate
 {
 public:
@@ -45,6 +46,11 @@ public:
 
     void Update(const ignition::gazebo::UpdateInfo& info,
                 ignition::gazebo::EntityComponentManager& ecm) override;
+
+    void Configure(const ignition::gazebo::Entity& entity,
+                   const std::shared_ptr<const sdf::Element>& sdf,
+                   ignition::gazebo::EntityComponentManager& ecm,
+                   ignition::gazebo::EventManager& eventMgr) override;
 
 private:
     class Impl;
