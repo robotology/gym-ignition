@@ -59,20 +59,10 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_releas
         libignition-rendering-dev \
         libignition-sensors2-dev \
         libignition-gui2-dev \
+        libignition-gazebo2-dev \
         &&\
     rm -rf /var/lib/apt/lists/*
 
-# Install ign-gazebo from my fork
-RUN cd /tmp &&\
-    git clone --depth 1 https://github.com/diegoferigo/ign-gazebo  &&\
-    cd ign-gazebo && mkdir -p build && cd build &&\
-    cmake \
-        -DCMAKE_BUILD_TYPE="Release" \
-        -DBUILD_TESTING:BOOL=OFF \
-        -DCMAKE_INSTALL_PREFIX="/usr" \
-        .. &&\
-    cmake --build . --target install -- -j8 &&\
-    rm -r /tmp/ign-gazebo
 
 # Install idyntree
 RUN apt-get update &&\
