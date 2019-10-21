@@ -38,6 +38,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@master
+        if: github.event_name != 'schedule'
+
+      - uses: actions/checkout@master
+        with:
+          ref: 'refs/heads/devel'
+        if: github.event_name == 'schedule'
 
       - name: Build
         env:
@@ -54,7 +60,7 @@ jobs:
         if: |
           github.repository == 'robotology/gym-ignition' &&
           github.event_name != 'pull_request' &&
-          (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/devel')
+          (github.event_name == 'schedule' || github.ref == 'refs/heads/devel')
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -64,5 +70,5 @@ jobs:
         if: |
           github.repository == 'robotology/gym-ignition' &&
           github.event_name != 'pull_request' &&
-          (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/devel')
+          (github.event_name == 'schedule' || github.ref == 'refs/heads/devel')
         run: docker push diegoferigo/gym-ignition:${{ matrix.tag }}
