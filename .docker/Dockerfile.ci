@@ -39,14 +39,12 @@ RUN apt-get update &&\
     rm -rf /var/lib/apt/lists/*
 
 # Install ignition robotics
-ARG branch="master"
-COPY ignition-pkgs-${branch}.txt /usr/local/share/ignition-pkgs-${branch}.txt
+ARG ignition_codename="blueprint"
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
         > /etc/apt/sources.list.d/gazebo-stable.list &&\
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
     apt-get update &&\
-    xargs -a /usr/local/share/ignition-pkgs-${branch}.txt \
-        apt-get install -y --no-install-recommends &&\
+    apt-get install -y --no-install-recommends ignition-${ignition_codename} &&\
     rm -rf /var/lib/apt/lists/*
 
 # Install idyntree

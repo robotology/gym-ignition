@@ -177,11 +177,11 @@ Execute all the setup commands in the same terminal.
    sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
    wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
    sudo apt update
-   sudo apt install ignition-gazebo2 libignition-gazebo2-dev
+   sudo apt install ignition-blueprint
    ```
 
-   We currently require the development version, that will be ABI-compatible with the upcoming **Citadel** release.
-   Refer to the [official documentation](https://ignitionrobotics.org/docs/latest/install) for more detailed information.
+   We currently require the development version, that will be ABI-compatible with the **Blueprint** release.
+   Refer to the [official documentation](https://ignitionrobotics.org/docs/blueprint/install) for more detailed information.
 
 1. Create a Python [virtual environment](https://docs.python.org/3.6/tutorial/venv.html) as follows:
    ```sh
