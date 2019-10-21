@@ -34,7 +34,7 @@ jobs:
             extra_docker_options: --build-arg branch='devel'
           - tag: nightly
             extra_docker_options: |
-              --build-arg pypi_package='gym-ignition-nightly' --build-arg ign_major_ver=2 \
+              --build-arg pypi_package='gym-ignition-nightly' --build-arg ign_major_ver=2 --build-arg branch='devel' \
 
     steps:
       - uses: actions/checkout@master

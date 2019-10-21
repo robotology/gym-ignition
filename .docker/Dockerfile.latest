@@ -34,11 +34,12 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_releas
 
 # Install gym-ignition bdist in a virtualenv
 # Download also gym-ignition for the examples
+ARG branch="master"
 ARG pypi_package="gym-ignition"
 ENV VIRTUAL_ENV=/venv
 ENV PATH=/venv/bin:$PATH
 RUN virtualenv -p python3.6 ${VIRTUAL_ENV} &&\
     pip install --pre ${pypi_package} &&\
-    git clone https://github.com/robotology/gym-ignition /github
+    git clone -b ${branch} https://github.com/robotology/gym-ignition /github
 
 CMD ["bash"]
