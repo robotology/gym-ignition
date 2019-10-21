@@ -192,9 +192,9 @@ Execute all the setup commands in the same terminal.
 
 ### User setup
 
-Check that the last release [includes a wheel](https://pypi.org/project/gym-ignition/#files).
-Then install Gym-Ignition with `pip3 install gym-ignition`.
-After this step, you should be able to execute the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
+1. `pip3 install gym-ignition`
+
+You can now run the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
 
 ### Developer setup
 
@@ -230,7 +230,7 @@ After this step, you should be able to execute the example [`launch_cartpole.py`
    export PYTHONPATH=<installprefix>/lib/python3.6/site-packages
    ```
 
-After these steps, you should be able to execute the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
+After these steps, you can run the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
 
 ### Unstable builds
 
@@ -240,9 +240,9 @@ In order to quickly deliver new features, we do our best to have a fast release 
 
 If you find interesting [PRs](https://github.com/robotology/gym-ignition/pulls) that are not yet included in the [most recent release](https://github.com/robotology/gym-ignition/releases), you can get the latest unstable version as follows:
 
-1. **User installation**: install [`gym-ignition-nightly`](https://pypi.org/project/gym-ignition-nightly/). Be sure that the last release [includes a wheel](https://pypi.org/project/gym-ignition-nightly/#files).
+1. **User installation**: `pip3 install gym-ignition-nightly`
 
-1. **Developer installation**: check-out the `devel` branch after cloning the repository.
+1. **Developer installation**: check-out the `devel` branch after cloning the repository and follow the remaining steps
 
 ## Citation
 
