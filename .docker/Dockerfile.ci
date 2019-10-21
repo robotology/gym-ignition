@@ -62,6 +62,7 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_releas
         libignition-sensors2-dev \
         libignition-gui2-dev \
         libignition-gazebo2-dev \
+        ignition-gazebo2 \
         &&\
     rm -rf /var/lib/apt/lists/*
 

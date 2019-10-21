@@ -30,6 +30,7 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_releas
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
     apt-get update &&\
     apt-get install -y --no-install-recommends \
+        ignition-gazebo2 \
         libignition-gazebo2-dev \
         &&\
     rm -rf /var/lib/apt/lists/*

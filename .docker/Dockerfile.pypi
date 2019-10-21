@@ -34,10 +34,6 @@ RUN apt-get update &&\
 # Install ignition robotics
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
         > /etc/apt/sources.list.d/gazebo-stable.list &&\
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" \
-        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-nightly `lsb_release -cs` main" \
-        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
     apt-get update &&\
     apt-get install -y --no-install-recommends \
@@ -55,6 +51,7 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_releas
         libignition-sensors2-dev \
         libignition-gui2-dev \
         libignition-gazebo2-dev \
+        ignition-gazebo2 \
         &&\
     rm -rf /var/lib/apt/lists/*
 
