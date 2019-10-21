@@ -39,33 +39,15 @@ RUN apt-get update &&\
     rm -rf /var/lib/apt/lists/*
 
 # Install ignition robotics
+ARG branch="master"
+COPY ignition-pkgs-${branch}.txt /usr/local/share/ignition-pkgs-${branch}.txt
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
         > /etc/apt/sources.list.d/gazebo-stable.list &&\
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" \
-        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-nightly `lsb_release -cs` main" \
-        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
     apt-get update &&\
-    apt-get install -y --no-install-recommends \
-        libignition-cmake2-dev \
-        libignition-plugin-dev \
-        libignition-math6-dev \
-        libignition-common3-dev \
-        libignition-transport7-dev \
-        libignition-msgs4-dev \
-        libignition-tools-dev \
-        libignition-fuel-tools3-dev \
-        libsdformat8-dev \
-        libignition-physics-dev \
-        libignition-rendering-dev \
-        libignition-sensors2-dev \
-        libignition-gui2-dev \
-        libignition-gazebo2-dev \
-        ignition-gazebo2 \
-        &&\
+    xargs -a /usr/local/share/ignition-pkgs-${branch}.txt \
+        apt-get install -y --no-install-recommends &&\
     rm -rf /var/lib/apt/lists/*
-
 
 # Install idyntree
 RUN apt-get update &&\

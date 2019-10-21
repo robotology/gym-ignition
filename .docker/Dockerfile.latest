@@ -21,17 +21,14 @@ RUN apt-get update &&\
     rm -rf /var/lib/apt/lists/*
 
 # Install ignition gazebo
+ARG ign_major_ver=2
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
         > /etc/apt/sources.list.d/gazebo-stable.list &&\
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" \
-        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-nightly `lsb_release -cs` main" \
-        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
     apt-get update &&\
     apt-get install -y --no-install-recommends \
-        ignition-gazebo2 \
-        libignition-gazebo2-dev \
+        ignition-gazebo${ign_major_ver} \
+        libignition-gazebo${ign_major_ver}-dev \
         &&\
     rm -rf /var/lib/apt/lists/*
 
