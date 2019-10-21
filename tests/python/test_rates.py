@@ -11,7 +11,6 @@ import itertools
 import numpy as np
 import gym_ignition
 from typing import List, Tuple
-from multiprocessing import Process
 from gym_ignition import gympp_bindings as bindings
 from gym_ignition.utils import logger, resource_finder
 
@@ -195,8 +194,8 @@ def template_test(rtf: float,
 
 def create_test_matrix() -> List[Tuple]:
     rtf_list = [0.5, 1, 2, 5, 10]
-    agent_rate_list = [100, 1000]
-    physics_rate_list = [100, 500, 1000, 2000]
+    agent_rate_list = [100, 500, 1000]
+    physics_rate_list = [100, 500, 1000]
 
     matrix = list()
 
@@ -206,7 +205,7 @@ def create_test_matrix() -> List[Tuple]:
 
         for rtf, physics_rate in combinations:
             # Remove some combination too demanding for a single process
-            if physics_rate * rtf >= 5000:
+            if physics_rate * rtf >= 2000:
                 continue
 
             # This case is not allowed
@@ -230,7 +229,4 @@ def test_rates(rtf, agent_rate, physics_rate):
     print("Agent rate = {}".format(agent_rate))
     print("Physics rate = {}".format(physics_rate))
 
-    # Test this combination in a separated process
-    p = Process(target=template_test, args=(rtf, physics_rate, agent_rate))
-    p.start()
-    p.join()
+    template_test(rtf, physics_rate, agent_rate)

@@ -32,43 +32,13 @@ RUN apt-get update &&\
     rm -rf /var/lib/apt/lists/*
 
 # Install ignition robotics
+ARG ignition_codename="blueprint"
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
         > /etc/apt/sources.list.d/gazebo-stable.list &&\
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" \
-        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-nightly `lsb_release -cs` main" \
-        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
     apt-get update &&\
-    apt-get install -y --no-install-recommends \
-        libignition-cmake2-dev \
-        libignition-plugin-dev \
-        libignition-math6-dev \
-        libignition-common3-dev \
-        libignition-transport7-dev \
-        libignition-msgs4-dev \
-        libignition-tools-dev \
-        libignition-fuel-tools3-dev \
-        libsdformat8-dev \
-        libignition-physics-dev \
-        libignition-rendering-dev \
-        libignition-sensors2-dev \
-        libignition-gui2-dev \
-        &&\
+    apt-get install -y --no-install-recommends ignition-${ignition_codename} &&\
     rm -rf /var/lib/apt/lists/*
-
-# Install ign-gazebo from my fork (statically compiled)
-RUN cd /tmp &&\
-    git clone --depth 1 https://github.com/diegoferigo/ign-gazebo  &&\
-    cd ign-gazebo && mkdir -p build && cd build &&\
-    cmake \
-        -DCMAKE_BUILD_TYPE="Release" \
-        -DBUILD_TESTING:BOOL=OFF \
-        -DCMAKE_INSTALL_PREFIX:PATH="/usr" \
-        -DBUILD_SHARED_LIBS:BOOL=OFF \
-        .. &&\
-    cmake --build . --target install -- -j8 &&\
-    rm -r /tmp/ign-gazebo
 
 # Install idyntree (statically compiled)
 RUN apt-get update &&\

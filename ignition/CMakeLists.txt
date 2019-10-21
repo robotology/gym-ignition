@@ -2,6 +2,21 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+# ==========
+# COMPONENTS
+# ==========
+
+add_library(ExtraComponents INTERFACE)
+target_sources(ExtraComponents INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/components/JointPositionReset.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/components/JointVelocityReset.h)
+
+target_include_directories(ExtraComponents INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_link_libraries(ExtraComponents INTERFACE ignition-gazebo2::core)
+
 # =====================
 # ENVIRONMENT CALLBACKS
 # =====================
@@ -148,7 +163,8 @@ target_link_libraries(IgnitionRobot
     PUBLIC
     gympp
     PRIVATE
-    RobotSingleton)
+    RobotSingleton
+    ExtraComponents)
 
 set_target_properties(IgnitionRobot PROPERTIES
     PUBLIC_HEADER include/gympp/gazebo/IgnitionRobot.h)

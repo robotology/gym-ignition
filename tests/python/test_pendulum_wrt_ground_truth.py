@@ -6,7 +6,6 @@ import gym
 import pytest
 import numpy as np
 from gym.envs import registry
-from multiprocessing import Process
 from gym_ignition.utils import logger
 from gym.envs.registration import register
 from gym_ignition.robots.sim import gazebo, pybullet
@@ -90,7 +89,7 @@ if "Pendulum-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all()
         max_episode_steps=1000,
         kwargs={'task_cls': PendulumSwingUp,
                 'robot_cls': gazebo.pendulum.PendulumGazeboRobot,
-                'sdf': "Pendulum/Pendulum.sdf",
+                'model': "Pendulum/Pendulum.sdf",
                 'world': "DefaultEmptyWorld.world",
                 'rtf': 100,
                 'agent_rate': 4000,
@@ -176,7 +175,4 @@ def template_pendulum_wrt_ground_truth(env_name: str, max_error_in_deg: float):
                           ("Pendulum-PyBullet-PyTest-v0", 3.0),
                           ])
 def test_pendulum_ignition(env_name: str, max_error_in_deg: float):
-    args = (env_name, max_error_in_deg)
-    p = Process(target=template_pendulum_wrt_ground_truth, args=args)
-    p.start()
-    p.join()
+    template_pendulum_wrt_ground_truth(env_name, max_error_in_deg)

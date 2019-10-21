@@ -77,6 +77,6 @@ else()
         DESTINATION ${CMAKE_INSTALL_PREFIX})
 
     install(
-        TARGETS ECMProvider RobotController CartPolePlugin
+        TARGETS ECMProvider RobotController CartPolePlugin PhysicsSystem
         LIBRARY DESTINATION ${PYTHON_PACKAGE_IMPORT_NAME}/plugins)
 endif()

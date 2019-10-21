@@ -1,4 +1,4 @@
-name: PyPI Release
+name: PyPI Continuous Delivery
 
 # Visit the following page for more details:
 # https://packaging.python.org/tutorials/packaging-projects/
@@ -8,11 +8,14 @@ on:
     types:
       - published
       - prereleased
+  # Nightly builds
+  push:
+    branches: devel
 
 jobs:
-  # =============
-  # SDIST PACKAGE
-  # =============
+  # ==================
+  # TEST SDIST PACKAGE
+  # ==================
 
   sdist:
     name: sdist
@@ -24,10 +27,113 @@ jobs:
     container:
       # The sdist is tested using the :ci image tag that should mostly match the developer
       # setup with ignition robotics installed from the official ppa
-      image: diegoferigo/gym-ignition:ci
+      image: diegoferigo/gym-ignition:ci-master
       env:
-        CC: gcc
-        CXX: g++
+        CC: gcc-8
+        CXX: g++-8
+        PYTHON_VERSION: ${{ matrix.python_version }}
+
+    steps:
+      - uses: actions/checkout@master
+
+      # The entrypoint is not called because it is overridden by GH Actions.
+      # Even using the 'jobs.<job_id>.container.options' does not work because the
+      # entrypoint of GH Actions overrides the one passed through YAML.
+      - name: Execute entrypoint
+        run: . /entrypoint.sh
+
+      - name: Create sdist
+        run: python setup.py sdist
+
+      - name: Install sdist
+        run: |
+          cd dist
+          pip install *.tar.gz
+
+      - name: Python tests
+        run: |
+          cd tests/python
+          pytest
+
+  # ========================
+  # TEST BDIST_WHEEL PACKAGE
+  # ========================
+
+  # The bdist is created using the :pypi image and tested in the ubuntu:bionic
+  # host that should mostly match the user setup
+  bdist:
+    name: bdist_wheel
+    strategy:
+      matrix:
+        os:
+          - ubuntu-18.04
+        python_version:
+          - 3.6
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@master
+
+      # Workaround to export environment variables that persist in next steps
+      # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+      - name: Setup Environment
+        run: |
+          echo "::set-env name=CC::gcc-8"
+          echo "::set-env name=CXX::g++-8"
+          echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
+          env
+
+      - name: Download diegoferigo/gym-ignition:pypi-master
+        run: 'docker pull diegoferigo/gym-ignition:pypi-master'
+
+      - name: Create container
+        run: |
+          docker run \
+            -d -i --rm --name pypi -v $(pwd):/github -w /github \
+            -e PYTHON_VERSION=$PYTHON_VERSION -e CC=$CC -e CXX=$CXX \
+            diegoferigo/gym-ignition:pypi-master bash
+          sleep 15
+
+      - name: Create bdist_wheel
+        run: docker exec -i pypi sh -c 'python setup.py bdist_wheel'
+
+      - name: Download and start clean system
+        run : |
+          docker pull diegoferigo/gym-ignition:ci-master
+          docker run \
+            -d -i --name test -e PYTHON_VERSION=$PYTHON_VERSION \
+            -v $(pwd)/dist:/dist \
+            diegoferigo/gym-ignition:ci-master bash
+          sleep 15
+
+      - name: Install bdist
+        run: docker exec -i -w /dist test sh -c 'pip install *.whl'
+
+      - name: Python tests
+        run: |
+          docker exec -i test sh -c "git clone https://github.com/robotology/gym-ignition"
+          docker exec -i test sh -c "cd gym-ignition/tests/python && pytest -v"
+
+  # =============
+  # PUSH PACKAGES
+  # =============
+
+  push:
+    name: PyPI Release
+    if: github.repository == 'robotology/gym-ignition'
+    needs:
+      - sdist
+      - bdist
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python_version:
+          - 3.6
+    container:
+      image: diegoferigo/gym-ignition:ci-master
+      env:
+        CC: gcc-8
+        CXX: g++-8
         PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
@@ -35,11 +141,11 @@ jobs:
 
       # Validate the last tag accordingly to PEP440
       # From https://stackoverflow.com/a/37972030/12150968
-      - name: Validate Tag for PEP440 compliance
+      - name: Check PEP440 compliance
+        if: github.event_name != 'push'
         run: |
-          apt-get update
-          apt-get install -y source-highlight
-          last_tag="$(git describe --abbrev=0 --tags)"
+          last_tag_with_v="$(git describe --abbrev=0 --tags)"
+          last_tag=${last_tag_with_v#v}
           rel_regexp='^(\d+!)?(\d+)(\.\d+)+([\.\-\_])?((a(lpha)?|b(eta)?|c|r(c|ev)?|pre(view)?)\d*)?(\.?(post|dev)\d*)?$'
           echo ""
           echo $last_tag
@@ -54,131 +160,27 @@ jobs:
       - name: Execute entrypoint
         run: . /entrypoint.sh
 
-      - name: Create package
-        run: python setup.py sdist
-
-      - name: Install and test
+      - name: Setup package name
+        if: github.event_name == 'push'
         run: |
-          cd dist
-          pip install $(find . -name gym-ignition-*.zip -o -name gym-ignition-*.gz)
-          cd ../tests/python
-          module_path=$(python -c "import gym_ignition ; print(gym_ignition.__path__[0])" | grep gym_ignition)
-          export IGN_GAZEBO_SYSTEM_PLUGIN_PATH=${module_path}/plugins
-          data_path=$(python -c "import gym_ignition_data ; print(gym_ignition_data.__path__[0])")
-          export IGN_GAZEBO_RESOURCE_PATH=${data_path}:${data_path}/worlds
-          pytest
+          sed -i "s/name='gym-ignition'/name='gym-ignition-nightly'/g" setup.py
+          git config --global user.name "Your Name"
+          git config --global user.email "you@example.com"
+          git commit -a -m "Renamed for nightly release"
 
-      - name: Install twine
-        if: github.event.action == 'published'
-        run: pip install twine
-
-      - name: Push to PyPI
-        if: github.event.action == 'published'
-        run: twine upload --verbose dist/*
-        env:
-          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
-
-  # ===================
-  # BDIST_WHEEL PACKAGE
-  # ===================
-
-  # The bdist is created using the :pypi image and tested in the ubuntu:bionic
-  # host that should mostly match the user setup
-  bdist:
-    name: bdist_wheel
-    needs: sdist
-    strategy:
-      matrix:
-        os:
-          - ubuntu-18.04
-        python_version:
-          - 3.6
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - uses: actions/checkout@master
-
-      # Configure the host ubuntu system. It will be used as clean system for the
-      - name: Setup python
-        uses: actions/setup-python@v1
-        with:
-          python-version: ${{ matrix.python_version }}
-          architecture: x64
-
-      # Validate the last tag accordingly to PEP440
-      # From https://stackoverflow.com/a/37972030/12150968
-      - name: Validate Tag for PEP440 compliance
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y source-highlight
-          last_tag="$(git describe --abbrev=0 --tags)"
-          rel_regexp='^(\d+!)?(\d+)(\.\d+)+([\.\-\_])?((a(lpha)?|b(eta)?|c|r(c|ev)?|pre(view)?)\d*)?(\.?(post|dev)\d*)?$'
-          echo ""
-          echo $last_tag
-          echo ""
-          check-regexp ${rel_regexp} ${last_tag}
-          match=$(check-regexp ${rel_regexp} ${last_tag} | grep matches | cut -d ' ' -f 5)
-          test $match -eq 1 && true
-
-      # Workaround to export environment variables that persist in next steps
-      # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
-      - name: Setup Environment
-        run: |
-          echo "::set-env name=CC::gcc"
-          echo "::set-env name=CXX::g++"
-          echo "::set-env name=PYTHON_VERSION::${{ matrix.python }}"
-          env
-
-      - name: Download diegoferigo/gym-ignition:pypi
-        run: 'docker pull diegoferigo/gym-ignition:pypi'
-
-      - name: Create container
-        run: |
-          docker run \
-            -d -i --rm --name pypi -v $(pwd):/github -w /github \
-            -e PYTHON_VERSION=$PYTHON_VERSION -e CC=$CC -e CXX=$CXX \
-            diegoferigo/gym-ignition:pypi bash
-          sleep 15
-
-      - name: Create package
-        run: docker exec -i pypi sh -c 'python setup.py bdist_wheel'
+      - name: Create packages
+        run: python setup.py sdist bdist_wheel
 
       - name: Rename wheel
         run: |
-          docker exec -i -w /github/dist pypi \
-            sh -c 'find -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +'
+          ls dist/
+          find -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +
 
-      - name: Install twine
-        run: pip install twine
+      - name: Inspect dist folder
+        run: ls -alh dist/
 
-      - name: Upload it to Test PiPY
-        run: twine upload --verbose --repository-url https://test.pypi.org/legacy/ dist/*
-        env:
-          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME_TESTPYPI }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD_TESTPYPI }}
-
-      - name: Download and start clean system
-        run : |
-          docker pull diegoferigo/gym-ignition:ci
-          docker run \
-            -d -i --name test -e PYTHON_VERSION=$PYTHON_VERSION \
-            diegoferigo/gym-ignition:ci bash
-          sleep 15
-
-      - name: Install and test
-        run: |
-          docker exec -i -e RELEASE_TAG=$(git describe --abbrev=0 --tags) test sh -c \
-            'pip install \
-              --index-url https://test.pypi.org/simple/ \
-              --extra-index-url https://pypi.org/simple \
-              gym-ignition==$RELEASE_TAG'
-          docker exec -i test sh -c "git clone https://github.com/robotology/gym-ignition"
-          docker exec -i test sh -c "cd gym-ignition/tests/python && pytest"
-
-      - name: Push to PyPI
-        if: github.event.action == 'published'
-        run: twine upload --verbose dist/*
-        env:
-          TWINE_USERNAME: ${{ secrets.TWINE_USERNAME }}
-          TWINE_PASSWORD: ${{ secrets.TWINE_PASSWORD }}
+      - name: Publish package to PyPI
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}

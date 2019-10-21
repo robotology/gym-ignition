@@ -9,52 +9,78 @@
 •
 <b><a href="https://github.com/robotology/gym-ignition#how">How</a></b>
 •
+<b><a href="https://github.com/robotology/gym-ignition#demo">Demo</a></b>
+•
 <b><a href="https://github.com/robotology/gym-ignition#setup">Setup</a></b>
 •
 <b><a href="https://github.com/robotology/gym-ignition#Citation">Citation</a></b>
 </p>
 
-<p align="center">
-    <a href="https://github.com/robotology/gym-ignition/actions">
-    <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/docker.yml/badge.svg" alt="CI Docker Image" />
-    </a>
-    <a href="https://github.com/robotology/gym-ignition/actions">
-    <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/ci.yml/badge.svg" alt="Continuous Integration" />
-    </a>
-    <a href="https://github.com/robotology/gym-ignition/actions">
-    <img src="https://github.com/robotology/gym-ignition/workflows/.github/workflows/pypi.yml/badge.svg" alt="PyPI Release" />
-    </a>
-    <a href="https://www.codacy.com/app/diegoferigo/gym-ignition?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=diegoferigo/gym-ignition&amp;utm_campaign=Badge_Grade">
-    <img src="https://api.codacy.com/project/badge/Grade/899a7c8304e14ed9b2330eb309cdad15" alt="Codacy Badge" />
-    </a>
-    <a href="https://github.com/robotology/gym-ignition/blob/master/LICENSE">
-    <img src="https://img.shields.io/badge/license-LGPL-19c2d8.svg" alt="License" />
-    </a>
-</p>
-
-<p align="center">
-	<a href="https://pypi.org/project/gym-ignition/">
-    <img src="https://img.shields.io/pypi/v/gym-ignition.svg" />
-    </a>
-    <a href="https://pypi.org/project/gym-ignition/">
-    <img src="https://img.shields.io/pypi/pyversions/gym-ignition.svg" />
-    </a>
-    <a href="https://pypi.org/project/gym-ignition/">
-    <img src="https://img.shields.io/pypi/status/gym-ignition.svg" />
-    </a>
-    <a href="https://pypi.org/project/gym-ignition/">
-    <img src="https://img.shields.io/pypi/format/gym-ignition.svg" />
-    </a>
-</p>
-
-<p align="center">
-    <a href="https://colab.research.google.com/github/robotology/gym-ignition/blob/master/examples/colab/RandomPolicy.ipynb">
-    <img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/>
-    </a>
-</p>
-
-<p align="center">⚠️ Warning, <a href="https://en.wikipedia.org/wiki/Here_be_dragons">Here be Dragons</a> ⚠️</p>
-<p align="center">You just reached a very unstable corner.<br/>Welcome, but mind your step. </p>
+<div align="center">
+<p><br/></p>
+<table>
+    <tbody>
+         <tr>
+            <td align="left">CI/CD</td>
+            <td align="center">
+                <a href="https://github.com/robotology/gym-ignition/actions">
+                <img src="https://github.com/robotology/gym-ignition/workflows/Docker%20Images/badge.svg" alt="Docker Images" />
+                </a>
+                <a href="https://github.com/robotology/gym-ignition/actions">
+                <img src="https://github.com/robotology/gym-ignition/workflows/Continuous%20Integration/badge.svg" alt="CI" />
+                </a>
+                <a href="https://github.com/robotology/gym-ignition/actions">
+                <img src="https://github.com/robotology/gym-ignition/workflows/PyPI%20Continuous%20Delivery/badge.svg" alt="PyPI CD" />
+                </a>
+                <a href="https://www.codacy.com/app/diegoferigo/gym-ignition?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=diegoferigo/gym-ignition&amp;utm_campaign=Badge_Grade">
+                <img src="https://api.codacy.com/project/badge/Grade/899a7c8304e14ed9b2330eb309cdad15" alt="Codacy Badge" />
+                </a>
+            </td>
+        </tr>   
+        <tr>
+            <td align="left"><code>gym-ignition</code></td>
+            <td align="center">
+                <a href="https://pypi.org/project/gym-ignition/">
+                <img src="https://img.shields.io/pypi/v/gym-ignition.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition/">
+                <img src="https://img.shields.io/pypi/pyversions/gym-ignition.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition/">
+                <img src="https://img.shields.io/pypi/status/gym-ignition.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition/">
+                <img src="https://img.shields.io/pypi/format/gym-ignition.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition/">
+                <img src="https://img.shields.io/pypi/l/gym-ignition.svg" />
+                </a>
+            </td>
+        </tr>
+        <tr>
+            <td align="left"><code>gym-ignition-nightly</code></td>
+            <td align="center">
+                <a href="https://pypi.org/project/gym-ignition-nightly/">
+                <img src="https://img.shields.io/pypi/v/gym-ignition-nightly.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition-nightly/">
+                <img src="https://img.shields.io/pypi/pyversions/gym-ignition-nightly.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition-nightly/">
+                <img src="https://img.shields.io/pypi/status/gym-ignition-nightly.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition-nightly/">
+                <img src="https://img.shields.io/pypi/format/gym-ignition-nightly.svg" />
+                </a>
+                <a href="https://pypi.org/project/gym-ignition-nightly/">
+                <img src="https://img.shields.io/pypi/l/gym-ignition-nightly.svg" />
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<p><br/></p>
+</div>
 
 ## What
 
@@ -87,9 +113,11 @@ We designed Gym-Ignition driven by the following reasons:
 
 ## How
 
-This project interfaces with the new generation of the [Gazebo](http://gazebosim.org) simulator, called [Ignition Gazebo](https://ignitionrobotics.org/libs/gazebo). It is part of the new [Ignition Robotics](http://ignitionrobotics.org) suite developed by [Open Robotics](https://www.openrobotics.org/).
+This project interfaces with the new generation of the [Gazebo](http://gazebosim.org) simulator, called [Ignition Gazebo](https://ignitionrobotics.org/libs/gazebo).
+It is part of the new [Ignition Robotics](http://ignitionrobotics.org) suite developed by [Open Robotics](https://www.openrobotics.org/).
 
-Ignition Robotics is currently under heavy development and is not yet stable. Though, it already offers enough functionalities for this project's aims:
+Ignition Robotics is currently under heavy development and is not yet stable.
+Though, it already offers enough functionalities for this project's aims:
 
 - Simulator-as-a-library
 - New modular architecture
@@ -114,36 +142,74 @@ At the time of writing, Gym-Ignition offers the following features:
   - **Runtime**: implements the actual step of the environment. Simulated runtimes step the simulator, real-time runtimes deal with real-time execution constraints. A Task object can be executed by any runtime without any change.
 - Experimental support to create C++ environments
 
+## Demo
+
+We provide two different methods to test Gym-Ignition without the need to install it locally:
+
+1. **Colab notebook**: [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/robotology/gym-ignition/blob/master/examples/colab/RandomPolicy.ipynb) and run the example
+1. **Docker image**:
+   ```sh
+   docker pull diegoferigo/gym-ignition:latest
+   pip3 install rocker
+   
+   # Intel GPU
+   rocker --x11 diegoferigo/gym-ignition ./github/examples/python/launch_cartpole.py
+   
+   # Nvidia GPU
+   rocker --x11 --nvidia diegoferigo/gym-ignition ./github/examples/python/launch_cartpole.py
+   ```
+
 ## Setup
 
 The setup instructions expect a **Ubuntu** distribution with at least **Python 3.6**.
+Gym-Ignition is compatible also with other distributions (and, also, other OSs) under the assumption that the Ignition Robotics suite can be installed either from repos or source.
+Though, to keep the instructions simple, we only report the steps for the Ubuntu distro.
 
-The process is different whether you're an _user_ that wants to create environments using Gym-Ignition or you are a _developer_ that wants to edit the Python and C++ code. Common steps:
+The process is different whether you're an _user_ that wants to create environments using Gym-Ignition or you are a _developer_ that wants to edit the Python and C++ upstream code.
+
+Execute all the setup commands in the same terminal.
+
+#### Common Steps
+
+1. Install the supported version of **Ignition Gazebo**:
+
+   ```sh
+   sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
+   wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+   sudo apt update
+   sudo apt install ignition-blueprint
+   ```
+
+   We currently require the development version, that will be ABI-compatible with the **Blueprint** release.
+   Refer to the [official documentation](https://ignitionrobotics.org/docs/blueprint/install) for more detailed information.
+
+1. Create a Python [virtual environment](https://docs.python.org/3.6/tutorial/venv.html) as follows:
+   ```sh
+   sudo apt install virtualenv
+   virtualenv -p python3.6 $HOME/venv
+   source $HOME/venv/bin/activate
+   ```
+
+### User setup
+
+1. `pip3 install gym-ignition`
+
+You can now run the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
+
+### Developer setup
+
+1. Install gcc 8 with `apt install gcc-8`.
+   Export the following environment variables to enable it temporarily:
+
+   ```sh
+   export CC=gcc-8
+   export CXX=g++-8
+   ```
 
 1. Install [SWIG](https://github.com/swig/swig) with `apt install swig`
 
-### Are you a user?
-
-1. Install the Ignition Robotics suite following the [official documentation](https://ignitionrobotics.org/docs/latest/install)
-1. Install Gym-Ignition with `pip install gym-ignition` (preferably in a [virtual environment](https://docs.python.org/3.6/tutorial/venv.html))
-1. Execute the following to export the required environment variables:
-   ```sh
-   # Worlds and models path
-   data_path=$(python -c "import gym_ignition_data ; (gym_ignition_data.__path__[0])")
-   export IGN_GAZEBO_RESOURCE_PATH=${data_path}:${data_path}/worlds
-   
-   # Gazebo plugins
-   module_path=$(python -c "import gym_ignition ; print(gym_ignition.__path__[0])" | grep gym_ignition)
-   export IGN_GAZEBO_SYSTEM_PLUGIN_PATH=${module_path}/plugins
-   ```
-
-After these steps, you should be able to execute the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
-
-### Are you a developer?
-
-1. Install all the Ignition Robotics suite except `ignition-gazebo2` following the [official documentation](https://ignitionrobotics.org/docs/latest/install)
-1. Install `ign-gazebo` from our [temporary fork](https://github.com/diegoferigo/ign-gazebo)
 1. Clone this repository
+
 1. Build and install the CMake project
    ```sh
    mkdir build
@@ -152,23 +218,31 @@ After these steps, you should be able to execute the example [`launch_cartpole.p
    cmake --build .
    cmake --build . --target install
    ```
+   
 1. Install the Python package in [editable mode](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs):
    ```sh
    pip3 install -e .
    ```
-1. Export the following environment variables:
+   
+1. Export the following environment variable:
    ```sh
-   # Worlds and models path
-   export IGN_GAZEBO_RESOURCE_PATH=<installprefix>/share/gympp/gazebo/worlds:<installprefix>/share/gympp/gazebo/models
-   
-   # Gazebo plugins
-   export IGN_GAZEBO_SYSTEM_PLUGIN_PATH=<installprefix>/lib/gympp/plugins
-   
    # C++ bindings
    export PYTHONPATH=<installprefix>/lib/python3.6/site-packages
    ```
 
-After these steps, you should be able to execute the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
+After these steps, you can run the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
+
+### Unstable builds
+
+Gym-Ignition still doesn't have a steady release cycle strategy.
+This project targets mainly research, and its development is very active.
+In order to quickly deliver new features, we do our best to have a fast release cycle.
+
+If you find interesting [PRs](https://github.com/robotology/gym-ignition/pulls) that are not yet included in the [most recent release](https://github.com/robotology/gym-ignition/releases), you can get the latest unstable version as follows:
+
+1. **User installation**: `pip3 install gym-ignition-nightly`
+
+1. **Developer installation**: check-out the `devel` branch after cloning the repository and follow the remaining steps
 
 ## Citation
 

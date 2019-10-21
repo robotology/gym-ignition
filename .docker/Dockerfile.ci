@@ -10,6 +10,8 @@ RUN apt-get update &&\
         apt-utils \
         gnupg2 \
         nano \
+        rename \
+        source-highlight \
         &&\
     wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add - && \
     apt-add-repository 'deb https://apt.kitware.com/ubuntu/ bionic main' &&\
@@ -37,42 +39,13 @@ RUN apt-get update &&\
     rm -rf /var/lib/apt/lists/*
 
 # Install ignition robotics
+ARG ignition_codename="blueprint"
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
         > /etc/apt/sources.list.d/gazebo-stable.list &&\
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-prerelease `lsb_release -cs` main" \
-        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
-    echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-nightly `lsb_release -cs` main" \
-        > /etc/apt/sources.list.d/gazebo-prerelease.list &&\
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
     apt-get update &&\
-    apt-get install -y --no-install-recommends \
-        libignition-cmake2-dev \
-        libignition-plugin-dev \
-        libignition-math6-dev \
-        libignition-common3-dev \
-        libignition-transport7-dev \
-        libignition-msgs4-dev \
-        libignition-tools-dev \
-        libignition-fuel-tools3-dev \
-        libsdformat8-dev \
-        libignition-physics-dev \
-        libignition-rendering-dev \
-        libignition-sensors2-dev \
-        libignition-gui2-dev \
-        &&\
+    apt-get install -y --no-install-recommends ignition-${ignition_codename} &&\
     rm -rf /var/lib/apt/lists/*
-
-# Install ign-gazebo from my fork
-RUN cd /tmp &&\
-    git clone --depth 1 https://github.com/diegoferigo/ign-gazebo  &&\
-    cd ign-gazebo && mkdir -p build && cd build &&\
-    cmake \
-        -DCMAKE_BUILD_TYPE="Release" \
-        -DBUILD_TESTING:BOOL=OFF \
-        -DCMAKE_INSTALL_PREFIX="/usr" \
-        .. &&\
-    cmake --build . --target install -- -j8 &&\
-    rm -r /tmp/ign-gazebo
 
 # Install idyntree
 RUN apt-get update &&\
@@ -95,19 +68,11 @@ ENV PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python3/dist-packages
 
 # Setup gym-ignition if installed from source
 ARG install_prefix="/usr/local"
-ENV IGN_GAZEBO_SYSTEM_PLUGIN_PATH="${install_prefix}/lib/gympp/plugins"
-ENV IGN_GAZEBO_RESOURCE_PATH="${install_prefix}/share/gympp/gazebo/worlds:${install_prefix}/share/gympp/gazebo/models"
-ENV SDF_PATH="${install_prefix}/share/gympp/gazebo/models"
 ENV PYTHONPATH="${PYTHONPATH}:${install_prefix}/lib/python3.6/site-packages:${install_prefix}/lib/python3.7/site-packages"
 
 # Prepare virtualenv variables
 ENV VIRTUAL_ENV=/venv
 ENV PATH=${VIRTUAL_ENV}/bin:${PATH}
-
-# Setup gym-ignition if installed from pip
-ARG site_pkgs="${VIRTUAL_ENV}/lib/python3.6/site-packages"
-ENV IGN_GAZEBO_SYSTEM_PLUGIN_PATH="${IGN_GAZEBO_SYSTEM_PLUGIN_PATH}:${site_pkgs}/gym_ignition/plugins"
-ENV IGN_GAZEBO_RESOURCE_PATH="${IGN_GAZEBO_RESOURCE_PATH}:${site_pkgs}/gym_ignition_data:${site_pkgs}/gym_ignition_data/worlds"
 
 COPY entrypoint.sh /entrypoint.sh
 COPY setup_virtualenv.sh /setup_virtualenv.sh

@@ -37,6 +37,7 @@ class PyBulletRuntime(base.runtime.Runtime):
         self._robot_cls = robot_cls
 
         # Delete and create a new robot every environment reset
+        self._first_run = True
         self._hard_reset = hard_reset
 
         # URDF or SDF model files
@@ -68,10 +69,9 @@ class PyBulletRuntime(base.runtime.Runtime):
             logger.warn("The real physics rate will be {} Hz".format(
                 agent_rate * self._num_of_physics_steps))
 
-        logger.debug("RTF = {}".format(rtf))
-        logger.debug("Agent rate = {} Hz".format(agent_rate))
-        logger.debug("Physics rate = {} Hz".format(
-            agent_rate * self._num_of_physics_steps))
+        logger.debug(f"RTF = {rtf}")
+        logger.debug(f"Agent rate = {agent_rate} Hz")
+        logger.debug(f"Physics rate = {agent_rate * self._num_of_physics_steps} Hz")
 
         logger.debug("Initializing the Task")
         task = task_cls(**kwargs)
@@ -84,6 +84,12 @@ class PyBulletRuntime(base.runtime.Runtime):
 
         # Initialize the simulator and the robot
         self.task.robot = self._get_robot()
+
+        # Initialize the spaces
+        self.task.action_space, self.task.observation_space = self.task.create_spaces()
+
+        # Seed the environment
+        self.seed()
 
     # =======================
     # PyBulletRuntime METHODS
@@ -129,7 +135,7 @@ class PyBulletRuntime(base.runtime.Runtime):
         logger.info(str(self._pybullet.getPhysicsEngineParameters()))
 
         step_time = 1.0 / self._physics_rate / self._rtf
-        logger.info("Nominal step time: {} seconds".format(step_time))
+        logger.info(f"Nominal step time: {step_time} seconds")
 
         logger.debug("PyBullet simulator created")
         return self._pybullet
@@ -238,10 +244,15 @@ class PyBulletRuntime(base.runtime.Runtime):
         p = self.pybullet
         assert p, "PyBullet object not valid"
 
-        if self._hard_reset and self.task._robot:
-            logger.debug("Hard reset: deleting the robot")
-            self.task.robot.delete_simulated_robot()
-            self.task.robot = self._get_robot()
+        if self._hard_reset and self.task.has_robot():
+            if not self._first_run:
+                logger.debug("Hard reset: deleting the robot")
+                self.task.robot.delete_simulated_robot()
+
+                logger.debug("Hard reset: creating new robot")
+                self.task.robot = self._get_robot()
+            else:
+                self._first_run = False
 
         # Reset the environment
         ok_reset = self.task.reset_task()
@@ -257,7 +268,7 @@ class PyBulletRuntime(base.runtime.Runtime):
 
     def render(self, mode: str = 'human', **kwargs) -> None:
         if mode != "human":
-            raise Exception("Render mode '{}' not yet supported".format(mode))
+            raise Exception(f"Render mode '{mode}' not yet supported")
 
         # If render has been already called once, and the simulator is ok, return
         if self._render_enabled and self._pybullet:
@@ -290,10 +301,9 @@ class PyBulletRuntime(base.runtime.Runtime):
             self.task._robot = None
 
     def seed(self, seed: int = None) -> SeedList:
-        # Tasks in most cases need the robot object to create the spaces.
-        # We initialize it lazily here.
-        if not self.task._robot:
-            self.task.robot = self._get_robot()
+        # This method also seeds the spaces. To create them, the robot object is often
+        # needed. Here we check that is has been created.
+        assert self.task.has_robot(), "The robot has not yet been created"
 
         # Seed the wrapped environment (task)
         seed = self.env.seed(seed)
