@@ -1,0 +1,15 @@
+libignition-cmake2-dev
+libignition-plugin-dev
+libignition-math6-dev
+libignition-common3-dev
+libignition-transport7-dev
+libignition-msgs4-dev
+libignition-tools-dev
+libignition-fuel-tools3-dev
+libsdformat8-dev
+libignition-physics-dev
+libignition-rendering-dev
+libignition-sensors2-dev
+libignition-gui2-dev
+libignition-gazebo2-dev
+ignition-gazebo2

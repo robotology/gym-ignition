@@ -27,7 +27,7 @@ jobs:
     container:
       # The sdist is tested using the :ci image tag that should mostly match the developer
       # setup with ignition robotics installed from the official ppa
-      image: diegoferigo/gym-ignition:ci
+      image: diegoferigo/gym-ignition:ci-master
       env:
         CC: gcc-8
         CXX: g++-8
@@ -83,15 +83,15 @@ jobs:
           echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
           env
 
-      - name: Download diegoferigo/gym-ignition:pypi
-        run: 'docker pull diegoferigo/gym-ignition:pypi'
+      - name: Download diegoferigo/gym-ignition:pypi-master
+        run: 'docker pull diegoferigo/gym-ignition:pypi-master'
 
       - name: Create container
         run: |
           docker run \
             -d -i --rm --name pypi -v $(pwd):/github -w /github \
             -e PYTHON_VERSION=$PYTHON_VERSION -e CC=$CC -e CXX=$CXX \
-            diegoferigo/gym-ignition:pypi bash
+            diegoferigo/gym-ignition:pypi-master bash
           sleep 15
 
       - name: Create bdist_wheel
@@ -99,11 +99,11 @@ jobs:
 
       - name: Download and start clean system
         run : |
-          docker pull diegoferigo/gym-ignition:ci
+          docker pull diegoferigo/gym-ignition:ci-master
           docker run \
             -d -i --name test -e PYTHON_VERSION=$PYTHON_VERSION \
             -v $(pwd)/dist:/dist \
-            diegoferigo/gym-ignition:ci bash
+            diegoferigo/gym-ignition:ci-master bash
           sleep 15
 
       - name: Install bdist
@@ -130,7 +130,7 @@ jobs:
         python_version:
           - 3.6
     container:
-      image: diegoferigo/gym-ignition:ci
+      image: diegoferigo/gym-ignition:ci-master
       env:
         CC: gcc-8
         CXX: g++-8
@@ -184,4 +184,3 @@ jobs:
         with:
           user: __token__
           password: ${{ secrets.PYPI_TOKEN }}
-
