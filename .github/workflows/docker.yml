@@ -1,4 +1,4 @@
-name: 'Docker Images'
+name: Docker Images
 
 on:
   push:
@@ -24,23 +24,28 @@ jobs:
           - ci
           - pypi
           - latest
+          - nightly
+        include:
+          - tag: nightly
+            extra_docker_options: "--build-arg pypi_package='gym-ignition-nightly'"
 
     steps:
       - uses: actions/checkout@master
 
-      - name: 'Build'
+      - name: Build
         run: |
           cd .docker/
           docker build . \
             --pull --build-arg from=${{ matrix.baseimage }} \
             --rm -t diegoferigo/gym-ignition:${{ matrix.tag }} \
+            ${{ matrix.extra_docker_options }} \
             -f Dockerfile.${{ matrix.tag }}
 
       - name: Login
         if: |
           github.repository == 'robotology/gym-ignition' &&
           github.event_name != 'pull_request' &&
-          github.ref == 'refs/heads/master'
+          (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/devel')
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -50,5 +55,14 @@ jobs:
         if: |
           github.repository == 'robotology/gym-ignition' &&
           github.event_name != 'pull_request' &&
-          github.ref == 'refs/heads/master'
+          github.ref == 'refs/heads/master' &&
+          matrix.tag != 'nightly'
+        run: docker push diegoferigo/gym-ignition:${{ matrix.tag }}
+
+      - name: Push nightly
+        if: |
+          github.repository == 'robotology/gym-ignition' &&
+          github.event_name != 'pull_request' &&
+          github.ref == 'refs/heads/devel' &&
+          matrix.tag == 'nightly'
         run: docker push diegoferigo/gym-ignition:${{ matrix.tag }}
