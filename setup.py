@@ -12,12 +12,9 @@ from setuptools.command.build_ext import build_ext
 
 class CMakeExtension(Extension):
     """
-    Custom setuptool extension to define parameters for configuring CMake.
+    Custom setuptools extension to define parameters for configuring CMake.
     """
-    def __init__(self,
-                 name: str,
-                 cmake_configuration: str,
-                 source_dir: str = ''):
+    def __init__(self, name, cmake_configuration, source_dir=''):
         Extension.__init__(self, name, sources=[])
         self.source_dir = os.path.abspath(source_dir)
         self.cmake_configuration = cmake_configuration
@@ -25,7 +22,7 @@ class CMakeExtension(Extension):
 
 class BuildExtension(build_ext):
     """
-    Setuptool build extension handler.
+    Setuptools build extension handler.
     It processes all the extensions listed in the 'ext_modules' entry.
     """
     def run(self):
@@ -49,7 +46,7 @@ class BuildExtension(build_ext):
     def build_extension(self, ext):
         # In editable mode, do not compile C++.
         # Developers should install the project through regular CMake.
-        # Note that here we use the 'inplace' variable that it switched on by the
+        # Note that here we use the 'inplace' variable that it's switched on by the
         # pip '--editable' option.
         if self.inplace:
             print("Editable install recognized. The CMake project will not be installed.")
