@@ -6,7 +6,7 @@
 # Physics PLUGIN
 # ==============
 
-find_package(ignition-physics1 COMPONENTS all REQUIRED)
+find_package(ignition-physics1 COMPONENTS dartsim REQUIRED)
 
 add_library(PhysicsSystem SHARED
     Physics.h
@@ -15,7 +15,7 @@ add_library(PhysicsSystem SHARED
 target_link_libraries(PhysicsSystem
     PUBLIC
     ignition-gazebo2::core
-    ignition-physics1::ignition-physics1-all
+    ignition-physics1
     PRIVATE
     ExtraComponents)
 
