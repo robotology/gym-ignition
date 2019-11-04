@@ -275,15 +275,15 @@ If you find interesting [PRs](https://github.com/robotology/gym-ignition/pulls) 
 ## Citation
 
 ```
-@inproceedings{ferigoGymIgnition2019,
-  title = {Gym-Ignition: Reproducible Robotic Simulations for Reinforcement Learning},
-  author = {Ferigo, Diego and Traversaro, Silvio and Pucci, Daniele},
-  booktitle = {RSS 2019 Workshop on Closing the Reality Gap in Sim2real Transfer for Robotic Manipulation},
-  year = {2019},
+@misc{ferigo2019gymignition,
+    title={Gym-Ignition: Reproducible Robotic Simulations for Reinforcement Learning},
+    author={Diego Ferigo and Silvio Traversaro and Daniele Pucci},
+    year={2019},
+    eprint={1911.01715},
+    archivePrefix={arXiv},
+    primaryClass={cs.RO}
 }
 ```
-
-[`paper.pdf`](https://sim2real.github.io/assets/papers/ferigo.pdf)
 
 ---
 
