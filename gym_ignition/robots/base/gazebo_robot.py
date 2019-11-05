@@ -123,8 +123,8 @@ class GazeboRobot(robot_abc.RobotABC,
     # RobotJoints
     # ===========
 
-    def dofs(self) -> None:
-        raise NotImplementedError
+    def dofs(self) -> int:
+        return len(self.joint_names())
 
     def joint_names(self) -> List[str]:
         return self.gympp_robot.jointNames()
