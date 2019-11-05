@@ -92,30 +92,6 @@ class RobotJoints(ABC):
         """
 
     @abstractmethod
-    def initial_positions(self) -> np.ndarray:
-        """
-        Return the initial joint positions.
-
-        Returns:
-            The initial joint positions.
-        """
-
-    @abstractmethod
-    def set_initial_positions(self, positions: np.ndarray) -> bool:
-        """
-        Set the initial joint positions.
-
-        Note that this does not actuate the robot, it only stores the initial joint
-        positions values.
-
-        Args:
-            positions: The initial joint positions.
-
-        Returns:
-             True if successful, False otherwise.
-        """
-
-    @abstractmethod
     def joint_position(self, joint_name: str) -> float:
         """
         Return the generalized position of the specified joint.
