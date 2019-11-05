@@ -14,10 +14,6 @@
         <diffuse>1 0 0 0.8</diffuse>
         <specular>1 0 0 0.8</specular>
         <emissive>1 0 0 0.8</emissive>
-        <script>
-          <uri/>
-          <name/>
-        </script>
       </material>
     </visual>
   </gazebo>
@@ -28,33 +24,33 @@
         <diffuse>0.2 0.2 0.2 0.8</diffuse>
         <specular>0.2 0.2 0.2 0.8</specular>
         <emissive>0.2 0.2 0.2 0.8</emissive>
-        <script>
-          <uri/>
-          <name/>
-        </script>
       </material>
     </visual>
   </gazebo>
   <!-- ===== -->
   <!-- LINKS -->
   <!-- ===== -->
-  <link name="world"/>
   <link name="support">
     <inertial>
-      <!-- This link is fixed, inertial values are not relevant -->
       <origin rpy="0 0 0" xyz="0 0 0.3"/>
-      <mass value="10"/>
-      <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
+      <mass value="1000"/>
+      <inertia ixx="30.8333333333" ixy="0" ixz="0" iyy="30.2083333333" iyz="0" izz="1.04166666667"/>
     </inertial>
     <visual>
       <geometry>
         <box size="0.05 0.1 0.6"/>
       </geometry>
-      <origin rpy="0 0 0" xyz="0 0 -0.3"/>
+      <origin rpy="0 0 0" xyz="0 0 0.3"/>
       <material name="black">
         <color rgba="0.2 0.2 0.2 0.8"/>
       </material>
     </visual>
+    <collision>
+      <geometry>
+        <box size="0.05 0.1 0.6"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.3"/>
+    </collision>
   </link>
   <link name="pendulum">
     <inertial>
@@ -80,21 +76,21 @@
         <color rgba="1 0 0 0.8"/>
       </material>
     </visual>
+    <collision>
+      <geometry>
+        <cylinder length="0.5" radius="0.01"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.25"/>
+    </collision>
   </link>
   <!-- ====== -->
   <!-- JOINTS -->
   <!-- ====== -->
-  <!--  http://gazebosim.org/tutorials/?tut=ros_urdf#RigidlyFixingAModeltotheWorld-->
-  <joint name="world_to_support" type="fixed">
-    <parent link="world"/>
-    <child link="support"/>
-    <origin rpy="0 0 0" xyz="0 0 0.6"/>
-  </joint>
   <joint name="pivot" type="continuous">
     <parent link="support"/>
     <child link="pendulum"/>
     <axis xyz="1 0 0"/>
-    <origin rpy="0.0 0 0" xyz="0.035 0 -0.03"/>
+    <origin rpy="0.0 0 0" xyz="0.035 0 0.57"/>
     <limit effort="500" lower="-6.28318530718" upper="6.28318530718" velocity="10"/>
     <dynamics damping="0" friction="0"/>
   </joint>

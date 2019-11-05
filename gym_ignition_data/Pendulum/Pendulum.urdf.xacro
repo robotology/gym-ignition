@@ -10,7 +10,7 @@
     <xacro:property name="support_x" value="0.05"/>
     <xacro:property name="support_y" value="0.1"/>
     <xacro:property name="support_z" value="${pendulum_length*1.2}"/>
-    <xacro:property name="support_mass" value="10"/>
+    <xacro:property name="support_mass" value="1000"/>
 
     <xacro:property name="rgba_black" value="0 0 0 0.8"/>
     <xacro:property name="rgba_white" value="1 1 1 0.8"/>
@@ -18,7 +18,7 @@
     <xacro:property name="rgba_red" value="1 0 0 0.8"/>
 
     <xacro:macro name="cylinder_inertial_element"
-                 params="mass rotaxis length radius xyz rpy">
+                 params="mass length radius xyz rpy">
         <inertial>
             <origin xyz="${xyz}" rpy="${rpy}"/>
             <mass value="${mass}"/>
@@ -27,6 +27,21 @@
             <xacro:property name="iyy"
                             value="${1/12*mass*(3*radius*radius+length*length)}"/>
             <xacro:property name="izz" value="${0.5*mass*radius*radius}"/>
+            <inertia ixx="${ixx}" ixy="0" ixz="0" iyy="${iyy}" iyz="0" izz="${izz}"/>
+        </inertial>
+    </xacro:macro>
+
+    <xacro:macro name="box_inertial_element"
+                 params="mass dimx dimy dimz xyz rpy">
+        <inertial>
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+            <mass value="${mass}"/>
+            <xacro:property name="ixx"
+                            value="${1/12*mass*(dimy*dimy+dimz*dimz)}"/>
+            <xacro:property name="iyy"
+                            value="${1/12*mass*(dimx*dimx+dimz*dimz)}"/>
+            <xacro:property name="izz"
+                            value="${1/12*mass*(dimx*dimx+dimy*dimy)}"/>
             <inertia ixx="${ixx}" ixy="0" ixz="0" iyy="${iyy}" iyz="0" izz="${izz}"/>
         </inertial>
     </xacro:macro>
@@ -45,10 +60,6 @@
                     <diffuse>${rgba}</diffuse>
                     <specular>${rgba}</specular>
                     <emissive>${rgba}</emissive>
-                    <script>
-                        <uri></uri>
-                        <name></name>
-                    </script>
                 </material>
             </visual>
         </gazebo>
@@ -65,27 +76,30 @@
     <!-- LINKS -->
     <!-- ===== -->
 
-    <link name="world"/>
-
     <link name="support">
-        <inertial>
-            <!-- This link is fixed, inertial values are not relevant -->
-            <origin xyz="0 0 ${support_z*0.5}" rpy="0 0 0"/>
-            <mass value="${support_mass}"/>
-            <inertia ixx="1" ixy="0" ixz="0" iyy="1" iyz="0" izz="1"/>
-        </inertial>
+        <xacro:box_inertial_element mass="${support_mass}"
+                                    dimx="${support_x}"
+                                    dimy="${support_y}"
+                                    dimz="${support_z}"
+                                    xyz="0 0 ${support_z*0.5}"
+                                    rpy="0 0 0"/>
         <visual>
             <geometry>
                 <box size="${support_x} ${support_y} ${support_z}"/>
             </geometry>
-            <origin xyz="0 0 -${support_z*0.5}" rpy="0 0 0"/>
+            <origin xyz="0 0 ${support_z*0.5}" rpy="0 0 0"/>
             <xacro:mymaterial name="black" rgba="${rgba_grey}"/>
         </visual>
+        <collision>
+            <geometry>
+                <box size="${support_x} ${support_y} ${support_z}"/>
+            </geometry>
+            <origin xyz="0 0 ${support_z*0.5}" rpy="0 0 0"/>
+        </collision>
     </link>
 
     <link name="pendulum">
         <xacro:cylinder_inertial_element mass="${pendulum_mass}"
-                                         rotaxis="x"
                                          length="${pendulum_length}"
                                          radius="${pendulum_radius}"
                                          xyz="0 0 ${pendulum_length/2}"
@@ -105,24 +119,23 @@
             <origin xyz="0 0 0" rpy="0 ${pi/2} 0"/>
             <xacro:mymaterial name="red" rgba="${rgba_red}"/>
         </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${pendulum_length}" radius="${pendulum_radius}"/>
+            </geometry>
+            <origin xyz="0 0 ${pendulum_length/2}" rpy="0 0 0"/>
+        </collision>
     </link>
 
     <!-- ====== -->
     <!-- JOINTS -->
     <!-- ====== -->
 
-    <!--  http://gazebosim.org/tutorials/?tut=ros_urdf#RigidlyFixingAModeltotheWorld-->
-    <joint name="world_to_support" type="fixed">
-        <parent link="world"/>
-        <child link="support"/>
-        <origin xyz="0 0 ${support_z}" rpy="0 0 0"/>
-    </joint>
-
     <joint name="pivot" type="continuous">
         <parent link="support"/>
         <child link="pendulum"/>
         <axis xyz="1 0 0"/>
-        <origin xyz="${support_x/2+pendulum_radius} 0 ${-pendulum_circle_radius}"
+        <origin xyz="${support_x/2+pendulum_radius} 0 ${support_z-pendulum_circle_radius}"
                 rpy="${theta_0} 0 0"/>
         <limit lower="${-2*pi}" upper="${2*pi}" effort="500" velocity="10"/>
         <dynamics damping="0" friction="0"/>
