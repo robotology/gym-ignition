@@ -8,11 +8,15 @@ import numpy as np
 from typing import List, Union, Tuple
 from gym_ignition.utils import logger, resource_finder
 from gym_ignition.base.robot import robot_abc, robot_joints
+from gym_ignition.base.robot import robot_baseframe, robot_initialstate
 from gym_ignition import gympp_bindings as bindings
 
 
 class GazeboRobot(robot_abc.RobotABC,
-                  robot_joints.RobotJoints):
+                  robot_joints.RobotJoints,
+                  robot_baseframe.RobotBaseFrame,
+                  robot_initialstate.RobotInitialState):
+
     def __init__(self,
                  model_file: str,
                  gazebo: bindings.GazeboWrapper,
@@ -29,6 +33,7 @@ class GazeboRobot(robot_abc.RobotABC,
         self._gazebo = gazebo
         self._robot_name = None
         self._gympp_robot = None
+        self._base_frame = None
         self._controller_rate = controller_rate
 
         # Create a random prefix that will be used for the robot name
@@ -45,7 +50,7 @@ class GazeboRobot(robot_abc.RobotABC,
         assert ok_model, f"Failed to remove the model '{self._robot_name}' from gazebo"
 
     @property
-    def gympp_robot(self):
+    def gympp_robot(self) -> bindings.Robot:
         if self._gympp_robot:
             assert not self._gympp_robot.expired(), "The Robot object has expired"
             assert self._gympp_robot.lock(), "The Robot object is empty"
@@ -64,12 +69,18 @@ class GazeboRobot(robot_abc.RobotABC,
         # Create a unique robot name
         self._robot_name = self._prefix + "::" + original_name
 
+        initial_base_pose, initial_base_orientation = self.initial_base_pose()
+
         # Initialize the model data
         model_data = bindings.ModelInitData()
         model_data.setModelName(self._robot_name)
         model_data.setSdfString(sdf_string)
-        model_data.setPosition([0., 0, 0])  # TODO: default initial position
-        model_data.setOrientation([1., 0, 0, 0])  # TODO: default initial orientation
+        model_data.setFixedPose(not self.is_floating_base())
+        model_data.setPosition(initial_base_pose.tolist())
+        model_data.setOrientation(initial_base_orientation.tolist())
+
+        if self._base_frame is not None:
+            model_data.setBaseLink(self._base_frame)
 
         # Initialize robot controller plugin
         plugin_data = bindings.PluginData()
@@ -89,7 +100,7 @@ class GazeboRobot(robot_abc.RobotABC,
             "The returned Robot object does not contain a valid interface"
         assert self._gympp_robot.lock().valid(), "The Robot object is not valid"
 
-        if self._controller_rate:
+        if self._controller_rate is not None:
             logger.debug("Robot controller rate: {} Hz".format(self._controller_rate))
             ok_dt = self._gympp_robot.lock().setdt(1 / self._controller_rate)
             assert ok_dt, "Failed to set the robot controller period"
@@ -127,12 +138,6 @@ class GazeboRobot(robot_abc.RobotABC,
     def set_joint_control_mode(self,
                                joint_name: str,
                                mode: robot_joints.JointControlMode) -> bool:
-        raise NotImplementedError
-
-    def initial_positions(self) -> np.ndarray:
-        raise NotImplementedError
-
-    def set_initial_positions(self, positions: np.ndarray) -> bool:
         raise NotImplementedError
 
     def joint_position(self, joint_name: str) -> float:
@@ -185,3 +190,117 @@ class GazeboRobot(robot_abc.RobotABC,
 
     def joint_force_limit(self, joint_name: str) -> float:
         raise NotImplementedError
+
+    # ==============
+    # RobotBaseFrame
+    # ==============
+
+    def set_as_floating_base(self, floating: bool) -> bool:
+        if self._gympp_robot is not None and self._is_floating_base != floating:
+            raise Exception(
+                "Changing the base type after the creation of the robot is not supported")
+
+        self._is_floating_base = floating
+        return True
+
+    def is_floating_base(self) -> bool:
+        return self._is_floating_base
+
+    def set_base_frame(self, frame_name: str) -> bool:
+        self._base_frame = frame_name
+
+        if self._gympp_robot:
+            ok_base_frame = self.gympp_robot.setBaseFrame(frame_name)
+            assert ok_base_frame, "Failed to set base frame"
+
+        return True
+
+    def base_frame(self) -> str:
+        if self._base_frame is None:
+            self._base_frame = self.gympp_robot.baseFrame()
+
+        return self._base_frame
+
+    def base_pose(self) -> Tuple[np.ndarray, np.ndarray]:
+        base_pose = self.gympp_robot.basePose()
+        position = np.array(base_pose.position)
+        orientation = np.array(base_pose.orientation)
+        return position, orientation
+
+    def base_velocity(self) -> Tuple[np.ndarray, np.ndarray]:
+        raise NotImplementedError
+
+    def reset_base_pose(self,
+                        position: np.ndarray,
+                        orientation: np.ndarray) -> bool:
+
+        assert position.size == 3, "Position should be a list with 3 elements"
+        assert orientation.size == 4, "Orientation should be a list with 4 elements"
+
+        if not self._is_floating_base:
+            logger.error("Changing the pose of a fixed-base robot is not yet supported")
+            logger.error("Remove and insert again the robot in the new pose")
+            return False
+
+        ok_pose = self.gympp_robot.resetBasePose(position.tolist(),
+                                                 orientation.tolist())
+        assert ok_pose, "Failed to set base pose"
+
+        return True
+
+    def reset_base_velocity(self, linear_velocity: np.ndarray,
+                            angular_velocity: np.ndarray) -> bool:
+        raise NotImplementedError
+
+    def base_wrench(self) -> np.ndarray:
+        raise NotImplementedError
+
+    # =================
+    # RobotInitialState
+    # =================
+
+    def initial_joint_positions(self) -> np.ndarray:
+        if self._initial_joint_positions is None:
+            self._initial_joint_positions = np.zeros(self.dofs())
+
+        return self._initial_joint_positions
+
+    def set_initial_joint_positions(self, positions: np.ndarray) -> bool:
+        if positions.size != self.dofs():
+            return False
+
+        self._initial_joint_positions = positions
+        return True
+
+    def initial_joint_velocities(self) -> np.ndarray:
+        if not self._initial_joint_velocities:
+            return np.zeros(self.dofs())
+        else:
+            return self._initial_joint_velocities
+
+    def set_initial_joint_velocities(self, velocities: np.ndarray) -> bool:
+        if velocities.size != self.dofs():
+            return False
+
+        self._initial_joint_velocities = velocities
+        return True
+
+    def initial_base_pose(self) -> Tuple[np.ndarray, np.ndarray]:
+        return self._initial_base_pose
+
+    def set_initial_base_pose(self,
+                              position: np.ndarray,
+                              orientation: np.ndarray) -> bool:
+        assert position.size == 3, "'position' should be an array with 3 elements"
+        assert orientation.size == 4, "'orientation' should be an array with 4 elements"
+        self._initial_base_pose = (position, orientation)
+        return True
+
+    def initial_base_velocity(self) -> Tuple[np.ndarray, np.ndarray]:
+        return self._initial_base_velocity
+
+    def set_initial_base_velocity(self, linear: np.ndarray, angular: np.ndarray) -> bool:
+        assert linear.size == 3, "'linear' should be an array with 3 elements"
+        assert angular.size == 4, "'angular' should be an array with 4 elements"
+        self._initial_base_velocity = (linear, angular)
+        return True
