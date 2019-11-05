@@ -13,6 +13,7 @@
 
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
+#include <ignition/gazebo/EventManager.hh>
 #include <sdf/Element.hh>
 
 #include <functional>
@@ -36,7 +37,8 @@ public:
 
     bool configureECM(const ignition::gazebo::Entity& entity,
                       const std::shared_ptr<const sdf::Element>& sdf,
-                      ignition::gazebo::EntityComponentManager& ecm);
+                      ignition::gazebo::EntityComponentManager& ecm,
+                      ignition::gazebo::EventManager& eventManager);
     bool valid() const override;
 
     // ===========
@@ -77,6 +79,22 @@ public:
                     const double jointVelocity = 0) override;
 
     bool update(const std::chrono::duration<double> time) override;
+
+    // ==============
+    // RobotBaseFrame
+    // ==============
+
+    LinkName baseFrame() override;
+    bool setBaseFrame(const LinkName& baseLink) override;
+
+    BasePose basePose() override;
+    BaseVelocity baseVelocity() override;
+    bool setAsFloatingBase(bool isFloating) override;
+    bool resetBasePose(const std::array<double, 3>& position,
+                       const std::array<double, 4>& orientation) override;
+    bool resetBaseVelocity(const std::array<double, 3>& linear,
+                           const std::array<double, 3>& angular) override;
+    std::array<double, 6> baseWrench() override;
 };
 
 #endif // GYMPP_GAZEBO_IGNITIONROBOT_H

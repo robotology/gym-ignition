@@ -13,15 +13,19 @@
 #include "gympp/gazebo/components/JointVelocityReset.h"
 
 #include <ignition/gazebo/Model.hh>
+#include <ignition/gazebo/SdfEntityCreator.hh>
+#include <ignition/gazebo/components/CanonicalLink.hh>
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
 #include <ignition/gazebo/components/JointType.hh>
 #include <ignition/gazebo/components/JointVelocity.hh>
 #include <ignition/gazebo/components/Link.hh>
+#include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/gazebo/components/Pose.hh>
+#include <ignition/gazebo/components/PoseCmd.hh>
 #include <ignition/math/PID.hh>
 #include <sdf/Joint.hh>
 
@@ -32,12 +36,14 @@
 #include <string>
 
 using namespace gympp::gazebo;
+using namespace ignition::gazebo;
 
 using LinkName = std::string;
 using JointName = std::string;
 using LinkEntity = ignition::gazebo::Entity;
 using JointEntity = ignition::gazebo::Entity;
 
+const std::string World2BaseJoint = "world2base";
 const ignition::math::PID DefaultPID(1, 0.1, 0.01, 1, -1, 10000, -10000);
 
 enum class ControlType
@@ -69,7 +75,9 @@ class IgnitionRobot::Impl
 public:
     std::string name;
 
+    ignition::gazebo::EventManager* eventManager = nullptr;
     ignition::gazebo::EntityComponentManager* ecm = nullptr;
+
     ignition::gazebo::Model model;
 
     std::chrono::duration<double> dt;
@@ -77,6 +85,7 @@ public:
 
     Buffers buffers;
 
+    bool floating = true;
     std::map<LinkName, LinkEntity> links;
     std::map<JointName, JointEntity> joints;
 
@@ -93,6 +102,11 @@ public:
     inline bool linkExists(const LinkName& linkName) const
     {
         return links.find(linkName) != links.end();
+    }
+
+    inline bool world2baseExists()
+    {
+        return model.JointByName(*ecm, World2BaseJoint) != ignition::gazebo::kNullEntity;
     }
 
     JointEntity getLinkEntity(const LinkName& linkName);
@@ -171,10 +185,12 @@ IgnitionRobot::~IgnitionRobot() = default;
 
 bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
                                  const std::shared_ptr<const sdf::Element>& sdf,
-                                 ignition::gazebo::EntityComponentManager& ecm)
+                                 ignition::gazebo::EntityComponentManager& ecm,
+                                 ignition::gazebo::EventManager& eventManager)
 {
     // Store the address of the entity-component manager
     pImpl->ecm = &ecm;
+    pImpl->eventManager = &eventManager;
 
     // Create the model
     pImpl->model = ignition::gazebo::Model(entity);
@@ -700,4 +716,147 @@ bool IgnitionRobot::update(const std::chrono::duration<double> time)
     }
 
     return true;
+}
+
+// ==============
+// RobotBaseFrame
+// ==============
+
+gympp::Robot::LinkName IgnitionRobot::baseFrame()
+{
+    // Get all the canonical links of the model
+    auto candidateBaseLinks = pImpl->ecm->EntitiesByComponents(
+        components::CanonicalLink(), components::ParentEntity(pImpl->model.Entity()));
+
+    if (candidateBaseLinks.size() == 0) {
+        gymppError << "Failed to find base link of model '" << pImpl->name << "'" << std::endl;
+        assert(false);
+        return {};
+    }
+
+    assert(candidateBaseLinks.size() == 1);
+
+    // Return the base link name
+    auto baseLinkName = pImpl->ecm->Component<components::Name>(candidateBaseLinks[0])->Data();
+    return baseLinkName;
+}
+
+bool IgnitionRobot::setBaseFrame(const gympp::Robot::LinkName& baseLink)
+{
+    if (!pImpl->linkExists(baseLink)) {
+        gymppError << "Failed to set base frame to not existing link '" << baseLink << "'"
+                   << std::endl;
+        return false;
+    }
+
+    if (baseLink == baseFrame()) {
+        gymppDebug << "The base is already set on the '" << baseLink << "' link" << std::endl;
+        return true;
+    }
+
+    gymppError << "Changing the base link is not yet supported" << std::endl;
+    return false;
+}
+
+gympp::BasePose IgnitionRobot::basePose()
+{
+    // Get the pose component
+    auto* poseComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::Pose>(pImpl->model.Entity());
+    assert(poseComponent);
+
+    // Create and fill the output data structure
+    gympp::BasePose basePose;
+    basePose.position[0] = poseComponent->Data().Pos().X();
+    basePose.position[1] = poseComponent->Data().Pos().Y();
+    basePose.position[2] = poseComponent->Data().Pos().Z();
+    basePose.orientation[0] = poseComponent->Data().Rot().W();
+    basePose.orientation[1] = poseComponent->Data().Rot().X();
+    basePose.orientation[2] = poseComponent->Data().Rot().Y();
+    basePose.orientation[3] = poseComponent->Data().Rot().Z();
+
+    return basePose;
+}
+
+gympp::BaseVelocity IgnitionRobot::baseVelocity()
+{
+    assert(false);
+    return {};
+}
+
+bool IgnitionRobot::setAsFloatingBase(bool isFloating)
+{
+    // Fixing the model to the world involves two steps:
+    // 1) Creating a new joint to fix the robot base to the world
+    // 2) Setting the desired pose of the fixed base
+    //
+    // At the moment these steps cannot be done in a single iteration because setting the pose
+    // of an entity (the new joint) has to be done after the physics engine already processed
+    // the new joint performing a step.
+    // Since this behavior is confusing, we only support fixing the robot at its last processed
+    // base pose. We do not expose yet both features together.
+
+    if (!pImpl->floating && isFloating) {
+        gymppError << "Converting a fixed-base robot to a floating-base robot is not yet supported"
+                   << std::endl;
+        return false;
+    }
+
+    if (pImpl->floating && !isFloating) {
+        gymppDebug << "Fixing robot at the current pose" << std::endl;
+        assert(!pImpl->world2baseExists());
+
+        sdf::Joint joint;
+        joint.SetName(World2BaseJoint);
+        joint.SetParentLinkName("world");
+        joint.SetChildLinkName(baseFrame());
+        joint.SetType(sdf::JointType::FIXED);
+
+        auto creator = SdfEntityCreator(*pImpl->ecm, *pImpl->eventManager);
+        auto jointEntity = creator.CreateEntities(&joint);
+
+        pImpl->ecm->CreateComponent(jointEntity, components::ParentEntity(pImpl->model.Entity()));
+        pImpl->ecm->SetParentEntity(jointEntity, pImpl->model.Entity());
+    }
+
+    pImpl->floating = isFloating;
+    return true;
+}
+
+bool IgnitionRobot::resetBasePose(const std::array<double, 3>& position,
+                                  const std::array<double, 4>& orientation)
+{
+    if (!pImpl->floating) {
+        gymppError << "The pose of fixed-base robots cannot be changed" << std::endl;
+        return false;
+    }
+
+    // Get the component that stores the new pose
+    auto& worldPoseComponent =
+        pImpl->getOrCreateComponent<ignition::gazebo::components::WorldPoseCmd>(
+            pImpl->model.Entity());
+
+    // Create the pose data
+    ignition::math::Pose3d pose;
+    pose.Pos() = ignition::math::Vector3<double>(position[0], position[1], position[2]);
+    pose.Rot() = ignition::math::Quaternion<double>(
+        orientation[0], orientation[1], orientation[2], orientation[3]);
+
+    // Store the pose data
+    worldPoseComponent.Data() = pose;
+
+    return true;
+}
+
+bool IgnitionRobot::resetBaseVelocity(const std::array<double, 3>& /*linear*/,
+                                      const std::array<double, 3>& /*angular*/)
+{
+    assert(false);
+    return false;
+}
+
+std::array<double, 6> IgnitionRobot::baseWrench()
+{
+    assert(false);
+    return {};
 }
