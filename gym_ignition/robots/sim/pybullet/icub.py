@@ -18,3 +18,6 @@ class ICubPyBulletRobot(pybullet_robot.PyBulletRobot):
         # Set the base frame
         ok_base_frame = self.set_base_frame("root_link")
         assert ok_base_frame, "Failed to set base frame"
+
+        # Insert the model in the simulation
+        self.initialize_model()

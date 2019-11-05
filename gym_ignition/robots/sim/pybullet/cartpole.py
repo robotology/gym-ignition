@@ -14,3 +14,6 @@ class CartPolePyBulletRobot(pybullet_robot.PyBulletRobot):
             model_file=model_file,
             plane_id=plane_id,
             keep_fixed_joints=False)
+
+        # Insert the model in the simulation
+        self.initialize_model()
