@@ -11,3 +11,6 @@ class PendulumGazeboRobot(gazebo_robot.GazeboRobot):
         super().__init__(model_file=model_file,
                          gazebo=gazebo,
                          controller_rate=kwargs.get("controller_rate"))
+
+        # Insert the model in the simulation
+        _ = self.gympp_robot
