@@ -18,6 +18,8 @@ namespace gympp {
     class Robot;
     using RobotPtr = std::shared_ptr<gympp::Robot>;
     struct PID;
+    struct BasePose;
+    struct BaseVelocity;
 } // namespace gympp
 
 struct gympp::PID
@@ -34,11 +36,24 @@ struct gympp::PID
     double d;
 };
 
+struct gympp::BasePose
+{
+    std::array<double, 3> position;
+    std::array<double, 4> orientation;
+};
+
+struct gympp::BaseVelocity
+{
+    std::array<double, 3> linear;
+    std::array<double, 3> angular;
+};
+
 class gympp::Robot
 {
 public:
     using VectorContainer = std::vector<double>;
 
+    using LinkName = std::string;
     using RobotName = std::string;
     using JointName = std::string;
     using JointNames = std::vector<JointName>;
@@ -93,6 +108,22 @@ public:
                             const double jointVelocity = 0) = 0;
 
     virtual bool update(const std::chrono::duration<double> time) = 0;
+
+    // ==============
+    // RobotBaseFrame
+    // ==============
+
+    virtual LinkName baseFrame() = 0;
+    virtual bool setBaseFrame(const LinkName& baseLink) = 0;
+
+    virtual BasePose basePose() = 0;
+    virtual BaseVelocity baseVelocity() = 0;
+    virtual bool setAsFloatingBase(bool isFloating) = 0;
+    virtual bool resetBasePose(const std::array<double, 3>& position,
+                               const std::array<double, 4>& orientation) = 0;
+    virtual bool resetBaseVelocity(const std::array<double, 3>& linear,
+                                   const std::array<double, 3>& angular) = 0;
+    virtual std::array<double, 6> baseWrench() = 0;
 };
 
 #endif // GYMPP_ROBOT_H
