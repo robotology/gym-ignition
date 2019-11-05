@@ -90,7 +90,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         model_abs_path = resource_finder.find_resource(model_file)
 
         # Initialize the parent classes
-        super().__init__()
+        robot.robot_abc.RobotABC.__init__(self)
+        robot.robot_baseframe.RobotBaseFrame.__init__(self)
+        robot.robot_initialstate.RobotInitialState.__init__(self)
         self.model_file = model_abs_path
 
         # Private attributes

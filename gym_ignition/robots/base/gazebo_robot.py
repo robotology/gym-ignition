@@ -26,7 +26,9 @@ class GazeboRobot(robot_abc.RobotABC,
         model_abs_path = resource_finder.find_resource(model_file)
 
         # Initialize the parent classes
-        super().__init__()
+        robot_abc.RobotABC.__init__(self)
+        robot_baseframe.RobotBaseFrame.__init__(self)
+        robot_initialstate.RobotInitialState.__init__(self)
         self.model_file = model_abs_path
 
         # Private attributes
