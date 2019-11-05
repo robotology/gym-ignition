@@ -40,10 +40,14 @@ namespace sdf {
 struct gympp::gazebo::ModelInitData
 {
     std::string sdfString;
+    bool fixedPose = false;
+    std::string baseLink = "";
     std::string modelName = "";
     std::array<double, 3> position = {0, 0, 0};
     std::array<double, 4> orientation = {1, 0, 0, 0};
 
+    inline void setFixedPose(const bool f) { fixedPose = f; }
+    inline void setBaseLink(const std::string& b) { baseLink = b; }
     inline void setSdfString(const std::string& s) { sdfString = s; }
     inline void setModelName(const std::string& m) { modelName = m; }
     inline void setPosition(const std::array<double, 3> p) { position = p; }
