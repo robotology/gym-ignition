@@ -64,7 +64,8 @@ class JointInfoPyBullet(NamedTuple):
 class PyBulletRobot(robot.robot_abc.RobotABC,
                     robot.robot_joints.RobotJoints,
                     robot.robot_contacts.RobotContacts,
-                    robot.robot_baseframe.RobotBaseFrame):
+                    robot.robot_baseframe.RobotBaseFrame,
+                    robot.robot_initialstate.RobotInitialState):
     """
     A "class"`Robot` implementation for the PyBullet simulator.
 
@@ -92,29 +93,17 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         super().__init__()
         self.model_file = model_abs_path
 
-        # Load the model
-        self._robot_id = self._load_model(self.model_file)
-        assert self._robot_id is not None, "Failed to load the robot model"
-
-        # Other private attributes
+        # Private attributes
+        self._robot_id = None
         self._links_name2index_dict = None
         self._joints_name2index_dict = None
 
         # TODO
         self._base_frame = None
         self._base_constraint = None
-        self._initial_joint_positions = None
 
         # Create a map from the joint name to its control info
         self._jointname2jointcontrolinfo = dict()
-
-        # Initialize all the joints in POSITION mode
-        for name in self.joint_names():
-            self._jointname2jointcontrolinfo[name] = JointControlInfo(
-                mode=JointControlMode.POSITION)
-            ok_mode = self.set_joint_control_mode(name, JointControlMode.POSITION)
-            assert ok_mode, \
-                "Failed to initialize the control mode of joint '{}'".format(name)
 
     # ==============================
     # PRIVATE METHODS AND PROPERTIES
@@ -159,11 +148,34 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             model_id = self._pybullet.loadSDF(filename, **kwargs)[0]
         else:
             model_id = self._pybullet.loadURDF(
-                filename,
+                fileName=filename,
                 flags=pybullet.URDF_USE_INERTIA_FROM_FILE,
                 **kwargs)
 
         return model_id
+
+    def initialize_model(self) -> None:
+        # Load the model
+        self._robot_id = self._load_model(self.model_file)
+        assert self._robot_id is not None, "Failed to load the robot model"
+
+        # Initialize all the joints in POSITION mode
+        for name in self.joint_names():
+            self._jointname2jointcontrolinfo[name] = JointControlInfo(
+                mode=JointControlMode.POSITION)
+            ok_mode = self.set_joint_control_mode(name, JointControlMode.POSITION)
+            assert ok_mode, \
+                f"Failed to initialize the control mode of joint '{name}'"
+
+        # Initialize the joints state
+        for idx, name in enumerate(self.joint_names()):
+            self.reset_joint(joint_name=name,
+                             position=self.initial_joint_positions()[idx],
+                             velocity=self.initial_joint_velocities()[idx])
+
+        # Initialize the base pose
+        initial_base_position, initial_base_orientation = self.initial_base_pose()
+        self.reset_base_pose(initial_base_position, initial_base_orientation)
 
     def _get_joints_info(self) -> Dict[str, JointInfoPyBullet]:
         joints_info = {}
@@ -303,16 +315,6 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
                 positionGain=pid.i,
                 velocityGain=pid.p)
 
-        return True
-
-    def initial_positions(self) -> np.ndarray:
-        return np.zeros(self.dofs())
-
-    def set_initial_positions(self, positions: np.ndarray) -> bool:
-        if positions.size != self.dofs():
-            return False
-
-        self._initial_joint_positions = positions
         return True
 
     def joint_position(self, joint_name: str) -> float:
@@ -466,6 +468,23 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     # robot_joints.RobotBaseFrame INTERFACE
     # =====================================
 
+    def set_as_floating_base(self, floating: bool) -> bool:
+        # Handle fixed to floating base conversion
+        if self._robot_id is not None and not self._is_floating_base and floating:
+            assert self._base_constraint, "No base constraint found"
+            self._pybullet.removeConstraint(self._base_constraint)
+            self._base_constraint = None
+
+        # The next call of reset_base_pose will create the constraint
+        self._is_floating_base = floating
+        return True
+
+    def is_floating_base(self) -> bool:
+        if not self._is_floating_base:
+            assert self._base_constraint is None
+
+        return self._is_floating_base
+
     def set_base_frame(self, frame_name: str) -> bool:
         # TODO: check that it exists
         self._base_frame = frame_name
@@ -498,10 +517,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
         return lin, ang
 
-    def reset_base_pose(self,
-                        position: np.ndarray,
-                        orientation: np.ndarray,
-                        floating: bool = False) -> bool:
+    def reset_base_pose(self, position: np.ndarray, orientation: np.ndarray) -> bool:
 
         assert position.size == 3, "Position should be a list with 3 elements"
         assert orientation.size == 4, "Orientation should be a list with 4 elements"
@@ -509,14 +525,25 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         # PyBullet wants xyzw, but the function argument quaternion is wxyz
         orientation = np.roll(orientation, -1)
 
-        if not floating:
+        # Fixed base robot and constraint already created
+        if not self._is_floating_base and self._base_constraint:
+            cur_position, cur_orientation = self.base_pose()
+            if not np.allclose(position, cur_position) or \
+                np.allclose(orientation, cur_orientation):
+                assert self._base_constraint, "No base constraint found"
+                self._pybullet.removeConstraint(self._base_constraint)
+                self._base_constraint = None
+
+        # Fixed base robot and constraint not yet created
+        if not self._is_floating_base and not self._base_constraint:
             # Set a constraint between base_link and world
+            # TODO: check the floating base link
             self._base_constraint = self._pybullet.createConstraint(
                 self._robot_id, -1, -1, -1, self._pybullet.JOINT_FIXED,
                 [0, 0, 0], [0, 0, 0], position, orientation)
-        else:
-            self._pybullet.resetBasePositionAndOrientation(
-                self._robot_id, position, orientation)
+
+        self._pybullet.resetBasePositionAndOrientation(
+            self._robot_id, position, orientation)
 
         return True
 
@@ -620,3 +647,53 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             total_force += force_1 + force_2 + force_3
 
         return total_force
+
+    # =================
+    # RobotInitialState
+    # =================
+
+    def initial_joint_positions(self) -> np.ndarray:
+        if self._initial_joint_positions is None:
+            self._initial_joint_positions = np.zeros(self.dofs())
+
+        return self._initial_joint_positions
+
+    def set_initial_joint_positions(self, positions: np.ndarray) -> bool:
+        if positions.size != self.dofs():
+            return False
+
+        self._initial_joint_positions = positions
+        return True
+
+    def initial_joint_velocities(self) -> np.ndarray:
+        if not self._initial_joint_velocities:
+            return np.zeros(self.dofs())
+        else:
+            return self._initial_joint_velocities
+
+    def set_initial_joint_velocities(self, velocities: np.ndarray) -> bool:
+        if velocities.size != self.dofs():
+            return False
+
+        self._initial_joint_velocities = velocities
+        return True
+
+    def initial_base_pose(self) -> Tuple[np.ndarray, np.ndarray]:
+        return self._initial_base_pose
+
+    def set_initial_base_pose(self,
+                              position: np.ndarray,
+                              orientation: np.ndarray) -> bool:
+        assert position.size == 3, "'position' should be an array with 3 elements"
+        assert orientation.size == 4, "'orientation' should be an array with 4 elements"
+        self._initial_base_pose = (position, orientation)
+        return True
+
+    def initial_base_velocity(self) -> Tuple[np.ndarray, np.ndarray]:
+        return self._initial_base_velocity
+
+    def set_initial_base_velocity(self, linear: np.ndarray, angular: np.ndarray) -> bool:
+        assert linear.size == 3, "'linear' should be an array with 3 elements"
+        assert angular.size == 4, "'angular' should be an array with 4 elements"
+        self._initial_base_velocity = (linear, angular)
+        return True
