@@ -34,8 +34,6 @@ class RobotJoints(ABC):
     This interface provides methods to get and set joint-related quantities.
     """
 
-    def __init__(self) -> None: ...
-
     @abstractmethod
     def dofs(self) -> int:
         """
