@@ -4,6 +4,8 @@
 <!-- |    EDITING THIS FILE BY HAND IS NOT RECOMMENDED                                 | -->
 <!-- =================================================================================== -->
 <robot name="cartpole_xacro" xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- CartPole properties match the OpenAI Gym CartPole-v1 environment -->
+  <!-- https://github.com/openai/gym/blob/master/gym/envs/classic_control/cartpole.py -->
   <!-- ====== -->
   <!-- COLORS -->
   <!-- ====== -->
@@ -52,10 +54,9 @@
   <link name="world"/>
   <link name="rail">
     <inertial>
-      <!-- This link is fixed, inertial values are not relevant -->
-      <origin rpy="0 0 0" xyz="0 0 0"/>
+      <origin rpy="1.57079632679 0 0" xyz="0 0 0"/>
       <mass value="5"/>
-      <inertia ixx="100" ixy="0" ixz="0" iyy="100" iyz="0" izz="100"/>
+      <inertia ixx="10.4166979167" ixy="0" ixz="0" iyy="10.4166979167" iyz="0" izz="6.25e-05"/>
     </inertial>
     <visual>
       <geometry>
@@ -71,7 +72,7 @@
     <inertial>
       <origin rpy="0 0 0" xyz="0 0 0"/>
       <mass value="1.0"/>
-      <inertia ixx="0.00354166666667" ixy="0" ixz="0" iyy="0.00416666666667" iyz="0" izz="0.00104166666667"/>
+      <inertia ixx="0.00354166666667" ixy="0" ixz="0" iyy="0.00104166666667" iyz="0" izz="0.00416666666667"/>
     </inertial>
     <visual>
       <geometry>
@@ -82,6 +83,12 @@
         <color rgba="0.2 0.2 0.2 0.8"/>
       </material>
     </visual>
+    <collision>
+      <geometry>
+        <box size="0.1 0.2 0.05"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0"/>
+    </collision>
   </link>
   <link name="pole">
     <inertial>
@@ -98,6 +105,15 @@
         <color rgba="1 0 0 0.8"/>
       </material>
     </visual>
+    <collision>
+      <geometry>
+        <cylinder length="1.0" radius="0.005"/>
+      </geometry>
+      <origin rpy="0 0 0" xyz="0 0 0.5"/>
+      <material name="red">
+        <color rgba="1 0 0 0.8"/>
+      </material>
+    </collision>
   </link>
   <!-- ====== -->
   <!-- JOINTS -->
@@ -106,7 +122,7 @@
   <joint name="world_to_rail" type="fixed">
     <parent link="world"/>
     <child link="rail"/>
-    <origin rpy="0 0 0" xyz="0 0 0.5"/>
+    <origin rpy="0 0 0" xyz="0 0 1.2"/>
   </joint>
   <joint name="linear" type="prismatic">
     <parent link="rail"/>
@@ -119,8 +135,8 @@
     <parent link="cart"/>
     <child link="pole"/>
     <axis xyz="1 0 0"/>
-    <origin rpy="0 0 0" xyz="0 0 0.025"/>
-    <limit effort="500" lower="-1.57079632679" upper="1.57079632679" velocity="10"/>
+    <origin rpy="0.0 0 0" xyz="0 0 0.025"/>
+    <limit effort="500" lower="-6.28318530718" upper="6.28318530718" velocity="10"/>
   </joint>
 </robot>
 

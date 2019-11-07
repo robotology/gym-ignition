@@ -1,21 +1,29 @@
 <sdf version='1.6'>
   <model name='pendulum_xacro'>
     <link name='support'>
-      <pose>0 0 0.6 0 -0 0</pose>
+      <pose>0 0 0 0 -0 0</pose>
       <inertial>
         <pose>0 0 0.3 0 -0 0</pose>
-        <mass>10</mass>
+        <mass>1000</mass>
         <inertia>
-          <ixx>1</ixx>
+          <ixx>30.8333</ixx>
           <ixy>0</ixy>
           <ixz>0</ixz>
-          <iyy>1</iyy>
+          <iyy>30.2083</iyy>
           <iyz>0</iyz>
-          <izz>1</izz>
+          <izz>1.04167</izz>
         </inertia>
       </inertial>
+      <collision name='support_collision'>
+        <pose>0 0 0.3 0 -0 0</pose>
+        <geometry>
+          <box>
+            <size>0.05 0.1 0.6</size>
+          </box>
+        </geometry>
+      </collision>
       <visual name='support_visual'>
-        <pose>0 0 -0.3 0 -0 0</pose>
+        <pose>0 0 0.3 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.05 0.1 0.6</size>
@@ -23,10 +31,6 @@
         </geometry>
       </visual>
     </link>
-    <joint name='world_to_support' type='fixed'>
-      <child>support</child>
-      <parent>world</parent>
-    </joint>
     <link name='pendulum'>
       <pose>0.035 0 0.57 0 -0 0</pose>
       <inertial>
@@ -41,6 +45,23 @@
           <izz>5e-05</izz>
         </inertia>
       </inertial>
+      <collision name='pendulum_collision'>
+        <pose>0 0 0.25 0 -0 0</pose>
+        <geometry>
+          <cylinder>
+            <length>0.5</length>
+            <radius>0.01</radius>
+          </cylinder>
+        </geometry>
+        <surface>
+          <contact>
+            <ode/>
+          </contact>
+          <friction>
+            <ode/>
+          </friction>
+        </surface>
+      </collision>
       <visual name='pendulum_visual'>
         <pose>0 0 0.25 0 -0 0</pose>
         <geometry>
@@ -89,8 +110,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
     </joint>
   </model>

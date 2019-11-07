@@ -14,8 +14,6 @@ class RobotContacts(ABC):
     This interface provides methods to get and set contact-related quantities.
     """
 
-    def __init__(self) -> None: ...
-
     @abstractmethod
     def links_in_contact(self) -> List[str]:
         """

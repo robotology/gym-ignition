@@ -2,173 +2,184 @@
 
 <robot name="cartpole_xacro" xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- CartPole properties match the OpenAI Gym CartPole-v1 environment -->
-  <!-- https://github.com/openai/gym/blob/master/gym/envs/classic_control/cartpole.py -->
-  <xacro:property name="rail_height" value="0.5" />
-  <xacro:property name="rail_length" value="5" />
-  <xacro:property name="rail_radius" value="0.005" />
-  <xacro:property name="rail_mass" value="5" />
+    <!-- CartPole properties match the OpenAI Gym CartPole-v1 environment -->
+    <!-- https://github.com/openai/gym/blob/master/gym/envs/classic_control/cartpole.py -->
 
-  <xacro:property name="cart_size_x" value="0.1" />
-  <xacro:property name="cart_size_y" value="0.2" />
-  <xacro:property name="cart_size_z" value="0.05" />
-  <xacro:property name="cart_mass" value="1.0" />
+    <xacro:property name="rail_height" value="1.2"/>
+    <xacro:property name="rail_length" value="5"/>
+    <xacro:property name="rail_radius" value="0.005"/>
+    <xacro:property name="rail_mass" value="5"/>
 
-  <xacro:property name="pole_length" value="1.0" />
-  <xacro:property name="pole_radius" value="0.005" />
-  <xacro:property name="pole_mass" value="0.1" />
-  <xacro:property name="theta_0" value="0" />
+    <xacro:property name="cart_size_x" value="0.1"/>
+    <xacro:property name="cart_size_y" value="0.2"/>
+    <xacro:property name="cart_size_z" value="0.05"/>
+    <xacro:property name="cart_mass" value="1.0"/>
 
-  <xacro:property name="epsilon" value="1e-09"/>
+    <xacro:property name="pole_length" value="1.0"/>
+    <xacro:property name="pole_radius" value="0.005"/>
+    <xacro:property name="pole_mass" value="0.1"/>
+    <xacro:property name="theta_0" value="0.0"/>
 
-  <xacro:property name="rgba_black" value="0 0 0 0.8"/>
-  <xacro:property name="rgba_white" value="1 1 1 0.8"/>
-  <xacro:property name="rgba_grey" value="0.2 0.2 0.2 0.8"/>
-  <xacro:property name="rgba_red" value="1 0 0 0.8"/>
+    <xacro:property name="epsilon" value="1e-09"/>
 
-  <xacro:macro name="box_inertia" params="mass dimx dimy dimz xyz rpy">
-    <inertial>
-      <origin xyz="${xyz}" rpy="${rpy}"/>
-      <mass value="${mass}"/>
-      <xacro:property name="ixx" value="${1/12*mass*(dimz*dimz+dimy*dimy)}"/>
-      <xacro:property name="iyy" value="${1/12*mass*(dimx*dimx+dimy*dimy)}"/>
-      <xacro:property name="izz" value="${1/12*mass*(dimx*dimx+dimz*dimz)}"/>
-      <inertia ixx="${ixx}"  ixy="0"  ixz="0" iyy="${iyy}" iyz="0" izz="${izz}" />
-    </inertial>
-  </xacro:macro>
+    <xacro:property name="rgba_black" value="0 0 0 0.8"/>
+    <xacro:property name="rgba_white" value="1 1 1 0.8"/>
+    <xacro:property name="rgba_grey" value="0.2 0.2 0.2 0.8"/>
+    <xacro:property name="rgba_red" value="1 0 0 0.8"/>
 
-  <xacro:macro name="cylinder_inertial_element"
-               params="mass rotaxis length radius xyz rpy">
-    <inertial>
-      <origin xyz="${xyz}" rpy="${rpy}"/>
-      <mass value="${mass}"/>
-      <xacro:property name="ixx" value="${1/12*mass*(3*radius*radius+length*length)}"/>
-      <xacro:property name="iyy" value="${1/12*mass*(3*radius*radius+length*length)}"/>
-      <xacro:property name="izz" value="${0.5*mass*radius*radius}"/>
-      <inertia ixx="${ixx}"  ixy="0"  ixz="0" iyy="${iyy}" iyz="0" izz="${izz}" />
-    </inertial>
-  </xacro:macro>
+    <xacro:macro name="box_inertia" params="mass dimx dimy dimz xyz rpy">
+        <inertial>
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+            <mass value="${mass}"/>
+            <xacro:property name="ixx" value="${1/12*mass*(dimy*dimy+dimz*dimz)}"/>
+            <xacro:property name="iyy" value="${1/12*mass*(dimx*dimx+dimz*dimz)}"/>
+            <xacro:property name="izz" value="${1/12*mass*(dimx*dimx+dimy*dimy)}"/>
+            <inertia ixx="${ixx}" ixy="0" ixz="0" iyy="${iyy}" iyz="0" izz="${izz}"/>
+        </inertial>
+    </xacro:macro>
 
-  <xacro:macro name="mymaterial" params="name rgba">
-    <material name="${name}">
-        <color rgba="${rgba}"/>
-    </material>
-  </xacro:macro>
+    <xacro:macro name="cylinder_inertial_element"
+                 params="mass length radius xyz rpy">
+        <inertial>
+            <origin xyz="${xyz}" rpy="${rpy}"/>
+            <mass value="${mass}"/>
+            <xacro:property name="ixx"
+                            value="${1/12*mass*(3*radius*radius+length*length)}"/>
+            <xacro:property name="iyy"
+                            value="${1/12*mass*(3*radius*radius+length*length)}"/>
+            <xacro:property name="izz" value="${0.5*mass*radius*radius}"/>
+            <inertia ixx="${ixx}" ixy="0" ixz="0" iyy="${iyy}" iyz="0" izz="${izz}"/>
+        </inertial>
+    </xacro:macro>
 
-  <xacro:macro name="gzmaterial" params="reference rgba">
-    <gazebo reference="${reference}">
-      <visual>
-        <material>
-            <ambient>${rgba}</ambient>
-            <diffuse>${rgba}</diffuse>
-            <specular>${rgba}</specular>
-            <emissive>${rgba}</emissive>
-            <script>
-              <uri></uri>
-              <name></name>
-            </script>
+    <xacro:macro name="mymaterial" params="name rgba">
+        <material name="${name}">
+            <color rgba="${rgba}"/>
         </material>
+    </xacro:macro>
+
+    <xacro:macro name="gzmaterial" params="reference rgba">
+        <gazebo reference="${reference}">
+            <visual>
+                <material>
+                    <ambient>${rgba}</ambient>
+                    <diffuse>${rgba}</diffuse>
+                    <specular>${rgba}</specular>
+                    <emissive>${rgba}</emissive>
+                </material>
+            </visual>
+        </gazebo>
+    </xacro:macro>
+
+    <!-- ====== -->
+    <!-- COLORS -->
+    <!-- ====== -->
+
+    <material name="black">
+        <color rgba="${rgba_black}"/>
+    </material>
+    <material name="white">
+        <color rgba="${rgba_white}"/>
+    </material>
+    <material name="grey">
+        <color rgba="${rgba_grey}"/>
+    </material>
+
+    <xacro:gzmaterial reference="rail" rgba="${rgba_black}"/>
+    <xacro:gzmaterial reference="cart" rgba="${rgba_grey}"/>
+    <xacro:gzmaterial reference="pole" rgba="${rgba_red}"/>
+
+    <!-- ===== -->
+    <!-- LINKS -->
+    <!-- ===== -->
+
+    <link name="world"/>
+
+    <link name="rail">
+        <xacro:cylinder_inertial_element mass="${rail_mass}"
+                                         length="${rail_length}"
+                                         radius="${rail_radius}"
+                                         xyz="0 0 0"
+                                         rpy="${pi/2} 0 0"/>
+        <visual>
+            <geometry>
+                <cylinder length="${rail_length}" radius="${rail_radius}"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+            <xacro:mymaterial name="black" rgba="${rgba_black}"/>
         </visual>
-    </gazebo>
-  </xacro:macro>
+    </link>
 
-  <!-- ====== -->
-  <!-- COLORS -->
-  <!-- ====== -->
+    <link name="cart">
+        <xacro:box_inertia mass="${cart_mass}"
+                           dimx="${cart_size_x}"
+                           dimy="${cart_size_y}"
+                           dimz="${cart_size_z}"
+                           xyz="0 0 0"
+                           rpy="0 0 0"/>
+        <visual>
+            <geometry>
+                <box size="${cart_size_x} ${cart_size_y} ${cart_size_z}"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <xacro:mymaterial name="grey" rgba="${rgba_grey}"/>
+        </visual>
+        <collision>
+            <geometry>
+                <box size="${cart_size_x} ${cart_size_y} ${cart_size_z}"/>
+            </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+        </collision>
+    </link>
 
-  <material name="black">
-    <color rgba="${rgba_black}"/>
-  </material>
-  <material name="white">
-    <color rgba="${rgba_white}"/>
-  </material>
-  <material name="grey">
-    <color rgba="${rgba_grey}"/>
-  </material>
+    <link name="pole">
+        <xacro:cylinder_inertial_element mass="${pole_mass}"
+                                         length="${pole_length}"
+                                         radius="${pole_radius}"
+                                         xyz="0 0 ${pole_length/2}"
+                                         rpy="0 0 0"/>
+        <visual>
+            <geometry>
+                <cylinder length="${pole_length}" radius="${pole_radius}"/>
+            </geometry>
+            <origin xyz="0 0 ${pole_length/2}" rpy="0 0 0"/>
+            <xacro:mymaterial name="red" rgba="${rgba_red}"/>
+        </visual>
+        <collision>
+            <geometry>
+                <cylinder length="${pole_length}" radius="${pole_radius}"/>
+            </geometry>
+            <origin xyz="0 0 ${pole_length/2}" rpy="0 0 0"/>
+            <xacro:mymaterial name="red" rgba="${rgba_red}"/>
+        </collision>
+    </link>
 
-  <xacro:gzmaterial reference="rail" rgba="${rgba_black}"/>
-  <xacro:gzmaterial reference="cart" rgba="${rgba_grey}"/>
-  <xacro:gzmaterial reference="pole" rgba="${rgba_red}"/>
+    <!-- ====== -->
+    <!-- JOINTS -->
+    <!-- ====== -->
 
-  <!-- ===== -->
-  <!-- LINKS -->
-  <!-- ===== -->
+    <!-- http://gazebosim.org/tutorials/?tut=ros_urdf#RigidlyFixingAModeltotheWorld -->
+    <joint name="world_to_rail" type="fixed">
+        <parent link="world"/>
+        <child link="rail"/>
+        <origin xyz="0 0 ${rail_height}" rpy="0 0 0"/>
+    </joint>
 
-  <link name="world"/>
+    <joint name="linear" type="prismatic">
+        <parent link="rail"/>
+        <child link="cart"/>
+        <axis xyz="0 1 0"/>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <limit lower="-${rail_length/2-cart_size_y/2}"
+               upper="${rail_length/2-cart_size_y/2}" effort="500" velocity="10"/>
+    </joint>
 
-  <link name="rail">
-    <inertial>
-      <!-- This link is fixed, inertial values are not relevant -->
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <mass value="${rail_mass}"/>
-      <inertia ixx="100"  ixy="0"  ixz="0" iyy="100" iyz="0" izz="100" />
-    </inertial>
-    <visual>
-      <geometry>
-        <cylinder length="${rail_length}" radius="${rail_radius}"/>
-      </geometry>
-      <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
-      <xacro:mymaterial name="black" rgba="${rgba_black}" />
-    </visual>
-  </link>
-
-  <link name="cart">
-    <xacro:box_inertia mass="${cart_mass}"
-                       dimx="${cart_size_x}"
-                       dimy="${cart_size_y}"
-                       dimz="${cart_size_z}"
-                       xyz="0 0 0"
-                       rpy="0 0 0"/>
-    <visual>
-      <geometry>
-        <box size="${cart_size_x} ${cart_size_y} ${cart_size_z}"/>
-      </geometry>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
-      <xacro:mymaterial name="grey" rgba="${rgba_grey}" />
-    </visual>
-  </link>
-
-  <link name="pole">
-    <xacro:cylinder_inertial_element mass="${pole_mass}"
-                                     rotaxis="x"
-                                     length="${pole_length}"
-                                     radius="${pole_radius}"
-                                     xyz="0 0 ${pole_length/2}"
-                                     rpy="0 0 0"/>
-    <visual>
-      <geometry>
-        <cylinder length="${pole_length}" radius="${pole_radius}"/>
-      </geometry>
-      <origin xyz="0 0 ${pole_length/2}" rpy="0 0 0"/>
-      <xacro:mymaterial name="red" rgba="${rgba_red}" />
-    </visual>
-  </link>
-
-  <!-- ====== -->
-  <!-- JOINTS -->
-  <!-- ====== -->
-
-  <!--  http://gazebosim.org/tutorials/?tut=ros_urdf#RigidlyFixingAModeltotheWorld-->
-  <joint name="world_to_rail" type="fixed">
-    <parent link="world"/>
-    <child link="rail"/>
-    <origin xyz="0 0 ${rail_height}" rpy="0 0 0" />
-  </joint>
-
-  <joint name="linear" type="prismatic">
-    <parent link="rail" />
-    <child link="cart" />
-    <axis xyz="0 1 0" />
-    <origin xyz="0 0 0" rpy="0 0 0" />
-    <limit lower="-${rail_length/2-cart_size_y/2}" upper="${rail_length/2-cart_size_y/2}" effort="500" velocity="10"/>
-  </joint>
-
-  <joint name="pivot" type="continuous">
-    <parent link="cart" />
-    <child link="pole" />
-    <axis xyz="1 0 0"/>
-    <origin xyz="0 0 ${cart_size_z/2}" rpy="${theta_0} 0 0" />
-    <limit lower="-${pi/2}" upper="${pi/2}" effort="500" velocity="10"/>
-  </joint>
+    <joint name="pivot" type="continuous">
+        <parent link="cart"/>
+        <child link="pole"/>
+        <axis xyz="1 0 0"/>
+        <origin xyz="0 0 ${cart_size_z/2}" rpy="${theta_0} 0 0"/>
+        <limit lower="-${2*pi}" upper="${2*pi}" effort="500" velocity="10"/>
+    </joint>
 
 </robot>

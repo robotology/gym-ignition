@@ -7,5 +7,7 @@ from . import robot_links
 from . import robot_joints
 from . import robot_contacts
 from . import robot_baseframe
+from . import robot_initialstate
+
 from .robot_joints import PID
 from .robot_features import feature_detector, RobotFeatures

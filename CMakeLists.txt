@@ -27,22 +27,26 @@ endif()
 include(cmake/AddNewBuildMode.cmake)
 add_new_build_mode(NAME "PyPI" TEMPLATE "Release")
 
-if(CMAKE_BUILD_TYPE STREQUAL "PyPI")
+# Expose shared or static compilation
+set(GYMPP_BUILD_SHARED_LIBRARY TRUE
+    CACHE BOOL "Compile libraries as shared libraries")
+
+if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "PyPI")
+    # Apply the user choice
+    set(BUILD_SHARED_LIBS ${GYMPP_BUILD_SHARED_LIBRARY})
+else()
     # Check that is Linux
     if(NOT (UNIX AND NOT APPLE))
         message(FATAL_ERROR "PyPI packages can be only created for Linux at the moment")
     endif()
 
-    # Compile libraries as static, if possible
-    set(GYMPP_BUILD_SHARED_LIBRARY FALSE
-        CACHE BOOL "Compile libraries as shared libraries" FORCE)
-else()
-    set(GYMPP_BUILD_SHARED_LIBRARY TRUE BOOL
-        CACHE BOOL "Compile libraries as shared libraries")
-endif()
+    if(${GYMPP_BUILD_SHARED_LIBRARY})
+        message(WARNING "Enabling static compilation, required by the PyPI build mode")
+    endif()
 
-# Set the final option for shared / static libraries
-set(BUILD_SHARED_LIBS ${GYMPP_BUILD_SHARED_LIBRARY})
+    # Force static compilation
+    set(BUILD_SHARED_LIBS FALSE)
+endif()
 
 # Use -fPIC even if statically compiled
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)

@@ -34,8 +34,6 @@ class RobotJoints(ABC):
     This interface provides methods to get and set joint-related quantities.
     """
 
-    def __init__(self) -> None: ...
-
     @abstractmethod
     def dofs(self) -> int:
         """
@@ -86,30 +84,6 @@ class RobotJoints(ABC):
         Args:
             joint_name: The name of the joint.
             mode: The joint control mode.
-
-        Returns:
-             True if successful, False otherwise.
-        """
-
-    @abstractmethod
-    def initial_positions(self) -> np.ndarray:
-        """
-        Return the initial joint positions.
-
-        Returns:
-            The initial joint positions.
-        """
-
-    @abstractmethod
-    def set_initial_positions(self, positions: np.ndarray) -> bool:
-        """
-        Set the initial joint positions.
-
-        Note that this does not actuate the robot, it only stores the initial joint
-        positions values.
-
-        Args:
-            positions: The initial joint positions.
 
         Returns:
              True if successful, False otherwise.

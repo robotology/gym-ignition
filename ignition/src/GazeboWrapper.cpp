@@ -20,6 +20,8 @@
 #include <ignition/gazebo/SdfEntityCreator.hh>
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
+#include <ignition/gazebo/components/Joint.hh>
+#include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
@@ -447,8 +449,9 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         return false;
     }
 
-    // Get the ECM
-    ignition::gazebo::EntityComponentManager* ecm = ECMSingleton::get().getECM(getWorldName());
+    // Get the ECM and the EventManager
+    auto* ecm = ECMSingleton::get().getECM(getWorldName());
+    auto* eventManager = ECMSingleton::get().getEventManager(getWorldName());
 
     // Get the SdfEntityCreator that abstracts the ECM to easily create entities
     auto sdfEntityCreator = pImpl->getSdfEntityCreator(getWorldName());
@@ -637,7 +640,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
 
         // Create an IgnitionRobot object from the ecm
         auto ignRobot = std::make_shared<gympp::gazebo::IgnitionRobot>();
-        if (!ignRobot->configureECM(modelEntity, modelSdfRoot.Element(), *ecm)) {
+        if (!ignRobot->configureECM(modelEntity, modelSdfRoot.Element(), *ecm, *eventManager)) {
             gymppError << "Failed to configure the Robot interface" << std::endl;
             return false;
         }
@@ -653,7 +656,21 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
             return false;
         }
 
-        // In the first iteration, we need to notify the we finished to operate on the ECM
+        // Set the base link
+        if (!modelData.baseLink.empty() && !ignRobot->setBaseFrame(modelData.baseLink)) {
+            gymppError << "Failed to set '" << modelData.baseLink << "' as base link" << std::endl;
+            return false;
+        }
+
+        // Handle the fixed base by creating a joint to fix the robot to the world.
+        // In this case the pose is already set when inserting the model in the world,
+        // and it is not necessary to also reset it through the robot interface.
+        if (!ignRobot->setAsFloatingBase(!modelData.fixedPose)) {
+            gymppError << "Failed to configure the robot as floating or fixed base" << std::endl;
+            return false;
+        }
+
+        // In the first iteration, we need to notify that we finished to operate on the ECM
         if (pImpl->gazebo.server->Running() && pImpl->gazebo.server->Paused().value()) {
             ecmSingleton.notifyExecutorFinished(getWorldName());
         }
