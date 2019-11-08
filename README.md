@@ -21,16 +21,32 @@
 <table>
     <tbody>
          <tr>
+            <td align="left">General</td>
+            <td align="center">
+                <a href="https://isocpp.org">
+                <img src="https://img.shields.io/badge/standard-C++17-blue.svg?style=flat&logo=c%2B%2B" alt="C++ Standard" />
+                </a>
+                <a href="https://github.com/robotology/gym-ignition">
+                <img src="https://img.shields.io/github/languages/code-size/robotology/gym-ignition.svg" alt="Size" />
+                </a>
+                <a href="https://github.com/robotology/gym-ignition/blob/master/LICENSE">
+                <img src="https://img.shields.io/badge/license-LGPL-19c2d8.svg" alt="Size" />
+                </a>
+            </td>
+        </tr> 
+         <tr>
             <td align="left">CI/CD</td>
             <td align="center">
                 <a href="https://github.com/robotology/gym-ignition/actions">
                 <img src="https://github.com/robotology/gym-ignition/workflows/Docker%20Images/badge.svg" alt="Docker Images" />
                 </a>
                 <a href="https://github.com/robotology/gym-ignition/actions">
-                <img src="https://github.com/robotology/gym-ignition/workflows/Continuous%20Integration/badge.svg" alt="CI" />
+                <img src="https://github.com/robotology/gym-ignition/workflows/CI/badge
+                .svg" alt="CI" />
                 </a>
                 <a href="https://github.com/robotology/gym-ignition/actions">
-                <img src="https://github.com/robotology/gym-ignition/workflows/PyPI%20Continuous%20Delivery/badge.svg" alt="PyPI CD" />
+                <img src="https://github.com/robotology/gym-ignition/workflows/PyPI%20CD
+                /badge.svg" alt="PyPI CD" />
                 </a>
                 <a href="https://www.codacy.com/app/diegoferigo/gym-ignition?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=diegoferigo/gym-ignition&amp;utm_campaign=Badge_Grade">
                 <img src="https://api.codacy.com/project/badge/Grade/899a7c8304e14ed9b2330eb309cdad15" alt="Codacy Badge" />
@@ -108,7 +124,7 @@ We designed Gym-Ignition driven by the following reasons:
 - There's no standard framework in the robotics community for creating simulated robotic environments.
 - Environments that can be transferred from simulation to reality with minimal changes do not exist.
 - Alternative solutions are not developed by roboticists for roboticist, and therefore they do not use familiar tools.
-- Existing robotics environments are typically difficult to adapt to run on different physics engines and different robotic platforms.
+- Existing robotics environments are typically difficult to adapt to run on different physics engines and different robots.
 - Only few solutions offer realistic rendering capabilities.
 
 ## How
@@ -116,7 +132,7 @@ We designed Gym-Ignition driven by the following reasons:
 This project interfaces with the new generation of the [Gazebo](http://gazebosim.org) simulator, called [Ignition Gazebo](https://ignitionrobotics.org/libs/gazebo).
 It is part of the new [Ignition Robotics](http://ignitionrobotics.org) suite developed by [Open Robotics](https://www.openrobotics.org/).
 
-Ignition Robotics is currently under heavy development and is not yet stable.
+Ignition Robotics is currently under heavy development.
 Though, it already offers enough functionalities for this project's aims:
 
 - Simulator-as-a-library
@@ -163,7 +179,9 @@ We provide two different methods to test Gym-Ignition without the need to instal
 
 The setup instructions expect a **Ubuntu** distribution with at least **Python 3.6**.
 Gym-Ignition is compatible also with other distributions (and, also, other OSs) under the assumption that the Ignition Robotics suite can be installed either from repos or source.
-Though, to keep the instructions simple, we only report the steps for the Ubuntu distro.
+Though, to keep the instructions simple, we only list the steps for Ubuntu Bionic 18.04.
+
+We follow the policy of supporting the most recent Ubuntu LTS distribution, excluding the periods close to a new release. Old LTS distribution are no longer officially supported as soon as the the first minor release of the new LTS becomes available.
 
 The process is different whether you're an _user_ that wants to create environments using Gym-Ignition or you are a _developer_ that wants to edit the Python and C++ upstream code.
 
@@ -194,11 +212,13 @@ Execute all the setup commands in the same terminal.
 
 1. `pip3 install gym-ignition`
 
-You can now run the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
+You can now download and run the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
 
 ### Developer setup
 
-1. Install gcc 8 with `apt install gcc-8`.
+1. Update CMake using the [official PPA](https://apt.kitware.com/) if you have a version older than 3.12
+   
+1. Install gcc 8 with `apt install gcc-8 g++-8`.
    Export the following environment variables to enable it temporarily:
 
    ```sh
@@ -212,6 +232,7 @@ You can now run the example [`launch_cartpole.py`](examples/python/launch_cartpo
 
 1. Build and install the CMake project
    ```sh
+   cd gym-ignition
    mkdir build
    cd build
    cmake -DCMAKE_INSTALL_PREFIX=<installprefix> ..
@@ -219,8 +240,11 @@ You can now run the example [`launch_cartpole.py`](examples/python/launch_cartpo
    cmake --build . --target install
    ```
    
+   Where `<installprefix>` is the destination of the CMake project. It can either be a system or user folder. The default is `/usr/local`. 
+   
 1. Install the Python package in [editable mode](https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs):
    ```sh
+   cd ..
    pip3 install -e .
    ```
    
@@ -230,7 +254,11 @@ You can now run the example [`launch_cartpole.py`](examples/python/launch_cartpo
    export PYTHONPATH=<installprefix>/lib/python3.6/site-packages
    ```
 
-After these steps, you can run the example [`launch_cartpole.py`](examples/python/launch_cartpole.py).
+After these steps, you can run the [cartpole example](examples/python/launch_cartpole.py) executing:
+
+ ```sh
+ python3 /path/to/gym-ignition-repo/examples/python/launch_cartpole.py
+ ```
 
 ### Unstable builds
 
@@ -242,7 +270,7 @@ If you find interesting [PRs](https://github.com/robotology/gym-ignition/pulls) 
 
 1. **User installation**: `pip3 install gym-ignition-nightly`
 
-1. **Developer installation**: check-out the `devel` branch after cloning the repository and follow the remaining steps
+1. **Developer installation**: check-out the `devel` branch after cloning the repository in step 4 and follow the remaining steps
 
 ## Citation
 
