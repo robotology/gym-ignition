@@ -20,6 +20,13 @@ namespace gympp {
     struct PID;
     struct BasePose;
     struct BaseVelocity;
+    enum class JointControlMode
+    {
+        Position,
+        PositionInterpolated,
+        Velocity,
+        Torque,
+    };
 } // namespace gympp
 
 struct gympp::PID
@@ -73,11 +80,13 @@ public:
     // GET METHODS
     // ===========
 
+    virtual size_t dofs() const = 0;
     virtual RobotName name() const = 0;
     virtual JointNames jointNames() const = 0;
 
     virtual double jointPosition(const JointName& jointName) const = 0;
     virtual double jointVelocity(const JointName& jointName) const = 0;
+    virtual JointControlMode jointControlMode(const JointName& jointName) const = 0;
 
     virtual JointPositions jointPositions() const = 0;
     virtual JointVelocities jointVelocities() const = 0;
@@ -100,6 +109,8 @@ public:
 
     virtual bool setJointPosition(const JointName& jointName, const double jointPosition) = 0;
     virtual bool setJointVelocity(const JointName& jointName, const double jointVelocity) = 0;
+    virtual bool setJointControlMode(const JointName& jointName,
+                                     const JointControlMode controlMode) = 0;
 
     virtual bool setJointPID(const JointName& jointName, const PID& pid) = 0;
 

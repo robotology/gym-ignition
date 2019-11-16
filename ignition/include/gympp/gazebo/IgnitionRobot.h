@@ -45,11 +45,14 @@ public:
     // GET METHODS
     // ===========
 
+    size_t dofs() const override;
+
     RobotName name() const override;
     JointNames jointNames() const override;
 
     double jointPosition(const JointName& jointName) const override;
     double jointVelocity(const JointName& jointName) const override;
+    JointControlMode jointControlMode(const JointName& jointName) const override;
 
     JointPositions jointPositions() const override;
     JointVelocities jointVelocities() const override;
@@ -71,6 +74,8 @@ public:
 
     bool setJointPosition(const JointName& jointName, const double jointPosition) override;
     bool setJointVelocity(const JointName& jointName, const double jointVelocity) override;
+    bool setJointControlMode(const JointName& jointName,
+                             const JointControlMode controlMode) override;
 
     bool setJointPID(const JointName& jointName, const PID& pid) override;
 

@@ -46,33 +46,27 @@ using JointEntity = ignition::gazebo::Entity;
 const std::string World2BaseJoint = "world2base";
 const ignition::math::PID DefaultPID(1, 0.1, 0.01, 1, -1, 10000, -10000);
 
-enum class ControlType
-{
-    Position,
-    Velocity
-};
-
-struct PIDData
-{
-    ControlType type;
-    ignition::math::PID pid;
-};
-
-struct Buffers
-{
-    struct
-    {
-        gympp::Robot::JointPositions positions;
-        gympp::Robot::JointVelocities velocities;
-        std::map<JointName, double> references;
-        std::map<JointName, double> appliedForces;
-        std::map<JointName, PIDData> pidData;
-    } joints;
-};
-
 class IgnitionRobot::Impl
 {
 public:
+    struct PIDData
+    {
+        ignition::math::PID pid;
+        JointControlMode controlMode;
+    };
+
+    struct
+    {
+        struct
+        {
+            gympp::Robot::JointPositions positions;
+            gympp::Robot::JointVelocities velocities;
+            std::map<JointName, double> references;
+            std::map<JointName, Impl::PIDData> pidData;
+            std::map<JointName, double> appliedForces;
+        } joints;
+    } buffers;
+
     std::string name;
 
     ignition::gazebo::EventManager* eventManager = nullptr;
@@ -82,8 +76,6 @@ public:
 
     std::chrono::duration<double> dt;
     std::chrono::duration<double> prevUpdateTime = std::chrono::duration<double>(0.0);
-
-    Buffers buffers;
 
     bool floating = true;
     std::map<LinkName, LinkEntity> links;
@@ -333,6 +325,11 @@ bool IgnitionRobot::valid() const
     return true;
 }
 
+size_t IgnitionRobot::dofs() const
+{
+    return jointNames().size();
+}
+
 // ===========
 // GET METHODS
 // ===========
@@ -400,6 +397,13 @@ double IgnitionRobot::jointVelocity(const gympp::Robot::JointName& jointName) co
 
     assert(jointVelocityComponent->Data().size() == 1);
     return jointVelocityComponent->Data()[0];
+}
+
+gympp::JointControlMode
+IgnitionRobot::jointControlMode(const gympp::Robot::JointName& jointName) const
+{
+    // TODO
+    return JointControlMode::Position;
 }
 
 gympp::Robot::JointPositions IgnitionRobot::jointPositions() const
@@ -479,13 +483,13 @@ bool IgnitionRobot::setJointPositionTarget(const gympp::Robot::JointName& jointN
 
     // Create the PID if it does not exist
     if (!pImpl->pidExists(jointName)) {
-        pImpl->buffers.joints.pidData[jointName] = {ControlType::Position, DefaultPID};
+        pImpl->buffers.joints.pidData[jointName] = {DefaultPID, JointControlMode::Position};
     }
 
     // Check the control type and switch to position control if the joint was controlled differently
-    if (pImpl->buffers.joints.pidData[jointName].type != ControlType::Position) {
+    if (pImpl->buffers.joints.pidData[jointName].controlMode != JointControlMode::Position) {
         gymppDebug << "Switching joint '" << jointName << "' to Position control" << std::endl;
-        pImpl->buffers.joints.pidData[jointName].type = ControlType::Position;
+        pImpl->buffers.joints.pidData[jointName].controlMode = JointControlMode::Position;
 
         // Reset the PID
         assert(pImpl->pidExists(jointName));
@@ -513,13 +517,13 @@ bool IgnitionRobot::setJointVelocityTarget(const gympp::Robot::JointName& jointN
 
     // Create the PID if it does not exist
     if (!pImpl->pidExists(jointName)) {
-        pImpl->buffers.joints.pidData[jointName] = {ControlType::Velocity, DefaultPID};
+        pImpl->buffers.joints.pidData[jointName] = {DefaultPID, JointControlMode::Velocity};
     }
 
     // Check the control type and switch to velocity control if the joint was controlled differently
-    if (pImpl->buffers.joints.pidData[jointName].type != ControlType::Velocity) {
+    if (pImpl->buffers.joints.pidData[jointName].controlMode != JointControlMode::Velocity) {
         gymppDebug << "Switching joint '" << jointName << "' to Velocity control" << std::endl;
-        pImpl->buffers.joints.pidData[jointName].type = ControlType::Velocity;
+        pImpl->buffers.joints.pidData[jointName].controlMode = JointControlMode::Velocity;
 
         // Reset the PID
         assert(pImpl->pidExists(jointName));
@@ -546,7 +550,9 @@ bool IgnitionRobot::setJointPosition(const gympp::Robot::JointName& jointName,
 
     jointPosResetComponent = ignition::gazebo::components::JointPositionReset({jointPosition});
 
-    // Store the new position in the ECM
+    // Store the new position in the ECM.
+    // This is necessary because before the physics engine executes the step and resets the
+    // position, we might need to read the JointPosition component that might be uninitialized.
     auto& jointPosComponent =
         pImpl->getOrCreateComponent<ignition::gazebo::components::JointPosition>(jointEntity);
 
@@ -569,12 +575,21 @@ bool IgnitionRobot::setJointVelocity(const gympp::Robot::JointName& jointName,
 
     jointVelResetComponent = ignition::gazebo::components::JointVelocityReset({jointVelocity});
 
-    // Store the new velocity in the ECM
+    // Store the new velocity in the ECM.
+    // This is necessary because before the physics engine executes the step and resets the
+    // velocity, we might need to read the JointVelocity component that might be uninitialized.
     auto& jointVelComponent =
         pImpl->getOrCreateComponent<ignition::gazebo::components::JointVelocity>(jointEntity);
 
     jointVelComponent = ignition::gazebo::components::JointVelocity({jointVelocity});
 
+    return true;
+}
+
+bool IgnitionRobot::setJointControlMode(const gympp::Robot::JointName& jointName,
+                                        const JointControlMode controlMode)
+{
+    // TODO
     return true;
 }
 
@@ -587,7 +602,7 @@ bool IgnitionRobot::setJointPID(const gympp::Robot::JointName& jointName, const 
 
     if (!pImpl->pidExists(jointName)) {
         gymppDebug << "Creating new PID for joint " << jointName << std::endl;
-        pImpl->buffers.joints.pidData[jointName] = {ControlType::Position, DefaultPID};
+        pImpl->buffers.joints.pidData[jointName] = {DefaultPID, JointControlMode::Position};
     }
     else {
         pImpl->buffers.joints.pidData[jointName].pid.Reset();
@@ -627,7 +642,7 @@ bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName,
     // Reset the PID
     if (pImpl->pidExists(jointName)) {
         pImpl->buffers.joints.pidData[jointName].pid.Reset();
-        pImpl->buffers.joints.pidData[jointName].type = ControlType::Position;
+        pImpl->buffers.joints.pidData[jointName].controlMode = JointControlMode::Position;
     }
 
     // Clean the joint controlling storage
@@ -686,13 +701,18 @@ bool IgnitionRobot::update(const std::chrono::duration<double> time)
             auto& pid = pImpl->buffers.joints.pidData[jointName].pid;
 
             // Use the PID to get the reference
-            switch (pImpl->buffers.joints.pidData[jointName].type) {
-                case ControlType::Position:
+            switch (pImpl->buffers.joints.pidData[jointName].controlMode) {
+                case JointControlMode::Position:
                     force = pid.Update(jointPosition(jointName) - reference, stepTime);
                     break;
-                case ControlType::Velocity:
+                case JointControlMode::Velocity:
                     force = pid.Update(jointVelocity(jointName) - reference, stepTime);
                     break;
+                default:
+                    gymppError << "Joint control mode '"
+                               << int(pImpl->buffers.joints.pidData[jointName].controlMode)
+                               << "' not supported" << std::endl;
+                    return false;
             }
 
             // Store the force
