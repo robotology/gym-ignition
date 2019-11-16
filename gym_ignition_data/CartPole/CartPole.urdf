@@ -109,7 +109,7 @@
   <!-- ====== -->
   <!-- JOINTS -->
   <!-- ====== -->
-  <!--  http://gazebosim.org/tutorials/?tut=ros_urdf#RigidlyFixingAModeltotheWorld-->
+  <!-- http://gazebosim.org/tutorials/?tut=ros_urdf#RigidlyFixingAModeltotheWorld -->
   <joint name="world_to_rail" type="fixed">
     <parent link="world"/>
     <child link="rail"/>
