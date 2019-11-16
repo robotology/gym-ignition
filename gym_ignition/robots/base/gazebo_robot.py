@@ -188,11 +188,11 @@ class GazeboRobot(robot_abc.RobotABC,
     def joint_velocity(self, joint_name: str) -> float:
         return self.gympp_robot.jointVelocity(joint_name)
 
-    def joint_positions(self) -> List[float]:
-        return self.gympp_robot.jointPositions()
+    def joint_positions(self) -> np.ndarray:
+        return np.array(self.gympp_robot.jointPositions(), dtype=np.float)
 
-    def joint_velocities(self) -> List[float]:
-        return self.gympp_robot.jointVelocities()
+    def joint_velocities(self) -> np.ndarray:
+        return np.array(self.gympp_robot.jointVelocities(), dtype=np.float)
 
     def joint_pid(self, joint_name: str) -> Union[robot_joints.PID, None]:
         gazebo_pid = self.gympp_robot.jointPID(joint_name)
