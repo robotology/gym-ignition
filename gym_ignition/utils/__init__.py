@@ -6,3 +6,4 @@ from .typing import *
 from . import misc
 from . import resource_finder
 from . import gazebo_env_vars
+from . import sinusoidal_trajectory_generator
