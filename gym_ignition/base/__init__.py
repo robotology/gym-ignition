@@ -6,6 +6,7 @@
 from . import task
 from . import robot
 from . import runtime
+from gym_ignition.base import controllers
 
 # Base C++ environment
 from . import gympp_env
