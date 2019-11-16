@@ -51,6 +51,30 @@ class GazeboRobot(robot_abc.RobotABC,
         ok_model = self._gazebo.removeModel(self._robot_name)
         assert ok_model, f"Failed to remove the model '{self._robot_name}' from gazebo"
 
+    @staticmethod
+    def _to_cpp_controlmode(mode: robot_joints.JointControlMode):
+        map_cm = {
+            robot_joints.JointControlMode.POSITION: bindings.JointControlMode_Position,
+            robot_joints.JointControlMode.POSITION_INTERPOLATED:
+                bindings.JointControlMode_PositionInterpolated,
+            robot_joints.JointControlMode.VELOCITY: bindings.JointControlMode_Velocity,
+            robot_joints.JointControlMode.TORQUE: bindings.JointControlMode_Torque,
+        }
+        assert mode in map_cm, f"Unsupported '{mode}' control mode"
+        return map_cm[mode]
+
+    @staticmethod
+    def _from_cpp_controlmode(mode) -> robot_joints.JointControlMode:
+        map_cm = {
+            bindings.JointControlMode_Position: robot_joints.JointControlMode.POSITION,
+            bindings.JointControlMode_PositionInterpolated:
+                robot_joints.JointControlMode.POSITION_INTERPOLATED,
+            bindings.JointControlMode_Velocity: robot_joints.JointControlMode.VELOCITY,
+            bindings.JointControlMode_Torque: robot_joints.JointControlMode.TORQUE,
+        }
+        assert mode in map_cm, f"Unsupported '{mode}' control mode"
+        return map_cm[mode]
+
     @property
     def gympp_robot(self) -> bindings.Robot:
         if self._gympp_robot:
@@ -135,12 +159,13 @@ class GazeboRobot(robot_abc.RobotABC,
         raise NotImplementedError
 
     def joint_control_mode(self, joint_name: str) -> robot_joints.JointControlMode:
-        raise NotImplementedError
+        return self._from_cpp_controlmode(self.gympp_robot.jointControlMode(joint_name))
 
     def set_joint_control_mode(self,
                                joint_name: str,
                                mode: robot_joints.JointControlMode) -> bool:
-        raise NotImplementedError
+        return self.gympp_robot.setJointControlMode(joint_name,
+                                                    self._to_cpp_controlmode(mode))
 
     def joint_position(self, joint_name: str) -> float:
         return self.gympp_robot.jointPosition(joint_name)
