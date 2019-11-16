@@ -64,6 +64,13 @@ class JointInfoPyBullet(NamedTuple):
     parentIndex: int
 
 
+class JointStatePyBullet(NamedTuple):
+    jointPosition: float
+    jointVelocity: float
+    jointReactionForces: List[float]
+    appliedJointMotorTorque: float
+
+
 class PyBulletRobot(robot.robot_abc.RobotABC,
                     robot.robot_joints.RobotJoints,
                     robot.robot_contacts.RobotContacts,
@@ -330,20 +337,28 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
     def joint_position(self, joint_name: str) -> float:
         joint_idx = self._joints_name2index[joint_name]
-        return self._pybullet.getJointState(self._robot_id, joint_idx)[0]
+        state = JointStatePyBullet._make(
+            self._pybullet.getJointState(self._robot_id, joint_idx))
+        return state.jointPosition
 
     def joint_velocity(self, joint_name: str) -> float:
         joint_idx = self._joints_name2index[joint_name]
-        return self._pybullet.getJointState(self._robot_id, joint_idx)[1]
+        state = JointStatePyBullet._make(
+            self._pybullet.getJointState(self._robot_id, joint_idx))
+        return state.jointVelocity
 
     def joint_positions(self) -> List[float]:
-        joint_states = self._pybullet.getJointStates(self._robot_id, range(self.dofs()))
-        joint_positions = [state[0] for state in joint_states]
+        joint_states = self._pybullet.getJointStates(self._robot_id,
+                                                     range(1, self.dofs() + 1))
+        joint_positions = \
+            [JointStatePyBullet._make(state).jointPosition for state in joint_states]
         return joint_positions
 
     def joint_velocities(self) -> List[float]:
-        joint_states = self._pybullet.getJointStates(self._robot_id, range(self.dofs()))
-        joint_velocities = [state[1] for state in joint_states]
+        joint_states = self._pybullet.getJointStates(self._robot_id,
+                                                     range(1, self.dofs() + 1))
+        joint_velocities = \
+            [JointStatePyBullet._make(state).jointVelocity for state in joint_states]
         return joint_velocities
 
     def joint_pid(self, joint_name: str) -> Union[robot.PID, None]:
