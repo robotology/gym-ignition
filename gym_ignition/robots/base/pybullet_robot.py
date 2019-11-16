@@ -175,15 +175,18 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         self._robot_id = self._load_model(self.model_file)
         assert self._robot_id is not None, "Failed to load the robot model"
 
-        # Initialize all the joints in POSITION mode
         for name in self.joint_names():
-            self._jointname2jointcontrolinfo[name] = JointControlInfo(
-                mode=JointControlMode.POSITION)
-            ok_mode = self.set_joint_control_mode(name, JointControlMode.POSITION)
-            assert ok_mode, \
-                f"Failed to initialize the control mode of joint '{name}'"
+            # Initialize the dict with None. It will be changed to POSITION, VELOCITY, etc
+            # the first time the user wants to control the joint.
+            self._jointname2jointcontrolinfo[name] = JointControlInfo(mode=None)
 
-        # Initialize the joints state
+            # Initialize the position as constraint
+            self._pybullet.setJointMotorControl2(
+                bodyIndex=self._robot_id,
+                jointIndex=self._joints_name2index[name],
+                controlMode=pybullet.POSITION_CONTROL)
+
+        # Initialize the joint state
         for idx, name in enumerate(self.joint_names()):
             self.reset_joint(joint_name=name,
                              position=self.initial_joint_positions()[idx],
