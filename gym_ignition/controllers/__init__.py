@@ -3,3 +3,4 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from . import computed_torque_fixed_base
+from . import computed_torque_fixed_base_cpp
