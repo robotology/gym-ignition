@@ -108,6 +108,7 @@ The project is composed of the following components:
 | [**`plugins`**](plugins/)                     | Ignition Gazebo plugins.                                     |
 | [**`gym_ignition`**](gym_ignition/)           | Python package for creating OpenAI Gym environments. Environments can be implemented either in C++ using `gympp` or in Python using the SWIG binded classes of the `ignition` component. |
 | [**`gym_ignition_data`**](gym_ignition_data/) | SDF and URDF models and Gazebo worlds.                       |
+| [**`controllers`**](controllers/)             | Generic implementation of fixed-base and floating-base robot controllers. |
 | [**`gympp`**](gympp/)                         | An _experimental_ C++ port of the OpenAI [Gym interfaces](https://github.com/openai/gym/tree/master/gym), used to create pure C++ environments. |
 
 ## Why
@@ -205,6 +206,8 @@ Execute all the setup commands in the same terminal.
    virtualenv -p python3.6 $HOME/venv
    source $HOME/venv/bin/activate
    ```
+
+1. _Optional_: install `libeigen3-dev` and [iDynTree](https://github.com/robotology/iDynTree) to enable the provided robot controllers. Make sure to enable the CMake option `IDYNTREE_USES_PYTHON` while configuring the project.
 
 ### User setup
 
