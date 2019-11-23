@@ -3,6 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
+import numpy as np
 import pybullet_data
 import pybullet as p
 import gympp_bindings as bindings
@@ -27,9 +28,10 @@ class Simulator(abc.ABC):
 class Gazebo(Simulator):
     simulator_name = "gazebo"
 
-    def __init__(self, physics_rate: float):
-        rtf = 1.0
-        iterations = 1
+    def __init__(self,
+                 physics_rate: float,
+                 iterations: int = int(1),
+                 rtf=float(np.finfo(np.float32).max)):
         self.simulator = bindings.GazeboWrapper(iterations, rtf, physics_rate)
         assert self.simulator
 
