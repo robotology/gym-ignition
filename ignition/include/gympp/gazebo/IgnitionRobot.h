@@ -59,6 +59,8 @@ public:
 
     JointPositions initialJointPositions() const override;
 
+    Limit jointPositionLimits(const JointName& jointName) const override;
+
     StepSize dt() const override;
     PID jointPID(const JointName& jointName) const override;
 

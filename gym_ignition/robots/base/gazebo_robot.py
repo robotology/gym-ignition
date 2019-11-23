@@ -214,7 +214,8 @@ class GazeboRobot(robot_abc.RobotABC,
         return self.gympp_robot.update(dt)
 
     def joint_position_limits(self, joint_name: str) -> Tuple[float, float]:
-        raise NotImplementedError
+        limit = self.gympp_robot.jointPositionLimits(joint_name)
+        return float(limit.min), float(limit.max)
 
     def joint_force_limit(self, joint_name: str) -> float:
         raise NotImplementedError

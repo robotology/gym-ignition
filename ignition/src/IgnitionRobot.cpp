@@ -456,6 +456,28 @@ gympp::Robot::JointPositions IgnitionRobot::initialJointPositions() const
     return initialJointPositions;
 }
 
+gympp::Limit IgnitionRobot::jointPositionLimits(const gympp::Robot::JointName& jointName) const
+{
+    JointEntity jointEntity = pImpl->getJointEntity(jointName);
+    assert(jointEntity != ignition::gazebo::kNullEntity);
+
+    // Get the joint axis component
+    auto jointAxisComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::JointAxis>(jointEntity);
+
+    if (!jointAxisComponent) {
+        gymppError << "JointAxis of joint '" << jointName << "' not found in the ecm" << std::endl;
+        assert(false);
+        return {};
+    }
+
+    gympp::Limit limit;
+    limit.min = jointAxisComponent->Data().Lower();
+    limit.max = jointAxisComponent->Data().Upper();
+
+    return limit;
+}
+
 gympp::Robot::StepSize IgnitionRobot::dt() const
 {
     return pImpl->dt;
