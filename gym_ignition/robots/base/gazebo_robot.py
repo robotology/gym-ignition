@@ -289,7 +289,8 @@ class GazeboRobot(robot_abc.RobotABC,
 
     def initial_joint_positions(self) -> np.ndarray:
         if self._initial_joint_positions is None:
-            self._initial_joint_positions = np.zeros(self.dofs())
+            self._initial_joint_positions = \
+                np.array(self.gympp_robot.initialJointPositions())
 
         return self._initial_joint_positions
 

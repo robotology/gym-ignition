@@ -91,6 +91,8 @@ public:
     virtual JointPositions jointPositions() const = 0;
     virtual JointVelocities jointVelocities() const = 0;
 
+    virtual JointPositions initialJointPositions() const = 0;
+
     virtual StepSize dt() const = 0;
     virtual PID jointPID(const JointName& jointName) const = 0;
 
