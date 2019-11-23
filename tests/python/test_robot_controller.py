@@ -75,6 +75,10 @@ def test_joint_controller():
     # Set the default update rate
     robot.setdt(1 / controller_rate)
 
+    # Control the cart joint in position
+    ok_cm = robot.setJointControlMode("linear", bindings.JointControlMode_Position)
+    assert ok_cm, "Failed to control the cart joint in position"
+
     # Set the PID of the cart joint
     pid = bindings.PID(10000, 1000, 1000)
     pid_ok = robot.setJointPID("linear", pid)
