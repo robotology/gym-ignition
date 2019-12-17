@@ -18,9 +18,11 @@
 namespace gympp {
     class Robot;
     using RobotPtr = std::shared_ptr<gympp::Robot>;
+
     struct PID;
     struct Limit;
     struct BasePose;
+    struct ContactData;
     struct BaseVelocity;
     enum class JointControlMode
     {
@@ -63,6 +65,16 @@ struct gympp::Limit
     double max = std::numeric_limits<double>::max();
 };
 
+struct gympp::ContactData
+{
+    std::string bodyA;
+    std::string bodyB;
+    std::array<double, 3> depth;
+    std::array<double, 6> wrench;
+    std::array<double, 3> normal;
+    std::array<double, 3> position;
+};
+
 class gympp::Robot
 {
 public:
@@ -71,6 +83,7 @@ public:
     using LinkName = std::string;
     using RobotName = std::string;
     using JointName = std::string;
+    using LinkNames = std::vector<JointName>;
     using JointNames = std::vector<JointName>;
 
     using JointPositions = VectorContainer;
@@ -105,6 +118,9 @@ public:
 
     virtual StepSize dt() const = 0;
     virtual PID jointPID(const JointName& jointName) const = 0;
+
+    virtual LinkNames linksInContact() const = 0;
+    virtual std::vector<ContactData> contactData(const LinkName& linkName) const = 0;
 
     // ===========
     // SET METHODS
