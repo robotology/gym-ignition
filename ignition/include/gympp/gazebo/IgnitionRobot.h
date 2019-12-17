@@ -63,6 +63,9 @@ public:
     StepSize dt() const override;
     PID jointPID(const JointName& jointName) const override;
 
+    LinkNames linksInContact() const override;
+    std::vector<ContactData> contactData(const LinkName& linkName) const override;
+
     // ===========
     // SET METHODS
     // ===========
