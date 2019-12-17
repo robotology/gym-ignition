@@ -78,10 +78,7 @@ class GazeboRobot(robot_abc.RobotABC,
     @property
     def gympp_robot(self) -> bindings.Robot:
         if self._gympp_robot:
-            assert not self._gympp_robot.expired(), "The Robot object has expired"
-            assert self._gympp_robot.lock(), "The Robot object is empty"
-            assert self._gympp_robot.lock().valid(), "The Robot object is not valid"
-            return self._gympp_robot.lock()
+            return self._gympp_robot
 
         # Find and load the model SDF file
         sdf_file = resource_finder.find_resource(self.model_file)
@@ -118,22 +115,24 @@ class GazeboRobot(robot_abc.RobotABC,
         assert ok_model, "Failed to insert the model"
 
         # Extract the robot from the singleton
-        self._gympp_robot = bindings.RobotSingleton_get().getRobot(self._robot_name)
+        gympp_robot_weak = bindings.RobotSingleton_get().getRobot(self._robot_name)
 
         # The robot is a weak pointer. Check that it is valid.
-        assert not self._gympp_robot.expired(), "The Robot object has expired"
-        assert self._gympp_robot.lock(), \
+        assert not gympp_robot_weak.expired(), "The Robot object has expired"
+        assert gympp_robot_weak.lock(), \
             "The returned Robot object does not contain a valid interface"
-        assert self._gympp_robot.lock().valid(), "The Robot object is not valid"
+
+        self._gympp_robot = gympp_robot_weak.lock()
+        assert self._gympp_robot.valid(), "The Robot object is not valid"
 
         if self._controller_rate is not None:
-            logger.debug("Robot controller rate: {} Hz".format(self._controller_rate))
-            ok_dt = self._gympp_robot.lock().setdt(1 / self._controller_rate)
+            logger.debug(f"Robot controller rate: {self._controller_rate} Hz")
+            ok_dt = self._gympp_robot.setdt(1 / self._controller_rate)
             assert ok_dt, "Failed to set the robot controller period"
 
-        logger.debug(f"IgnitionRobot '{self._gympp_robot.lock().name()}' added to the "
-                     "simulation")
-        return self._gympp_robot.lock()
+        logger.debug(
+            f"GazeboRobot '{self._gympp_robot.name()}' added to the simulation")
+        return self._gympp_robot
 
     # ========
     # RobotABC
