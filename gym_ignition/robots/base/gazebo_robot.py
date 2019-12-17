@@ -180,7 +180,8 @@ class GazeboRobot(robot_abc.RobotABC,
         return self.gympp_robot.jointVelocities()
 
     def joint_pid(self, joint_name: str) -> Union[robot_joints.PID, None]:
-        return self.gympp_robot.jointPID()
+        gazebo_pid = self.gympp_robot.jointPID(joint_name)
+        return robot_joints.PID(p=gazebo_pid.p, i=gazebo_pid.i, d=gazebo_pid.d)
 
     def dt(self) -> float:
         return self.gympp_robot.dt()
@@ -201,7 +202,8 @@ class GazeboRobot(robot_abc.RobotABC,
         raise NotImplementedError
 
     def set_joint_pid(self, joint_name: str, pid: robot_joints.PID) -> bool:
-        return self.gympp_robot.setJointPID(joint_name, pid)
+        gazebo_pid = bindings.PID(pid.p, pid.i, pid.d)
+        return self.gympp_robot.setJointPID(joint_name, gazebo_pid)
 
     def reset_joint(self,
                     joint_name: str,
