@@ -18,8 +18,8 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
         set(CMAKE_BUILD_TYPE "Release" CACHE STRING
             "Choose the type of build, recommended options are: Debug or Release" FORCE)
     endif()
-    set(GYMPP_BUILD_TYPES "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${GYMPP_BUILD_TYPES})
+    set(GYMIGNITION_BUILD_TYPES "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${GYMIGNITION_BUILD_TYPES})
 endif()
 
 # This new build mode configures the CMake project to be compatible with the pipeline to
