@@ -320,10 +320,6 @@ bool IgnitionRobot::valid() const
         return false;
     }
 
-    if (pImpl->joints.size() == 0) {
-        return false;
-    }
-
     if (pImpl->links.size() == 0) {
         return false;
     }
