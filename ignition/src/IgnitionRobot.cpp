@@ -16,6 +16,7 @@
 #include <ignition/gazebo/SdfEntityCreator.hh>
 #include <ignition/gazebo/components/CanonicalLink.hh>
 #include <ignition/gazebo/components/Joint.hh>
+#include <ignition/gazebo/components/JointAxis.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
 #include <ignition/gazebo/components/JointType.hh>
@@ -428,6 +429,53 @@ gympp::Robot::JointVelocities IgnitionRobot::jointVelocities() const
     }
 
     return pImpl->buffers.joints.velocities;
+}
+
+gympp::Robot::JointPositions IgnitionRobot::initialJointPositions() const
+{
+    JointPositions initialJointPositions;
+    initialJointPositions.reserve(dofs());
+
+    for (const auto& name : jointNames()) {
+        JointEntity jointEntity = pImpl->getJointEntity(name);
+        assert(jointEntity != ignition::gazebo::kNullEntity);
+
+        // Get the joint axis component
+        auto jointAxisComponent =
+            pImpl->ecm->Component<ignition::gazebo::components::JointAxis>(jointEntity);
+
+        if (!jointAxisComponent) {
+            gymppError << "JointAxis of joint '" << name << "' not found in the ecm" << std::endl;
+            assert(false);
+            return {};
+        }
+
+        initialJointPositions.push_back(jointAxisComponent->Data().InitialPosition());
+    }
+
+    return initialJointPositions;
+}
+
+gympp::Limit IgnitionRobot::jointPositionLimits(const gympp::Robot::JointName& jointName) const
+{
+    JointEntity jointEntity = pImpl->getJointEntity(jointName);
+    assert(jointEntity != ignition::gazebo::kNullEntity);
+
+    // Get the joint axis component
+    auto jointAxisComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::JointAxis>(jointEntity);
+
+    if (!jointAxisComponent) {
+        gymppError << "JointAxis of joint '" << jointName << "' not found in the ecm" << std::endl;
+        assert(false);
+        return {};
+    }
+
+    gympp::Limit limit;
+    limit.min = jointAxisComponent->Data().Lower();
+    limit.max = jointAxisComponent->Data().Upper();
+
+    return limit;
 }
 
 gympp::Robot::StepSize IgnitionRobot::dt() const

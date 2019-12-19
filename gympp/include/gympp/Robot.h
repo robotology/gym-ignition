@@ -10,6 +10,7 @@
 #define GYMPP_ROBOT_H
 
 #include <chrono>
+#include <limits>
 #include <memory>
 #include <string>
 #include <vector>
@@ -18,6 +19,7 @@ namespace gympp {
     class Robot;
     using RobotPtr = std::shared_ptr<gympp::Robot>;
     struct PID;
+    struct Limit;
     struct BasePose;
     struct BaseVelocity;
     enum class JointControlMode
@@ -55,6 +57,12 @@ struct gympp::BaseVelocity
     std::array<double, 3> angular;
 };
 
+struct gympp::Limit
+{
+    double min = std::numeric_limits<double>::lowest();
+    double max = std::numeric_limits<double>::max();
+};
+
 class gympp::Robot
 {
 public:
@@ -90,6 +98,10 @@ public:
 
     virtual JointPositions jointPositions() const = 0;
     virtual JointVelocities jointVelocities() const = 0;
+
+    virtual JointPositions initialJointPositions() const = 0;
+
+    virtual Limit jointPositionLimits(const JointName& jointName) const = 0;
 
     virtual StepSize dt() const = 0;
     virtual PID jointPID(const JointName& jointName) const = 0;

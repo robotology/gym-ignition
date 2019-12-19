@@ -130,6 +130,17 @@ class GazeboRobot(robot_abc.RobotABC,
             ok_dt = self._gympp_robot.setdt(1 / self._controller_rate)
             assert ok_dt, "Failed to set the robot controller period"
 
+        s0 = self.initial_joint_positions()
+        sdot0 = self.initial_joint_velocities()
+        joint_names = list(self._gympp_robot.jointNames())
+
+        assert s0.size == len(joint_names)
+        assert sdot0.size == len(joint_names)
+
+        for idx, name in enumerate(joint_names):
+            ok_reset = self._gympp_robot.resetJoint(name, s0[idx], sdot0[idx])
+            assert ok_reset, f"Failed to initialize the state of joint '{name}'"
+
         logger.debug(
             f"GazeboRobot '{self._gympp_robot.name()}' added to the simulation")
         return self._gympp_robot
@@ -214,7 +225,8 @@ class GazeboRobot(robot_abc.RobotABC,
         return self.gympp_robot.update(dt)
 
     def joint_position_limits(self, joint_name: str) -> Tuple[float, float]:
-        raise NotImplementedError
+        limit = self.gympp_robot.jointPositionLimits(joint_name)
+        return float(limit.min), float(limit.max)
 
     def joint_force_limit(self, joint_name: str) -> float:
         raise NotImplementedError
@@ -256,7 +268,8 @@ class GazeboRobot(robot_abc.RobotABC,
         return position, orientation
 
     def base_velocity(self) -> Tuple[np.ndarray, np.ndarray]:
-        raise NotImplementedError
+        logger.warn("Interface not implemented!")
+        return np.zeros(3), np.zeros(3)
 
     def reset_base_pose(self,
                         position: np.ndarray,
@@ -289,26 +302,27 @@ class GazeboRobot(robot_abc.RobotABC,
 
     def initial_joint_positions(self) -> np.ndarray:
         if self._initial_joint_positions is None:
-            self._initial_joint_positions = np.zeros(self.dofs())
+            self._initial_joint_positions = \
+                np.array(self.gympp_robot.initialJointPositions())
 
         return self._initial_joint_positions
 
     def set_initial_joint_positions(self, positions: np.ndarray) -> bool:
-        if positions.size != self.dofs():
-            return False
+        if self._gympp_robot is not None:
+            raise Exception("The robot object has been already created")
 
         self._initial_joint_positions = positions
         return True
 
     def initial_joint_velocities(self) -> np.ndarray:
-        if not self._initial_joint_velocities:
-            return np.zeros(self.dofs())
-        else:
-            return self._initial_joint_velocities
+        if self._initial_joint_velocities is None:
+            self._initial_joint_velocities = np.zeros(self.dofs())
+
+        return self._initial_joint_velocities
 
     def set_initial_joint_velocities(self, velocities: np.ndarray) -> bool:
-        if velocities.size != self.dofs():
-            return False
+        if self._gympp_robot is not None:
+            raise Exception("The robot object has been already created")
 
         self._initial_joint_velocities = velocities
         return True
