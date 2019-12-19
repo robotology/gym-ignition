@@ -62,14 +62,14 @@ class Task(gym.Env, abc.ABC):
         if not robot.valid():
             raise Exception("Robot object is not valid")
 
-        if self.robot_features:
+        if self.robot_features is not None:
             self.robot_features.has_all_features(robot)
 
         # Set the robot
         self._robot = robot
 
     def has_robot(self) -> bool:
-        if not self._robot:
+        if self._robot is None:
             return False
         else:
             assert self._robot.valid(), "The robot object is not valid"

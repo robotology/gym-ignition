@@ -147,7 +147,7 @@ std::unique_lock<std::mutex> ECMSingleton::waitPreUpdate(const std::string& worl
     syncroData.preUpdateCV.wait(lock, [&] {
         if (syncroData.isPreUpdate) {
             // When the simulation reaches the PreUpdate step, this lambda is called.
-            // One executors aquires the lock and continues. The others are blocked here.
+            // One executors acquires the lock and continues. The others are blocked here.
             processingLock.lock();
             return true;
         }

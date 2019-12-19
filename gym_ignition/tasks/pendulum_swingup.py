@@ -22,7 +22,7 @@ class RobotFeatures(robot_abc.RobotABC,
 
 class PendulumSwingUp(task.Task, abc.ABC):
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs) -> None:
         super().__init__()
 
         # Store the requested robot features for this task

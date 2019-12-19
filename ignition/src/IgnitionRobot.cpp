@@ -368,12 +368,14 @@ double IgnitionRobot::jointPosition(const gympp::Robot::JointName& jointName) co
 
     if (!jointPositionComponent) {
         gymppError << "Position for joint '" << jointName << "' not found in the ecm" << std::endl;
+        assert(false);
         return {};
     }
 
     if (jointPositionComponent->Data().size() <= 0) {
         gymppWarning << "The joint position component exists but it does not have yet any data"
                      << std::endl;
+        assert(false);
         return {};
     }
 
@@ -392,12 +394,14 @@ double IgnitionRobot::jointVelocity(const gympp::Robot::JointName& jointName) co
 
     if (!jointVelocityComponent) {
         gymppError << "Velocity for joint '" << jointName << "' not found in the ecm" << std::endl;
+        assert(false);
         return {};
     }
 
     if (jointVelocityComponent->Data().size() <= 0) {
         gymppWarning << "The joint velocity component exists but it does not have yet any data"
                      << std::endl;
+        assert(false);
         return {};
     }
 
@@ -717,9 +721,9 @@ bool IgnitionRobot::update(const std::chrono::duration<double> time)
         stepTime = pImpl->dt;
     }
 
-    // If enough time is passed, store the time of this actuation step. In this case the state of
-    // the robot is read and new force references are computed and actuated.
-    // Otherwise, the same force of the last step is actuated.
+    // If enough time is passed, store the time of this actuation step. In this case the state
+    // of the robot is read and new force references are computed and actuated. Otherwise, the
+    // same force of the last step is actuated.
     bool updateCurrentState;
 
     if (stepTime >= pImpl->dt) {

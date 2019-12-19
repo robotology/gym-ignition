@@ -621,6 +621,10 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         // Attach the model entity to the world entity
         sdfEntityCreator->SetParent(modelEntity, worldEntity);
 
+        // -------------------
+        // HANDLE INITIAL POSE
+        // -------------------
+
         // Create pose data
         ignition::math::Pose3d pose;
         pose.Pos() = ignition::math::Vector3<double>(
@@ -679,6 +683,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
     // Add the model in a list of allocated models
     pImpl->modelPendingToRemove.push_back(finalModelEntityName);
 
+    gymppDebug << "New model successfully inserted in the world" << std::endl;
     return true;
 }
 
@@ -742,6 +747,7 @@ bool GazeboWrapper::removeModel(const std::string& modelName)
         pImpl->modelPendingToRemove.erase(it);
     }
 
+    gymppDebug << "Model successfully removed from the world" << std::endl;
     return true;
 }
 

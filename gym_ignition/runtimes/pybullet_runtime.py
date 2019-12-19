@@ -20,10 +20,10 @@ class PyBulletRuntime(base.runtime.Runtime):
     def __init__(self,
                  task_cls: type,
                  robot_cls: type,
-                 model: str,
                  rtf: float,
                  agent_rate: float,
                  physics_rate: float,
+                 model: str = None,
                  world: str = "plane_implicit.urdf",
                  hard_reset: bool = True,
                  **kwargs):
@@ -200,7 +200,7 @@ class PyBulletRuntime(base.runtime.Runtime):
             # We use a low-filtered bias to compensate delays due to code running outside
             # the step method
             self._bias = \
-                0.01 * (real_sleep - np.max([sleep_amount, 0.0])) +\
+                0.01 * (real_sleep - np.max([sleep_amount, 0.0])) + \
                 0.99 * self._bias
 
         # Update the time for the next cycle

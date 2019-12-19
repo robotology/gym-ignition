@@ -22,7 +22,7 @@ class RobotFeatures(robot_abc.RobotABC,
 
 class CartPoleDiscrete(task.Task, abc.ABC):
 
-    def __init__(self, reward_cart_at_center: bool = False) -> None:
+    def __init__(self, reward_cart_at_center: bool = False, **kwargs) -> None:
         super().__init__()
 
         # Store the requested robot features for this task

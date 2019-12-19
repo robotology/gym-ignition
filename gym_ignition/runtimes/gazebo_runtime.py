@@ -17,11 +17,11 @@ class GazeboRuntime(runtime.Runtime):
     def __init__(self,
                  task_cls: type,
                  robot_cls: type,
-                 model: str,
-                 world: str,
                  rtf: float,
                  agent_rate: float,
                  physics_rate: float,
+                 model: str = None,
+                 world: str = "DefaultEmptyWorld.world",
                  hard_reset: bool = True,
                  **kwargs):
 
@@ -43,12 +43,11 @@ class GazeboRuntime(runtime.Runtime):
 
         # Gazebo simulation attributes
         self._rtf = rtf
-        self._agent_rate = agent_rate
         self._physics_rate = physics_rate
         self._gazebo_wrapper = None
 
         # Build the environment
-        task = task_cls(**kwargs)
+        task = task_cls(agent_rate=agent_rate, **kwargs)
 
         assert isinstance(task, base.task.Task), \
             "'task_cls' object must inherit from Task"
@@ -85,16 +84,16 @@ class GazeboRuntime(runtime.Runtime):
         # =================
 
         assert self._rtf, "Real Time Factor was not set"
-        assert self._agent_rate, "Agent rate was not set"
+        assert self.agent_rate, "Agent rate was not set"
         assert self._physics_rate, "Physics rate was not set"
 
         logger.debug("Starting gazebo")
-        logger.debug("Agent rate: {} Hz".format(self._agent_rate))
-        logger.debug("Physics rate: {} Hz".format(self._physics_rate))
-        logger.debug("Simulation RTF: {}".format(self._rtf))
+        logger.debug(f"Agent rate: {self.agent_rate} Hz")
+        logger.debug(f"Physics rate: {self._physics_rate} Hz")
+        logger.debug(f"Simulation RTF: {self._rtf}")
 
         # Compute the number of physics iteration to execute at every environment step
-        num_of_iterations_per_gazebo_step = self._physics_rate / self._agent_rate
+        num_of_iterations_per_gazebo_step = self._physics_rate / self.agent_rate
 
         if num_of_iterations_per_gazebo_step != int(num_of_iterations_per_gazebo_step):
             logger.warn("Rounding the number of iterations to {} from the nominal {}"

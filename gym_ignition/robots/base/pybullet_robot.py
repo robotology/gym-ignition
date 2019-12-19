@@ -112,6 +112,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     # ==============================
 
     def delete_simulated_robot(self):
+        if not self._pybullet or self._robot_id is None:
+            return
+
         # Remove the robot from the simulation
         self._pybullet.removeBody(self._robot_id)
 
@@ -259,8 +262,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         elif joint_type_pybullet == pybullet.JOINT_REVOLUTE:
             return robot.robot_joints.JointType.REVOLUTE
         else:
-            raise Exception(
-                "Joint type '{}' not yet supported".format(joint_type_pybullet))
+            raise Exception(f"Joint type '{joint_type_pybullet}' not yet supported")
 
     def joint_control_mode(self, joint_name: str) -> JointControlMode:
         return self._jointname2jointcontrolinfo[joint_name].mode
@@ -278,7 +280,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         elif mode == JointControlMode.POSITION_INTERPOLATED:
             raise Exception("Control mode POSITION_INTERPOLATED is not supported")
         else:
-            raise Exception("Control mode '{}' not recognized".format(mode))
+            raise Exception(f"Control mode '{mode}' not recognized")
 
         mode_pybullet = JointControlMode2PyBullet[mode]
         joint_idx_pybullet = self._joints_name2index[joint_name]
@@ -483,7 +485,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
     def is_floating_base(self) -> bool:
         if not self._is_floating_base:
-            assert self._base_constraint is None
+            assert self._base_constraint is not None
 
         return self._is_floating_base
 
@@ -661,6 +663,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         return self._initial_joint_positions
 
     def set_initial_joint_positions(self, positions: np.ndarray) -> bool:
+        if self._robot_id is not None:
+            raise Exception("The robot object has been already created")
+
         if positions.size != self.dofs():
             return False
 
@@ -668,12 +673,15 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         return True
 
     def initial_joint_velocities(self) -> np.ndarray:
-        if not self._initial_joint_velocities:
-            return np.zeros(self.dofs())
-        else:
-            return self._initial_joint_velocities
+        if self._initial_joint_velocities is None:
+            self._initial_joint_velocities = np.zeros(self.dofs())
+
+        return self._initial_joint_velocities
 
     def set_initial_joint_velocities(self, velocities: np.ndarray) -> bool:
+        if self._robot_id is not None:
+            raise Exception("The robot object has been already created")
+
         if velocities.size != self.dofs():
             return False
 
