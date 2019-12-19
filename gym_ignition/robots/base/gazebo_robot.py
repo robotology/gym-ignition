@@ -47,6 +47,9 @@ class GazeboRobot(robot_abc.RobotABC,
     # ==============================
 
     def delete_simulated_robot(self) -> None:
+        if not self._gazebo or not self._gympp_robot:
+            return
+
         # Remove the robot from the simulation
         ok_model = self._gazebo.removeModel(self._robot_name)
         assert ok_model, f"Failed to remove the model '{self._robot_name}' from gazebo"
@@ -163,7 +166,7 @@ class GazeboRobot(robot_abc.RobotABC,
         return len(self.joint_names())
 
     def joint_names(self) -> List[str]:
-        return self.gympp_robot.jointNames()
+        return list(self.gympp_robot.jointNames())
 
     def joint_type(self, joint_name: str) -> robot_joints.JointType:
         raise NotImplementedError

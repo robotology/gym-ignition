@@ -169,6 +169,8 @@ def template_pendulum_wrt_ground_truth(env_name: str, max_error_in_deg: float):
                 print("===================")
                 assert False, "Error in pendulum angle is bigger then the threshold"
 
+    env.close()
+
 
 @pytest.mark.parametrize("env_name, max_error_in_deg",
                          [("Pendulum-Ignition-PyTest-v0", 3.0),

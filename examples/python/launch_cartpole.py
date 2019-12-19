@@ -53,6 +53,6 @@ for epoch in range(10):
             msg += "\t%.6f" % value
         logger.debug(msg)
 
-    logger.info("Total reward for episode #{}: {}".format(epoch, totalReward))
+    logger.info(f"Total reward for episode #{epoch}: {totalReward}")
 
 env.close()

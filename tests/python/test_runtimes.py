@@ -95,6 +95,7 @@ def template_compare_environments(env_name_a: str, env_name_b: str, max_error: f
     env_b.seed(42)
 
     range_obs = env_a.observation_space.high - env_a.observation_space.low
+    range_obs = np.where(np.isinf(range_obs), 1000, range_obs)
 
     for epoch in range(10):
         # Reset the environments

@@ -22,10 +22,10 @@ def almost_equal(first, second, epsilon=None) -> bool:
         print("----------------")
         print("ASSERTION FAILED")
         print("----------------")
-        print("#1={}".format(first))
-        print("#2={}".format(second))
+        print(f"#1={first}")
+        print(f"#2={second}")
         print("Error={}".format(np.abs(first-second)))
-        print("Tolerance={}".format(epsilon))
+        print(f"Tolerance={epsilon}")
         print("----------------")
 
     return res
@@ -88,10 +88,10 @@ def template_test(rtf: float,
     assert number_of_actions == cart_ref.size
 
     print()
-    print("Elapsed time = {}".format(elapsed_time))
-    print("Average step time = {}".format(avg_time_per_step))
+    print(f"Elapsed time = {elapsed_time}")
+    print(f"Average step time = {avg_time_per_step}")
     print("Number of actions: = {}".format(tot_simulated_seconds / trajectory_dt))
-    print("Physics iteration per simulator step = {}".format(physics_iterations_per_run))
+    print(f"Physics iteration per simulator step = {physics_iterations_per_run}")
     print()
 
     # Check if the average time per step matches what expected
@@ -140,8 +140,8 @@ def test_rates(rtf: float, agent_rate: float, physics_rate: float):
     print("========")
     print("Testing:")
     print("========")
-    print("RTF = {}".format(rtf))
-    print("Agent rate = {}".format(agent_rate))
-    print("Physics rate = {}".format(physics_rate))
+    print(f"RTF = {rtf}")
+    print(f"Agent rate = {agent_rate}")
+    print(f"Physics rate = {physics_rate}")
 
     template_test(rtf, physics_rate, agent_rate)

@@ -22,7 +22,7 @@ class RobotFeatures(robot_abc.RobotABC,
 
 class PendulumSwingUp(task.Task, abc.ABC):
 
-    def __init__(self) -> None:
+    def __init__(self, **kwargs) -> None:
         super().__init__()
 
         # Store the requested robot features for this task
@@ -34,12 +34,6 @@ class PendulumSwingUp(task.Task, abc.ABC):
 
         # Private attributes
         self._last_a = None
-
-        # Create the spaces
-        self.action_space, self.observation_space = self.create_spaces()
-
-        # Seed the environment
-        self.seed()
 
     def create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
         action_space = gym.spaces.Box(low=-self._max_torque, high=self._max_torque,
