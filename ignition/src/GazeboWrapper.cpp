@@ -384,6 +384,20 @@ bool GazeboWrapper::initialized()
     }
 }
 
+double GazeboWrapper::getSimulatedTime() const
+{
+    auto dt = pImpl->gazebo.physics.maxStepSize;
+    auto iterationCount = pImpl->gazebo.server->IterationCount();
+
+    if (!iterationCount || !pImpl->gazebo.server) {
+        gymppError << "Failed to get the simulated time" << std::endl;
+        return 0.0;
+    }
+
+    // TODO: this will no longer work if Gazebo changes the step dynamically
+    return dt * iterationCount.value();
+}
+
 PhysicsData GazeboWrapper::getPhysicsData() const
 {
     return pImpl->gazebo.physics;
