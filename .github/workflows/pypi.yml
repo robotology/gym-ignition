@@ -34,6 +34,12 @@ jobs:
         PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
+      - name: Update git
+        run: |
+          add-apt-repository ppa:git-core/ppa
+          apt update
+          apt install -y git
+
       - uses: actions/checkout@master
 
       # The entrypoint is not called because it is overridden by GH Actions.
@@ -72,6 +78,12 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
+      - name: Update git
+        run: |
+          sudo add-apt-repository ppa:git-core/ppa
+          sudo apt update
+          sudo apt install -y git
+
       - uses: actions/checkout@master
 
       # Workaround to export environment variables that persist in next steps
@@ -137,6 +149,12 @@ jobs:
         PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
+      - name: Update git
+        run: |
+          add-apt-repository ppa:git-core/ppa
+          apt update
+          apt install -y git
+
       - uses: actions/checkout@master
 
       # Validate the last tag accordingly to PEP440
