@@ -36,12 +36,6 @@ class CartPoleContinuous(task.Task, abc.ABC):
         self._x_threshold = 2.5
         self._x_threshold_reset = 2.4
 
-        # Create the spaces
-        self.action_space, self.observation_space = self.create_spaces()
-
-        # Seed the environment
-        self.seed()
-
     def create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
         # Configure action space
         max_force = 50

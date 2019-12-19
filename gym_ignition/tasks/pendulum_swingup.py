@@ -35,12 +35,6 @@ class PendulumSwingUp(task.Task, abc.ABC):
         # Private attributes
         self._last_a = None
 
-        # Create the spaces
-        self.action_space, self.observation_space = self.create_spaces()
-
-        # Seed the environment
-        self.seed()
-
     def create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
         action_space = gym.spaces.Box(low=-self._max_torque, high=self._max_torque,
                                       shape=(1,), dtype=np.float32)

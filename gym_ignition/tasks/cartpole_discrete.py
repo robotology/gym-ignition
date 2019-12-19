@@ -37,12 +37,6 @@ class CartPoleDiscrete(task.Task, abc.ABC):
         self._x_threshold = 2.4
         self._theta_threshold_radians = np.deg2rad(12)
 
-        # Create the spaces
-        self.action_space, self.observation_space = self.create_spaces()
-
-        # Seed the environment
-        self.seed()
-
     def create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
         # Configure action space
         action_space = gym.spaces.Discrete(2)
