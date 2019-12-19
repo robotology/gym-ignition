@@ -50,3 +50,16 @@ class Runtime(gym.Wrapper, abc.ABC):
             The gym.Env environment of the Runtime.
         """
         return self
+
+    @abc.abstractmethod
+    def timestamp(self) -> float:
+        """
+        Return the timestamp associated to the execution of the environment.
+
+        In real-time environments, the timestamp is the time read from the host system.
+        In simulated environments, the timestamp is the simulated time, which might not
+        match the real-time in the case of RTF different than 1.
+
+        Returns:
+            A float indicating the current environment timestamp
+        """

@@ -143,6 +143,13 @@ class GazeboRuntime(runtime.Runtime):
 
         return robot
 
+    # =================
+    # Runtime interface
+    # =================
+
+    def timestamp(self) -> float:
+        return self.gazebo.getSimulatedTime()
+
     # ===============
     # gym.Env METHODS
     # ===============

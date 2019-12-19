@@ -85,6 +85,7 @@ public:
 
     bool initialized();
 
+    double getSimulatedTime() const;
     PhysicsData getPhysicsData() const;
     static void setVerbosity(int level = DEFAULT_VERBOSITY);
 

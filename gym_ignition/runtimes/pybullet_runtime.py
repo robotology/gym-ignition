@@ -48,6 +48,7 @@ class PyBulletRuntime(base.runtime.Runtime):
         self._rtf = rtf
         self._now = None
         self._bias = 0.0
+        self._timestamp = 0.0
 
         self._physics_rate = physics_rate
 
@@ -206,6 +207,13 @@ class PyBulletRuntime(base.runtime.Runtime):
         # Update the time for the next cycle
         self._now = time.time()
 
+    # =================
+    # Runtime interface
+    # =================
+
+    def timestamp(self) -> float:
+        return self._timestamp
+
     # ===============
     # gym.Env METHODS
     # ===============
@@ -213,6 +221,9 @@ class PyBulletRuntime(base.runtime.Runtime):
     def step(self, action: Action) -> State:
         if not self.action_space.contains(action):
             logger.warn("The action does not belong to the action space")
+
+        # Update the timestamp
+        self._timestamp += 1.0 / self.agent_rate
 
         # Set the action
         ok_action = self.task.set_action(action)
@@ -263,6 +274,9 @@ class PyBulletRuntime(base.runtime.Runtime):
 
         if not self.observation_space.contains(observation):
             logger.warn("The observation does not belong to the observation space")
+
+        # Reset the timestamp
+        self._timestamp = 0.0
 
         return Observation(observation)
 
