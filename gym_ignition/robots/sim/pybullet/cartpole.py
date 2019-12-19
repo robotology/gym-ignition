@@ -2,13 +2,12 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import pybullet
 import numpy as np
 from gym_ignition.robots import pybullet_robot
 
 
 class CartPolePyBulletRobot(pybullet_robot.PyBulletRobot):
-    def __init__(self, p: pybullet, model_file: str, plane_id: int, **kwargs):
+    def __init__(self, p, model_file: str, plane_id: int, **kwargs):
         # Initialize base class
         super().__init__(
             p=p,
