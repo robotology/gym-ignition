@@ -189,7 +189,7 @@ def test_gymfactory():
     md.setLibraryName("CartPolePlugin")
     md.setClassName("gympp::plugins::CartPole")
     md.setWorldFileName("DefaultEmptyWorld.world")
-    md.setModelFileName("CartPole/CartPole.sdf")
+    md.setModelFileName("CartPole/CartPole.urdf")
     md.setAgentRate(1000)
     md.setPhysicsData(bindings.PhysicsData(1.0, 0.001))
     action_space_md = bindings.SpaceMetadata()
