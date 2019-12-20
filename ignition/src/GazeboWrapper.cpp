@@ -616,8 +616,10 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         // involved synchronization logic. This allows avoiding to use the UserCommands system
         // to create entities, giving us full power.
         assert(pImpl->gazebo.server->Paused().has_value());
-        if (pImpl->gazebo.server->Running() && pImpl->gazebo.server->Paused().value())
-            auto lock = ecmSingleton.waitPreUpdate(getWorldName());
+        std::unique_lock<std::mutex> lock;
+        if (pImpl->gazebo.server->Running() && pImpl->gazebo.server->Paused().value()) {
+            lock = ecmSingleton.waitPreUpdate(getWorldName());
+        }
 
         // Create the model entity. It will create a model with the name specified in the SDF.
         modelEntity = sdfEntityCreator->CreateEntities(modelSdfRoot.ModelByIndex(0));
