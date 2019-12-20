@@ -12,10 +12,10 @@
     <xacro:property name="support_z" value="${pendulum_length*1.2}"/>
     <xacro:property name="support_mass" value="1000"/>
 
-    <xacro:property name="rgba_black" value="0 0 0 0.8"/>
-    <xacro:property name="rgba_white" value="1 1 1 0.8"/>
-    <xacro:property name="rgba_grey" value="0.2 0.2 0.2 0.8"/>
-    <xacro:property name="rgba_red" value="1 0 0 0.8"/>
+    <xacro:property name="rgba_black" value="0 0 0 1"/>
+    <xacro:property name="rgba_white" value="1 1 1 1"/>
+    <xacro:property name="rgba_grey" value="0.2 0.2 0.2 1"/>
+    <xacro:property name="rgba_red" value="1 0 0 1"/>
 
     <xacro:macro name="cylinder_inertial_element"
                  params="mass length radius xyz rpy">
@@ -56,10 +56,7 @@
         <gazebo reference="${reference}">
             <visual>
                 <material>
-                    <ambient>${rgba}</ambient>
                     <diffuse>${rgba}</diffuse>
-                    <specular>${rgba}</specular>
-                    <emissive>${rgba}</emissive>
                 </material>
             </visual>
         </gazebo>
