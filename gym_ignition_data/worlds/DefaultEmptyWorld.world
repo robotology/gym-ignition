@@ -16,11 +16,6 @@
                 name="ignition::gazebo::systems::SceneBroadcaster">
         </plugin>
         <plugin
-                filename="libignition-gazebo-contact-system.so"
-                name="ignition::gazebo::systems::Contact">
-        </plugin>
-
-        <plugin
                 filename="libECMProvider.so"
                 name="gympp::plugins::ECMProvider">
         </plugin>
