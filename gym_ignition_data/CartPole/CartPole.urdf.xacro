@@ -22,10 +22,10 @@
 
     <xacro:property name="epsilon" value="1e-09"/>
 
-    <xacro:property name="rgba_black" value="0 0 0 0.8"/>
-    <xacro:property name="rgba_white" value="1 1 1 0.8"/>
-    <xacro:property name="rgba_grey" value="0.2 0.2 0.2 0.8"/>
-    <xacro:property name="rgba_red" value="1 0 0 0.8"/>
+    <xacro:property name="rgba_black" value="0 0 0 1"/>
+    <xacro:property name="rgba_white" value="1 1 1 1"/>
+    <xacro:property name="rgba_grey" value="0.2 0.2 0.2 1"/>
+    <xacro:property name="rgba_red" value="1 0 0 1"/>
 
     <xacro:macro name="box_inertia" params="mass dimx dimy dimz xyz rpy">
         <inertial>
@@ -62,10 +62,7 @@
         <gazebo reference="${reference}">
             <visual>
                 <material>
-                    <ambient>${rgba}</ambient>
                     <diffuse>${rgba}</diffuse>
-                    <specular>${rgba}</specular>
-                    <emissive>${rgba}</emissive>
                 </material>
             </visual>
         </gazebo>
