@@ -36,9 +36,8 @@ public:
     ~IgnitionRobot() override;
 
     bool configureECM(const ignition::gazebo::Entity& entity,
-                      const std::shared_ptr<const sdf::Element>& sdf,
-                      ignition::gazebo::EntityComponentManager& ecm,
-                      ignition::gazebo::EventManager& eventManager);
+                      ignition::gazebo::EntityComponentManager* ecm,
+                      ignition::gazebo::EventManager* eventManager);
     bool valid() const override;
 
     // ===========

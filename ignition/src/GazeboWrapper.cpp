@@ -658,7 +658,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
 
         // Create an IgnitionRobot object from the ecm
         auto ignRobot = std::make_shared<gympp::gazebo::IgnitionRobot>();
-        if (!ignRobot->configureECM(modelEntity, modelSdfRoot.Element(), *ecm, *eventManager)) {
+        if (!ignRobot->configureECM(modelEntity, ecm, eventManager)) {
             gymppError << "Failed to configure the Robot interface" << std::endl;
             return false;
         }
