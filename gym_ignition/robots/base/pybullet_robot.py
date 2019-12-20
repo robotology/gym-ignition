@@ -3,7 +3,6 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import os
-import pybullet
 import numpy as np
 from gym_ignition.base import robot
 from gym_ignition.utils import logger, resource_finder
@@ -16,12 +15,16 @@ class JointControlInfo(NamedTuple):
     PID: robot.PID = None
 
 
-JointControlMode2PyBullet = {
-    JointControlMode.POSITION: pybullet.PD_CONTROL,
-    JointControlMode.POSITION_INTERPOLATED: None,
-    JointControlMode.VELOCITY: pybullet.PD_CONTROL,
-    JointControlMode.TORQUE: pybullet.TORQUE_CONTROL,
-}
+def controlmode_to_pybullet(control_mode: JointControlMode):
+    import pybullet
+    JointControlMode2PyBullet = {
+        JointControlMode.POSITION: pybullet.PD_CONTROL,
+        JointControlMode.POSITION_INTERPOLATED: None,
+        JointControlMode.VELOCITY: pybullet.PD_CONTROL,
+        JointControlMode.TORQUE: pybullet.TORQUE_CONTROL,
+    }
+
+    return JointControlMode2PyBullet[control_mode]
 
 
 class ContactPyBullet(NamedTuple):
@@ -77,7 +80,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     """
 
     def __init__(self,
-                 p: pybullet,
+                 p,
                  model_file: str,
                  plane_id: int = None,
                  keep_fixed_joints: bool = False) -> None:
@@ -152,6 +155,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         if extension == "sdf":
             model_id = self._pybullet.loadSDF(filename, **kwargs)[0]
         else:
+            import pybullet
             model_id = self._pybullet.loadURDF(
                 fileName=filename,
                 flags=pybullet.URDF_USE_INERTIA_FROM_FILE,
@@ -241,6 +245,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         return dofs
 
     def joint_names(self) -> List[str]:
+        import pybullet
         joints_names = []
 
         # Get Joint names
@@ -254,6 +259,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         return joints_names
 
     def joint_type(self, joint_name: str) -> robot.robot_joints.JointType:
+        import pybullet
         joint_info = self._get_joints_info()[joint_name]
         joint_type_pybullet = joint_info.jointType
 
@@ -282,11 +288,12 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         else:
             raise Exception(f"Control mode '{mode}' not recognized")
 
-        mode_pybullet = JointControlMode2PyBullet[mode]
+        mode_pybullet = controlmode_to_pybullet(mode)
         joint_idx_pybullet = self._joints_name2index[joint_name]
 
         # Disable the default joint motorization setting a 0 maximum force
         if mode == JointControlMode.TORQUE:
+            import pybullet
             # Disable the PID if was configured
             self._pybullet.setJointMotorControl2(
                 bodyIndex=self._robot_id,
@@ -354,7 +361,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             raise Exception("Joint '{}' is not controlled in TORQUE".format(joint_name))
 
         joint_idx_pybullet = self._joints_name2index[joint_name]
-        mode_pybullet = JointControlMode2PyBullet[JointControlMode.TORQUE]
+        mode_pybullet = controlmode_to_pybullet(JointControlMode.TORQUE)
 
         # Clip the force if specified
         if clip:
@@ -377,7 +384,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         pid = self._jointname2jointcontrolinfo[joint_name].PID
 
         joint_idx_pybullet = self._joints_name2index[joint_name]
-        mode_pybullet = JointControlMode2PyBullet[JointControlMode.POSITION]
+        mode_pybullet = controlmode_to_pybullet(JointControlMode.POSITION)
 
         # Change the control mode of the joint
         self._pybullet.setJointMotorControl2(
@@ -399,7 +406,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         pid = self._jointname2jointcontrolinfo[joint_name].PID
 
         joint_idx_pybullet = self._joints_name2index[joint_name]
-        mode_pybullet = JointControlMode2PyBullet[JointControlMode.POSITION]
+        mode_pybullet = controlmode_to_pybullet(JointControlMode.POSITION)
 
         # Change the control mode of the joint
         self._pybullet.setJointMotorControl2(

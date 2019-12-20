@@ -4,7 +4,6 @@
 
 import os
 import time
-import pybullet
 import numpy as np
 import pybullet_data
 from gym_ignition import base, robots
@@ -104,6 +103,7 @@ class PyBulletRuntime(base.runtime.Runtime):
         logger.debug("Creating PyBullet simulator")
 
         if self._render_enabled:
+            import pybullet
             self._pybullet = bullet_client.BulletClient(pybullet.GUI)
         else:
             # Connects to an existing instance or, if it fails, creates an headless
@@ -173,6 +173,7 @@ class PyBulletRuntime(base.runtime.Runtime):
         if extension == "sdf":
             model_id = self._pybullet.loadSDF(filename, **kwargs)[0]
         else:
+            import pybullet
             model_id = self._pybullet.loadURDF(
                 filename,
                 flags=pybullet.URDF_USE_INERTIA_FROM_FILE,
