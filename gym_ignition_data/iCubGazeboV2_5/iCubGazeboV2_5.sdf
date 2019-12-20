@@ -2,9 +2,9 @@
 <sdf version='1.6'>
   <model name='iCub'>
     <link name='base_link'>
-      <pose frame=''>0 0 0 0 -0 0</pose>
+      <pose>0 0 0 0 -0 0</pose>
       <inertial>
-        <pose frame=''>0.024882 0.000104 -0.044081 0 -0 0</pose>
+        <pose>0.024882 0.000104 -0.044081 0 -0 0</pose>
         <mass>5.09143</mass>
         <inertia>
           <ixx>0.0249124</ixx>
@@ -16,7 +16,7 @@
         </inertia>
       </inertial>
       <collision name='base_link_fixed_joint_lump__root_link_collision'>
-        <pose frame=''>-0.0364 0 0.032 1.5708 0 -1.5708</pose>
+        <pose>-0.0364 0 0.032 1.5708 0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -33,19 +33,16 @@
         </surface>
       </collision>
       <visual name='base_link_fixed_joint_lump__root_link_visual'>
-        <pose frame=''>-0.0364 0 0.032 1.5708 0 -1.5708</pose>
+        <pose>-0.0364 0 0.032 1.5708 0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_root_link_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <sensor name='root_link_ems_acc_eb5' type='imu'>
@@ -63,9 +60,9 @@
       </sensor>
     </link>
     <link name='l_hip_1'>
-      <pose frame=''>0.006452 -0.026 -0.119913 0 -0 3.14159</pose>
+      <pose>0.006452 -0.026 -0.119913 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.000511 0.038092 -8.3e-05 1.5708 -0 1.5708</pose>
+        <pose>-0.000511 0.038092 -8.3e-05 1.5708 -0 1.5708</pose>
         <mass>0.919725</mass>
         <inertia>
           <ixx>0.000404539</ixx>
@@ -77,7 +74,7 @@
         </inertia>
       </inertial>
       <collision name='l_hip_1_collision'>
-        <pose frame=''>0.042852 -0.026 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 -0.026 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -86,20 +83,23 @@
         </geometry>
       </collision>
       <visual name='l_hip_1_visual'>
-        <pose frame=''>0.042852 -0.026 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 -0.026 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_hip_pitch' type='revolute'>
       <child>l_hip_1</child>
       <parent>base_link</parent>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>-0 -1 0</xyz>
         <limit>
           <lower>-0.785398</lower>
           <upper>2.33874</upper>
@@ -112,7 +112,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -126,9 +126,9 @@
       </physics>
     </joint>
     <link name='l_hip_2'>
-      <pose frame=''>0.006452 -0.0701 -0.119913 0 -0 3.14159</pose>
+      <pose>0.006452 -0.0701 -0.119913 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.001576 -1.9e-05 -0.044053 1.5708 -0 1.5708</pose>
+        <pose>-0.001576 -1.9e-05 -0.044053 1.5708 -0 1.5708</pose>
         <mass>0.421106</mass>
         <inertia>
           <ixx>0.000494284</ixx>
@@ -140,7 +140,7 @@
         </inertia>
       </inertial>
       <collision name='l_hip_2_collision'>
-        <pose frame=''>0.042852 -0.0701 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 -0.0701 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -149,20 +149,23 @@
         </geometry>
       </collision>
       <visual name='l_hip_2_visual'>
-        <pose frame=''>0.042852 -0.0701 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 -0.0701 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_hip_roll' type='revolute'>
       <child>l_hip_2</child>
       <parent>l_hip_1</parent>
       <axis>
-        <xyz>-1 0 0</xyz>
+        <xyz>1 0 0</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>2.0944</upper>
@@ -175,7 +178,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -189,9 +192,9 @@
       </physics>
     </joint>
     <link name='l_hip_3'>
-      <pose frame=''>0.007309 -0.0701 -0.194213 -3.14159 -0 3.14159</pose>
+      <pose>0.007309 -0.0701 -0.194213 -3.14159 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.000123 -0.000282 0.008718 -1.5708 -0 -1.5708</pose>
+        <pose>-0.000123 -0.000282 0.008718 -1.5708 -0 -1.5708</pose>
         <mass>0.126212</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -203,7 +206,7 @@
         </inertia>
       </inertial>
       <collision name='l_hip_3_collision'>
-        <pose frame=''>0.043709 0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+        <pose>0.043709 0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -212,13 +215,16 @@
         </geometry>
       </collision>
       <visual name='l_hip_3_visual'>
-        <pose frame=''>0.043709 0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+        <pose>0.043709 0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_leg_ft_sensor' type='revolute'>
@@ -235,8 +241,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -259,9 +265,9 @@
       </sensor>
     </joint>
     <link name='l_upper_leg'>
-      <pose frame=''>0.007309 -0.0701 -0.208613 0 -0 3.14159</pose>
+      <pose>0.007309 -0.0701 -0.208613 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.003387 0.000102 -0.078916 1.5708 -0 1.5708</pose>
+        <pose>0.003387 0.000102 -0.078916 1.5708 -0 1.5708</pose>
         <mass>1.8084</mass>
         <inertia>
           <ixx>0.00648513</ixx>
@@ -273,7 +279,7 @@
         </inertia>
       </inertial>
       <collision name='l_upper_leg_collision'>
-        <pose frame=''>0.043709 -0.0701 0.240813 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.240813 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -290,19 +296,16 @@
         </surface>
       </collision>
       <visual name='l_upper_leg_visual'>
-        <pose frame=''>0.043709 -0.0701 0.240813 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.240813 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <sensor name='l_upper_leg_ems_acc_eb6' type='imu'>
@@ -385,7 +388,7 @@
       <child>l_upper_leg</child>
       <parent>l_hip_3</parent>
       <axis>
-        <xyz>-0 -0 1</xyz>
+        <xyz>0 0 1</xyz>
         <limit>
           <lower>-1.39626</lower>
           <upper>1.39626</upper>
@@ -398,7 +401,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -412,9 +415,9 @@
       </physics>
     </joint>
     <link name='l_lower_leg'>
-      <pose frame=''>0.007309 -0.0701 -0.354438 0 -0 3.14159</pose>
+      <pose>0.007309 -0.0701 -0.354438 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.001 0.003497 -0.088567 1.5708 -0 1.5708</pose>
+        <pose>0.001 0.003497 -0.088567 1.5708 -0 1.5708</pose>
         <mass>1.4724</mass>
         <inertia>
           <ixx>0.00423699</ixx>
@@ -426,7 +429,7 @@
         </inertia>
       </inertial>
       <collision name='l_lower_leg_collision'>
-        <pose frame=''>0.043709 -0.0701 0.386638 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.386638 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -443,19 +446,16 @@
         </surface>
       </collision>
       <visual name='l_lower_leg_visual'>
-        <pose frame=''>0.043709 -0.0701 0.386638 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.386638 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shank_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <sensor name='l_lower_leg_ems_acc_eb7' type='imu'>
@@ -504,7 +504,7 @@
       <child>l_lower_leg</child>
       <parent>l_upper_leg</parent>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>-0 -1 0</xyz>
         <limit>
           <lower>-2.16421</lower>
           <upper>0.0698132</upper>
@@ -517,7 +517,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -531,9 +531,9 @@
       </physics>
     </joint>
     <link name='l_ankle_1'>
-      <pose frame=''>0.007309 -0.0701 -0.554938 0 -0 3.14159</pose>
+      <pose>0.007309 -0.0701 -0.554938 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.015153 0.000902 4.2e-05 1.5708 -0 1.5708</pose>
+        <pose>0.015153 0.000902 4.2e-05 1.5708 -0 1.5708</pose>
         <mass>0.6798</mass>
         <inertia>
           <ixx>0.000404474</ixx>
@@ -545,7 +545,7 @@
         </inertia>
       </inertial>
       <collision name='l_ankle_1_collision'>
-        <pose frame=''>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -554,20 +554,23 @@
         </geometry>
       </collision>
       <visual name='l_ankle_1_visual'>
-        <pose frame=''>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_ankle_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_ankle_pitch' type='revolute'>
       <child>l_ankle_1</child>
       <parent>l_lower_leg</parent>
       <axis>
-        <xyz>-0 -1 -0</xyz>
+        <xyz>0 1 0</xyz>
         <limit>
           <lower>-0.610865</lower>
           <upper>0.610865</upper>
@@ -580,7 +583,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -594,9 +597,9 @@
       </physics>
     </joint>
     <link name='l_ankle_2'>
-      <pose frame=''>0.007309 -0.0701 -0.554938 0 -0 3.14159</pose>
+      <pose>0.007309 -0.0701 -0.554938 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.000767 -8e-06 -0.038202 1.5708 -0 1.5708</pose>
+        <pose>0.000767 -8e-06 -0.038202 1.5708 -0 1.5708</pose>
         <mass>0.267485</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -608,7 +611,7 @@
         </inertia>
       </inertial>
       <collision name='l_ankle_2_collision'>
-        <pose frame=''>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -617,20 +620,23 @@
         </geometry>
       </collision>
       <visual name='l_ankle_2_visual'>
-        <pose frame=''>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_foot_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_ankle_roll' type='revolute'>
       <child>l_ankle_2</child>
       <parent>l_ankle_1</parent>
       <axis>
-        <xyz>-1 0 0</xyz>
+        <xyz>1 0 0</xyz>
         <limit>
           <lower>-0.436332</lower>
           <upper>0.436332</upper>
@@ -643,7 +649,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -657,9 +663,9 @@
       </physics>
     </joint>
     <link name='l_foot'>
-      <pose frame=''>0.010809 -0.0701 -0.615438 -3.14159 -0 3.14159</pose>
+      <pose>0.010809 -0.0701 -0.615438 -3.14159 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.033667 -0.005374 -0.001164 -1.5708 -0 -1.5708</pose>
+        <pose>0.033667 -0.005374 -0.001164 -1.5708 -0 -1.5708</pose>
         <mass>0.382968</mass>
         <inertia>
           <ixx>0.00121242</ixx>
@@ -671,7 +677,7 @@
         </inertia>
       </inertial>
       <collision name='l_foot_collision'>
-        <pose frame=''>0.03 -0.005 0.014 0 -0 0</pose>
+        <pose>0.03 -0.005 0.014 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.16 0.072 0.001</size>
@@ -701,19 +707,16 @@
         <max_contacts>4</max_contacts>
       </collision>
       <visual name='l_foot_visual'>
-        <pose frame=''>0.047209 0.0701 -0.647438 -1.5708 -0 -1.5708</pose>
+        <pose>0.047209 0.0701 -0.647438 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_sole_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <velocity_decay/>
@@ -746,8 +749,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -770,9 +773,9 @@
       </sensor>
     </joint>
     <link name='r_hip_1'>
-      <pose frame=''>0.006452 0.026 -0.119913 0 -0 3.14159</pose>
+      <pose>0.006452 0.026 -0.119913 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.000515 -0.038075 -7.1e-05 1.5708 -0 1.5708</pose>
+        <pose>-0.000515 -0.038075 -7.1e-05 1.5708 -0 1.5708</pose>
         <mass>0.919978</mass>
         <inertia>
           <ixx>0.000404268</ixx>
@@ -784,7 +787,7 @@
         </inertia>
       </inertial>
       <collision name='r_hip_1_collision'>
-        <pose frame=''>0.042852 0.026 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 0.026 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -793,20 +796,23 @@
         </geometry>
       </collision>
       <visual name='r_hip_1_visual'>
-        <pose frame=''>0.042852 0.026 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 0.026 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_hip_pitch' type='revolute'>
       <child>r_hip_1</child>
       <parent>base_link</parent>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>-0 -1 0</xyz>
         <limit>
           <lower>-0.785398</lower>
           <upper>2.33874</upper>
@@ -819,7 +825,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -833,9 +839,9 @@
       </physics>
     </joint>
     <link name='r_hip_2'>
-      <pose frame=''>0.006452 0.0701 -0.119913 0 -0 3.14159</pose>
+      <pose>0.006452 0.0701 -0.119913 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.001375 4e-06 -0.044282 1.5708 -0 1.5708</pose>
+        <pose>-0.001375 4e-06 -0.044282 1.5708 -0 1.5708</pose>
         <mass>0.418361</mass>
         <inertia>
           <ixx>0.000487866</ixx>
@@ -847,7 +853,7 @@
         </inertia>
       </inertial>
       <collision name='r_hip_2_collision'>
-        <pose frame=''>0.042852 0.0701 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 0.0701 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -856,20 +862,23 @@
         </geometry>
       </collision>
       <visual name='r_hip_2_visual'>
-        <pose frame=''>0.042852 0.0701 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 0.0701 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_hip_roll' type='revolute'>
       <child>r_hip_2</child>
       <parent>r_hip_1</parent>
       <axis>
-        <xyz>1 -0 -0</xyz>
+        <xyz>-1 0 -0</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>2.0944</upper>
@@ -882,7 +891,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -896,9 +905,9 @@
       </physics>
     </joint>
     <link name='r_hip_3'>
-      <pose frame=''>0.007309 0.0701 -0.194213 -3.14159 -0 3.14159</pose>
+      <pose>0.007309 0.0701 -0.194213 -3.14159 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.000123 -0.000282 0.008718 -1.5708 -0 -1.5708</pose>
+        <pose>-0.000123 -0.000282 0.008718 -1.5708 -0 -1.5708</pose>
         <mass>0.126212</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -910,7 +919,7 @@
         </inertia>
       </inertial>
       <collision name='r_hip_3_collision'>
-        <pose frame=''>0.043709 -0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+        <pose>0.043709 -0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -919,13 +928,16 @@
         </geometry>
       </collision>
       <visual name='r_hip_3_visual'>
-        <pose frame=''>0.043709 -0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+        <pose>0.043709 -0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_leg_ft_sensor' type='revolute'>
@@ -942,8 +954,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -966,9 +978,9 @@
       </sensor>
     </joint>
     <link name='r_upper_leg'>
-      <pose frame=''>0.007309 0.0701 -0.208613 0 -0 3.14159</pose>
+      <pose>0.007309 0.0701 -0.208613 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.0034 -2.9e-05 -0.078954 1.5708 -0 1.5708</pose>
+        <pose>0.0034 -2.9e-05 -0.078954 1.5708 -0 1.5708</pose>
         <mass>1.8035</mass>
         <inertia>
           <ixx>0.00647751</ixx>
@@ -980,7 +992,7 @@
         </inertia>
       </inertial>
       <collision name='r_upper_leg_collision'>
-        <pose frame=''>0.043709 0.0701 0.240813 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.240813 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -997,19 +1009,16 @@
         </surface>
       </collision>
       <visual name='r_upper_leg_visual'>
-        <pose frame=''>0.043709 0.0701 0.240813 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.240813 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <sensor name='r_upper_leg_ems_acc_eb8' type='imu'>
@@ -1092,7 +1101,7 @@
       <child>r_upper_leg</child>
       <parent>r_hip_3</parent>
       <axis>
-        <xyz>0 0 -1</xyz>
+        <xyz>0 -0 -1</xyz>
         <limit>
           <lower>-1.39626</lower>
           <upper>1.39626</upper>
@@ -1105,7 +1114,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1119,9 +1128,9 @@
       </physics>
     </joint>
     <link name='r_lower_leg'>
-      <pose frame=''>0.007309 0.0701 -0.354438 0 -0 3.14159</pose>
+      <pose>0.007309 0.0701 -0.354438 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.001236 -0.003513 -0.088794 1.5708 -0 1.5708</pose>
+        <pose>0.001236 -0.003513 -0.088794 1.5708 -0 1.5708</pose>
         <mass>1.472</mass>
         <inertia>
           <ixx>0.00423993</ixx>
@@ -1133,7 +1142,7 @@
         </inertia>
       </inertial>
       <collision name='r_lower_leg_collision'>
-        <pose frame=''>0.043709 0.0701 0.386638 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.386638 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1150,19 +1159,16 @@
         </surface>
       </collision>
       <visual name='r_lower_leg_visual'>
-        <pose frame=''>0.043709 0.0701 0.386638 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.386638 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shank_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <sensor name='r_lower_leg_ems_acc_eb9' type='imu'>
@@ -1211,7 +1217,7 @@
       <child>r_lower_leg</child>
       <parent>r_upper_leg</parent>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>-0 -1 0</xyz>
         <limit>
           <lower>-2.16421</lower>
           <upper>0.0698132</upper>
@@ -1224,7 +1230,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1238,9 +1244,9 @@
       </physics>
     </joint>
     <link name='r_ankle_1'>
-      <pose frame=''>0.007309 0.0701 -0.554938 0 -0 3.14159</pose>
+      <pose>0.007309 0.0701 -0.554938 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.015144 -0.000869 4.2e-05 1.5708 -0 1.5708</pose>
+        <pose>0.015144 -0.000869 4.2e-05 1.5708 -0 1.5708</pose>
         <mass>0.6803</mass>
         <inertia>
           <ixx>0.000404619</ixx>
@@ -1252,7 +1258,7 @@
         </inertia>
       </inertial>
       <collision name='r_ankle_1_collision'>
-        <pose frame=''>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1261,20 +1267,23 @@
         </geometry>
       </collision>
       <visual name='r_ankle_1_visual'>
-        <pose frame=''>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_ankle_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_ankle_pitch' type='revolute'>
       <child>r_ankle_1</child>
       <parent>r_lower_leg</parent>
       <axis>
-        <xyz>-0 -1 -0</xyz>
+        <xyz>0 1 0</xyz>
         <limit>
           <lower>-0.610865</lower>
           <upper>0.610865</upper>
@@ -1287,7 +1296,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1301,9 +1310,9 @@
       </physics>
     </joint>
     <link name='r_ankle_2'>
-      <pose frame=''>0.007309 0.0701 -0.554938 0 -0 3.14159</pose>
+      <pose>0.007309 0.0701 -0.554938 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.000767 -8e-06 -0.038202 1.5708 -0 1.5708</pose>
+        <pose>0.000767 -8e-06 -0.038202 1.5708 -0 1.5708</pose>
         <mass>0.267485</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -1315,7 +1324,7 @@
         </inertia>
       </inertial>
       <collision name='r_ankle_2_collision'>
-        <pose frame=''>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1324,20 +1333,23 @@
         </geometry>
       </collision>
       <visual name='r_ankle_2_visual'>
-        <pose frame=''>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_foot_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_ankle_roll' type='revolute'>
       <child>r_ankle_2</child>
       <parent>r_ankle_1</parent>
       <axis>
-        <xyz>1 -0 -0</xyz>
+        <xyz>-1 0 -0</xyz>
         <limit>
           <lower>-0.436332</lower>
           <upper>0.436332</upper>
@@ -1350,7 +1362,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1364,9 +1376,9 @@
       </physics>
     </joint>
     <link name='r_foot'>
-      <pose frame=''>0.010809 0.0701 -0.615438 -3.14159 -0 3.14159</pose>
+      <pose>0.010809 0.0701 -0.615438 -3.14159 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.0336 0.005372 -0.001147 -1.5708 -0 -1.5708</pose>
+        <pose>0.0336 0.005372 -0.001147 -1.5708 -0 -1.5708</pose>
         <mass>0.382866</mass>
         <inertia>
           <ixx>0.00120946</ixx>
@@ -1378,7 +1390,7 @@
         </inertia>
       </inertial>
       <collision name='r_foot_collision'>
-        <pose frame=''>0.03 0.005 0.014 0 -0 0</pose>
+        <pose>0.03 0.005 0.014 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.16 0.072 0.001</size>
@@ -1408,19 +1420,16 @@
         <max_contacts>4</max_contacts>
       </collision>
       <visual name='r_foot_visual'>
-        <pose frame=''>0.047209 -0.0701 -0.647438 -1.5708 -0 -1.5708</pose>
+        <pose>0.047209 -0.0701 -0.647438 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_sole_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <velocity_decay/>
@@ -1453,8 +1462,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1477,9 +1486,9 @@
       </sensor>
     </joint>
     <link name='torso_1'>
-      <pose frame=''>0 0.027046 0 1.5708 0 -1.5708</pose>
+      <pose>0 0.027046 0 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>0.027092 0.029148 -0.00044 0 -0 0</pose>
+        <pose>0.027092 0.029148 -0.00044 0 -0 0</pose>
         <mass>0.67144</mass>
         <inertia>
           <ixx>0.00040911</ixx>
@@ -1491,7 +1500,7 @@
         </inertia>
       </inertial>
       <collision name='torso_1_collision'>
-        <pose frame=''>0.027046 0.032 0.0364 0 -0 0</pose>
+        <pose>0.027046 0.032 0.0364 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1500,20 +1509,23 @@
         </geometry>
       </collision>
       <visual name='torso_1_visual'>
-        <pose frame=''>0.027046 0.032 0.0364 0 -0 0</pose>
+        <pose>0.027046 0.032 0.0364 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='torso_pitch' type='revolute'>
       <child>torso_1</child>
       <parent>base_link</parent>
       <axis>
-        <xyz>0 -1 -0</xyz>
+        <xyz>1 0 0</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>1.22173</upper>
@@ -1526,7 +1538,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1540,9 +1552,9 @@
       </physics>
     </joint>
     <link name='torso_2'>
-      <pose frame=''>0.057345 0 0.032 1.5708 0 -1.5708</pose>
+      <pose>0.057345 0 0.032 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>-0.000114 0.036153 0.057096 0 -0 0</pose>
+        <pose>-0.000114 0.036153 0.057096 0 -0 0</pose>
         <mass>0.425685</mass>
         <inertia>
           <ixx>0.000829234</ixx>
@@ -1554,7 +1566,7 @@
         </inertia>
       </inertial>
       <collision name='torso_2_collision'>
-        <pose frame=''>0 0.1433 0.038653 0 -0 0</pose>
+        <pose>0 0.1433 0.038653 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1563,20 +1575,23 @@
         </geometry>
       </collision>
       <visual name='torso_2_visual'>
-        <pose frame=''>0 0.1433 0.038653 0 -0 0</pose>
+        <pose>0 0.1433 0.038653 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='torso_roll' type='revolute'>
       <child>torso_2</child>
       <parent>torso_1</parent>
       <axis>
-        <xyz>1 0 -0</xyz>
+        <xyz>0 0 -1</xyz>
         <limit>
           <lower>-0.523599</lower>
           <upper>0.523599</upper>
@@ -1589,7 +1604,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1603,9 +1618,9 @@
       </physics>
     </joint>
     <link name='chest'>
-      <pose frame=''>-0.005498 0 0.082 1.5708 0 -1.5708</pose>
+      <pose>-0.005498 0 0.082 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>0.000189 0.073091 -0.047238 0 -0 0</pose>
+        <pose>0.000189 0.073091 -0.047238 0 -0 0</pose>
         <mass>7.638</mass>
         <inertia>
           <ixx>0.0430325</ixx>
@@ -1617,7 +1632,7 @@
         </inertia>
       </inertial>
       <collision name='chest_collision'>
-        <pose frame=''>0 0.0928 -0.024189 0 -0 0</pose>
+        <pose>0 0.0928 -0.024189 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1634,19 +1649,16 @@
         </surface>
       </collision>
       <visual name='chest_visual'>
-        <pose frame=''>0 0.0928 -0.024189 0 -0 0</pose>
+        <pose>0 0.0928 -0.024189 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_chest_bb_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <sensor name='chest_ems_acc_eb1' type='imu'>
@@ -1734,7 +1746,7 @@
       <child>chest</child>
       <parent>torso_2</parent>
       <axis>
-        <xyz>-0 0 -1</xyz>
+        <xyz>0 -1 0</xyz>
         <limit>
           <lower>-0.872665</lower>
           <upper>0.872665</upper>
@@ -1747,7 +1759,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1761,9 +1773,9 @@
       </physics>
     </joint>
     <link name='l_shoulder_1'>
-      <pose frame=''>-0.013467 -0.120016 0.1748 1.5708 0 -1.5708</pose>
+      <pose>-0.013467 -0.120016 0.1748 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>-0.008985 -3.3e-05 -0.0089 0 -0 0</pose>
+        <pose>-0.008985 -3.3e-05 -0.0089 0 -0 0</pose>
         <mass>0.114882</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -1775,7 +1787,7 @@
         </inertia>
       </inertial>
       <collision name='l_shoulder_1_collision'>
-        <pose frame=''>-0.120257 0 -0.032223 0 -0 0</pose>
+        <pose>-0.120257 0 -0.032223 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1784,20 +1796,23 @@
         </geometry>
       </collision>
       <visual name='l_shoulder_1_visual'>
-        <pose frame=''>-0.120257 0 -0.032223 0 -0 0</pose>
+        <pose>-0.120257 0 -0.032223 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_shoulder_pitch' type='revolute'>
       <child>l_shoulder_1</child>
       <parent>chest</parent>
       <axis>
-        <xyz>-0.258819 -0.965926 0</xyz>
+        <xyz>0.965926 0 0.258819</xyz>
         <limit>
           <lower>-1.66679</lower>
           <upper>0.174533</upper>
@@ -1810,7 +1825,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1824,9 +1839,9 @@
       </physics>
     </joint>
     <link name='l_shoulder_2'>
-      <pose frame=''>-0.021987 -0.106345 0.1748 -3.14159 1.309 -0.261799</pose>
+      <pose>-0.021987 -0.106345 0.1748 -3.14159 1.309 -0.261799</pose>
       <inertial>
-        <pose frame=''>0.021475 0.000269 -0.019411 0 -0 0</pose>
+        <pose>0.021475 0.000269 -0.019411 0 -0 0</pose>
         <mass>0.238162</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -1838,7 +1853,7 @@
         </inertia>
       </inertial>
       <collision name='l_shoulder_2_collision'>
-        <pose frame=''>-0.106587 0 -0.040743 0 -0 0</pose>
+        <pose>-0.106587 0 -0.040743 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1847,20 +1862,23 @@
         </geometry>
       </collision>
       <visual name='l_shoulder_2_visual'>
-        <pose frame=''>-0.106587 0 -0.040743 0 -0 0</pose>
+        <pose>-0.106587 0 -0.040743 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_shoulder_roll' type='revolute'>
       <child>l_shoulder_2</child>
       <parent>l_shoulder_1</parent>
       <axis>
-        <xyz>-0.965926 0.258819 0</xyz>
+        <xyz>-0.258819 0 0.965926</xyz>
         <limit>
           <lower>0</lower>
           <upper>2.80649</upper>
@@ -1873,7 +1891,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1887,9 +1905,9 @@
       </physics>
     </joint>
     <link name='l_shoulder_3'>
-      <pose frame=''>-0.01062 -0.109391 0.151746 -3.14159 1.309 0</pose>
+      <pose>-0.01062 -0.109391 0.151746 -3.14159 1.309 0</pose>
       <inertial>
-        <pose frame=''>0.026798 -1.6e-05 0.014696 0 -0 0</pose>
+        <pose>0.026798 -1.6e-05 0.014696 0 -0 0</pose>
         <mass>0.35913</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -1901,7 +1919,7 @@
         </inertia>
       </inertial>
       <collision name='l_shoulder_3_collision'>
-        <pose frame=''>-0.131901 0 -0.035343 0 -0 0</pose>
+        <pose>-0.131901 0 -0.035343 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1910,20 +1928,23 @@
         </geometry>
       </collision>
       <visual name='l_shoulder_3_visual'>
-        <pose frame=''>-0.131901 0 -0.035343 0 -0 0</pose>
+        <pose>-0.131901 0 -0.035343 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_arm_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_shoulder_yaw' type='revolute'>
       <child>l_shoulder_3</child>
       <parent>l_shoulder_2</parent>
       <axis>
-        <xyz>-0 0 -1</xyz>
+        <xyz>0.965926 0 0.258819</xyz>
         <limit>
           <lower>-0.645772</lower>
           <upper>1.39626</upper>
@@ -1936,7 +1957,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1950,9 +1971,9 @@
       </physics>
     </joint>
     <link name='l_upper_arm'>
-      <pose frame=''>-0.02562 -0.109391 0.095 3.14159 -0 -3.14159</pose>
+      <pose>-0.02562 -0.109391 0.095 3.14159 -0 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.006121 -0.000189 0.029368 0 -1.309 3.14159</pose>
+        <pose>-0.006121 -0.000189 0.029368 0 -1.309 3.14159</pose>
         <mass>0.746799</mass>
         <inertia>
           <ixx>0.000509731</ixx>
@@ -1964,7 +1985,7 @@
         </inertia>
       </inertial>
       <collision name='l_upper_arm_collision'>
-        <pose frame=''>-0.015 0 -0.1933 0 -1.309 3.14159</pose>
+        <pose>-0.015 0 -0.1933 0 -1.309 3.14159</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1981,19 +2002,16 @@
         </surface>
       </collision>
       <visual name='l_upper_arm_visual'>
-        <pose frame=''>-0.015 0 -0.1933 0 -1.309 3.14159</pose>
+        <pose>-0.015 0 -0.1933 0 -1.309 3.14159</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <sensor name='l_upper_arm_mtb_acc_1b10' type='imu'>
@@ -2039,8 +2057,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2063,9 +2081,9 @@
       </sensor>
     </joint>
     <link name='l_elbow_1'>
-      <pose frame=''>-0.02562 -0.075391 0.01574 -3.14159 1.309 0</pose>
+      <pose>-0.02562 -0.075391 0.01574 -3.14159 1.309 0</pose>
       <inertial>
-        <pose frame=''>0.006739 0.030302 -0.004658 0 -0 0</pose>
+        <pose>0.006739 0.030302 -0.004658 0 -0 0</pose>
         <mass>0.267903</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2077,7 +2095,7 @@
         </inertia>
       </inertial>
       <collision name='l_elbow_1_collision'>
-        <pose frame=''>-0.25939 0.034 -0.085033 0 -0 0</pose>
+        <pose>-0.25939 0.034 -0.085033 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2086,20 +2104,23 @@
         </geometry>
       </collision>
       <visual name='l_elbow_1_visual'>
-        <pose frame=''>-0.25939 0.034 -0.085033 0 -0 0</pose>
+        <pose>-0.25939 0.034 -0.085033 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prosup_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_elbow' type='revolute'>
       <child>l_elbow_1</child>
       <parent>l_upper_arm</parent>
       <axis>
-        <xyz>-0 1 0</xyz>
+        <xyz>0 -1 0</xyz>
         <limit>
           <lower>0.261799</lower>
           <upper>1.85005</upper>
@@ -2112,7 +2133,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2126,9 +2147,9 @@
       </physics>
     </joint>
     <link name='l_forearm'>
-      <pose frame=''>-0.01062 -0.109391 -0.02006 -3.14159 1.309 0</pose>
+      <pose>-0.01062 -0.109391 -0.02006 -3.14159 1.309 0</pose>
       <inertial>
-        <pose frame=''>0.040451 -0.000686 0.005324 0 -0 0</pose>
+        <pose>0.040451 -0.000686 0.005324 0 -0 0</pose>
         <mass>0.636185</mass>
         <inertia>
           <ixx>0.000371447</ixx>
@@ -2140,7 +2161,7 @@
         </inertia>
       </inertial>
       <collision name='l_forearm_collision'>
-        <pose frame=''>-0.296887 0 -0.079551 0 -0 0</pose>
+        <pose>-0.296887 0 -0.079551 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2157,19 +2178,16 @@
         </surface>
       </collision>
       <visual name='l_forearm_visual'>
-        <pose frame=''>-0.296887 0 -0.079551 0 -0 0</pose>
+        <pose>-0.296887 0 -0.079551 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_forearm_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <sensor name='l_forearm_mtb_acc_1b7' type='imu'>
@@ -2198,7 +2216,7 @@
       <child>l_forearm</child>
       <parent>l_elbow_1</parent>
       <axis>
-        <xyz>-0 0 -1</xyz>
+        <xyz>0.965926 0 0.258819</xyz>
         <limit>
           <lower>-1.0472</lower>
           <upper>1.0472</upper>
@@ -2211,7 +2229,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2225,9 +2243,9 @@
       </physics>
     </joint>
     <link name='l_wrist_1'>
-      <pose frame=''>-0.00847 -0.109398 -0.12656 -3.14159 1.309 0</pose>
+      <pose>-0.00847 -0.109398 -0.12656 -3.14159 1.309 0</pose>
       <inertial>
-        <pose frame=''>-0.000981 -0.001178 0.004083 0 -0 0</pose>
+        <pose>-0.000981 -0.001178 0.004083 0 -0 0</pose>
         <mass>0.0362152</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2239,7 +2257,7 @@
         </inertia>
       </inertial>
       <collision name='l_wrist_1_collision'>
-        <pose frame=''>-0.400315 -7e-06 -0.105038 0 -0 0</pose>
+        <pose>-0.400315 -7e-06 -0.105038 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2248,20 +2266,23 @@
         </geometry>
       </collision>
       <visual name='l_wrist_1_visual'>
-        <pose frame=''>-0.400315 -7e-06 -0.105038 0 -0 0</pose>
+        <pose>-0.400315 -7e-06 -0.105038 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_wrist_pitch_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_wrist_pitch' type='revolute'>
       <child>l_wrist_1</child>
       <parent>l_forearm</parent>
       <axis>
-        <xyz>1 0 -0</xyz>
+        <xyz>0.258819 0 -0.965926</xyz>
         <limit>
           <lower>-1.39626</lower>
           <upper>0.436332</upper>
@@ -2274,7 +2295,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2288,9 +2309,9 @@
       </physics>
     </joint>
     <link name='l_hand'>
-      <pose frame=''>-0.01092 -0.089898 -0.12656 -3.14159 1.309 0</pose>
+      <pose>-0.01092 -0.089898 -0.12656 -3.14159 1.309 0</pose>
       <inertial>
-        <pose frame=''>0.064768 0.00563 0.02266 0 -0 0</pose>
+        <pose>0.064768 0.00563 0.02266 0 -0 0</pose>
         <mass>0.247806</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2302,7 +2323,7 @@
         </inertia>
       </inertial>
       <collision name='l_hand_collision'>
-        <pose frame=''>-0.39968 0.019493 -0.107405 0 -0 0</pose>
+        <pose>-0.39968 0.019493 -0.107405 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2311,20 +2332,23 @@
         </geometry>
       </collision>
       <visual name='l_hand_visual'>
-        <pose frame=''>-0.39968 0.019493 -0.107405 0 -0 0</pose>
+        <pose>-0.39968 0.019493 -0.107405 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hand_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_wrist_yaw' type='revolute'>
       <child>l_hand</child>
       <parent>l_wrist_1</parent>
       <axis>
-        <xyz>0 -1 -0</xyz>
+        <xyz>-0 1 0</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>0.436332</upper>
@@ -2337,7 +2361,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2351,9 +2375,9 @@
       </physics>
     </joint>
     <link name='neck_1'>
-      <pose frame=''>-0.010809 0.0143 0.254797 1.5708 0 -1.5708</pose>
+      <pose>-0.010809 0.0143 0.254797 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>0.014371 0.006567 -0.006384 0 -0 0</pose>
+        <pose>0.014371 0.006567 -0.006384 0 -0 0</pose>
         <mass>0.125793</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2365,7 +2389,7 @@
         </inertia>
       </inertial>
       <collision name='neck_1_collision'>
-        <pose frame=''>0.0143 -0.079997 -0.029501 0 -0 0</pose>
+        <pose>0.0143 -0.079997 -0.029501 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2374,20 +2398,23 @@
         </geometry>
       </collision>
       <visual name='neck_1_visual'>
-        <pose frame=''>0.0143 -0.079997 -0.029501 0 -0 0</pose>
+        <pose>0.0143 -0.079997 -0.029501 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_neck_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='neck_pitch' type='revolute'>
       <child>neck_1</child>
       <parent>chest</parent>
       <axis>
-        <xyz>-0 1 0</xyz>
+        <xyz>-1 0 0</xyz>
         <limit>
           <lower>-0.698132</lower>
           <upper>0.383972</upper>
@@ -2400,7 +2427,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2414,9 +2441,9 @@
       </physics>
     </joint>
     <link name='neck_2'>
-      <pose frame=''>-0.031609 0 0.264297 1.5708 0 -1.5708</pose>
+      <pose>-0.031609 0 0.264297 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>-8.9e-05 0.035225 -0.019545 0 -0 0</pose>
+        <pose>-8.9e-05 0.035225 -0.019545 0 -0 0</pose>
         <mass>0.177087</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2428,7 +2455,7 @@
         </inertia>
       </inertial>
       <collision name='neck_2_collision'>
-        <pose frame=''>0 -0.089497 -0.050301 0 -0 0</pose>
+        <pose>0 -0.089497 -0.050301 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2437,20 +2464,23 @@
         </geometry>
       </collision>
       <visual name='neck_2_visual'>
-        <pose frame=''>0 -0.089497 -0.050301 0 -0 0</pose>
+        <pose>0 -0.089497 -0.050301 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_neck_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='neck_roll' type='revolute'>
       <child>neck_2</child>
       <parent>neck_1</parent>
       <axis>
-        <xyz>-1 -0 0</xyz>
+        <xyz>0 0 1</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>0.349066</upper>
@@ -2463,7 +2493,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2477,9 +2507,9 @@
       </physics>
     </joint>
     <link name='head'>
-      <pose frame=''>-0.010809 0 0.241953 1.5708 0 -1.5708</pose>
+      <pose>-0.010809 0 0.241953 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>-0.000574 0.113511 -0.007539 0 -0 0</pose>
+        <pose>-0.000574 0.113511 -0.007539 0 -0 0</pose>
         <mass>1.50691</mass>
         <inertia>
           <ixx>0.00680478</ixx>
@@ -2491,7 +2521,7 @@
         </inertia>
       </inertial>
       <collision name='head_collision'>
-        <pose frame=''>0 -0.067153 -0.029501 0 -0 0</pose>
+        <pose>0 -0.067153 -0.029501 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2508,19 +2538,16 @@
         </surface>
       </collision>
       <visual name='head_visual'>
-        <pose frame=''>0 -0.067153 -0.029501 0 -0 0</pose>
+        <pose>0 -0.067153 -0.029501 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_head_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <gravity>1</gravity>
       <velocity_decay/>
@@ -2537,7 +2564,7 @@
       <child>head</child>
       <parent>neck_2</parent>
       <axis>
-        <xyz>0 -0 1</xyz>
+        <xyz>0 1 0</xyz>
         <limit>
           <lower>-0.872665</lower>
           <upper>0.872665</upper>
@@ -2550,7 +2577,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2564,9 +2591,9 @@
       </physics>
     </joint>
     <link name='r_shoulder_1'>
-      <pose frame=''>-0.013467 0.120016 0.1748 -1.5708 -0 2.0944</pose>
+      <pose>-0.013467 0.120016 0.1748 -1.5708 0 2.0944</pose>
       <inertial>
-        <pose frame=''>-0.012266 3.2e-05 -0.003211 0 -0 0</pose>
+        <pose>-0.012266 3.2e-05 -0.003211 0 -0 0</pose>
         <mass>0.114862</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2578,7 +2605,7 @@
         </inertia>
       </inertial>
       <collision name='r_shoulder_1_collision'>
-        <pose frame=''>0.099008 0 -0.026529 0 -0 0</pose>
+        <pose>0.099008 0 -0.026529 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2587,20 +2614,23 @@
         </geometry>
       </collision>
       <visual name='r_shoulder_1_visual'>
-        <pose frame=''>0.099008 0 -0.026529 0 -0 0</pose>
+        <pose>0.099008 0 -0.026529 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_shoulder_pitch' type='revolute'>
       <child>r_shoulder_1</child>
       <parent>chest</parent>
       <axis>
-        <xyz>0.258819 -0.965926 -0</xyz>
+        <xyz>-0.965926 0 0.258819</xyz>
         <limit>
           <lower>-1.66679</lower>
           <upper>0.174533</upper>
@@ -2613,7 +2643,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2627,9 +2657,9 @@
       </physics>
     </joint>
     <link name='r_shoulder_2'>
-      <pose frame=''>-0.021983 0.106346 0.1748 -3.14159 -1.309 -2.87979</pose>
+      <pose>-0.021983 0.106346 0.1748 -3.14159 -1.309 -2.87979</pose>
       <inertial>
-        <pose frame=''>-0.021414 0.000272 -0.01944 0 -0 0</pose>
+        <pose>-0.021414 0.000272 -0.01944 0 -0 0</pose>
         <mass>0.238162</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2641,7 +2671,7 @@
         </inertia>
       </inertial>
       <collision name='r_shoulder_2_collision'>
-        <pose frame=''>0.106588 0 -0.040739 0 -0 0</pose>
+        <pose>0.106588 0 -0.040739 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2650,20 +2680,23 @@
         </geometry>
       </collision>
       <visual name='r_shoulder_2_visual'>
-        <pose frame=''>0.106588 0 -0.040739 0 -0 0</pose>
+        <pose>0.106588 0 -0.040739 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_shoulder_roll' type='revolute'>
       <child>r_shoulder_2</child>
       <parent>r_shoulder_1</parent>
       <axis>
-        <xyz>0.965926 0.258819 -0</xyz>
+        <xyz>-0.258819 -0 -0.965926</xyz>
         <limit>
           <lower>0</lower>
           <upper>2.80649</upper>
@@ -2676,7 +2709,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2690,9 +2723,9 @@
       </physics>
     </joint>
     <link name='r_shoulder_3'>
-      <pose frame=''>-0.01062 0.109391 0.151712 -3.14159 -1.309 -3.14159</pose>
+      <pose>-0.01062 0.109391 0.151712 -3.14159 -1.309 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.026762 -7e-06 0.0147 0 -0 0</pose>
+        <pose>-0.026762 -7e-06 0.0147 0 -0 0</pose>
         <mass>0.35913</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2704,7 +2737,7 @@
         </inertia>
       </inertial>
       <collision name='r_shoulder_3_collision'>
-        <pose frame=''>0.131934 0 -0.035352 0 -0 0</pose>
+        <pose>0.131934 0 -0.035352 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2713,20 +2746,23 @@
         </geometry>
       </collision>
       <visual name='r_shoulder_3_visual'>
-        <pose frame=''>0.131934 0 -0.035352 0 -0 0</pose>
+        <pose>0.131934 0 -0.035352 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_arm_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_shoulder_yaw' type='revolute'>
       <child>r_shoulder_3</child>
       <parent>r_shoulder_2</parent>
       <axis>
-        <xyz>0 0 1</xyz>
+        <xyz>0.965926 -0 -0.258819</xyz>
         <limit>
           <lower>-0.645772</lower>
           <upper>1.39626</upper>
@@ -2739,7 +2775,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2753,9 +2789,9 @@
       </physics>
     </joint>
     <link name='r_upper_arm'>
-      <pose frame=''>-0.02562 0.109391 0.095 -3.14159 -0 -3.14159</pose>
+      <pose>-0.02562 0.109391 0.095 -3.14159 -0 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.006087 0.000126 0.029312 0 1.309 0</pose>
+        <pose>-0.006087 0.000126 0.029312 0 1.309 0</pose>
         <mass>0.745104</mass>
         <inertia>
           <ixx>0.000509527</ixx>
@@ -2767,7 +2803,7 @@
         </inertia>
       </inertial>
       <collision name='r_upper_arm_collision'>
-        <pose frame=''>-0.015 0 -0.1933 0 1.309 0</pose>
+        <pose>-0.015 0 -0.1933 0 1.309 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2784,19 +2820,16 @@
         </surface>
       </collision>
       <visual name='r_upper_arm_visual'>
-        <pose frame=''>-0.015 0 -0.1933 0 1.309 0</pose>
+        <pose>-0.015 0 -0.1933 0 1.309 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <sensor name='r_upper_arm_mtb_acc_2b10' type='imu'>
@@ -2842,8 +2875,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2866,9 +2899,9 @@
       </sensor>
     </joint>
     <link name='r_elbow_1'>
-      <pose frame=''>-0.02562 0.086891 0.01574 -3.14159 -1.309 -3.14159</pose>
+      <pose>-0.02562 0.086891 0.01574 -3.14159 -1.309 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.006739 0.018802 -0.004658 0 -0 0</pose>
+        <pose>-0.006739 0.018802 -0.004658 0 -0 0</pose>
         <mass>0.267903</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2880,7 +2913,7 @@
         </inertia>
       </inertial>
       <collision name='r_elbow_1_collision'>
-        <pose frame=''>0.25939 0.0225 -0.085033 0 -0 0</pose>
+        <pose>0.25939 0.0225 -0.085033 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2889,20 +2922,23 @@
         </geometry>
       </collision>
       <visual name='r_elbow_1_visual'>
-        <pose frame=''>0.25939 0.0225 -0.085033 0 -0 0</pose>
+        <pose>0.25939 0.0225 -0.085033 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prosup_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_elbow' type='revolute'>
       <child>r_elbow_1</child>
       <parent>r_upper_arm</parent>
       <axis>
-        <xyz>-0 1 -0</xyz>
+        <xyz>0 1 0</xyz>
         <limit>
           <lower>0.261799</lower>
           <upper>1.85005</upper>
@@ -2915,7 +2951,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2929,9 +2965,9 @@
       </physics>
     </joint>
     <link name='r_forearm'>
-      <pose frame=''>-0.01062 0.109391 -0.02006 -3.14159 -1.309 -3.14159</pose>
+      <pose>-0.01062 0.109391 -0.02006 -3.14159 -1.309 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.040439 -0.000328 0.005327 0 -0 0</pose>
+        <pose>-0.040439 -0.000328 0.005327 0 -0 0</pose>
         <mass>0.6347</mass>
         <inertia>
           <ixx>0.000370044</ixx>
@@ -2943,7 +2979,7 @@
         </inertia>
       </inertial>
       <collision name='r_forearm_collision'>
-        <pose frame=''>0.296887 0 -0.079551 0 -0 0</pose>
+        <pose>0.296887 0 -0.079551 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2960,19 +2996,16 @@
         </surface>
       </collision>
       <visual name='r_forearm_visual'>
-        <pose frame=''>0.296887 0 -0.079551 0 -0 0</pose>
+        <pose>0.296887 0 -0.079551 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_forearm_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <sensor name='r_forearm_mtb_acc_2b7' type='imu'>
@@ -3001,7 +3034,7 @@
       <child>r_forearm</child>
       <parent>r_elbow_1</parent>
       <axis>
-        <xyz>0 0 1</xyz>
+        <xyz>0.965926 -0 -0.258819</xyz>
         <limit>
           <lower>-1.0472</lower>
           <upper>1.0472</upper>
@@ -3014,7 +3047,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -3028,9 +3061,9 @@
       </physics>
     </joint>
     <link name='r_wrist_1'>
-      <pose frame=''>-0.00817 0.109398 -0.12656 -3.14159 -1.309 -3.14159</pose>
+      <pose>-0.00817 0.109398 -0.12656 -3.14159 -1.309 -3.14159</pose>
       <inertial>
-        <pose frame=''>0.000986 -0.001176 0.004101 0 -0 0</pose>
+        <pose>0.000986 -0.001176 0.004101 0 -0 0</pose>
         <mass>0.0362615</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -3042,7 +3075,7 @@
         </inertia>
       </inertial>
       <collision name='r_wrist_1_collision'>
-        <pose frame=''>0.400392 -7e-06 -0.104748 0 -0 0</pose>
+        <pose>0.400392 -7e-06 -0.104748 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -3051,20 +3084,23 @@
         </geometry>
       </collision>
       <visual name='r_wrist_1_visual'>
-        <pose frame=''>0.400392 -7e-06 -0.104748 0 -0 0</pose>
+        <pose>0.400392 -7e-06 -0.104748 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_wrist_pitch_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_wrist_pitch' type='revolute'>
       <child>r_wrist_1</child>
       <parent>r_forearm</parent>
       <axis>
-        <xyz>-1 -0 0</xyz>
+        <xyz>0.258819 0 0.965926</xyz>
         <limit>
           <lower>-1.39626</lower>
           <upper>0.436332</upper>
@@ -3077,7 +3113,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -3091,9 +3127,9 @@
       </physics>
     </joint>
     <link name='r_hand'>
-      <pose frame=''>-0.01062 0.089898 -0.12656 -3.14159 -1.309 -3.14159</pose>
+      <pose>-0.01062 0.089898 -0.12656 -3.14159 -1.309 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.064668 0.0056 0.022681 0 -0 0</pose>
+        <pose>-0.064668 0.0056 0.022681 0 -0 0</pose>
         <mass>0.248289</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -3105,7 +3141,7 @@
         </inertia>
       </inertial>
       <collision name='r_hand_collision'>
-        <pose frame=''>0.399758 0.019493 -0.107115 0 -0 0</pose>
+        <pose>0.399758 0.019493 -0.107115 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -3114,20 +3150,23 @@
         </geometry>
       </collision>
       <visual name='r_hand_visual'>
-        <pose frame=''>0.399758 0.019493 -0.107115 0 -0 0</pose>
+        <pose>0.399758 0.019493 -0.107115 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hand_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_wrist_yaw' type='revolute'>
       <child>r_hand</child>
       <parent>r_wrist_1</parent>
       <axis>
-        <xyz>-0 1 -0</xyz>
+        <xyz>0 1 0</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>0.436332</upper>
@@ -3140,7 +3179,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -3192,6 +3231,6 @@
       <robotNamefromConfigFile>file://iCub/conf/gazebo_icub_robotname.ini</robotNamefromConfigFile>
     </plugin>
     <static>0</static>
-    <pose frame=''>0 0 0.63 0 -0 3.14</pose>
+    <pose>0 0 0.63 0 -0 3.14</pose>
   </model>
 </sdf>
