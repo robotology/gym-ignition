@@ -40,7 +40,8 @@ jobs:
           apt update
           apt install -y git
 
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
+      - run: git fetch --prune --unshallow
 
       # The entrypoint is not called because it is overridden by GH Actions.
       # Even using the 'jobs.<job_id>.container.options' does not work because the
@@ -84,7 +85,8 @@ jobs:
           sudo apt update
           sudo apt install -y git
 
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
+      - run: git fetch --prune --unshallow
 
       # Workaround to export environment variables that persist in next steps
       # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
@@ -154,7 +156,8 @@ jobs:
           apt update
           apt install -y git
 
-      - uses: actions/checkout@master
+      - uses: actions/checkout@v2
+      - run: git fetch --prune --unshallow
 
       # Validate the last tag accordingly to PEP440
       # From https://stackoverflow.com/a/37972030/12150968
