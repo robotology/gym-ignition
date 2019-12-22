@@ -89,7 +89,7 @@ if "Pendulum-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all()
         max_episode_steps=1000,
         kwargs={'task_cls': PendulumSwingUp,
                 'robot_cls': gazebo.pendulum.PendulumGazeboRobot,
-                'model': "Pendulum/Pendulum.sdf",
+                'model': "Pendulum/Pendulum.urdf",
                 'world': "DefaultEmptyWorld.world",
                 'rtf': 100,
                 'agent_rate': 4000,

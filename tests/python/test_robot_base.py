@@ -70,14 +70,15 @@ def get_simulator(simulator_name: str) -> Simulator:
 
 def get_robot(simulator: Simulator, **kwargs):
     if simulator.simulator_name == "gazebo":
-        return gazebo.pendulum.PendulumGazeboRobot(model_file="Pendulum/Pendulum.sdf",
+        return gazebo.pendulum.PendulumGazeboRobot(model_file="Pendulum/Pendulum.urdf",
                                                    gazebo=simulator._gazebo,
                                                    **kwargs)
     elif simulator.simulator_name == "pybullet":
-        return pybullet.pendulum.PendulumPyBulletRobot(model_file="Pendulum/Pendulum.sdf",
-                                                       p=simulator._pybullet,
-                                                       plane_id=simulator.plane_id,
-                                                       **kwargs)
+        return pybullet.pendulum.PendulumPyBulletRobot(
+            model_file="Pendulum/Pendulum.urdf",
+            p=simulator._pybullet,
+            plane_id=simulator.plane_id,
+            **kwargs)
     else:
         raise Exception(f"Simulator {simulator.simulator_name} not recognized")
 

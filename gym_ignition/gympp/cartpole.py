@@ -21,7 +21,7 @@ class CartPoleDiscrete(gympp_env.GymppEnv):
         md.setLibraryName("CartPolePlugin")
         md.setClassName("gympp::plugins::CartPole")
         md.setWorldFileName("DefaultEmptyWorld.world")
-        md.setModelFileName("CartPole/CartPole.sdf")
+        md.setModelFileName("CartPole/CartPole.urdf")
 
         md.setAgentRate(1000)
 

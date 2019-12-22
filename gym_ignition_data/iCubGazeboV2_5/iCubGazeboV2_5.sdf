@@ -2,9 +2,9 @@
 <sdf version='1.6'>
   <model name='iCub'>
     <link name='base_link'>
-      <pose frame=''>0 0 0 0 -0 0</pose>
+      <pose>0 0 0 0 -0 0</pose>
       <inertial>
-        <pose frame=''>0.024882 0.000104 -0.044081 0 -0 0</pose>
+        <pose>0.024882 0.000104 -0.044081 0 -0 0</pose>
         <mass>5.09143</mass>
         <inertia>
           <ixx>0.0249124</ixx>
@@ -16,7 +16,7 @@
         </inertia>
       </inertial>
       <collision name='base_link_fixed_joint_lump__root_link_collision'>
-        <pose frame=''>-0.0364 0 0.032 1.5708 0 -1.5708</pose>
+        <pose>-0.0364 0 0.032 1.5708 0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -33,39 +33,23 @@
         </surface>
       </collision>
       <visual name='base_link_fixed_joint_lump__root_link_visual'>
-        <pose frame=''>-0.0364 0 0.032 1.5708 0 -1.5708</pose>
+        <pose>-0.0364 0 0.032 1.5708 0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_root_link_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
-      <sensor name='root_link_ems_acc_eb5' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-        <pose frame=''>0 0 0 0 -0 0</pose>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='root_link_ems_gyro_eb5' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0 0 0 0 -0 0</pose>
-      </sensor>
     </link>
     <link name='l_hip_1'>
-      <pose frame=''>0.006452 -0.026 -0.119913 0 -0 3.14159</pose>
+      <pose>0.006452 -0.026 -0.119913 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.000511 0.038092 -8.3e-05 1.5708 -0 1.5708</pose>
+        <pose>-0.000511 0.038092 -8.3e-05 1.5708 -0 1.5708</pose>
         <mass>0.919725</mass>
         <inertia>
           <ixx>0.000404539</ixx>
@@ -77,7 +61,7 @@
         </inertia>
       </inertial>
       <collision name='l_hip_1_collision'>
-        <pose frame=''>0.042852 -0.026 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 -0.026 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -86,20 +70,23 @@
         </geometry>
       </collision>
       <visual name='l_hip_1_visual'>
-        <pose frame=''>0.042852 -0.026 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 -0.026 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_hip_pitch' type='revolute'>
       <child>l_hip_1</child>
       <parent>base_link</parent>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>-0 -1 0</xyz>
         <limit>
           <lower>-0.785398</lower>
           <upper>2.33874</upper>
@@ -112,7 +99,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -126,9 +113,9 @@
       </physics>
     </joint>
     <link name='l_hip_2'>
-      <pose frame=''>0.006452 -0.0701 -0.119913 0 -0 3.14159</pose>
+      <pose>0.006452 -0.0701 -0.119913 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.001576 -1.9e-05 -0.044053 1.5708 -0 1.5708</pose>
+        <pose>-0.001576 -1.9e-05 -0.044053 1.5708 -0 1.5708</pose>
         <mass>0.421106</mass>
         <inertia>
           <ixx>0.000494284</ixx>
@@ -140,7 +127,7 @@
         </inertia>
       </inertial>
       <collision name='l_hip_2_collision'>
-        <pose frame=''>0.042852 -0.0701 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 -0.0701 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -149,20 +136,23 @@
         </geometry>
       </collision>
       <visual name='l_hip_2_visual'>
-        <pose frame=''>0.042852 -0.0701 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 -0.0701 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hip_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_hip_roll' type='revolute'>
       <child>l_hip_2</child>
       <parent>l_hip_1</parent>
       <axis>
-        <xyz>-1 0 0</xyz>
+        <xyz>1 0 0</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>2.0944</upper>
@@ -175,7 +165,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -189,9 +179,9 @@
       </physics>
     </joint>
     <link name='l_hip_3'>
-      <pose frame=''>0.007309 -0.0701 -0.194213 -3.14159 -0 3.14159</pose>
+      <pose>0.007309 -0.0701 -0.194213 -3.14159 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.000123 -0.000282 0.008718 -1.5708 -0 -1.5708</pose>
+        <pose>-0.000123 -0.000282 0.008718 -1.5708 -0 -1.5708</pose>
         <mass>0.126212</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -203,7 +193,7 @@
         </inertia>
       </inertial>
       <collision name='l_hip_3_collision'>
-        <pose frame=''>0.043709 0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+        <pose>0.043709 0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -212,13 +202,16 @@
         </geometry>
       </collision>
       <visual name='l_hip_3_visual'>
-        <pose frame=''>0.043709 0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+        <pose>0.043709 0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_leg_ft_sensor' type='revolute'>
@@ -235,8 +228,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -246,22 +239,11 @@
           </limit>
         </ode>
       </physics>
-      <sensor name='l_leg_ft_sensor' type='force_torque'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <force_torque>
-          <frame>child</frame>
-          <measure_direction>child_to_parent</measure_direction>
-        </force_torque>
-        <plugin name='left_leg_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_left_leg_ft.ini</yarpConfigurationFile>
-        </plugin>
-      </sensor>
     </joint>
     <link name='l_upper_leg'>
-      <pose frame=''>0.007309 -0.0701 -0.208613 0 -0 3.14159</pose>
+      <pose>0.007309 -0.0701 -0.208613 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.003387 0.000102 -0.078916 1.5708 -0 1.5708</pose>
+        <pose>0.003387 0.000102 -0.078916 1.5708 -0 1.5708</pose>
         <mass>1.8084</mass>
         <inertia>
           <ixx>0.00648513</ixx>
@@ -273,7 +255,7 @@
         </inertia>
       </inertial>
       <collision name='l_upper_leg_collision'>
-        <pose frame=''>0.043709 -0.0701 0.240813 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.240813 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -290,102 +272,23 @@
         </surface>
       </collision>
       <visual name='l_upper_leg_visual'>
-        <pose frame=''>0.043709 -0.0701 0.240813 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.240813 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
-      <velocity_decay/>
-      <sensor name='l_upper_leg_ems_acc_eb6' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.012577 -0.040407 -0.083407 1.5708 1.5708 0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_upper_leg_ems_acc_eb10' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.012575 0.040407 -0.040227 -1.5708 -1.5708 0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_upper_leg_ems_gyro_eb6' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.013081 -0.040407 -0.087979 1.5708 1.5708 0</pose>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_upper_leg_ems_gyro_eb10' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.013079 0.040407 -0.035655 -1.5708 -1.5708 0</pose>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_upper_leg_mtb_acc_10b1' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.042002 0.031565 0.049132 -1.5708 -1.57068 -0.733039</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_upper_leg_mtb_acc_10b2' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.053521 0.007766 0.039252 -1.5708 -1.57068 -1.309</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_upper_leg_mtb_acc_10b3' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.053785 0.015071 0.004182 -3.14159 -1.5708 0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_upper_leg_mtb_acc_10b4' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.053785 -0.014429 0.004182 -3.14159 -1.5708 0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_upper_leg_mtb_acc_10b5' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.034129 -0.0415 -0.004858 1.95477 -1.5708 0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_upper_leg_mtb_acc_10b6' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.043785 0.017811 -0.026411 -1.5708 1.57077 1.5708</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='l_upper_leg_mtb_acc_10b7' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.043785 -0.014192 -0.026411 1.5708 1.57065 -1.5708</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
     </link>
     <joint name='l_hip_yaw' type='revolute'>
       <child>l_upper_leg</child>
       <parent>l_hip_3</parent>
       <axis>
-        <xyz>-0 -0 1</xyz>
+        <xyz>0 0 1</xyz>
         <limit>
           <lower>-1.39626</lower>
           <upper>1.39626</upper>
@@ -398,7 +301,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -412,9 +315,9 @@
       </physics>
     </joint>
     <link name='l_lower_leg'>
-      <pose frame=''>0.007309 -0.0701 -0.354438 0 -0 3.14159</pose>
+      <pose>0.007309 -0.0701 -0.354438 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.001 0.003497 -0.088567 1.5708 -0 1.5708</pose>
+        <pose>0.001 0.003497 -0.088567 1.5708 -0 1.5708</pose>
         <mass>1.4724</mass>
         <inertia>
           <ixx>0.00423699</ixx>
@@ -426,7 +329,7 @@
         </inertia>
       </inertial>
       <collision name='l_lower_leg_collision'>
-        <pose frame=''>0.043709 -0.0701 0.386638 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.386638 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -443,68 +346,24 @@
         </surface>
       </collision>
       <visual name='l_lower_leg_visual'>
-        <pose frame=''>0.043709 -0.0701 0.386638 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.386638 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shank_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
-      <sensor name='l_lower_leg_ems_acc_eb7' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.043514 0.011315 -0.092765 3.14159 -1.35263 -0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_lower_leg_ems_gyro_eb7' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.044503 0.011819 -0.088301 3.14159 -1.35263 -0</pose>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_lower_leg_mtb_acc_10b8' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.053133 0.017184 -0.004318 -2.89725 -1.5708 0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_lower_leg_mtb_acc_10b9' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.054452 -0.013799 -0.004318 -1.5708 -1.57068 -1.91986</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_lower_leg_mtb_acc_10b10' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.025915 0.042744 -0.043468 -1.57079 -1.57068 -0.261802</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='l_lower_leg_mtb_acc_10b11' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.018459 -0.041719 -0.092958 1.57079 -1.57077 0.2618</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
     </link>
     <joint name='l_knee' type='revolute'>
       <child>l_lower_leg</child>
       <parent>l_upper_leg</parent>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>-0 -1 0</xyz>
         <limit>
           <lower>-2.16421</lower>
           <upper>0.0698132</upper>
@@ -517,7 +376,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -531,9 +390,9 @@
       </physics>
     </joint>
     <link name='l_ankle_1'>
-      <pose frame=''>0.007309 -0.0701 -0.554938 0 -0 3.14159</pose>
+      <pose>0.007309 -0.0701 -0.554938 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.015153 0.000902 4.2e-05 1.5708 -0 1.5708</pose>
+        <pose>0.015153 0.000902 4.2e-05 1.5708 -0 1.5708</pose>
         <mass>0.6798</mass>
         <inertia>
           <ixx>0.000404474</ixx>
@@ -545,7 +404,7 @@
         </inertia>
       </inertial>
       <collision name='l_ankle_1_collision'>
-        <pose frame=''>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -554,20 +413,23 @@
         </geometry>
       </collision>
       <visual name='l_ankle_1_visual'>
-        <pose frame=''>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_ankle_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_ankle_pitch' type='revolute'>
       <child>l_ankle_1</child>
       <parent>l_lower_leg</parent>
       <axis>
-        <xyz>-0 -1 -0</xyz>
+        <xyz>0 1 0</xyz>
         <limit>
           <lower>-0.610865</lower>
           <upper>0.610865</upper>
@@ -580,7 +442,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -594,9 +456,9 @@
       </physics>
     </joint>
     <link name='l_ankle_2'>
-      <pose frame=''>0.007309 -0.0701 -0.554938 0 -0 3.14159</pose>
+      <pose>0.007309 -0.0701 -0.554938 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.000767 -8e-06 -0.038202 1.5708 -0 1.5708</pose>
+        <pose>0.000767 -8e-06 -0.038202 1.5708 -0 1.5708</pose>
         <mass>0.267485</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -608,7 +470,7 @@
         </inertia>
       </inertial>
       <collision name='l_ankle_2_collision'>
-        <pose frame=''>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -617,20 +479,23 @@
         </geometry>
       </collision>
       <visual name='l_ankle_2_visual'>
-        <pose frame=''>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 -0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_foot_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_ankle_roll' type='revolute'>
       <child>l_ankle_2</child>
       <parent>l_ankle_1</parent>
       <axis>
-        <xyz>-1 0 0</xyz>
+        <xyz>1 0 0</xyz>
         <limit>
           <lower>-0.436332</lower>
           <upper>0.436332</upper>
@@ -643,7 +508,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -657,9 +522,9 @@
       </physics>
     </joint>
     <link name='l_foot'>
-      <pose frame=''>0.010809 -0.0701 -0.615438 -3.14159 -0 3.14159</pose>
+      <pose>0.010809 -0.0701 -0.615438 -3.14159 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.033667 -0.005374 -0.001164 -1.5708 -0 -1.5708</pose>
+        <pose>0.033667 -0.005374 -0.001164 -1.5708 -0 -1.5708</pose>
         <mass>0.382968</mass>
         <inertia>
           <ixx>0.00121242</ixx>
@@ -671,7 +536,7 @@
         </inertia>
       </inertial>
       <collision name='l_foot_collision'>
-        <pose frame=''>0.03 -0.005 0.014 0 -0 0</pose>
+        <pose>0.03 -0.005 0.014 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.16 0.072 0.001</size>
@@ -701,36 +566,19 @@
         <max_contacts>4</max_contacts>
       </collision>
       <visual name='l_foot_visual'>
-        <pose frame=''>0.047209 0.0701 -0.647438 -1.5708 -0 -1.5708</pose>
+        <pose>0.047209 0.0701 -0.647438 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_sole_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <velocity_decay/>
-      <sensor name='l_foot_mtb_acc_10b12' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.105527 0.000812 -0.001215 0 -0 1.5708</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='l_foot_mtb_acc_10b13' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.080527 0.011812 -0.001215 0 -0 1.5708</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
     </link>
     <joint name='l_foot_ft_sensor' type='revolute'>
       <child>l_foot</child>
@@ -746,8 +594,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -757,22 +605,11 @@
           </limit>
         </ode>
       </physics>
-      <sensor name='l_foot_ft_sensor' type='force_torque'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <force_torque>
-          <frame>child</frame>
-          <measure_direction>child_to_parent</measure_direction>
-        </force_torque>
-        <plugin name='left_foot_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_left_foot_ft.ini</yarpConfigurationFile>
-        </plugin>
-      </sensor>
     </joint>
     <link name='r_hip_1'>
-      <pose frame=''>0.006452 0.026 -0.119913 0 -0 3.14159</pose>
+      <pose>0.006452 0.026 -0.119913 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.000515 -0.038075 -7.1e-05 1.5708 -0 1.5708</pose>
+        <pose>-0.000515 -0.038075 -7.1e-05 1.5708 -0 1.5708</pose>
         <mass>0.919978</mass>
         <inertia>
           <ixx>0.000404268</ixx>
@@ -784,7 +621,7 @@
         </inertia>
       </inertial>
       <collision name='r_hip_1_collision'>
-        <pose frame=''>0.042852 0.026 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 0.026 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -793,20 +630,23 @@
         </geometry>
       </collision>
       <visual name='r_hip_1_visual'>
-        <pose frame=''>0.042852 0.026 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 0.026 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_hip_pitch' type='revolute'>
       <child>r_hip_1</child>
       <parent>base_link</parent>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>-0 -1 0</xyz>
         <limit>
           <lower>-0.785398</lower>
           <upper>2.33874</upper>
@@ -819,7 +659,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -833,9 +673,9 @@
       </physics>
     </joint>
     <link name='r_hip_2'>
-      <pose frame=''>0.006452 0.0701 -0.119913 0 -0 3.14159</pose>
+      <pose>0.006452 0.0701 -0.119913 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.001375 4e-06 -0.044282 1.5708 -0 1.5708</pose>
+        <pose>-0.001375 4e-06 -0.044282 1.5708 -0 1.5708</pose>
         <mass>0.418361</mass>
         <inertia>
           <ixx>0.000487866</ixx>
@@ -847,7 +687,7 @@
         </inertia>
       </inertial>
       <collision name='r_hip_2_collision'>
-        <pose frame=''>0.042852 0.0701 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 0.0701 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -856,20 +696,23 @@
         </geometry>
       </collision>
       <visual name='r_hip_2_visual'>
-        <pose frame=''>0.042852 0.0701 0.151913 1.5708 -0 1.5708</pose>
+        <pose>0.042852 0.0701 0.151913 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hip_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_hip_roll' type='revolute'>
       <child>r_hip_2</child>
       <parent>r_hip_1</parent>
       <axis>
-        <xyz>1 -0 -0</xyz>
+        <xyz>-1 0 -0</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>2.0944</upper>
@@ -882,7 +725,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -896,9 +739,9 @@
       </physics>
     </joint>
     <link name='r_hip_3'>
-      <pose frame=''>0.007309 0.0701 -0.194213 -3.14159 -0 3.14159</pose>
+      <pose>0.007309 0.0701 -0.194213 -3.14159 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>-0.000123 -0.000282 0.008718 -1.5708 -0 -1.5708</pose>
+        <pose>-0.000123 -0.000282 0.008718 -1.5708 -0 -1.5708</pose>
         <mass>0.126212</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -910,7 +753,7 @@
         </inertia>
       </inertial>
       <collision name='r_hip_3_collision'>
-        <pose frame=''>0.043709 -0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+        <pose>0.043709 -0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -919,13 +762,16 @@
         </geometry>
       </collision>
       <visual name='r_hip_3_visual'>
-        <pose frame=''>0.043709 -0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
+        <pose>0.043709 -0.0701 -0.226213 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_leg_ft_sensor' type='revolute'>
@@ -942,8 +788,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -953,22 +799,11 @@
           </limit>
         </ode>
       </physics>
-      <sensor name='r_leg_ft_sensor' type='force_torque'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <force_torque>
-          <frame>child</frame>
-          <measure_direction>child_to_parent</measure_direction>
-        </force_torque>
-        <plugin name='right_leg_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_right_leg_ft.ini</yarpConfigurationFile>
-        </plugin>
-      </sensor>
     </joint>
     <link name='r_upper_leg'>
-      <pose frame=''>0.007309 0.0701 -0.208613 0 -0 3.14159</pose>
+      <pose>0.007309 0.0701 -0.208613 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.0034 -2.9e-05 -0.078954 1.5708 -0 1.5708</pose>
+        <pose>0.0034 -2.9e-05 -0.078954 1.5708 -0 1.5708</pose>
         <mass>1.8035</mass>
         <inertia>
           <ixx>0.00647751</ixx>
@@ -980,7 +815,7 @@
         </inertia>
       </inertial>
       <collision name='r_upper_leg_collision'>
-        <pose frame=''>0.043709 0.0701 0.240813 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.240813 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -997,102 +832,24 @@
         </surface>
       </collision>
       <visual name='r_upper_leg_visual'>
-        <pose frame=''>0.043709 0.0701 0.240813 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.240813 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_thigh_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
-      <sensor name='r_upper_leg_ems_acc_eb8' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.012575 0.040407 -0.040227 1.5708 1.5708 0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_upper_leg_ems_acc_eb11' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.012577 -0.040407 -0.083407 1.5708 1.5708 0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_upper_leg_ems_gyro_eb8' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.013079 0.040407 -0.035655 1.5708 1.5708 0</pose>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_upper_leg_ems_gyro_eb11' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.013081 -0.040407 -0.087979 1.5708 1.5708 0</pose>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_upper_leg_mtb_acc_11b1' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.043589 -0.030195 0.04894 2.52671 -1.57045 -0.222874</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_upper_leg_mtb_acc_11b2' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.053947 -0.006407 0.039056 -3.1294 -1.57038 -0.27399</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_upper_leg_mtb_acc_11b3' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.053831 -0.013021 0.003986 -2.87731 -1.57035 -0.264282</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_upper_leg_mtb_acc_11b4' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.032272 0.042268 -0.005045 -1.87391 -1.57026 -0.080859</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_upper_leg_mtb_acc_11b5' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.053831 0.016479 0.003986 -2.87731 -1.57035 -0.264282</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_upper_leg_mtb_acc_11b6' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.043752 -0.015759 -0.026565 0 1.57037 3.14159</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='r_upper_leg_mtb_acc_11b7' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.043752 0.016239 -0.026566 0.264253 1.57035 -2.87734</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
     </link>
     <joint name='r_hip_yaw' type='revolute'>
       <child>r_upper_leg</child>
       <parent>r_hip_3</parent>
       <axis>
-        <xyz>0 0 -1</xyz>
+        <xyz>0 -0 -1</xyz>
         <limit>
           <lower>-1.39626</lower>
           <upper>1.39626</upper>
@@ -1105,7 +862,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1119,9 +876,9 @@
       </physics>
     </joint>
     <link name='r_lower_leg'>
-      <pose frame=''>0.007309 0.0701 -0.354438 0 -0 3.14159</pose>
+      <pose>0.007309 0.0701 -0.354438 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.001236 -0.003513 -0.088794 1.5708 -0 1.5708</pose>
+        <pose>0.001236 -0.003513 -0.088794 1.5708 -0 1.5708</pose>
         <mass>1.472</mass>
         <inertia>
           <ixx>0.00423993</ixx>
@@ -1133,7 +890,7 @@
         </inertia>
       </inertial>
       <collision name='r_lower_leg_collision'>
-        <pose frame=''>0.043709 0.0701 0.386638 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.386638 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1150,68 +907,24 @@
         </surface>
       </collision>
       <visual name='r_lower_leg_visual'>
-        <pose frame=''>0.043709 0.0701 0.386638 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.386638 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shank_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
-      <sensor name='r_lower_leg_ems_acc_eb9' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.043514 0.01384 -0.092765 3.14159 -1.35263 -0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_lower_leg_ems_gyro_eb9' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.044503 0.014344 -0.088301 3.14159 -1.35263 -0</pose>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_lower_leg_mtb_acc_11b8' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.053629 -0.015196 -0.004318 -1.5708 -1.57068 -1.81514</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_lower_leg_mtb_acc_11b9' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.053752 0.015723 -0.004318 -1.5708 -1.57068 -1.22173</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_lower_leg_mtb_acc_11b10' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.027895 -0.042214 -0.043468 1.8326 -1.5708 0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='r_lower_leg_mtb_acc_11b11' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.01648 0.042249 -0.092958 -1.57079 -1.57068 -0.261802</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
     </link>
     <joint name='r_knee' type='revolute'>
       <child>r_lower_leg</child>
       <parent>r_upper_leg</parent>
       <axis>
-        <xyz>0 1 0</xyz>
+        <xyz>-0 -1 0</xyz>
         <limit>
           <lower>-2.16421</lower>
           <upper>0.0698132</upper>
@@ -1224,7 +937,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1238,9 +951,9 @@
       </physics>
     </joint>
     <link name='r_ankle_1'>
-      <pose frame=''>0.007309 0.0701 -0.554938 0 -0 3.14159</pose>
+      <pose>0.007309 0.0701 -0.554938 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.015144 -0.000869 4.2e-05 1.5708 -0 1.5708</pose>
+        <pose>0.015144 -0.000869 4.2e-05 1.5708 -0 1.5708</pose>
         <mass>0.6803</mass>
         <inertia>
           <ixx>0.000404619</ixx>
@@ -1252,7 +965,7 @@
         </inertia>
       </inertial>
       <collision name='r_ankle_1_collision'>
-        <pose frame=''>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1261,20 +974,23 @@
         </geometry>
       </collision>
       <visual name='r_ankle_1_visual'>
-        <pose frame=''>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_ankle_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_ankle_pitch' type='revolute'>
       <child>r_ankle_1</child>
       <parent>r_lower_leg</parent>
       <axis>
-        <xyz>-0 -1 -0</xyz>
+        <xyz>0 1 0</xyz>
         <limit>
           <lower>-0.610865</lower>
           <upper>0.610865</upper>
@@ -1287,7 +1003,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1301,9 +1017,9 @@
       </physics>
     </joint>
     <link name='r_ankle_2'>
-      <pose frame=''>0.007309 0.0701 -0.554938 0 -0 3.14159</pose>
+      <pose>0.007309 0.0701 -0.554938 0 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.000767 -8e-06 -0.038202 1.5708 -0 1.5708</pose>
+        <pose>0.000767 -8e-06 -0.038202 1.5708 -0 1.5708</pose>
         <mass>0.267485</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -1315,7 +1031,7 @@
         </inertia>
       </inertial>
       <collision name='r_ankle_2_collision'>
-        <pose frame=''>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1324,20 +1040,23 @@
         </geometry>
       </collision>
       <visual name='r_ankle_2_visual'>
-        <pose frame=''>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
+        <pose>0.043709 0.0701 0.587138 1.5708 -0 1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_foot_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_ankle_roll' type='revolute'>
       <child>r_ankle_2</child>
       <parent>r_ankle_1</parent>
       <axis>
-        <xyz>1 -0 -0</xyz>
+        <xyz>-1 0 -0</xyz>
         <limit>
           <lower>-0.436332</lower>
           <upper>0.436332</upper>
@@ -1350,7 +1069,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1364,9 +1083,9 @@
       </physics>
     </joint>
     <link name='r_foot'>
-      <pose frame=''>0.010809 0.0701 -0.615438 -3.14159 -0 3.14159</pose>
+      <pose>0.010809 0.0701 -0.615438 -3.14159 -0 3.14159</pose>
       <inertial>
-        <pose frame=''>0.0336 0.005372 -0.001147 -1.5708 -0 -1.5708</pose>
+        <pose>0.0336 0.005372 -0.001147 -1.5708 -0 -1.5708</pose>
         <mass>0.382866</mass>
         <inertia>
           <ixx>0.00120946</ixx>
@@ -1378,7 +1097,7 @@
         </inertia>
       </inertial>
       <collision name='r_foot_collision'>
-        <pose frame=''>0.03 0.005 0.014 0 -0 0</pose>
+        <pose>0.03 0.005 0.014 0 -0 0</pose>
         <geometry>
           <box>
             <size>0.16 0.072 0.001</size>
@@ -1408,36 +1127,19 @@
         <max_contacts>4</max_contacts>
       </collision>
       <visual name='r_foot_visual'>
-        <pose frame=''>0.047209 -0.0701 -0.647438 -1.5708 -0 -1.5708</pose>
+        <pose>0.047209 -0.0701 -0.647438 -1.5708 -0 -1.5708</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_sole_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
       <velocity_decay/>
-      <sensor name='r_foot_mtb_acc_11b12' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.103479 -0.000812 -0.001215 0 0 -1.5708</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='r_foot_mtb_acc_11b13' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.078479 -0.011812 -0.001215 0 0 -1.5708</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
     </link>
     <joint name='r_foot_ft_sensor' type='revolute'>
       <child>r_foot</child>
@@ -1453,8 +1155,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1464,22 +1166,11 @@
           </limit>
         </ode>
       </physics>
-      <sensor name='r_foot_ft_sensor' type='force_torque'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <force_torque>
-          <frame>child</frame>
-          <measure_direction>child_to_parent</measure_direction>
-        </force_torque>
-        <plugin name='right_foot_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_right_foot_ft.ini</yarpConfigurationFile>
-        </plugin>
-      </sensor>
     </joint>
     <link name='torso_1'>
-      <pose frame=''>0 0.027046 0 1.5708 0 -1.5708</pose>
+      <pose>0 0.027046 0 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>0.027092 0.029148 -0.00044 0 -0 0</pose>
+        <pose>0.027092 0.029148 -0.00044 0 -0 0</pose>
         <mass>0.67144</mass>
         <inertia>
           <ixx>0.00040911</ixx>
@@ -1491,7 +1182,7 @@
         </inertia>
       </inertial>
       <collision name='torso_1_collision'>
-        <pose frame=''>0.027046 0.032 0.0364 0 -0 0</pose>
+        <pose>0.027046 0.032 0.0364 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1500,20 +1191,23 @@
         </geometry>
       </collision>
       <visual name='torso_1_visual'>
-        <pose frame=''>0.027046 0.032 0.0364 0 -0 0</pose>
+        <pose>0.027046 0.032 0.0364 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='torso_pitch' type='revolute'>
       <child>torso_1</child>
       <parent>base_link</parent>
       <axis>
-        <xyz>0 -1 -0</xyz>
+        <xyz>1 0 0</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>1.22173</upper>
@@ -1526,7 +1220,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1540,9 +1234,9 @@
       </physics>
     </joint>
     <link name='torso_2'>
-      <pose frame=''>0.057345 0 0.032 1.5708 0 -1.5708</pose>
+      <pose>0.057345 0 0.032 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>-0.000114 0.036153 0.057096 0 -0 0</pose>
+        <pose>-0.000114 0.036153 0.057096 0 -0 0</pose>
         <mass>0.425685</mass>
         <inertia>
           <ixx>0.000829234</ixx>
@@ -1554,7 +1248,7 @@
         </inertia>
       </inertial>
       <collision name='torso_2_collision'>
-        <pose frame=''>0 0.1433 0.038653 0 -0 0</pose>
+        <pose>0 0.1433 0.038653 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1563,20 +1257,23 @@
         </geometry>
       </collision>
       <visual name='torso_2_visual'>
-        <pose frame=''>0 0.1433 0.038653 0 -0 0</pose>
+        <pose>0 0.1433 0.038653 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_lap_belt_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='torso_roll' type='revolute'>
       <child>torso_2</child>
       <parent>torso_1</parent>
       <axis>
-        <xyz>1 0 -0</xyz>
+        <xyz>0 0 -1</xyz>
         <limit>
           <lower>-0.523599</lower>
           <upper>0.523599</upper>
@@ -1589,7 +1286,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1603,9 +1300,9 @@
       </physics>
     </joint>
     <link name='chest'>
-      <pose frame=''>-0.005498 0 0.082 1.5708 0 -1.5708</pose>
+      <pose>-0.005498 0 0.082 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>0.000189 0.073091 -0.047238 0 -0 0</pose>
+        <pose>0.000189 0.073091 -0.047238 0 -0 0</pose>
         <mass>7.638</mass>
         <inertia>
           <ixx>0.0430325</ixx>
@@ -1617,7 +1314,7 @@
         </inertia>
       </inertial>
       <collision name='chest_collision'>
-        <pose frame=''>0 0.0928 -0.024189 0 -0 0</pose>
+        <pose>0 0.0928 -0.024189 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1634,107 +1331,24 @@
         </surface>
       </collision>
       <visual name='chest_visual'>
-        <pose frame=''>0 0.0928 -0.024189 0 -0 0</pose>
+        <pose>0 0.0928 -0.024189 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_chest_bb_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
-      <sensor name='chest_ems_acc_eb1' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.064786 0.064043 -0.064709 3.14152 -0.261799 0.000293</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='chest_ems_gyro_eb1' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.069202 0.064548 -0.063526 3.14152 -0.261799 0.000293</pose>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='chest_ems_acc_eb2' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.020453 0.088063 -0.064165 3.14159 0.261799 3.14158</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='chest_ems_gyro_eb2' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.016037 0.087559 -0.065348 3.14159 0.261799 3.14158</pose>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='chest_ems_acc_eb3' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.023059 0.064019 -0.075899 3.14111 0.261101 -0.000309</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='chest_ems_gyro_eb3' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.018642 0.064521 -0.077079 3.14111 0.261101 -0.000309</pose>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='chest_ems_acc_eb4' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.062162 0.088063 -0.052989 -3.14159 -0.261799 3.14158</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='chest_ems_gyro_eb4' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.066578 0.087559 -0.051805 -3.14159 -0.261799 3.14158</pose>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='chest_mtb_acc_0b7' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.060754 -0.001784 0.044234 0.875168 0.116364 -1.48597</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='chest_mtb_acc_0b8' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.045705 -0.001846 0.056743 0.50096 0.107314 -1.47783</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='chest_mtb_acc_0b9' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.043904 -0.001784 0.057722 -0.50096 0.107315 -1.66376</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='chest_mtb_acc_0b10' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.059429 -0.001854 0.045798 -0.875168 0.116362 -1.65562</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
     </link>
     <joint name='torso_yaw' type='revolute'>
       <child>chest</child>
       <parent>torso_2</parent>
       <axis>
-        <xyz>-0 0 -1</xyz>
+        <xyz>0 -1 0</xyz>
         <limit>
           <lower>-0.872665</lower>
           <upper>0.872665</upper>
@@ -1747,7 +1361,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1761,9 +1375,9 @@
       </physics>
     </joint>
     <link name='l_shoulder_1'>
-      <pose frame=''>-0.013467 -0.120016 0.1748 1.5708 0 -1.5708</pose>
+      <pose>-0.013467 -0.120016 0.1748 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>-0.008985 -3.3e-05 -0.0089 0 -0 0</pose>
+        <pose>-0.008985 -3.3e-05 -0.0089 0 -0 0</pose>
         <mass>0.114882</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -1775,7 +1389,7 @@
         </inertia>
       </inertial>
       <collision name='l_shoulder_1_collision'>
-        <pose frame=''>-0.120257 0 -0.032223 0 -0 0</pose>
+        <pose>-0.120257 0 -0.032223 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1784,20 +1398,23 @@
         </geometry>
       </collision>
       <visual name='l_shoulder_1_visual'>
-        <pose frame=''>-0.120257 0 -0.032223 0 -0 0</pose>
+        <pose>-0.120257 0 -0.032223 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_shoulder_pitch' type='revolute'>
       <child>l_shoulder_1</child>
       <parent>chest</parent>
       <axis>
-        <xyz>-0.258819 -0.965926 0</xyz>
+        <xyz>0.965926 0 0.258819</xyz>
         <limit>
           <lower>-1.66679</lower>
           <upper>0.174533</upper>
@@ -1810,7 +1427,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1824,9 +1441,9 @@
       </physics>
     </joint>
     <link name='l_shoulder_2'>
-      <pose frame=''>-0.021987 -0.106345 0.1748 -3.14159 1.309 -0.261799</pose>
+      <pose>-0.021987 -0.106345 0.1748 -3.14159 1.309 -0.261799</pose>
       <inertial>
-        <pose frame=''>0.021475 0.000269 -0.019411 0 -0 0</pose>
+        <pose>0.021475 0.000269 -0.019411 0 -0 0</pose>
         <mass>0.238162</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -1838,7 +1455,7 @@
         </inertia>
       </inertial>
       <collision name='l_shoulder_2_collision'>
-        <pose frame=''>-0.106587 0 -0.040743 0 -0 0</pose>
+        <pose>-0.106587 0 -0.040743 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1847,20 +1464,23 @@
         </geometry>
       </collision>
       <visual name='l_shoulder_2_visual'>
-        <pose frame=''>-0.106587 0 -0.040743 0 -0 0</pose>
+        <pose>-0.106587 0 -0.040743 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_shoulder_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_shoulder_roll' type='revolute'>
       <child>l_shoulder_2</child>
       <parent>l_shoulder_1</parent>
       <axis>
-        <xyz>-0.965926 0.258819 0</xyz>
+        <xyz>-0.258819 0 0.965926</xyz>
         <limit>
           <lower>0</lower>
           <upper>2.80649</upper>
@@ -1873,7 +1493,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1887,9 +1507,9 @@
       </physics>
     </joint>
     <link name='l_shoulder_3'>
-      <pose frame=''>-0.01062 -0.109391 0.151746 -3.14159 1.309 0</pose>
+      <pose>-0.01062 -0.109391 0.151746 -3.14159 1.309 0</pose>
       <inertial>
-        <pose frame=''>0.026798 -1.6e-05 0.014696 0 -0 0</pose>
+        <pose>0.026798 -1.6e-05 0.014696 0 -0 0</pose>
         <mass>0.35913</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -1901,7 +1521,7 @@
         </inertia>
       </inertial>
       <collision name='l_shoulder_3_collision'>
-        <pose frame=''>-0.131901 0 -0.035343 0 -0 0</pose>
+        <pose>-0.131901 0 -0.035343 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1910,20 +1530,23 @@
         </geometry>
       </collision>
       <visual name='l_shoulder_3_visual'>
-        <pose frame=''>-0.131901 0 -0.035343 0 -0 0</pose>
+        <pose>-0.131901 0 -0.035343 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_upper_arm_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_shoulder_yaw' type='revolute'>
       <child>l_shoulder_3</child>
       <parent>l_shoulder_2</parent>
       <axis>
-        <xyz>-0 0 -1</xyz>
+        <xyz>0.965926 0 0.258819</xyz>
         <limit>
           <lower>-0.645772</lower>
           <upper>1.39626</upper>
@@ -1936,7 +1559,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -1950,9 +1573,9 @@
       </physics>
     </joint>
     <link name='l_upper_arm'>
-      <pose frame=''>-0.02562 -0.109391 0.095 3.14159 -0 -3.14159</pose>
+      <pose>-0.02562 -0.109391 0.095 3.14159 -0 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.006121 -0.000189 0.029368 0 -1.309 3.14159</pose>
+        <pose>-0.006121 -0.000189 0.029368 0 -1.309 3.14159</pose>
         <mass>0.746799</mass>
         <inertia>
           <ixx>0.000509731</ixx>
@@ -1964,7 +1587,7 @@
         </inertia>
       </inertial>
       <collision name='l_upper_arm_collision'>
-        <pose frame=''>-0.015 0 -0.1933 0 -1.309 3.14159</pose>
+        <pose>-0.015 0 -0.1933 0 -1.309 3.14159</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -1981,49 +1604,18 @@
         </surface>
       </collision>
       <visual name='l_upper_arm_visual'>
-        <pose frame=''>-0.015 0 -0.1933 0 -1.309 3.14159</pose>
+        <pose>-0.015 0 -0.1933 0 -1.309 3.14159</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
-      <sensor name='l_upper_arm_mtb_acc_1b10' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.043055 -0.028681 0.029528 -1.5708 -1.5705 2.68257</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_upper_arm_mtb_acc_1b11' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.041218 -0.029589 0.07606 -1.5708 -1.5705 2.68257</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_upper_arm_mtb_acc_1b12' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.041219 -0.029588 0.004992 -1.5708 -1.57078 2.68257</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='l_upper_arm_mtb_acc_1b13' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.010593 -0.028351 -0.008691 -1.5708 0.000215 -2.47804</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
     </link>
     <joint name='l_arm_ft_sensor' type='revolute'>
       <child>l_upper_arm</child>
@@ -2039,8 +1631,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2050,22 +1642,11 @@
           </limit>
         </ode>
       </physics>
-      <sensor name='l_arm_ft_sensor' type='force_torque'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <force_torque>
-          <frame>child</frame>
-          <measure_direction>child_to_parent</measure_direction>
-        </force_torque>
-        <plugin name='left_arm_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_left_arm_ft.ini</yarpConfigurationFile>
-        </plugin>
-      </sensor>
     </joint>
     <link name='l_elbow_1'>
-      <pose frame=''>-0.02562 -0.075391 0.01574 -3.14159 1.309 0</pose>
+      <pose>-0.02562 -0.075391 0.01574 -3.14159 1.309 0</pose>
       <inertial>
-        <pose frame=''>0.006739 0.030302 -0.004658 0 -0 0</pose>
+        <pose>0.006739 0.030302 -0.004658 0 -0 0</pose>
         <mass>0.267903</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2077,7 +1658,7 @@
         </inertia>
       </inertial>
       <collision name='l_elbow_1_collision'>
-        <pose frame=''>-0.25939 0.034 -0.085033 0 -0 0</pose>
+        <pose>-0.25939 0.034 -0.085033 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2086,20 +1667,23 @@
         </geometry>
       </collision>
       <visual name='l_elbow_1_visual'>
-        <pose frame=''>-0.25939 0.034 -0.085033 0 -0 0</pose>
+        <pose>-0.25939 0.034 -0.085033 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_elbow_prosup_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_elbow' type='revolute'>
       <child>l_elbow_1</child>
       <parent>l_upper_arm</parent>
       <axis>
-        <xyz>-0 1 0</xyz>
+        <xyz>0 -1 0</xyz>
         <limit>
           <lower>0.261799</lower>
           <upper>1.85005</upper>
@@ -2112,7 +1696,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2126,9 +1710,9 @@
       </physics>
     </joint>
     <link name='l_forearm'>
-      <pose frame=''>-0.01062 -0.109391 -0.02006 -3.14159 1.309 0</pose>
+      <pose>-0.01062 -0.109391 -0.02006 -3.14159 1.309 0</pose>
       <inertial>
-        <pose frame=''>0.040451 -0.000686 0.005324 0 -0 0</pose>
+        <pose>0.040451 -0.000686 0.005324 0 -0 0</pose>
         <mass>0.636185</mass>
         <inertia>
           <ixx>0.000371447</ixx>
@@ -2140,7 +1724,7 @@
         </inertia>
       </inertial>
       <collision name='l_forearm_collision'>
-        <pose frame=''>-0.296887 0 -0.079551 0 -0 0</pose>
+        <pose>-0.296887 0 -0.079551 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2157,48 +1741,23 @@
         </surface>
       </collision>
       <visual name='l_forearm_visual'>
-        <pose frame=''>-0.296887 0 -0.079551 0 -0 0</pose>
+        <pose>-0.296887 0 -0.079551 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_forearm_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
-      <velocity_decay/>
-      <sensor name='l_forearm_mtb_acc_1b7' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.076873 -0.005483 -0.011048 0.261799 0.00037 -1.57033</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='l_forearm_mtb_acc_1b8' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.051424 -0.018028 0.040751 -0.661144 0.147825 -3.04952</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='l_forearm_mtb_acc_1b9' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.022099 0.025657 -0.015117 1.76682 0.2611 3.08752</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
     </link>
     <joint name='l_wrist_prosup' type='revolute'>
       <child>l_forearm</child>
       <parent>l_elbow_1</parent>
       <axis>
-        <xyz>-0 0 -1</xyz>
+        <xyz>0.965926 0 0.258819</xyz>
         <limit>
           <lower>-1.0472</lower>
           <upper>1.0472</upper>
@@ -2211,7 +1770,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2225,9 +1784,9 @@
       </physics>
     </joint>
     <link name='l_wrist_1'>
-      <pose frame=''>-0.00847 -0.109398 -0.12656 -3.14159 1.309 0</pose>
+      <pose>-0.00847 -0.109398 -0.12656 -3.14159 1.309 0</pose>
       <inertial>
-        <pose frame=''>-0.000981 -0.001178 0.004083 0 -0 0</pose>
+        <pose>-0.000981 -0.001178 0.004083 0 -0 0</pose>
         <mass>0.0362152</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2239,7 +1798,7 @@
         </inertia>
       </inertial>
       <collision name='l_wrist_1_collision'>
-        <pose frame=''>-0.400315 -7e-06 -0.105038 0 -0 0</pose>
+        <pose>-0.400315 -7e-06 -0.105038 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2248,20 +1807,23 @@
         </geometry>
       </collision>
       <visual name='l_wrist_1_visual'>
-        <pose frame=''>-0.400315 -7e-06 -0.105038 0 -0 0</pose>
+        <pose>-0.400315 -7e-06 -0.105038 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_wrist_pitch_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_wrist_pitch' type='revolute'>
       <child>l_wrist_1</child>
       <parent>l_forearm</parent>
       <axis>
-        <xyz>1 0 -0</xyz>
+        <xyz>0.258819 0 -0.965926</xyz>
         <limit>
           <lower>-1.39626</lower>
           <upper>0.436332</upper>
@@ -2274,7 +1836,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2288,9 +1850,9 @@
       </physics>
     </joint>
     <link name='l_hand'>
-      <pose frame=''>-0.01092 -0.089898 -0.12656 -3.14159 1.309 0</pose>
+      <pose>-0.01092 -0.089898 -0.12656 -3.14159 1.309 0</pose>
       <inertial>
-        <pose frame=''>0.064768 0.00563 0.02266 0 -0 0</pose>
+        <pose>0.064768 0.00563 0.02266 0 -0 0</pose>
         <mass>0.247806</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2302,7 +1864,7 @@
         </inertia>
       </inertial>
       <collision name='l_hand_collision'>
-        <pose frame=''>-0.39968 0.019493 -0.107405 0 -0 0</pose>
+        <pose>-0.39968 0.019493 -0.107405 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2311,20 +1873,23 @@
         </geometry>
       </collision>
       <visual name='l_hand_visual'>
-        <pose frame=''>-0.39968 0.019493 -0.107405 0 -0 0</pose>
+        <pose>-0.39968 0.019493 -0.107405 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_l_hand_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='l_wrist_yaw' type='revolute'>
       <child>l_hand</child>
       <parent>l_wrist_1</parent>
       <axis>
-        <xyz>0 -1 -0</xyz>
+        <xyz>-0 1 0</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>0.436332</upper>
@@ -2337,7 +1902,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2351,9 +1916,9 @@
       </physics>
     </joint>
     <link name='neck_1'>
-      <pose frame=''>-0.010809 0.0143 0.254797 1.5708 0 -1.5708</pose>
+      <pose>-0.010809 0.0143 0.254797 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>0.014371 0.006567 -0.006384 0 -0 0</pose>
+        <pose>0.014371 0.006567 -0.006384 0 -0 0</pose>
         <mass>0.125793</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2365,7 +1930,7 @@
         </inertia>
       </inertial>
       <collision name='neck_1_collision'>
-        <pose frame=''>0.0143 -0.079997 -0.029501 0 -0 0</pose>
+        <pose>0.0143 -0.079997 -0.029501 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2374,20 +1939,23 @@
         </geometry>
       </collision>
       <visual name='neck_1_visual'>
-        <pose frame=''>0.0143 -0.079997 -0.029501 0 -0 0</pose>
+        <pose>0.0143 -0.079997 -0.029501 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_neck_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='neck_pitch' type='revolute'>
       <child>neck_1</child>
       <parent>chest</parent>
       <axis>
-        <xyz>-0 1 0</xyz>
+        <xyz>-1 0 0</xyz>
         <limit>
           <lower>-0.698132</lower>
           <upper>0.383972</upper>
@@ -2400,7 +1968,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2414,9 +1982,9 @@
       </physics>
     </joint>
     <link name='neck_2'>
-      <pose frame=''>-0.031609 0 0.264297 1.5708 0 -1.5708</pose>
+      <pose>-0.031609 0 0.264297 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>-8.9e-05 0.035225 -0.019545 0 -0 0</pose>
+        <pose>-8.9e-05 0.035225 -0.019545 0 -0 0</pose>
         <mass>0.177087</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2428,7 +1996,7 @@
         </inertia>
       </inertial>
       <collision name='neck_2_collision'>
-        <pose frame=''>0 -0.089497 -0.050301 0 -0 0</pose>
+        <pose>0 -0.089497 -0.050301 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2437,20 +2005,23 @@
         </geometry>
       </collision>
       <visual name='neck_2_visual'>
-        <pose frame=''>0 -0.089497 -0.050301 0 -0 0</pose>
+        <pose>0 -0.089497 -0.050301 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_neck_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='neck_roll' type='revolute'>
       <child>neck_2</child>
       <parent>neck_1</parent>
       <axis>
-        <xyz>-1 -0 0</xyz>
+        <xyz>0 0 1</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>0.349066</upper>
@@ -2463,7 +2034,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2477,9 +2048,9 @@
       </physics>
     </joint>
     <link name='head'>
-      <pose frame=''>-0.010809 0 0.241953 1.5708 0 -1.5708</pose>
+      <pose>-0.010809 0 0.241953 1.5708 0 -1.5708</pose>
       <inertial>
-        <pose frame=''>-0.000574 0.113511 -0.007539 0 -0 0</pose>
+        <pose>-0.000574 0.113511 -0.007539 0 -0 0</pose>
         <mass>1.50691</mass>
         <inertia>
           <ixx>0.00680478</ixx>
@@ -2491,7 +2062,7 @@
         </inertia>
       </inertial>
       <collision name='head_collision'>
-        <pose frame=''>0 -0.067153 -0.029501 0 -0 0</pose>
+        <pose>0 -0.067153 -0.029501 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2508,36 +2079,25 @@
         </surface>
       </collision>
       <visual name='head_visual'>
-        <pose frame=''>0 -0.067153 -0.029501 0 -0 0</pose>
+        <pose>0 -0.067153 -0.029501 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_head_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <gravity>1</gravity>
       <velocity_decay/>
-      <sensor name='head_imu_acc_1x1' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.0095 0.133444 0.0093 -1.5708 1.5708 0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_IMU' filename='libgazebo_yarp_imu.so'>
-          <yarpConfigurationFile>file://iCub/conf/gazebo_icub_inertial.ini</yarpConfigurationFile>
-        </plugin>
-      </sensor>
     </link>
     <joint name='neck_yaw' type='revolute'>
       <child>head</child>
       <parent>neck_2</parent>
       <axis>
-        <xyz>0 -0 1</xyz>
+        <xyz>0 1 0</xyz>
         <limit>
           <lower>-0.872665</lower>
           <upper>0.872665</upper>
@@ -2550,7 +2110,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2564,9 +2124,9 @@
       </physics>
     </joint>
     <link name='r_shoulder_1'>
-      <pose frame=''>-0.013467 0.120016 0.1748 -1.5708 -0 2.0944</pose>
+      <pose>-0.013467 0.120016 0.1748 -1.5708 0 2.0944</pose>
       <inertial>
-        <pose frame=''>-0.012266 3.2e-05 -0.003211 0 -0 0</pose>
+        <pose>-0.012266 3.2e-05 -0.003211 0 -0 0</pose>
         <mass>0.114862</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2578,7 +2138,7 @@
         </inertia>
       </inertial>
       <collision name='r_shoulder_1_collision'>
-        <pose frame=''>0.099008 0 -0.026529 0 -0 0</pose>
+        <pose>0.099008 0 -0.026529 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2587,20 +2147,23 @@
         </geometry>
       </collision>
       <visual name='r_shoulder_1_visual'>
-        <pose frame=''>0.099008 0 -0.026529 0 -0 0</pose>
+        <pose>0.099008 0 -0.026529 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_1_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_shoulder_pitch' type='revolute'>
       <child>r_shoulder_1</child>
       <parent>chest</parent>
       <axis>
-        <xyz>0.258819 -0.965926 -0</xyz>
+        <xyz>-0.965926 0 0.258819</xyz>
         <limit>
           <lower>-1.66679</lower>
           <upper>0.174533</upper>
@@ -2613,7 +2176,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2627,9 +2190,9 @@
       </physics>
     </joint>
     <link name='r_shoulder_2'>
-      <pose frame=''>-0.021983 0.106346 0.1748 -3.14159 -1.309 -2.87979</pose>
+      <pose>-0.021983 0.106346 0.1748 -3.14159 -1.309 -2.87979</pose>
       <inertial>
-        <pose frame=''>-0.021414 0.000272 -0.01944 0 -0 0</pose>
+        <pose>-0.021414 0.000272 -0.01944 0 -0 0</pose>
         <mass>0.238162</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2641,7 +2204,7 @@
         </inertia>
       </inertial>
       <collision name='r_shoulder_2_collision'>
-        <pose frame=''>0.106588 0 -0.040739 0 -0 0</pose>
+        <pose>0.106588 0 -0.040739 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2650,20 +2213,23 @@
         </geometry>
       </collision>
       <visual name='r_shoulder_2_visual'>
-        <pose frame=''>0.106588 0 -0.040739 0 -0 0</pose>
+        <pose>0.106588 0 -0.040739 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_shoulder_2_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_shoulder_roll' type='revolute'>
       <child>r_shoulder_2</child>
       <parent>r_shoulder_1</parent>
       <axis>
-        <xyz>0.965926 0.258819 -0</xyz>
+        <xyz>-0.258819 -0 -0.965926</xyz>
         <limit>
           <lower>0</lower>
           <upper>2.80649</upper>
@@ -2676,7 +2242,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2690,9 +2256,9 @@
       </physics>
     </joint>
     <link name='r_shoulder_3'>
-      <pose frame=''>-0.01062 0.109391 0.151712 -3.14159 -1.309 -3.14159</pose>
+      <pose>-0.01062 0.109391 0.151712 -3.14159 -1.309 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.026762 -7e-06 0.0147 0 -0 0</pose>
+        <pose>-0.026762 -7e-06 0.0147 0 -0 0</pose>
         <mass>0.35913</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2704,7 +2270,7 @@
         </inertia>
       </inertial>
       <collision name='r_shoulder_3_collision'>
-        <pose frame=''>0.131934 0 -0.035352 0 -0 0</pose>
+        <pose>0.131934 0 -0.035352 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2713,20 +2279,23 @@
         </geometry>
       </collision>
       <visual name='r_shoulder_3_visual'>
-        <pose frame=''>0.131934 0 -0.035352 0 -0 0</pose>
+        <pose>0.131934 0 -0.035352 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_upper_arm_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_shoulder_yaw' type='revolute'>
       <child>r_shoulder_3</child>
       <parent>r_shoulder_2</parent>
       <axis>
-        <xyz>0 0 1</xyz>
+        <xyz>0.965926 -0 -0.258819</xyz>
         <limit>
           <lower>-0.645772</lower>
           <upper>1.39626</upper>
@@ -2739,7 +2308,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2753,9 +2322,9 @@
       </physics>
     </joint>
     <link name='r_upper_arm'>
-      <pose frame=''>-0.02562 0.109391 0.095 -3.14159 -0 -3.14159</pose>
+      <pose>-0.02562 0.109391 0.095 -3.14159 -0 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.006087 0.000126 0.029312 0 1.309 0</pose>
+        <pose>-0.006087 0.000126 0.029312 0 1.309 0</pose>
         <mass>0.745104</mass>
         <inertia>
           <ixx>0.000509527</ixx>
@@ -2767,7 +2336,7 @@
         </inertia>
       </inertial>
       <collision name='r_upper_arm_collision'>
-        <pose frame=''>-0.015 0 -0.1933 0 1.309 0</pose>
+        <pose>-0.015 0 -0.1933 0 1.309 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2784,49 +2353,17 @@
         </surface>
       </collision>
       <visual name='r_upper_arm_visual'>
-        <pose frame=''>-0.015 0 -0.1933 0 1.309 0</pose>
+        <pose>-0.015 0 -0.1933 0 1.309 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
-      <velocity_decay/>
-      <sensor name='r_upper_arm_mtb_acc_2b10' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.041219 0.029588 0.029528 1.57079 1.57078 -2.68257</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_upper_arm_mtb_acc_2b11' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.043057 0.02868 0.07606 -1.5708 -1.5705 0.459022</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_upper_arm_mtb_acc_2b12' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.043055 0.028681 0.004992 -1.11177 -1.5708 0</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='r_upper_arm_mtb_acc_2b13' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>0.010593 0.02835 -0.010738 1.5708 -0.000215 2.47804</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
     </link>
     <joint name='r_arm_ft_sensor' type='revolute'>
       <child>r_upper_arm</child>
@@ -2842,8 +2379,8 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
         <xyz>0 0 1</xyz>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2853,22 +2390,11 @@
           </limit>
         </ode>
       </physics>
-      <sensor name='r_arm_ft_sensor' type='force_torque'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <force_torque>
-          <frame>child</frame>
-          <measure_direction>child_to_parent</measure_direction>
-        </force_torque>
-        <plugin name='right_arm_ft_plugin' filename='libgazebo_yarp_forcetorque.so'>
-          <yarpConfigurationFile>file://iCub/conf/FT/gazebo_icub_right_arm_ft.ini</yarpConfigurationFile>
-        </plugin>
-      </sensor>
     </joint>
     <link name='r_elbow_1'>
-      <pose frame=''>-0.02562 0.086891 0.01574 -3.14159 -1.309 -3.14159</pose>
+      <pose>-0.02562 0.086891 0.01574 -3.14159 -1.309 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.006739 0.018802 -0.004658 0 -0 0</pose>
+        <pose>-0.006739 0.018802 -0.004658 0 -0 0</pose>
         <mass>0.267903</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -2880,7 +2406,7 @@
         </inertia>
       </inertial>
       <collision name='r_elbow_1_collision'>
-        <pose frame=''>0.25939 0.0225 -0.085033 0 -0 0</pose>
+        <pose>0.25939 0.0225 -0.085033 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2889,20 +2415,23 @@
         </geometry>
       </collision>
       <visual name='r_elbow_1_visual'>
-        <pose frame=''>0.25939 0.0225 -0.085033 0 -0 0</pose>
+        <pose>0.25939 0.0225 -0.085033 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_elbow_prosup_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_elbow' type='revolute'>
       <child>r_elbow_1</child>
       <parent>r_upper_arm</parent>
       <axis>
-        <xyz>-0 1 -0</xyz>
+        <xyz>0 1 0</xyz>
         <limit>
           <lower>0.261799</lower>
           <upper>1.85005</upper>
@@ -2915,7 +2444,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -2929,9 +2458,9 @@
       </physics>
     </joint>
     <link name='r_forearm'>
-      <pose frame=''>-0.01062 0.109391 -0.02006 -3.14159 -1.309 -3.14159</pose>
+      <pose>-0.01062 0.109391 -0.02006 -3.14159 -1.309 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.040439 -0.000328 0.005327 0 -0 0</pose>
+        <pose>-0.040439 -0.000328 0.005327 0 -0 0</pose>
         <mass>0.6347</mass>
         <inertia>
           <ixx>0.000370044</ixx>
@@ -2943,7 +2472,7 @@
         </inertia>
       </inertial>
       <collision name='r_forearm_collision'>
-        <pose frame=''>0.296887 0 -0.079551 0 -0 0</pose>
+        <pose>0.296887 0 -0.079551 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -2960,48 +2489,24 @@
         </surface>
       </collision>
       <visual name='r_forearm_visual'>
-        <pose frame=''>0.296887 0 -0.079551 0 -0 0</pose>
+        <pose>0.296887 0 -0.079551 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_forearm_prt-binary.stl</uri>
           </mesh>
         </geometry>
-        <!-- <material>
-          <script>
-            <uri>__default__</uri>
-            <name>__default__</name>
-          </script>
-        </material> -->
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
       <velocity_decay/>
-      <sensor name='r_forearm_mtb_acc_2b7' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.076873 0.005497 -0.011048 0.261799 0.00037 1.57126</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <velocity_decay/>
-      <sensor name='r_forearm_mtb_acc_2b8' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.051419 0.015786 0.040752 -0.661144 0.147825 0.09207</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
-      <gravity>1</gravity>
-      <velocity_decay/>
-      <sensor name='r_forearm_mtb_acc_2b9' type='imu'>
-        <always_on>1</always_on>
-        <update_rate>100</update_rate>
-        <pose frame=''>-0.021638 0.027924 -0.013249 -1.76683 0.261191 0.054048</pose>
-        <plugin name='iCub_yarp_gazebo_plugin_ACC' filename='libgazebo_yarp_inertial.so'/>
-      </sensor>
     </link>
     <joint name='r_wrist_prosup' type='revolute'>
       <child>r_forearm</child>
       <parent>r_elbow_1</parent>
       <axis>
-        <xyz>0 0 1</xyz>
+        <xyz>0.965926 -0 -0.258819</xyz>
         <limit>
           <lower>-1.0472</lower>
           <upper>1.0472</upper>
@@ -3014,7 +2519,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -3028,9 +2533,9 @@
       </physics>
     </joint>
     <link name='r_wrist_1'>
-      <pose frame=''>-0.00817 0.109398 -0.12656 -3.14159 -1.309 -3.14159</pose>
+      <pose>-0.00817 0.109398 -0.12656 -3.14159 -1.309 -3.14159</pose>
       <inertial>
-        <pose frame=''>0.000986 -0.001176 0.004101 0 -0 0</pose>
+        <pose>0.000986 -0.001176 0.004101 0 -0 0</pose>
         <mass>0.0362615</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -3042,7 +2547,7 @@
         </inertia>
       </inertial>
       <collision name='r_wrist_1_collision'>
-        <pose frame=''>0.400392 -7e-06 -0.104748 0 -0 0</pose>
+        <pose>0.400392 -7e-06 -0.104748 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -3051,20 +2556,23 @@
         </geometry>
       </collision>
       <visual name='r_wrist_1_visual'>
-        <pose frame=''>0.400392 -7e-06 -0.104748 0 -0 0</pose>
+        <pose>0.400392 -7e-06 -0.104748 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_wrist_pitch_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_wrist_pitch' type='revolute'>
       <child>r_wrist_1</child>
       <parent>r_forearm</parent>
       <axis>
-        <xyz>-1 -0 0</xyz>
+        <xyz>0.258819 0 0.965926</xyz>
         <limit>
           <lower>-1.39626</lower>
           <upper>0.436332</upper>
@@ -3077,7 +2585,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -3091,9 +2599,9 @@
       </physics>
     </joint>
     <link name='r_hand'>
-      <pose frame=''>-0.01062 0.089898 -0.12656 -3.14159 -1.309 -3.14159</pose>
+      <pose>-0.01062 0.089898 -0.12656 -3.14159 -1.309 -3.14159</pose>
       <inertial>
-        <pose frame=''>-0.064668 0.0056 0.022681 0 -0 0</pose>
+        <pose>-0.064668 0.0056 0.022681 0 -0 0</pose>
         <mass>0.248289</mass>
         <inertia>
           <ixx>0.01</ixx>
@@ -3105,7 +2613,7 @@
         </inertia>
       </inertial>
       <collision name='r_hand_collision'>
-        <pose frame=''>0.399758 0.019493 -0.107115 0 -0 0</pose>
+        <pose>0.399758 0.019493 -0.107115 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
@@ -3114,20 +2622,23 @@
         </geometry>
       </collision>
       <visual name='r_hand_visual'>
-        <pose frame=''>0.399758 0.019493 -0.107115 0 -0 0</pose>
+        <pose>0.399758 0.019493 -0.107115 0 -0 0</pose>
         <geometry>
           <mesh>
             <scale>0.001 0.001 0.001</scale>
             <uri>file://iCub/meshes/simmechanics/sim_sea_2-5_r_hand_prt-binary.stl</uri>
           </mesh>
         </geometry>
+        <material>
+          <diffuse>1 1 1 1</diffuse>
+        </material>
       </visual>
     </link>
     <joint name='r_wrist_yaw' type='revolute'>
       <child>r_hand</child>
       <parent>r_wrist_1</parent>
       <axis>
-        <xyz>-0 1 -0</xyz>
+        <xyz>0 1 0</xyz>
         <limit>
           <lower>-0.349066</lower>
           <upper>0.436332</upper>
@@ -3140,7 +2651,7 @@
           <spring_reference>0</spring_reference>
           <spring_stiffness>0</spring_stiffness>
         </dynamics>
-        <use_parent_model_frame>1</use_parent_model_frame>
+        <use_parent_model_frame>0</use_parent_model_frame>
       </axis>
       <physics>
         <ode>
@@ -3153,45 +2664,7 @@
         </ode>
       </physics>
     </joint>
-    <plugin name='iCub_yarp_gazebo_plugin_ACCpart' filename='libgazebo_yarp_distributedinertials.so'>
-      <yarpConfigurationFile>file://iCub/conf/MTB/gazebo_icub_left_leg_mtb.ini</yarpConfigurationFile>
-    </plugin>
-    <plugin name='iCub_yarp_gazebo_plugin_ACCpart' filename='libgazebo_yarp_distributedinertials.so'>
-      <yarpConfigurationFile>file://iCub/conf/MTB/gazebo_icub_right_leg_mtb.ini</yarpConfigurationFile>
-    </plugin>
-    <plugin name='iCub_yarp_gazebo_plugin_ACCpart' filename='libgazebo_yarp_distributedinertials.so'>
-      <yarpConfigurationFile>file://iCub/conf/MTB/gazebo_icub_left_arm_mtb.ini</yarpConfigurationFile>
-    </plugin>
-    <plugin name='iCub_yarp_gazebo_plugin_ACCpart' filename='libgazebo_yarp_distributedinertials.so'>
-      <yarpConfigurationFile>file://iCub/conf/MTB/gazebo_icub_right_arm_mtb.ini</yarpConfigurationFile>
-    </plugin>
-    <plugin name='iCub_yarp_gazebo_plugin_ACCpart' filename='libgazebo_yarp_distributedinertials.so'>
-      <yarpConfigurationFile>file://iCub/conf/MTB/gazebo_icub_torso_mtb.ini</yarpConfigurationFile>
-    </plugin>
-    <plugin name='controlboard_torso' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_torso.ini</yarpConfigurationFile>
-    </plugin>
-    <plugin name='controlboard_head_without_eyes' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_head_without_eyes.ini</yarpConfigurationFile>
-    </plugin>
-    <plugin name='controlboard_left_arm_no_hand' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_left_arm_no_hand_for_no_hand_model.ini</yarpConfigurationFile>
-      <initialConfiguration>-0.52 0.52 0 0.785 0 0 0.0</initialConfiguration>
-    </plugin>
-    <plugin name='controlboard_right_arm_no_hand' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_right_arm_no_hand_for_no_hand_model.ini</yarpConfigurationFile>
-      <initialConfiguration>-0.52 0.52 0 0.785 0 0 0.0</initialConfiguration>
-    </plugin>
-    <plugin name='controlboard_right_leg' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_right_leg.ini</yarpConfigurationFile>
-    </plugin>
-    <plugin name='controlboard_left_leg' filename='libgazebo_yarp_controlboard.so'>
-      <yarpConfigurationFile>file://iCub/conf/gazebo_icub_left_leg.ini</yarpConfigurationFile>
-    </plugin>
-    <plugin name='apply_external_wrench' filename='libgazebo_yarp_externalwrench.so'>
-      <robotNamefromConfigFile>file://iCub/conf/gazebo_icub_robotname.ini</robotNamefromConfigFile>
-    </plugin>
     <static>0</static>
-    <pose frame=''>0 0 0.63 0 -0 3.14</pose>
+    <pose>0 0 0.63 0 -0 3.14</pose>
   </model>
 </sdf>
