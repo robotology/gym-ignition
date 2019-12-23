@@ -90,6 +90,7 @@
 %ignore gympp::Robot::dt;
 %ignore gympp::Robot::setdt(const StepSize&);
 %include "gympp/Robot.h"
+%template(Vector_contact) std::vector<gympp::ContactData>;
 
 %inline %{
     std::shared_ptr<gympp::gazebo::IgnitionEnvironment> envToIgnEnv(gympp::EnvironmentPtr env) {

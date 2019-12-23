@@ -15,6 +15,8 @@
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/SdfEntityCreator.hh>
 #include <ignition/gazebo/components/CanonicalLink.hh>
+#include <ignition/gazebo/components/Collision.hh>
+#include <ignition/gazebo/components/ContactSensorData.hh>
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/JointAxis.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
@@ -28,6 +30,7 @@
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/gazebo/components/PoseCmd.hh>
 #include <ignition/math/PID.hh>
+#include <ignition/msgs/contacts.pb.h>
 #include <sdf/Joint.hh>
 
 #include <cassert>
@@ -62,6 +65,10 @@ public:
             std::map<JointName, JointControlMode> controlMode;
             std::map<JointName, double> appliedForces;
         } joints;
+        struct
+        {
+            std::unordered_map<LinkName, std::vector<gympp::ContactData>> contacts;
+        } links;
     } buffers;
 
     std::string name;
@@ -98,6 +105,7 @@ public:
         return model.JointByName(*ecm, World2BaseJoint) != ignition::gazebo::kNullEntity;
     }
 
+    void gatherLinksContactData();
     JointEntity getLinkEntity(const LinkName& linkName);
     JointEntity getJointEntity(const JointName& jointName);
 
@@ -147,6 +155,85 @@ JointEntity IgnitionRobot::Impl::getJointEntity(const JointName& jointName)
 
     // Return the joint entity
     return joints[jointName];
+}
+
+void IgnitionRobot::Impl::gatherLinksContactData()
+{
+    auto getEntityName = [&](const ignition::gazebo::Entity entity) -> std::string {
+        auto nameComponent = ecm->Component<ignition::gazebo::components::Name>(entity);
+        assert(nameComponent);
+        return nameComponent->Data();
+    };
+
+    auto getParentModelNameFromCollisionEntity =
+        [&](const ignition::gazebo::Entity collisionEntity) -> std::string {
+        // The hierarchy must be: model -> link -> collision
+        auto linkEntity = ecm->ParentEntity(collisionEntity);
+        auto modelEntity = ecm->ParentEntity(linkEntity);
+        return getEntityName(modelEntity);
+    };
+
+    ecm->Each<ignition::gazebo::components::Collision,
+              ignition::gazebo::components::ContactSensorData,
+              ignition::gazebo::components::ParentEntity>(
+        [&](const ignition::gazebo::Entity& /*collisionEntity*/,
+            ignition::gazebo::components::Collision* /*collisionComponent*/,
+            ignition::gazebo::components::ContactSensorData* contactDataComponent,
+            ignition::gazebo::components::ParentEntity* linkEntityComponent) -> bool {
+            // Get the model entity of the link that contains the collision
+            auto modelEntity = ecm->ParentEntity(linkEntityComponent->Data());
+
+            // Keep only collisions of links that belong to the handled model
+            if (modelEntity != model.Entity()) {
+                return true;
+            }
+
+            // Get the name of the link associated to this collision entity
+            std::string linkName =
+                ecm->Component<ignition::gazebo::components::Name>(linkEntityComponent->Data())
+                    ->Data();
+
+            // Extract the contacts data structure
+            ignition::msgs::Contacts contactsData = contactDataComponent->Data();
+
+            assert(buffers.links.contacts.find(linkName) != buffers.links.contacts.end());
+            buffers.links.contacts[linkName].clear();
+            buffers.links.contacts[linkName].reserve(contactsData.contact_size());
+
+            // Process each contact
+            for (int i = 0; i < contactsData.contact_size(); ++i) {
+                // Extract the contact object
+                const ignition::msgs::Contact& contactData = contactsData.contact(i);
+
+                std::string scopedBodyA =
+                    getParentModelNameFromCollisionEntity(contactData.collision1().id())
+                    + "::" + getEntityName(contactData.collision1().id());
+
+                std::string scopedBodyB =
+                    getParentModelNameFromCollisionEntity(contactData.collision2().id())
+                    + "::" + getEntityName(contactData.collision2().id());
+
+                // Extract the contact data
+                ContactData contact;
+                contact.bodyA = scopedBodyA;
+                contact.bodyB = scopedBodyB;
+                contact.position[0] = contactData.position(i).x();
+                contact.position[1] = contactData.position(i).y();
+                contact.position[2] = contactData.position(i).z();
+
+                // TODO: fill the normal
+                // TODO: fill the contacty depth
+                // TODO: fill the wrench magnitude
+                assert(contactData.depth_size() == 0);
+                assert(contactData.normal_size() == 0);
+                assert(contactData.wrench_size() == 0);
+
+                // Add the new contact data to the link's buffer
+                buffers.links.contacts[linkName].push_back(contact);
+            }
+
+            return true;
+        });
 }
 
 template <typename ComponentTypeT>
@@ -294,6 +381,11 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
             pImpl->links[name->Data()] = linkEntity;
             return true;
         });
+
+    // Initialize the contacts buffers for each link
+    for (const auto& [linkName, LinkEntity] : pImpl->links) {
+        pImpl->buffers.links.contacts[linkName] = {};
+    }
 
     // Check that the created object is valid
     if (!valid()) {
@@ -495,6 +587,30 @@ gympp::Robot::PID IgnitionRobot::jointPID(const gympp::Robot::JointName& jointNa
 
     auto& pid = pImpl->buffers.joints.pid[jointName];
     return PID(pid.PGain(), pid.IGain(), pid.DGain());
+}
+
+gympp::Robot::LinkNames IgnitionRobot::linksInContact() const
+{
+    // Acquire the data
+    pImpl->gatherLinksContactData();
+
+    // Return the list of links that have collisions with other bodies
+    LinkNames linksInContact;
+
+    for (const auto& [linkName, linkContacts] : pImpl->buffers.links.contacts) {
+        if (linkContacts.size() > 0) {
+            linksInContact.push_back(linkName);
+        }
+    }
+
+    return linksInContact;
+}
+
+std::vector<gympp::ContactData>
+IgnitionRobot::contactData(const gympp::Robot::LinkName& linkName) const
+{
+    pImpl->gatherLinksContactData();
+    return pImpl->buffers.links.contacts.at(linkName);
 }
 
 bool IgnitionRobot::setdt(const gympp::Robot::StepSize& stepSize)

@@ -20,6 +20,9 @@
 #include <ignition/gazebo/SdfEntityCreator.hh>
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
+#include <ignition/gazebo/components/Collision.hh>
+#include <ignition/gazebo/components/ContactSensor.hh>
+#include <ignition/gazebo/components/ContactSensorData.hh>
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Model.hh>
@@ -653,6 +656,105 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         // Create a pose component
         auto poseComp = ecm->Component<ignition::gazebo::components::Pose>(modelEntity);
         *poseComp = ignition::gazebo::components::Pose(pose);
+
+        // ----------------------
+        // HANDLE CONTACT SENSORS
+        // ----------------------
+
+        // Store collision entities that need to be modified.
+        // We use an external data structure because editing the ECM within the Each() method
+        // can cause undefined behavior.
+        using CollisionName = std::string;
+        using CollisionEntity = ignition::gazebo::Entity;
+        std::unordered_map<CollisionName, CollisionEntity> collisions;
+
+        // Get the collision names of all the links that belong to the new model
+        ecm->Each<ignition::gazebo::components::Name,
+                  ignition::gazebo::components::Collision,
+                  ignition::gazebo::components::ParentEntity>(
+            [&](const ignition::gazebo::Entity& collisionEntity,
+                ignition::gazebo::components::Name* collisionName,
+                ignition::gazebo::components::Collision*,
+                ignition::gazebo::components::ParentEntity* parentEntity) -> bool {
+                // The parent entity of the collision must be a link
+                assert(parentEntity->Data());
+                auto parentLinkEntity = parentEntity->Data();
+                auto linkLinkComp =
+                    ecm->Component<ignition::gazebo::components::Link>(parentLinkEntity);
+
+                // And must have a name
+                assert(linkLinkComp);
+                auto linkNameComp =
+                    ecm->Component<ignition::gazebo::components::Name>(parentLinkEntity);
+                assert(linkNameComp);
+
+                // Get the model entity (parent of the link)
+                auto parentModelEntity = ecm->ParentEntity(parentLinkEntity);
+
+                // Discard all the links that do not belong to this model
+                if (parentModelEntity != modelEntity) {
+                    return true;
+                }
+
+                // Insert the collision entity in the map
+                collisions.insert({collisionName->Data(), collisionEntity});
+                return true;
+            });
+
+        // Create the ContactSensor and ContactSensorData components.
+        // Note that here we are bypassing the Contact system.
+        for (const auto& [collisionName, collisionEntity] : collisions) {
+            // Create the SDF element of the contact sensor
+            auto sensorElement = std::make_shared<sdf::Element>();
+            sensorElement->SetName("sensor");
+            sensorElement->AddAttribute("name", "string", "contact_sensor", true, "sensor name");
+            sensorElement->AddAttribute("type", "string", "contact", true, "sensor type");
+
+            auto alwaysOnElement = std::make_shared<sdf::Element>();
+            alwaysOnElement->SetName("always_on");
+            alwaysOnElement->SetParent(sensorElement);
+            sensorElement->InsertElement(alwaysOnElement);
+            alwaysOnElement->AddValue("bool", "1", true, "initialize the sensor status");
+
+            auto contactElement = std::make_shared<sdf::Element>();
+            contactElement->SetName("contact");
+            contactElement->SetParent(sensorElement);
+            sensorElement->InsertElement(contactElement);
+
+            auto collisionElement = std::make_shared<sdf::Element>();
+            collisionElement->SetName("collision");
+            collisionElement->SetParent(contactElement);
+            contactElement->InsertElement(collisionElement);
+            collisionElement->AddValue("string", collisionName, true, "collision element name");
+
+            // Parse the SDF contact element
+            sdf::Sensor contactSensor;
+            auto errors = contactSensor.Load(sensorElement);
+
+            if (!errors.empty()) {
+                gymppError << "Failed to load contact sensor sdf" << std::endl;
+                for (const auto& error : errors) {
+                    gymppError << error << std::endl;
+                }
+                return false;
+            }
+
+            // Create the ContactSensorData component inside the collision entity
+            ecm->CreateComponent(collisionEntity,
+                                 ignition::gazebo::components::ContactSensorData());
+
+            // Get the parent entity of the collision, which is a link entity
+            ignition::gazebo::Entity parentLinkEntity = ecm->ParentEntity(collisionEntity);
+
+            // Create the ContactSensor component inside the sensor entity
+            // Note: this is not strictly required. Let's leave it here in the case this component
+            //       is used for something else in the Physics system.
+            auto sensorEntity = sdfEntityCreator->CreateEntities(&contactSensor);
+            assert(sensorEntity != ignition::gazebo::kNullEntity);
+            sdfEntityCreator->SetParent(sensorEntity, parentLinkEntity);
+            assert(ecm->EntityHasComponentType(
+                sensorEntity, ignition::gazebo::components::ContactSensor().TypeId()));
+        }
 
         // ========================================================
         // CREATE THE ROBOT OBJECT AND REGISTER IT IN THE SINGLETON

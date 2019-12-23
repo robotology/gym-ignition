@@ -8,12 +8,13 @@ import numpy as np
 from typing import List, Union, Tuple
 from gym_ignition.utils import logger, resource_finder
 from gym_ignition.base.robot import robot_abc, robot_joints
-from gym_ignition.base.robot import robot_baseframe, robot_initialstate
+from gym_ignition.base.robot import robot_baseframe, robot_initialstate, robot_contacts
 from gym_ignition import gympp_bindings as bindings
 
 
 class GazeboRobot(robot_abc.RobotABC,
                   robot_joints.RobotJoints,
+                  robot_contacts.RobotContacts,
                   robot_baseframe.RobotBaseFrame,
                   robot_initialstate.RobotInitialState):
 
@@ -349,3 +350,25 @@ class GazeboRobot(robot_abc.RobotABC,
         assert angular.size == 4, "'angular' should be an array with 4 elements"
         self._initial_base_velocity = (linear, angular)
         return True
+
+    # =============
+    # RobotContacts
+    # =============
+
+    def links_in_contact(self) -> List[str]:
+        return list(self._gympp_robot.linksInContact())
+
+    def contact_data(self, contact_link_name: str) -> List[robot_contacts.ContactData]:
+        contacts = []
+        gazebo_contacts = self._gympp_robot.contactData(contact_link_name)
+
+        for contact in gazebo_contacts:
+            contact_data = robot_contacts.ContactData(bodyA=contact.bodyA,
+                                                      bodyB=contact.bodyB,
+                                                      position=contact.position)
+            contacts.append(contact_data)
+
+        return contacts
+
+    def total_contact_wrench_on_link(self, contact_link_name: str) -> np.ndarray:
+        raise NotImplementedError

@@ -3,8 +3,17 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import numpy as np
-from typing import List
+from typing import List, NamedTuple
 from abc import ABC, abstractmethod
+
+
+class ContactData(NamedTuple):
+    bodyA: str
+    bodyB: str
+    position: np.ndarray
+    depth: np.ndarray = None
+    normal: np.ndarray = None
+    wrench: np.ndarray = None
 
 
 class RobotContacts(ABC):
@@ -24,18 +33,15 @@ class RobotContacts(ABC):
         """
 
     @abstractmethod
-    def contact_data(self, contact_link_name: str):  # TODO
+    def contact_data(self, contact_link_name: str) -> List[ContactData]:
         """
-        Return data related to a contact.
+        Return contact data of a link. It might contain multiple contacts.
 
         Args:
             contact_link_name: The name of the link.
 
         Returns:
-            A Tuple with contact data with the following information:
-
-            # TODO ContactWrench idyntree
-
+            A list of NameTuple containing the contact data.
         """
 
     @abstractmethod
