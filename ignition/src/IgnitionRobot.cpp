@@ -111,6 +111,20 @@ public:
 
     template <typename ComponentType>
     ComponentType& getOrCreateComponent(const ignition::gazebo::Entity entity);
+
+    static gympp::Pose fromIgnitionMath(const ignition::math::Pose3d& ignitionPose);
+    static ignition::math::Pose3d toIgnitionMath(const gympp::Pose& pose);
+
+    static inline std::array<double, 3>
+    fromIgnitionMath(const ignition::math::Vector3d& ignitionVector)
+    {
+        return {ignitionVector.X(), ignitionVector.Y(), ignitionVector.Z()};
+    }
+
+    static inline ignition::math::Vector3d toIgnitionMath(const std::array<double, 3>& vector)
+    {
+        return {vector[0], vector[1], vector[2]};
+    }
 };
 
 LinkEntity IgnitionRobot::Impl::getLinkEntity(const LinkName& linkName)
@@ -234,6 +248,29 @@ void IgnitionRobot::Impl::gatherLinksContactData()
 
             return true;
         });
+}
+
+gympp::Pose IgnitionRobot::Impl::fromIgnitionMath(const ignition::math::Pose3d& ignitionPose)
+{
+    gympp::Pose pose;
+    pose.position[0] = ignitionPose.Pos().X();
+    pose.position[1] = ignitionPose.Pos().Y();
+    pose.position[2] = ignitionPose.Pos().Z();
+    pose.orientation[0] = ignitionPose.Rot().W();
+    pose.orientation[1] = ignitionPose.Rot().X();
+    pose.orientation[2] = ignitionPose.Rot().Y();
+    pose.orientation[3] = ignitionPose.Rot().Z();
+    return pose;
+}
+
+ignition::math::Pose3d IgnitionRobot::Impl::toIgnitionMath(const gympp::Pose& pose)
+{
+    ignition::math::Pose3d ignitionPose;
+    ignitionPose.Pos() =
+        ignition::math::Vector3d(pose.position[0], pose.position[1], pose.position[2]);
+    ignitionPose.Rot() = ignition::math::Quaterniond(
+        pose.orientation[0], pose.orientation[1], pose.orientation[2], pose.orientation[3]);
+    return ignitionPose;
 }
 
 template <typename ComponentTypeT>
