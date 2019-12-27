@@ -662,6 +662,143 @@ IgnitionRobot::contactData(const gympp::Robot::LinkName& linkName) const
     return pImpl->buffers.links.contacts.at(linkName);
 }
 
+gympp::Robot::LinkNames IgnitionRobot::linkNames() const
+{
+    LinkNames names;
+    names.reserve(pImpl->links.size());
+
+    for (const auto& [linkName, _] : pImpl->links) {
+        names.push_back(linkName);
+    }
+
+    return names;
+}
+
+gympp::Pose IgnitionRobot::linkPose(const gympp::Robot::LinkName& linkName) const
+{
+    LinkEntity linkEntity = pImpl->getLinkEntity(linkName);
+    assert(linkEntity != ignition::gazebo::kNullEntity);
+
+    // Get the link world pose component expressed in the world frame
+    auto linkWorldPoseComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::WorldPose>(linkEntity);
+    assert(linkWorldPoseComponent);
+
+    // Get the link pose
+    const ignition::math::Pose3d& linkWorldPoseGazebo = linkWorldPoseComponent->Data();
+
+    return Impl::fromIgnitionMath(linkWorldPoseGazebo);
+}
+
+gympp::Velocity6D IgnitionRobot::linkVelocity(const gympp::Robot::LinkName& linkName) const
+{
+    LinkEntity linkEntity = pImpl->getLinkEntity(linkName);
+    assert(linkEntity != ignition::gazebo::kNullEntity);
+
+    // Get the link linear velocity componenent expressed in the world frame.
+    auto linkWorldLinVelComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::WorldLinearVelocity>(linkEntity);
+    assert(linkWorldLinVelComponent);
+
+    // Get the link angular velocity componenent expressed in the world frame.
+    auto linkWorldAngVelComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::WorldAngularVelocity>(linkEntity);
+    assert(linkWorldAngVelComponent);
+
+    // Get the link velocities
+    const ignition::math::Vector3d& linkWorldLinVel = linkWorldLinVelComponent->Data();
+    const ignition::math::Vector3d& linkWorldAngVel = linkWorldAngVelComponent->Data();
+
+    // Fill the output data structure
+    gympp::Velocity6D linkWorldVelocity;
+    linkWorldVelocity.linear = Impl::fromIgnitionMath(linkWorldLinVel);
+    linkWorldVelocity.angular = Impl::fromIgnitionMath(linkWorldAngVel);
+
+    return linkWorldVelocity;
+}
+
+gympp::Acceleration6D IgnitionRobot::linkAcceleration(const gympp::Robot::LinkName& linkName) const
+{
+    LinkEntity linkEntity = pImpl->getLinkEntity(linkName);
+    assert(linkEntity != ignition::gazebo::kNullEntity);
+
+    // Get the link linear acceleration componenent expressed in the world frame.
+    auto linkWorldLinAccComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::WorldLinearAcceleration>(linkEntity);
+    assert(linkWorldLinAccComponent);
+
+    // Get the link angular acceleration componenent expressed in the world frame.
+    auto linkWorldAngAccComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::WorldAngularAcceleration>(linkEntity);
+    assert(linkWorldAngAccComponent);
+
+    // Get the link accelerations
+    const ignition::math::Vector3d& linkWorldLinAcc = linkWorldLinAccComponent->Data();
+    const ignition::math::Vector3d& linkWorldAngAcc = linkWorldAngAccComponent->Data();
+
+    // Fill the output data structure
+    gympp::Acceleration6D linkWorldAcceleration;
+    linkWorldAcceleration.linear = Impl::fromIgnitionMath(linkWorldLinAcc);
+    linkWorldAcceleration.angular = Impl::fromIgnitionMath(linkWorldAngAcc);
+
+    return linkWorldAcceleration;
+}
+
+gympp::Velocity6D IgnitionRobot::linkBodyFixedVelocity(const gympp::Robot::LinkName& linkName) const
+{
+    LinkEntity linkEntity = pImpl->getLinkEntity(linkName);
+    assert(linkEntity != ignition::gazebo::kNullEntity);
+
+    // Get the link linear velocity componenent expressed in the link frame.
+    auto linkBodyLinVelComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::LinearVelocity>(linkEntity);
+    assert(linkBodyLinVelComponent);
+
+    // Get the link angular velocity componenent expressed in the link frame.
+    auto linkBodyAngVelComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::AngularVelocity>(linkEntity);
+    assert(linkBodyAngVelComponent);
+
+    // Get the link velocities
+    const ignition::math::Vector3d& linkBodyLinVel = linkBodyLinVelComponent->Data();
+    const ignition::math::Vector3d& linkBodyAngVel = linkBodyAngVelComponent->Data();
+
+    // Fill the output data structure
+    gympp::Velocity6D linkBodyVelocity;
+    linkBodyVelocity.linear = Impl::fromIgnitionMath(linkBodyLinVel);
+    linkBodyVelocity.angular = Impl::fromIgnitionMath(linkBodyAngVel);
+
+    return linkBodyVelocity;
+}
+
+gympp::Acceleration6D
+IgnitionRobot::linkBodyFixedAcceleration(const gympp::Robot::LinkName& linkName) const
+{
+    LinkEntity linkEntity = pImpl->getLinkEntity(linkName);
+    assert(linkEntity != ignition::gazebo::kNullEntity);
+
+    // Get the link linear acceleration componenent expressed in the link frame.
+    auto linkBodyLinAccComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::LinearAcceleration>(linkEntity);
+    assert(linkBodyLinAccComponent);
+
+    // Get the link angular acceleration componenent expressed in the link frame.
+    auto linkBodyAngAccComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::AngularAcceleration>(linkEntity);
+    assert(linkBodyAngAccComponent);
+
+    // Get the link velocities
+    const ignition::math::Vector3d& linkBodyLinAcc = linkBodyLinAccComponent->Data();
+    const ignition::math::Vector3d& linkBodyAngAcc = linkBodyAngAccComponent->Data();
+
+    // Fill the output data structure
+    gympp::Acceleration6D linkBodyAcceleration;
+    linkBodyAcceleration.linear = Impl::fromIgnitionMath(linkBodyLinAcc);
+    linkBodyAcceleration.angular = Impl::fromIgnitionMath(linkBodyAngAcc);
+
+    return linkBodyAcceleration;
+}
+
 bool IgnitionRobot::setdt(const gympp::Robot::StepSize& stepSize)
 {
     pImpl->dt = stepSize;

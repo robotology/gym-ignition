@@ -66,6 +66,13 @@ public:
     LinkNames linksInContact() const override;
     std::vector<ContactData> contactData(const LinkName& linkName) const override;
 
+    LinkNames linkNames() const override;
+    Pose linkPose(const LinkName& linkName) const override;
+    Velocity6D linkVelocity(const LinkName& linkName) const override;
+    Acceleration6D linkAcceleration(const LinkName& linkName) const override;
+    Velocity6D linkBodyFixedVelocity(const LinkName& linkName) const override;
+    Acceleration6D linkBodyFixedAcceleration(const LinkName& linkName) const override;
+
     // ===========
     // SET METHODS
     // ===========
