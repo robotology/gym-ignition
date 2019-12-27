@@ -320,10 +320,6 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
 
     gymppDebug << "Processing model '" << pImpl->model.Name(*ecm) << "'" << std::endl;
 
-    // Modifying the ECM in a Each loop is dangerous.
-    // We store the joint entities we are interested in this vector and then we operate on them.
-    std::vector<ignition::gazebo::Entity> thisModelJointEntities;
-
     ecm->Each<ignition::gazebo::components::Joint,
               ignition::gazebo::components::Name,
               ignition::gazebo::components::JointType,
@@ -357,8 +353,6 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
                 return true;
             }
 
-            thisModelJointEntities.push_back(entity);
-
             // Store the joint entity
             pImpl->joints[name->Data()] = jointEntity;
 
@@ -376,7 +370,7 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
 
     // Create the joint position and velocity components.
     // In this way this data is stored in these components after the physics step.
-    for (auto& jointEntity : thisModelJointEntities) {
+    for (auto& [_, jointEntity] : pImpl->joints) {
         ecm->CreateComponent(jointEntity, ignition::gazebo::components::JointPosition());
         ecm->CreateComponent(jointEntity, ignition::gazebo::components::JointVelocity());
     }
