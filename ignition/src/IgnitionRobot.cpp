@@ -14,6 +14,8 @@
 
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/SdfEntityCreator.hh>
+#include <ignition/gazebo/components/AngularAcceleration.hh>
+#include <ignition/gazebo/components/AngularVelocity.hh>
 #include <ignition/gazebo/components/CanonicalLink.hh>
 #include <ignition/gazebo/components/Collision.hh>
 #include <ignition/gazebo/components/ContactSensorData.hh>
@@ -23,6 +25,8 @@
 #include <ignition/gazebo/components/JointPosition.hh>
 #include <ignition/gazebo/components/JointType.hh>
 #include <ignition/gazebo/components/JointVelocity.hh>
+#include <ignition/gazebo/components/LinearAcceleration.hh>
+#include <ignition/gazebo/components/LinearVelocity.hh>
 #include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/Name.hh>
@@ -416,6 +420,20 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
     // Initialize the contacts buffers for each link
     for (const auto& [linkName, LinkEntity] : pImpl->links) {
         pImpl->buffers.links.contacts[linkName] = {};
+    }
+
+    // Create the components to store link quantities.
+    // The Physics system fills the components during the simulation.
+    for (auto& [_, linkEntity] : pImpl->links) {
+        ecm->CreateComponent(linkEntity, ignition::gazebo::components::WorldPose());
+        ecm->CreateComponent(linkEntity, ignition::gazebo::components::WorldLinearVelocity());
+        ecm->CreateComponent(linkEntity, ignition::gazebo::components::WorldAngularVelocity());
+        ecm->CreateComponent(linkEntity, ignition::gazebo::components::WorldLinearAcceleration());
+        ecm->CreateComponent(linkEntity, ignition::gazebo::components::WorldAngularAcceleration());
+        ecm->CreateComponent(linkEntity, ignition::gazebo::components::LinearVelocity());
+        ecm->CreateComponent(linkEntity, ignition::gazebo::components::AngularVelocity());
+        ecm->CreateComponent(linkEntity, ignition::gazebo::components::LinearAcceleration());
+        ecm->CreateComponent(linkEntity, ignition::gazebo::components::AngularAcceleration());
     }
 
     // Check that the created object is valid
