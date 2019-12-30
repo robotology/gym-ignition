@@ -273,8 +273,8 @@ class GazeboRobot(robot_abc.RobotABC,
         return position, orientation
 
     def base_velocity(self) -> Tuple[np.ndarray, np.ndarray]:
-        logger.warn("Interface not implemented!")
-        return np.zeros(3), np.zeros(3)
+        base_velocity_gympp = self.gympp_robot.baseVelocity()
+        return np.array(base_velocity_gympp.linear), np.array(base_velocity_gympp.angular)
 
     def reset_base_pose(self,
                         position: np.ndarray,
@@ -294,9 +294,23 @@ class GazeboRobot(robot_abc.RobotABC,
 
         return True
 
-    def reset_base_velocity(self, linear_velocity: np.ndarray,
+    def reset_base_velocity(self,
+                            linear_velocity: np.ndarray,
                             angular_velocity: np.ndarray) -> bool:
-        raise NotImplementedError
+        assert linear_velocity.size == 3, \
+            "Linear velocity should be a list with 3 elements"
+        assert angular_velocity.size == 3, \
+            "Angular velocity should be a list with 3 elements"
+
+        if not self._is_floating_base:
+            logger.error("Changing the velocity of a fixed-base robot is not supported")
+            return False
+
+        ok_velocity = self.gympp_robot.resetBaseVelocity(linear_velocity.tolist(),
+                                                         angular_velocity.tolist())
+        assert ok_velocity, "Failed to reset the base velocity"
+
+        return True
 
     def base_wrench(self) -> np.ndarray:
         raise NotImplementedError
