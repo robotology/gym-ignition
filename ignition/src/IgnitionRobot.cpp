@@ -11,7 +11,9 @@
 #include "gympp/gazebo/RobotSingleton.h"
 #include "gympp/gazebo/components/JointPositionReset.h"
 #include "gympp/gazebo/components/JointVelocityReset.h"
+#include "gympp/gazebo/components/WorldVelocityCmd.h"
 
+#include <eigen3/Eigen/Dense>
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/SdfEntityCreator.hh>
 #include <ignition/gazebo/components/AngularAcceleration.hh>
@@ -34,6 +36,7 @@
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/gazebo/components/PoseCmd.hh>
 #include <ignition/math/PID.hh>
+#include <ignition/math/eigen3/Conversions.hh>
 #include <ignition/msgs/contacts.pb.h>
 #include <sdf/Joint.hh>
 
@@ -1131,30 +1134,84 @@ bool IgnitionRobot::setBaseFrame(const gympp::Robot::LinkName& baseLink)
     return false;
 }
 
-gympp::BasePose IgnitionRobot::basePose()
+gympp::Pose IgnitionRobot::basePose()
 {
     // Get the pose component
-    auto* poseComponent =
+    auto* modelWorldPoseComponent =
         pImpl->ecm->Component<ignition::gazebo::components::Pose>(pImpl->model.Entity());
-    assert(poseComponent);
+    assert(modelWorldPoseComponent);
 
-    // Create and fill the output data structure
-    gympp::BasePose basePose;
-    basePose.position[0] = poseComponent->Data().Pos().X();
-    basePose.position[1] = poseComponent->Data().Pos().Y();
-    basePose.position[2] = poseComponent->Data().Pos().Z();
-    basePose.orientation[0] = poseComponent->Data().Rot().W();
-    basePose.orientation[1] = poseComponent->Data().Rot().X();
-    basePose.orientation[2] = poseComponent->Data().Rot().Y();
-    basePose.orientation[3] = poseComponent->Data().Rot().Z();
+    // Extract the transform
+    const ignition::math::Pose3d& world_H_model = modelWorldPoseComponent->Data();
 
-    return basePose;
+    return Impl::fromIgnitionMath(world_H_model);
 }
 
-gympp::BaseVelocity IgnitionRobot::baseVelocity()
+gympp::Velocity6D IgnitionRobot::baseVelocity()
 {
-    assert(false);
-    return {};
+    // The base velocity is the velocity of the model frame.
+    // Between base link and model frame there's a rigid transformation.
+    // We can extract the velocity of the base link and express it in the model frame.
+
+    // Get the name of the base link
+    const LinkName& baseLink = baseFrame();
+
+    // Get the Pose component of the canonical link.
+    // This is the fixed transformation between the model and the base
+    const auto* canonicalLinkPose =
+        pImpl->ecm->Component<ignition::gazebo::components::Pose>(pImpl->getLinkEntity(baseLink));
+    assert(canonicalLinkPose);
+
+    // Get the transform of the canonical link
+    const ignition::math::Pose3d& model_H_base = canonicalLinkPose->Data();
+
+    // Position of base link wrt model frame
+    const ignition::math::Vector3d& M_o_B_math = model_H_base.Pos();
+    Eigen::Vector3d M_o_B = ignition::math::eigen3::convert(M_o_B_math);
+
+    // Create a skew symmetric matrix from the 3D position
+    Eigen::Matrix3d sk_M_o_B = Eigen::Matrix3d::Zero();
+    sk_M_o_B(1, 0) = M_o_B[2];
+    sk_M_o_B(0, 1) = -M_o_B[2];
+    sk_M_o_B(0, 2) = M_o_B[1];
+    sk_M_o_B(2, 0) = -M_o_B[1];
+    sk_M_o_B(2, 1) = M_o_B[0];
+    sk_M_o_B(1, 2) = -M_o_B[0];
+
+    // Get the rotation of the base link frame wrt the model frame
+    ignition::math::Matrix3d M_R_B_math(model_H_base.Rot());
+    Eigen::Matrix3d M_R_B = ignition::math::eigen3::convert(M_R_B_math);
+
+    // Construct the velocity transformation matrix
+    Eigen::Matrix<double, 6, 6> M_X_B = Eigen::Matrix<double, 6, 6>::Zero();
+    M_X_B.topLeftCorner(3, 3) = M_R_B;
+    M_X_B.bottomRightCorner(3, 3) = M_R_B;
+    M_X_B.topRightCorner(3, 3) = sk_M_o_B * M_R_B;
+
+    // Get the velocity of the base link
+    gympp::Velocity6D baseVelocity = linkVelocity(baseLink);
+    Eigen::Matrix<double, 6, 1> baseVelocityEigen;
+    baseVelocityEigen[0] = baseVelocity.linear[0];
+    baseVelocityEigen[1] = baseVelocity.linear[1];
+    baseVelocityEigen[2] = baseVelocity.linear[2];
+    baseVelocityEigen[3] = baseVelocity.angular[0];
+    baseVelocityEigen[4] = baseVelocity.angular[1];
+    baseVelocityEigen[5] = baseVelocity.angular[2];
+
+    // Express the velocity in the model frame
+    Eigen::Matrix<double, 6, 1> modelVelocityEigen = M_X_B * baseVelocityEigen;
+
+    // Create the output data structure
+    gympp::Velocity6D modelVelocity;
+    modelVelocity.linear[0] = modelVelocityEigen[0];
+    modelVelocity.linear[1] = modelVelocityEigen[1];
+    modelVelocity.linear[2] = modelVelocityEigen[2];
+    modelVelocity.angular[0] = modelVelocityEigen[3];
+    modelVelocity.angular[1] = modelVelocityEigen[4];
+    modelVelocity.angular[2] = modelVelocityEigen[5];
+
+    // Return the velocity of the model frame
+    return modelVelocity;
 }
 
 bool IgnitionRobot::setAsFloatingBase(bool isFloating)
@@ -1204,28 +1261,55 @@ bool IgnitionRobot::resetBasePose(const std::array<double, 3>& position,
         return false;
     }
 
+    // Construct the desired transform between world and base
+    gympp::Pose pose;
+    pose.position = position;
+    pose.orientation = orientation;
+    ignition::math::Pose3d world_H_base = Impl::toIgnitionMath(pose);
+
+    // Get the name of the canonical link
+    const LinkName& baseLink = baseFrame();
+
+    // Get the Pose component of the canonical link.
+    // This is the fixed transformation between the model and the base
+    const auto* canonicalLinkPose =
+        pImpl->ecm->Component<ignition::gazebo::components::Pose>(pImpl->getLinkEntity(baseLink));
+    assert(canonicalLinkPose);
+
+    // Get the transform of the canonical link
+    const ignition::math::Pose3d& model_H_base = canonicalLinkPose->Data();
+
+    // Compute the robot pose that corresponds to the desired base pose
+    const ignition::math::Pose3d& world_H_model = world_H_base * model_H_base.Inverse();
+
     // Get the component that stores the new pose
-    auto& worldPoseComponent =
+    auto& modelWorldPoseComponent =
         pImpl->getOrCreateComponent<ignition::gazebo::components::WorldPoseCmd>(
             pImpl->model.Entity());
 
-    // Create the pose data
-    ignition::math::Pose3d pose;
-    pose.Pos() = ignition::math::Vector3<double>(position[0], position[1], position[2]);
-    pose.Rot() = ignition::math::Quaternion<double>(
-        orientation[0], orientation[1], orientation[2], orientation[3]);
-
     // Store the pose data
-    worldPoseComponent.Data() = pose;
-
+    modelWorldPoseComponent.Data() = world_H_model;
     return true;
 }
 
-bool IgnitionRobot::resetBaseVelocity(const std::array<double, 3>& /*linear*/,
-                                      const std::array<double, 3>& /*angular*/)
+bool IgnitionRobot::resetBaseVelocity(const std::array<double, 3>& linear,
+                                      const std::array<double, 3>& angular)
 {
-    assert(false);
-    return false;
+    if (!pImpl->floating) {
+        gymppError << "The angular velocity of fixed-base robots cannot be changed" << std::endl;
+        return false;
+    }
+
+    // Get the component that stores the new pose
+    auto& modelVelCmdComponent =
+        pImpl->getOrCreateComponent<ignition::gazebo::components::WorldVelocityCmd>(
+            pImpl->model.Entity());
+
+    // Store the new velocity
+    modelVelCmdComponent.Data().linear = Impl::toIgnitionMath(linear);
+    modelVelCmdComponent.Data().angular = Impl::toIgnitionMath(angular);
+
+    return true;
 }
 
 std::array<double, 6> IgnitionRobot::baseWrench()

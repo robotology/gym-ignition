@@ -105,8 +105,8 @@ public:
     LinkName baseFrame() override;
     bool setBaseFrame(const LinkName& baseLink) override;
 
-    BasePose basePose() override;
-    BaseVelocity baseVelocity() override;
+    Pose basePose() override;
+    Velocity6D baseVelocity() override;
     bool setAsFloatingBase(bool isFloating) override;
     bool resetBasePose(const std::array<double, 3>& position,
                        const std::array<double, 4>& orientation) override;
