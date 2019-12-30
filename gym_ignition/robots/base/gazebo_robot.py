@@ -6,13 +6,14 @@ import string
 import random
 import numpy as np
 from typing import List, Union, Tuple
-from gym_ignition.utils import logger, resource_finder
-from gym_ignition.base.robot import robot_abc, robot_joints
-from gym_ignition.base.robot import robot_baseframe, robot_initialstate, robot_contacts
 from gym_ignition import gympp_bindings as bindings
+from gym_ignition.utils import logger, resource_finder
+from gym_ignition.base.robot import robot_baseframe, robot_initialstate
+from gym_ignition.base.robot import robot_abc, robot_joints, robot_links, robot_contacts
 
 
 class GazeboRobot(robot_abc.RobotABC,
+                  robot_links.RobotLinks,
                   robot_joints.RobotJoints,
                   robot_contacts.RobotContacts,
                   robot_baseframe.RobotBaseFrame,
@@ -372,3 +373,22 @@ class GazeboRobot(robot_abc.RobotABC,
 
     def total_contact_wrench_on_link(self, contact_link_name: str) -> np.ndarray:
         raise NotImplementedError
+
+    # ==========
+    # RobotLinks
+    # ==========
+
+    def link_names(self) -> List[str]:
+        return self.gympp_robot.linkNames()
+
+    def link_pose(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        link_pose_gympp = self.gympp_robot.linkPose(link_name)
+        return np.array(link_pose_gympp.position), np.array(link_pose_gympp.orientation)
+
+    def link_velocity(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        link_velocity_gympp = self.gympp_robot.linkVelocity(link_name)
+        return np.array(link_velocity_gympp.linear), np.array(link_velocity_gympp.angular)
+
+    def link_acceleration(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        link_acc_gympp = self.gympp_robot.linkAcceleration(link_name)
+        return np.array(link_acc_gympp.linear), np.array(link_acc_gympp.angular)
