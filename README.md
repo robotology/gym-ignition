@@ -110,6 +110,8 @@ The project is composed of the following components:
 | [**`gym_ignition_data`**](gym_ignition_data/) | SDF and URDF models and Gazebo worlds.                       |
 | [**`gympp`**](gympp/)                         | An _experimental_ C++ port of the OpenAI [Gym interfaces](https://github.com/openai/gym/tree/master/gym), used to create pure C++ environments. |
 
+DO NOT MERGE TEST 
+
 ## Why
 
 Refer to the [Citation](#citation) for the extended rationale behind this project.
