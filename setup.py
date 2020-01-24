@@ -145,7 +145,7 @@ setup(
     use_scm_version={
         'local_scheme': 'dirty-tag',
     },
-    setup_requires=['setuptools_scm', 'ninja'],
+    setup_requires=['setuptools_scm'],
     python_requires='>=3.6',
     install_requires=[
         'gym >= 0.13.1',
