@@ -12,7 +12,7 @@ add_library(RobotController SHARED
 
 target_link_libraries(RobotController
     PUBLIC
-    ignition-gazebo2::core
+    ignition-gazebo3::core
     PRIVATE
     gympp
     RobotSingleton)
