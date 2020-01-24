@@ -32,9 +32,9 @@ namespace gympp {
 } // namespace gympp
 
 namespace sdf {
-    inline namespace v8 {
+    inline namespace v9 {
         class Root;
-    } // namespace v8
+    } // namespace v9
 } // namespace sdf
 
 struct gympp::gazebo::ModelInitData
