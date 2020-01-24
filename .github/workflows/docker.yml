@@ -29,12 +29,12 @@ jobs:
           - nightly
         include:
           - tag: ci-devel
-            extra_docker_options: --build-arg ignition_codename='blueprint'
+            extra_docker_options: --build-arg ignition_codename='citadel'
           - tag: pypi-devel
-            extra_docker_options: --build-arg ignition_codename='blueprint'
+            extra_docker_options: --build-arg ignition_codename='citadel'
           - tag: nightly
             extra_docker_options: |
-              --build-arg pypi_package='gym-ignition-nightly' --build-arg ignition_codename='blueprint' --build-arg branch='devel' \
+              --build-arg pypi_package='gym-ignition-nightly' --build-arg ignition_codename='citadel' --build-arg branch='devel' \
 
     steps:
       - uses: actions/checkout@master
