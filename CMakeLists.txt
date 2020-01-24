@@ -3,7 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 cmake_minimum_required(VERSION 3.12)
-project(Gympp VERSION 0.1)
+project(GymIgnition VERSION 0.1)
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
@@ -28,19 +28,19 @@ include(cmake/AddNewBuildMode.cmake)
 add_new_build_mode(NAME "PyPI" TEMPLATE "Release")
 
 # Expose shared or static compilation
-set(GYMPP_BUILD_SHARED_LIBRARY TRUE
+set(GYMIGNITION_BUILD_SHARED_LIBRARY TRUE
     CACHE BOOL "Compile libraries as shared libraries")
 
 if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "PyPI")
     # Apply the user choice
-    set(BUILD_SHARED_LIBS ${GYMPP_BUILD_SHARED_LIBRARY})
+    set(BUILD_SHARED_LIBS ${GYMIGNITION_BUILD_SHARED_LIBRARY})
 else()
     # Check that is Linux
     if(NOT (UNIX AND NOT APPLE))
         message(FATAL_ERROR "PyPI packages can be only created for Linux at the moment")
     endif()
 
-    if(${GYMPP_BUILD_SHARED_LIBRARY})
+    if(${GYMIGNITION_BUILD_SHARED_LIBRARY})
         message(WARNING "Enabling static compilation, required by the PyPI build mode")
     endif()
 
@@ -68,8 +68,8 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
 
 # Get include-what-you-use information when compiling
-option(USE_IWYU "Get the output of include-what-you-use" OFF)
-if(USE_IWYU)
+option(GYMIGNITION_USE_IWYU "Get the output of include-what-you-use" OFF)
+if(GYMIGNITION_USE_IWYU)
     find_program(IWYU_PATH NAMES include-what-you-use iwyu)
     if(IWYU_PATH)
         set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_PATH})
@@ -110,12 +110,16 @@ add_subdirectory(deps)
 # Add the C++ sources subdirectory
 add_subdirectory(gympp)
 
-# This target is not found automatically when searching for 'all' components and
-# ign-gazebo is statically compiled. Adding this find_package here solves the problem.
-find_package(ignition-gazebo2-gui)
+# ========
+# IGNITION
+# ========
 
 find_package(ignition-gazebo2 COMPONENTS all)
-if(ignition-gazebo2_FOUND)
+option(GYMIGNITION_USE_IGNITION
+       "Build C++ code depending on Ignition Robotics" ${ignition-gazebo2_FOUND})
+
+# Add the targets depending on Ignition Robotics
+if(${GYMIGNITION_USE_IGNITION})
     add_subdirectory(ignition)
     add_subdirectory(plugins)
     add_subdirectory(gym_ignition_data)
