@@ -29,8 +29,8 @@ jobs:
       # setup with ignition robotics installed from the official ppa
       image: diegoferigo/gym-ignition:ci-master
       env:
-        CC: gcc-8
-        CXX: g++-8
+        CC: gcc-7
+        CXX: g++-7
         PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
@@ -145,8 +145,8 @@ jobs:
     container:
       image: diegoferigo/gym-ignition:ci-master
       env:
-        CC: gcc-8
-        CXX: g++-8
+        CC: gcc-7
+        CXX: g++-7
         PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:

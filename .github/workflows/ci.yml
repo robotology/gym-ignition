@@ -13,9 +13,10 @@ jobs:
         python: [3.6]
         build_type: [Debug]
         compiler:
-          - gcc8
-          - clang7
-          - clang8
+          - gcc7
+          #- gcc8
+          #- clang7
+          #- clang8
     container:
       image: diegoferigo/gym-ignition:ci-master
       env:
@@ -77,8 +78,7 @@ jobs:
         run: |
           pip3 install colour-valgrind
           cd tests/python
-          valgrind --log-file=/tmp/valgrind.log pytest -v -s
-          colour-valgrind -t /tmp/valgrind.log
+          valgrind --log-file=/tmp/valgrind.log pytest -v -s || colour-valgrind -t /tmp/valgrind.log
 
   user:
     name: User installation
@@ -93,8 +93,8 @@ jobs:
       image: diegoferigo/gym-ignition:ci-master
       env:
         PYTHON_VERSION: ${{ matrix.python }}
-        CC: gcc-8
-        CXX: g++-8
+        CC: gcc-7
+        CXX: g++-7
 
     steps:
       - name: Update git
@@ -129,5 +129,4 @@ jobs:
         run: |
           pip3 install colour-valgrind
           cd tests/python
-          valgrind --log-file=/tmp/valgrind.log pytest -v -s
-          colour-valgrind -t /tmp/valgrind.log
+          valgrind --log-file=/tmp/valgrind.log pytest -v -s || colour-valgrind -t /tmp/valgrind.log

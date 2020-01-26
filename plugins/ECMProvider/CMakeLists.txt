@@ -12,7 +12,7 @@ add_library(ECMProvider SHARED
 
 target_link_libraries(ECMProvider
     PUBLIC
-    ignition-gazebo2::core
+    ignition-gazebo3::core
     PRIVATE
     gympp
     ECMSingleton)

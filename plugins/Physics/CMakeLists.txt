@@ -6,7 +6,7 @@
 # Physics PLUGIN
 # ==============
 
-find_package(ignition-physics1 COMPONENTS dartsim REQUIRED)
+find_package(ignition-physics2 COMPONENTS dartsim REQUIRED)
 
 add_library(PhysicsSystem SHARED
     Physics.h
@@ -14,8 +14,8 @@ add_library(PhysicsSystem SHARED
 
 target_link_libraries(PhysicsSystem
     PUBLIC
-    ignition-gazebo2::core
-    ignition-physics1
+    ignition-gazebo3::core
+    ignition-physics2
     PRIVATE
     ExtraComponents)
 
@@ -23,7 +23,7 @@ target_include_directories(PhysicsSystem PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 target_compile_definitions(PhysicsSystem PRIVATE
-    ""dartsim_plugin_LIB=\"$<TARGET_SONAME_FILE:ignition-physics1::ignition-physics1-dartsim-plugin>\""")
+    ""dartsim_plugin_LIB=\"$<TARGET_SONAME_FILE:ignition-physics2::ignition-physics2-dartsim-plugin>\""")
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
     install(
