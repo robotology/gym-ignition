@@ -107,7 +107,7 @@ using namespace ignition;
 using namespace gympp::plugins;
 using namespace ignition::gazebo;
 using namespace ignition::gazebo::systems;
-namespace components = ignition::gazebo::components;
+using namespace ignition::gazebo::components;
 
 class Physics::Impl
 {
