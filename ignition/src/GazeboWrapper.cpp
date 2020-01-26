@@ -390,9 +390,9 @@ bool GazeboWrapper::initialized()
 double GazeboWrapper::getSimulatedTime() const
 {
     auto dt = pImpl->gazebo.physics.maxStepSize;
-    auto iterationCount = pImpl->gazebo.server->IterationCount();
+    auto iterationCount = pImpl->getServer()->IterationCount();
 
-    if (!iterationCount || !pImpl->gazebo.server) {
+    if (!iterationCount) {
         gymppError << "Failed to get the simulated time" << std::endl;
         return 0.0;
     }
@@ -618,9 +618,9 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         // In order to handle the particular state of the initial iteration, we need a rather
         // involved synchronization logic. This allows avoiding to use the UserCommands system
         // to create entities, giving us full power.
-        assert(pImpl->gazebo.server->Paused().has_value());
+        assert(pImpl->getServer()->Paused().has_value());
         std::unique_lock<std::mutex> lock;
-        if (pImpl->gazebo.server->Running() && pImpl->gazebo.server->Paused().value()) {
+        if (pImpl->getServer()->Running() && pImpl->getServer()->Paused().value()) {
             lock = ecmSingleton.waitPreUpdate(getWorldName());
         }
 
@@ -793,7 +793,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         }
 
         // In the first iteration, we need to notify that we finished to operate on the ECM
-        if (pImpl->gazebo.server->Running() && pImpl->gazebo.server->Paused().value()) {
+        if (pImpl->getServer()->Running() && pImpl->getServer()->Paused().value()) {
             ecmSingleton.notifyExecutorFinished(getWorldName());
         }
     }
