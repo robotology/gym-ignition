@@ -741,71 +741,38 @@ void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
         });
 
     // Process WorldVelocityCmd
-    _ecm.Each<components::Model, components::WorldVelocityCmd>([&](const Entity& _entity,
-                                                                   const components::Model*,
-                                                                   components::WorldVelocityCmd*
-                                                                       _modelWorldVelocityCmd) {
-        auto modelIt = this->entityModelMap.find(_entity);
-        if (modelIt == this->entityModelMap.end())
-            return true;
+    _ecm.Each<components::Model, components::WorldVelocityCmd>(
+        [&](const Entity& _entity,
+            const components::Model*,
+            components::WorldVelocityCmd* _modelWorldVelocityCmd) {
+            auto modelIt = this->entityModelMap.find(_entity);
+            if (modelIt == this->entityModelMap.end())
+                return true;
 
-        // TODO(addisu) Store the free group instead of searching for it at
-        // every iteration
-        auto freeGroup = modelIt->second->FindFreeGroup();
+            // TODO(addisu) Store the free group instead of searching for it at
+            // every iteration
+            auto freeGroup = modelIt->second->FindFreeGroup();
 
-        // The FreeGroup is created only for floating-base object that do not have any defined
-        // joint between the world and their base
-        if (!freeGroup) {
-            ignwarn << "Failed to find FreeGroup. Linear and angular velocities commands ignored."
+            // The FreeGroup is created only for floating-base object that do not have any defined
+            // joint between the world and their base
+            if (!freeGroup) {
+                ignwarn
+                    << "Failed to find FreeGroup. Linear and angular velocities commands ignored."
                     << std::endl;
+                return true;
+            }
+
+            ignition::math::Vector3d& modelWorldLinearVelocity =
+                _modelWorldVelocityCmd->Data().linear;
+            ignition::math::Vector3d& modelWorldAngularVelocity =
+                _modelWorldVelocityCmd->Data().angular;
+
+            freeGroup->SetWorldLinearVelocity(math::eigen3::convert(modelWorldLinearVelocity));
+            freeGroup->SetWorldAngularVelocity(math::eigen3::convert(modelWorldAngularVelocity));
+
+            // TODO(diego): static models from above
             return true;
-        }
-
-        // Get canonical link offset
-        auto canonicalLink = _ecm.ChildrenByComponents(_entity, components::CanonicalLink());
-        if (canonicalLink.empty())
-            return true;
-
-        auto canonicalPoseComp = _ecm.Component<components::Pose>(canonicalLink[0]);
-        if (nullptr == canonicalPoseComp)
-            return true;
-
-        ignition::math::Vector3d& modelWorldLinearVelocity = _modelWorldVelocityCmd->Data().linear;
-        ignition::math::Vector3d& modelWorldAngularVelocity =
-            _modelWorldVelocityCmd->Data().angular;
-
-        ignition::math::Pose3d& M_H_B = canonicalPoseComp->Data();
-        ignition::math::Pose3d B_H_M = M_H_B.Inverse();
-        ignition::math::Vector3d& B_o_M = B_H_M.Pos();
-        ignition::math::Quaterniond& B_R_M = B_H_M.Rot();
-
-        {
-            // Express the angular velocity in the frame of the base link
-            ignition::math::Vector3d wBase = B_R_M * modelWorldAngularVelocity;
-            ignwarn << wBase << std::endl;
-
-            // Set the angular velocity of the canonical link
-            freeGroup->SetWorldAngularVelocity(math::eigen3::convert(wBase));
-        }
-
-        {
-            // Skew-symmetrix matrix from 3D vector
-            auto hat = [](const ignition::math::Vector3d& v) -> ignition::math::Matrix3d {
-                return ignition::math::Matrix3d(0, -v[2], v[1], v[2], 0, -v[0], -v[1], v[0], 0);
-            };
-
-            // Express the linear velocity in the frame of the base link
-            ignition::math::Vector3d vBase =
-                B_R_M * modelWorldLinearVelocity + hat(B_o_M) * (B_R_M * modelWorldAngularVelocity);
-            ignwarn << vBase << std::endl;
-
-            // Set the linear velocity of the canonical link
-            freeGroup->SetWorldLinearVelocity(math::eigen3::convert(vBase));
-        }
-
-        // TODO(diego): static models from above
-        return true;
-    });
+        });
 
     // Clear pending commands
     // Note: Removing components from inside an Each call can be dangerous.
