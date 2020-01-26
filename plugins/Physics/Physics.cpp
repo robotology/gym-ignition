@@ -338,7 +338,7 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
 
             sdf::Model model;
             model.SetName(_name->Data());
-            model.SetPose(_pose->Data());
+            model.SetRawPose(_pose->Data());
 
             auto staticComp = _ecm.Component<components::Static>(_entity);
             if (staticComp && staticComp->Data()) {
@@ -376,7 +376,7 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
 
             sdf::Link link;
             link.SetName(_name->Data());
-            link.SetPose(_pose->Data());
+            link.SetRawPose(_pose->Data());
 
             // get link inertial
             auto inertial = _ecm.Component<components::Inertial>(_entity);
@@ -488,7 +488,7 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
             sdf::Joint joint;
             joint.SetName(_name->Data());
             joint.SetType(_jointType->Data());
-            joint.SetPose(_pose->Data());
+            joint.SetRawPose(_pose->Data());
             joint.SetThreadPitch(_threadPitch->Data());
 
             joint.SetParentLinkName(_parentLinkName->Data());
