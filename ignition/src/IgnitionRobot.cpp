@@ -1149,66 +1149,24 @@ gympp::Pose IgnitionRobot::basePose()
 
 gympp::Velocity6D IgnitionRobot::baseVelocity()
 {
-    // The base velocity is the velocity of the model frame.
-    // Between base link and model frame there's a rigid transformation.
-    // We can extract the velocity of the base link and express it in the model frame.
+    // We can get the velocity of the base link. Since there's only a rigid
+    // transformation between base and model frame, and the velocity is expressed
+    // in the world frame, we do not need to perform any conversion.
 
     // Get the name of the base link
     const LinkName& baseLink = baseFrame();
 
-    // Get the Pose component of the canonical link.
-    // This is the fixed transformation between the model and the base
-    const auto* canonicalLinkPose =
-        pImpl->ecm->Component<ignition::gazebo::components::Pose>(pImpl->getLinkEntity(baseLink));
-    assert(canonicalLinkPose);
-
-    // Get the transform of the canonical link
-    const ignition::math::Pose3d& model_H_base = canonicalLinkPose->Data();
-
-    // Position of base link wrt model frame
-    const ignition::math::Vector3d& M_o_B_math = model_H_base.Pos();
-    Eigen::Vector3d M_o_B = ignition::math::eigen3::convert(M_o_B_math);
-
-    // Create a skew symmetric matrix from the 3D position
-    Eigen::Matrix3d sk_M_o_B = Eigen::Matrix3d::Zero();
-    sk_M_o_B(1, 0) = M_o_B[2];
-    sk_M_o_B(0, 1) = -M_o_B[2];
-    sk_M_o_B(0, 2) = M_o_B[1];
-    sk_M_o_B(2, 0) = -M_o_B[1];
-    sk_M_o_B(2, 1) = M_o_B[0];
-    sk_M_o_B(1, 2) = -M_o_B[0];
-
-    // Get the rotation of the base link frame wrt the model frame
-    ignition::math::Matrix3d M_R_B_math(model_H_base.Rot());
-    Eigen::Matrix3d M_R_B = ignition::math::eigen3::convert(M_R_B_math);
-
-    // Construct the velocity transformation matrix
-    Eigen::Matrix<double, 6, 6> M_X_B = Eigen::Matrix<double, 6, 6>::Zero();
-    M_X_B.topLeftCorner(3, 3) = M_R_B;
-    M_X_B.bottomRightCorner(3, 3) = M_R_B;
-    M_X_B.topRightCorner(3, 3) = sk_M_o_B * M_R_B;
-
     // Get the velocity of the base link
     gympp::Velocity6D baseVelocity = linkVelocity(baseLink);
-    Eigen::Matrix<double, 6, 1> baseVelocityEigen;
-    baseVelocityEigen[0] = baseVelocity.linear[0];
-    baseVelocityEigen[1] = baseVelocity.linear[1];
-    baseVelocityEigen[2] = baseVelocity.linear[2];
-    baseVelocityEigen[3] = baseVelocity.angular[0];
-    baseVelocityEigen[4] = baseVelocity.angular[1];
-    baseVelocityEigen[5] = baseVelocity.angular[2];
 
-    // Express the velocity in the model frame
-    Eigen::Matrix<double, 6, 1> modelVelocityEigen = M_X_B * baseVelocityEigen;
+    // Convert it to ignition math objects
+    ignition::math::Vector3d baseLinVel = Impl::toIgnitionMath(baseVelocity.linear);
+    ignition::math::Vector3d baseAngVel = Impl::toIgnitionMath(baseVelocity.angular);
 
     // Create the output data structure
     gympp::Velocity6D modelVelocity;
-    modelVelocity.linear[0] = modelVelocityEigen[0];
-    modelVelocity.linear[1] = modelVelocityEigen[1];
-    modelVelocity.linear[2] = modelVelocityEigen[2];
-    modelVelocity.angular[0] = modelVelocityEigen[3];
-    modelVelocity.angular[1] = modelVelocityEigen[4];
-    modelVelocity.angular[2] = modelVelocityEigen[5];
+    modelVelocity.linear = {baseLinVel.X(), baseLinVel.Y(), baseLinVel.Z()};
+    modelVelocity.angular = {baseAngVel.X(), baseAngVel.Y(), baseAngVel.Z()};
 
     // Return the velocity of the model frame
     return modelVelocity;
