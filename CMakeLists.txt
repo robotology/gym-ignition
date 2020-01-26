@@ -110,6 +110,16 @@ add_subdirectory(deps)
 # Add the C++ sources subdirectory
 add_subdirectory(gympp)
 
+find_package(Eigen3)
+find_package(iDynTree)
+
+# Add the controllers
+if(${Eigen3_FOUND} AND ${iDynTree_FOUND})
+    add_subdirectory(controllers)
+else()
+    message(STATUS "Disabling controllers. Either iDynTree of Eigen3 not found")
+endif()
+
 # ========
 # IGNITION
 # ========

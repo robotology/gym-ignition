@@ -40,6 +40,7 @@ target_link_libraries(${swig_name} PUBLIC
     RobotSingleton
     GazeboWrapper
     IgnitionRobot
+    Controllers
     ${PYTHON_LIBRARIES})
 
 set_property(TARGET ${swig_name} PROPERTY

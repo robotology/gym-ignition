@@ -3,6 +3,10 @@
 %{
 #define SWIG_FILE_WITH_INIT
 #include "gympp/Common.h"
+#include "gympp/controllers/Controller.h"
+#include "gympp/controllers/PositionController.h"
+#include "gympp/controllers/PositionControllerReferences.h"
+#include "gympp/controllers/ComputedTorqueFixedBase.h"
 #include "gympp/Environment.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
 #include "gympp/gazebo/GazeboWrapper.h"
@@ -55,6 +59,7 @@
 %template(Optional_d) std::optional<double>;
 %template(Optional_state) std::optional<gympp::State>;
 %template(Optional_sample) std::optional<gympp::data::Sample>;
+%template(Optional_vector_d) std::optional<std::vector<double>>;
 
 %include <std_shared_ptr.i>
 %shared_ptr(gympp::spaces::Space)
@@ -105,3 +110,8 @@
 %include "gympp/Metadata.h"
 %include "gympp/GymFactory.h"
 %include "gympp/gazebo/RobotSingleton.h"
+
+%include "gympp/controllers/Controller.h"
+%include "gympp/controllers/PositionControllerReferences.h"
+%include "gympp/controllers/PositionController.h"
+%include "gympp/controllers/ComputedTorqueFixedBase.h"
