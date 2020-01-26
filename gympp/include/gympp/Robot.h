@@ -9,6 +9,7 @@
 #ifndef GYMPP_ROBOT_H
 #define GYMPP_ROBOT_H
 
+#include <array>
 #include <chrono>
 #include <limits>
 #include <memory>
@@ -160,6 +161,9 @@ public:
                             const double jointPosition = 0,
                             const double jointVelocity = 0) = 0;
 
+    virtual bool addExternalWrench(const LinkName& linkName,
+                                   const std::array<double, 3>& force,
+                                   const std::array<double, 3>& torque) = 0;
     virtual bool update(const std::chrono::duration<double> time) = 0;
 
     // ==============
