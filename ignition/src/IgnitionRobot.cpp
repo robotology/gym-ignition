@@ -503,6 +503,39 @@ gympp::Robot::JointNames IgnitionRobot::jointNames() const
     return names;
 }
 
+gympp::JointType IgnitionRobot::jointType(const gympp::Robot::JointName& jointName) const
+{
+    JointEntity jointEntity = pImpl->getJointEntity(jointName);
+    if (jointEntity == ignition::gazebo::kNullEntity) {
+        return JointType::Invalid;
+    }
+
+    auto typeComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::JointType>(jointEntity);
+    assert(typeComponent);
+
+    gympp::JointType returnedType;
+    sdf::JointType type = typeComponent->Data();
+
+    switch (type) {
+        case sdf::JointType::FIXED:
+            returnedType = JointType::Fixed;
+            break;
+        case sdf::JointType::REVOLUTE:
+            returnedType = JointType::Revolute;
+            break;
+        case sdf::JointType::PRISMATIC:
+            returnedType = JointType::Prismatic;
+            break;
+        default:
+            gymppError << "Joint type not recognized" << std::endl;
+            returnedType = JointType::Invalid;
+            break;
+    }
+
+    return returnedType;
+}
+
 double IgnitionRobot::jointPosition(const gympp::Robot::JointName& jointName) const
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
