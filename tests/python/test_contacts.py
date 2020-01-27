@@ -5,55 +5,6 @@
 import tempfile
 import numpy as np
 from . import utils
-from gym_ignition.robots import gazebo_robot
-
-
-def get_cube_urdf() -> str:
-    mass = 5.0
-    edge = 0.2
-    i = 1 / 12 * mass * (edge ** 2 + edge ** 2)
-    cube_urdf = f"""
-    <robot name="cube_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
-        <link name="cube">
-            <inertial>
-              <origin rpy="0 0 0" xyz="0 0 0"/>
-              <mass value="{mass}"/>
-              <inertia ixx="{i}" ixy="0" ixz="0" iyy="{i}" iyz="0" izz="{i}"/>
-            </inertial>
-            <visual>
-              <geometry>
-                <box size="{edge} {edge} {edge}"/>
-              </geometry>
-              <origin rpy="0 0 0" xyz="0 0 0"/>
-            </visual>
-            <collision>
-              <geometry>
-                <box size="{edge} {edge} {edge}"/>
-              </geometry>
-              <origin rpy="0 0 0" xyz="0 0 0"/>
-            </collision>
-        </link>
-    </robot>"""
-    return cube_urdf
-
-
-class CubeGazeboRobot(gazebo_robot.GazeboRobot):
-    def __init__(self, model_file: str, gazebo, initial_position: np.ndarray):
-        # Initialize base class
-        super().__init__(model_file=model_file,
-                         gazebo=gazebo)
-
-        ok_floating = self.set_as_floating_base(True)
-        assert ok_floating, "Failed to set the robot as floating base"
-
-        # Initial base position and orientation
-        base_position = np.array(initial_position)
-        base_orientation = np.array([1., 0., 0., 0.])
-        ok_base_pose = self.set_initial_base_pose(base_position, base_orientation)
-        assert ok_base_pose, "Failed to set base pose"
-
-        # Insert the model in the simulation
-        _ = self.gympp_robot
 
 
 def test_contacts():
@@ -63,17 +14,17 @@ def test_contacts():
     # Serialize the cube urdf
     handle, model_file = tempfile.mkstemp()
     with open(handle, 'w') as f:
-        f.write(get_cube_urdf())
+        f.write(utils.get_cube_urdf())
 
     # Create the first cube and insert it in the simulation
-    cube1 = CubeGazeboRobot(model_file=model_file,
-                            gazebo=gazebo.simulator,
-                            initial_position=np.array([0, 0, 1.0]))
+    cube1 = utils.CubeGazeboRobot(model_file=model_file,
+                                  gazebo=gazebo.simulator,
+                                  initial_position=np.array([0, 0, 1.0]))
 
     # Create the second cube and insert it in the simulation
-    cube2 = CubeGazeboRobot(model_file=model_file,
-                            gazebo=gazebo.simulator,
-                            initial_position=np.array([0, 0, 2.5]))
+    cube2 = utils.CubeGazeboRobot(model_file=model_file,
+                                  gazebo=gazebo.simulator,
+                                  initial_position=np.array([0, 0, 2.5]))
 
     # Execute the first simulation step
     gazebo.step()
