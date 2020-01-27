@@ -92,8 +92,8 @@ jobs:
       # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
       - name: Setup Environment
         run: |
-          echo "::set-env name=CC::gcc-8"
-          echo "::set-env name=CXX::g++-8"
+          echo "::set-env name=CC::gcc-7"
+          echo "::set-env name=CXX::g++-7"
           echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
           env
 
