@@ -84,3 +84,27 @@ class RobotLinks(ABC):
             - linear acceleration: a 3D array in the [ax, ay, az] form.
             - angular acceleration: a 3D array in the [wdotx, wdoty, wdotz] form.
         """
+
+    def apply_external_force(self,
+                             link_name: str,
+                             force: np.ndarray,
+                             torque: np.ndarray) -> bool:
+        """
+        Apply external force and torque to the link.
+
+        The force and the torque are applied at the link origin.
+        The force is expressed in the world frame.
+        The torque is expressed with the orientation of the world frame.
+
+        The external force and torque are only applied for the next simulation step,
+        and then they are automatically reset to zero. To apply a force for more then one
+        step, call `apply_external_force` before each step.
+
+        Args:
+            link_name: The name of the link.
+            force: A 3D array containing the force vector.
+            torque: A 3D array containing the torque vector.
+
+        Returns:
+            True if successful, False otherwise.
+        """
