@@ -34,7 +34,7 @@ class RobotLinks(ABC):
         both expressed in the the world frame.
 
         Args:
-            link_name: The name of the link
+            link_name: The name of the link.
 
         Returns:
             A Tuple containing the position and orientation of the link:
@@ -48,11 +48,14 @@ class RobotLinks(ABC):
         """
         Return the velocity of the specified link.
 
-        The velocity is composed of linear and angular velocities of the link frame,
-        both expressed in the world frame.
+        The velocity is composed of linear velocity (first three elements) and angular
+        velocity (last three elements) of the link frame.
+        The linear velocity is the time derivative of the position of the link frame
+        origin expressed in the world frame.
+        The angular velocity is expressed with the orientation of the world frame.
 
         Args:
-            link_name: The name of the link
+            link_name: The name of the link.
 
         Returns:
             A Tuple containing the linear and angular velocity of the link:
@@ -66,11 +69,14 @@ class RobotLinks(ABC):
         """
         Return the acceleration of the specified link.
 
-        The acceleration is composed of linear and angular accelerations of the link
-        frame, both expressed in the world frame.
+        The acceleration is composed of linear acceleration (first three elements) and
+        angular acceleration (last three elements) of the link frame.
+        The linear acceleration is the second time derivative of the position of the link
+        frame origin expressed in the world frame.
+        The angular acceleration is expressed with the orientation of the world frame.
 
         Args:
-            link_name: The name of the link
+            link_name: The name of the link.
 
         Returns:
             A Tuple containing the linear and angular acceleration of the link:
