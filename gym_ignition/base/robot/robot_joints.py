@@ -9,9 +9,10 @@ from typing import List, Tuple, Union
 
 
 class JointType(Enum):
+    INVALID = auto()
     FIXED = auto()
     REVOLUTE = auto()
-
+    PRISMATIC = auto()
 
 class JointControlMode(Enum):
     POSITION = auto()
