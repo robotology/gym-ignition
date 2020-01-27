@@ -406,3 +406,15 @@ class GazeboRobot(robot_abc.RobotABC,
     def link_acceleration(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
         link_acc_gympp = self.gympp_robot.linkAcceleration(link_name)
         return np.array(link_acc_gympp.linear), np.array(link_acc_gympp.angular)
+
+    def apply_external_force(self,
+                             link_name: str,
+                             force: np.ndarray,
+                             torque: np.ndarray) -> bool:
+        assert link_name in self.link_names(), "The link is not part of the model"
+
+        ok_wrench = self.gympp_robot.addExternalWrench(
+            link_name, list(force), list(torque))
+        assert ok_wrench, f"Failed to add external wrench to link '{link_name}'"
+
+        return True
