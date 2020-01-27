@@ -6,13 +6,14 @@ import string
 import random
 import numpy as np
 from typing import List, Union, Tuple
-from gym_ignition.utils import logger, resource_finder
-from gym_ignition.base.robot import robot_abc, robot_joints
-from gym_ignition.base.robot import robot_baseframe, robot_initialstate, robot_contacts
 from gym_ignition import gympp_bindings as bindings
+from gym_ignition.utils import logger, resource_finder
+from gym_ignition.base.robot import robot_baseframe, robot_initialstate
+from gym_ignition.base.robot import robot_abc, robot_joints, robot_links, robot_contacts
 
 
 class GazeboRobot(robot_abc.RobotABC,
+                  robot_links.RobotLinks,
                   robot_joints.RobotJoints,
                   robot_contacts.RobotContacts,
                   robot_baseframe.RobotBaseFrame,
@@ -272,8 +273,8 @@ class GazeboRobot(robot_abc.RobotABC,
         return position, orientation
 
     def base_velocity(self) -> Tuple[np.ndarray, np.ndarray]:
-        logger.warn("Interface not implemented!")
-        return np.zeros(3), np.zeros(3)
+        base_velocity_gympp = self.gympp_robot.baseVelocity()
+        return np.array(base_velocity_gympp.linear), np.array(base_velocity_gympp.angular)
 
     def reset_base_pose(self,
                         position: np.ndarray,
@@ -293,9 +294,23 @@ class GazeboRobot(robot_abc.RobotABC,
 
         return True
 
-    def reset_base_velocity(self, linear_velocity: np.ndarray,
+    def reset_base_velocity(self,
+                            linear_velocity: np.ndarray,
                             angular_velocity: np.ndarray) -> bool:
-        raise NotImplementedError
+        assert linear_velocity.size == 3, \
+            "Linear velocity should be a list with 3 elements"
+        assert angular_velocity.size == 3, \
+            "Angular velocity should be a list with 3 elements"
+
+        if not self._is_floating_base:
+            logger.error("Changing the velocity of a fixed-base robot is not supported")
+            return False
+
+        ok_velocity = self.gympp_robot.resetBaseVelocity(linear_velocity.tolist(),
+                                                         angular_velocity.tolist())
+        assert ok_velocity, "Failed to reset the base velocity"
+
+        return True
 
     def base_wrench(self) -> np.ndarray:
         raise NotImplementedError
@@ -372,3 +387,22 @@ class GazeboRobot(robot_abc.RobotABC,
 
     def total_contact_wrench_on_link(self, contact_link_name: str) -> np.ndarray:
         raise NotImplementedError
+
+    # ==========
+    # RobotLinks
+    # ==========
+
+    def link_names(self) -> List[str]:
+        return self.gympp_robot.linkNames()
+
+    def link_pose(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        link_pose_gympp = self.gympp_robot.linkPose(link_name)
+        return np.array(link_pose_gympp.position), np.array(link_pose_gympp.orientation)
+
+    def link_velocity(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        link_velocity_gympp = self.gympp_robot.linkVelocity(link_name)
+        return np.array(link_velocity_gympp.linear), np.array(link_velocity_gympp.angular)
+
+    def link_acceleration(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        link_acc_gympp = self.gympp_robot.linkAcceleration(link_name)
+        return np.array(link_acc_gympp.linear), np.array(link_acc_gympp.angular)

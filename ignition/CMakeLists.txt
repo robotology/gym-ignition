@@ -9,7 +9,8 @@
 add_library(ExtraComponents INTERFACE)
 target_sources(ExtraComponents INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/components/JointPositionReset.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/components/JointVelocityReset.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/components/JointVelocityReset.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/components/WorldVelocityCmd.h)
 
 target_include_directories(ExtraComponents INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>

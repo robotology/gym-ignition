@@ -21,9 +21,10 @@ namespace gympp {
 
     struct PID;
     struct Limit;
-    struct BasePose;
+    struct Pose;
+    struct Velocity6D;
     struct ContactData;
-    struct BaseVelocity;
+    struct Acceleration6D;
     enum class JointControlMode
     {
         Position,
@@ -47,13 +48,19 @@ struct gympp::PID
     double d;
 };
 
-struct gympp::BasePose
+struct gympp::Pose
 {
     std::array<double, 3> position;
     std::array<double, 4> orientation;
 };
 
-struct gympp::BaseVelocity
+struct gympp::Velocity6D
+{
+    std::array<double, 3> linear;
+    std::array<double, 3> angular;
+};
+
+struct gympp::Acceleration6D
 {
     std::array<double, 3> linear;
     std::array<double, 3> angular;
@@ -83,7 +90,7 @@ public:
     using LinkName = std::string;
     using RobotName = std::string;
     using JointName = std::string;
-    using LinkNames = std::vector<JointName>;
+    using LinkNames = std::vector<LinkName>;
     using JointNames = std::vector<JointName>;
 
     using JointPositions = VectorContainer;
@@ -122,6 +129,13 @@ public:
     virtual LinkNames linksInContact() const = 0;
     virtual std::vector<ContactData> contactData(const LinkName& linkName) const = 0;
 
+    virtual LinkNames linkNames() const = 0;
+    virtual Pose linkPose(const LinkName& linkName) const = 0;
+    virtual Velocity6D linkVelocity(const LinkName& linkName) const = 0;
+    virtual Acceleration6D linkAcceleration(const LinkName& linkName) const = 0;
+    virtual Velocity6D linkBodyFixedVelocity(const LinkName& linkName) const = 0;
+    virtual Acceleration6D linkBodyFixedAcceleration(const LinkName& linkName) const = 0;
+
     // ===========
     // SET METHODS
     // ===========
@@ -155,8 +169,8 @@ public:
     virtual LinkName baseFrame() = 0;
     virtual bool setBaseFrame(const LinkName& baseLink) = 0;
 
-    virtual BasePose basePose() = 0;
-    virtual BaseVelocity baseVelocity() = 0;
+    virtual Pose basePose() = 0;
+    virtual Velocity6D baseVelocity() = 0;
     virtual bool setAsFloatingBase(bool isFloating) = 0;
     virtual bool resetBasePose(const std::array<double, 3>& position,
                                const std::array<double, 4>& orientation) = 0;

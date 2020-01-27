@@ -87,7 +87,7 @@ class RobotBaseFrame(ABC):
             A Tuple containing the linear and angular velocity of the base:
 
             - linear velocity: a 3D array in the [vx, vy, vz] form.
-            - angular velocity: a 3D array in the [wx, wy, wx] form.
+            - angular velocity: a 3D array in the [wx, wy, wz] form.
         """
 
     @abstractmethod
