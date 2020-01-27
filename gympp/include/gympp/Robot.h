@@ -33,6 +33,13 @@ namespace gympp {
         Velocity,
         Torque,
     };
+    enum class JointType
+    {
+        Invalid,
+        Fixed,
+        Revolute,
+        Prismatic,
+    };
 } // namespace gympp
 
 struct gympp::PID
@@ -113,6 +120,7 @@ public:
     virtual RobotName name() const = 0;
     virtual JointNames jointNames() const = 0;
 
+    virtual JointType jointType(const JointName& jointName) const = 0;
     virtual double jointPosition(const JointName& jointName) const = 0;
     virtual double jointVelocity(const JointName& jointName) const = 0;
     virtual JointControlMode jointControlMode(const JointName& jointName) const = 0;
