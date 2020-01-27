@@ -96,6 +96,9 @@ public:
                     const double jointPosition = 0,
                     const double jointVelocity = 0) override;
 
+    bool addExternalWrench(const LinkName& linkName,
+                           const std::array<double, 3>& force,
+                           const std::array<double, 3>& torque) override;
     bool update(const std::chrono::duration<double> time) override;
 
     // ==============
