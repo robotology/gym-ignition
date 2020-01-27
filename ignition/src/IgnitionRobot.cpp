@@ -21,6 +21,7 @@
 #include <ignition/gazebo/components/CanonicalLink.hh>
 #include <ignition/gazebo/components/Collision.hh>
 #include <ignition/gazebo/components/ContactSensorData.hh>
+#include <ignition/gazebo/components/ExternalWorldWrenchCmd.hh>
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/JointAxis.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
@@ -1003,6 +1004,37 @@ bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName,
 
     // Clean the joint controlling storage
     pImpl->buffers.joints.references.erase(jointName);
+    return true;
+}
+
+bool IgnitionRobot::addExternalWrench(const gympp::Robot::LinkName& linkName,
+                                      const std::array<double, 3>& force,
+                                      const std::array<double, 3>& torque)
+{
+    LinkEntity linkEntity = pImpl->getLinkEntity(linkName);
+    if (linkEntity == ignition::gazebo::kNullEntity) {
+        return false;
+    }
+
+    // Get the ExternalWorldWrenchCmd component
+    auto& externalWrenchCmd =
+        pImpl->getOrCreateComponent<ignition::gazebo::components::ExternalWorldWrenchCmd>(
+            linkEntity);
+
+    auto forceMsg = std::make_unique<ignition::msgs::Vector3d>();
+    auto torqueMsg = std::make_unique<ignition::msgs::Vector3d>();
+    ignition::msgs::Wrench& externalWrench = externalWrenchCmd.Data();
+
+    forceMsg->set_x(force[0]);
+    forceMsg->set_y(force[1]);
+    forceMsg->set_z(force[2]);
+
+    torqueMsg->set_x(torque[0]);
+    torqueMsg->set_y(torque[1]);
+    torqueMsg->set_z(torque[2]);
+
+    externalWrench.set_allocated_force(forceMsg.release());
+    externalWrench.set_allocated_torque(torqueMsg.release());
     return true;
 }
 

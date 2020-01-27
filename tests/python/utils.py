@@ -9,6 +9,7 @@ import pybullet as p
 import gympp_bindings as bindings
 from gym_ignition.robots import sim
 from pybullet_utils import bullet_client
+from gym_ignition.robots import gazebo_robot
 from gym_ignition.utils import resource_finder
 
 
@@ -107,3 +108,51 @@ def get_cartpole(simulator: Simulator, **kwargs):
             **kwargs)
     else:
         raise Exception(f"Simulator {simulator.simulator_name} not recognized")
+
+
+class CubeGazeboRobot(gazebo_robot.GazeboRobot):
+    def __init__(self, model_file: str, gazebo, initial_position: np.ndarray):
+        # Initialize base class
+        super().__init__(model_file=model_file,
+                         gazebo=gazebo)
+
+        ok_floating = self.set_as_floating_base(True)
+        assert ok_floating, "Failed to set the robot as floating base"
+
+        # Initial base position and orientation
+        base_position = np.array(initial_position)
+        base_orientation = np.array([1., 0., 0., 0.])
+        ok_base_pose = self.set_initial_base_pose(base_position, base_orientation)
+        assert ok_base_pose, "Failed to set base pose"
+
+        # Insert the model in the simulation
+        _ = self.gympp_robot
+
+
+def get_cube_urdf() -> str:
+    mass = 5.0
+    edge = 0.2
+    i = 1 / 12 * mass * (edge ** 2 + edge ** 2)
+    cube_urdf = f"""
+    <robot name="cube_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+        <link name="cube">
+            <inertial>
+              <origin rpy="0 0 0" xyz="0 0 0"/>
+              <mass value="{mass}"/>
+              <inertia ixx="{i}" ixy="0" ixz="0" iyy="{i}" iyz="0" izz="{i}"/>
+            </inertial>
+            <visual>
+              <geometry>
+                <box size="{edge} {edge} {edge}"/>
+              </geometry>
+              <origin rpy="0 0 0" xyz="0 0 0"/>
+            </visual>
+            <collision>
+              <geometry>
+                <box size="{edge} {edge} {edge}"/>
+              </geometry>
+              <origin rpy="0 0 0" xyz="0 0 0"/>
+            </collision>
+        </link>
+    </robot>"""
+    return cube_urdf
