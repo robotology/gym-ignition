@@ -267,6 +267,8 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             return robot.robot_joints.JointType.FIXED
         elif joint_type_pybullet == pybullet.JOINT_REVOLUTE:
             return robot.robot_joints.JointType.REVOLUTE
+        elif joint_type_pybullet == pybullet.JOINT_PRISMATIC:
+            return robot.robot_joints.JointType.PRISMATIC
         else:
             raise Exception(f"Joint type '{joint_type_pybullet}' not yet supported")
 

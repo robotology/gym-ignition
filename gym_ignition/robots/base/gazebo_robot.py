@@ -171,7 +171,20 @@ class GazeboRobot(robot_abc.RobotABC,
         return list(self.gympp_robot.jointNames())
 
     def joint_type(self, joint_name: str) -> robot_joints.JointType:
-        raise NotImplementedError
+        joint_type = self.gympp_robot.jointType(joint_name)
+        assert joint_type != bindings.JointType_Invalid, \
+            f"Type of joint '{joint_name}' not valid"
+
+        if joint_type == bindings.JointType_Revolute:
+            return robot_joints.JointType.REVOLUTE
+        elif joint_type == bindings.JointType_Prismatic:
+            return robot_joints.JointType.PRISMATIC
+        elif joint_type == bindings.JointType_Fixed:
+            return robot_joints.JointType.FIXED
+        elif joint_type == bindings.JointType_Invalid:
+            return robot_joints.JointType.INVALID
+        else:
+            raise Exception(f"Failed to recognize type of joint '{joint_name}'")
 
     def joint_control_mode(self, joint_name: str) -> robot_joints.JointControlMode:
         return self._from_cpp_controlmode(self.gympp_robot.jointControlMode(joint_name))
