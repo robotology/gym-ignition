@@ -172,7 +172,7 @@ public:
     virtual bool addExternalWrench(const LinkName& linkName,
                                    const std::array<double, 3>& force,
                                    const std::array<double, 3>& torque) = 0;
-    virtual bool update(const std::chrono::duration<double> time) = 0;
+    virtual bool update(const std::chrono::duration<double>& simTime) = 0;
 
     // ==============
     // RobotBaseFrame

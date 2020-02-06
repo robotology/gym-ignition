@@ -1071,7 +1071,7 @@ bool IgnitionRobot::addExternalWrench(const gympp::Robot::LinkName& linkName,
     return true;
 }
 
-bool IgnitionRobot::update(const std::chrono::duration<double> time)
+bool IgnitionRobot::update(const std::chrono::duration<double>& simTime)
 {
     // Return if there are no references to actuate
     if (pImpl->buffers.joints.references.empty()) {
@@ -1085,7 +1085,7 @@ bool IgnitionRobot::update(const std::chrono::duration<double> time)
     }
 
     // Update the controller only if enough time is passed
-    std::chrono::duration<double> stepTime = time - pImpl->prevUpdateTime;
+    std::chrono::duration<double> stepTime = simTime - pImpl->prevUpdateTime;
 
     // Handle first iteration
     if (pImpl->prevUpdateTime == std::chrono::duration<double>(0.0)) {
@@ -1106,7 +1106,7 @@ bool IgnitionRobot::update(const std::chrono::duration<double> time)
 
     if (greaterThen(stepTime, pImpl->dt)) {
         // Store the current update time
-        pImpl->prevUpdateTime = time;
+        pImpl->prevUpdateTime = simTime;
 
         // Enable using the PID to compute the new force
         computeNewForce = true;
