@@ -1145,11 +1145,8 @@ bool IgnitionRobot::update(const std::chrono::duration<double>& simTime)
             pImpl->buffers.joints.appliedForces[jointName] = force;
         }
 
-        // Break if there is no force to actuate for this joint
-        if (pImpl->buffers.joints.appliedForces.find(jointName)
-            == pImpl->buffers.joints.appliedForces.end()) {
-            break;
-        }
+        assert(pImpl->buffers.joints.appliedForces.find(jointName)
+               != pImpl->buffers.joints.appliedForces.end());
 
         // Get the force
         auto force = pImpl->buffers.joints.appliedForces[jointName];
