@@ -133,6 +133,11 @@ public:
     {
         return {vector[0], vector[1], vector[2]};
     }
+
+    static inline ignition::math::PID toIgnitionMath(const gympp::PID& pid)
+    {
+        return {pid.p, pid.i, pid.d};
+    }
 };
 
 LinkEntity IgnitionRobot::Impl::getLinkEntity(const LinkName& linkName)
@@ -991,19 +996,8 @@ bool IgnitionRobot::setJointPID(const gympp::Robot::JointName& jointName, const 
         return false;
     }
 
-    if (!pImpl->pidExists(jointName)) {
-        gymppDebug << "Creating new PID for joint " << jointName << std::endl;
-        pImpl->buffers.joints.pid[jointName] = DefaultPID;
-    }
-    else {
-        pImpl->buffers.joints.pid[jointName].Reset();
-    }
-
-    // Update the gains. The other PID parameters do not change.
-    pImpl->buffers.joints.pid[jointName].SetPGain(pid.p);
-    pImpl->buffers.joints.pid[jointName].SetIGain(pid.i);
-    pImpl->buffers.joints.pid[jointName].SetDGain(pid.d);
-
+    // Create a new PID
+    pImpl->buffers.joints.pid[jointName] = Impl::toIgnitionMath(pid);
     return true;
 }
 
