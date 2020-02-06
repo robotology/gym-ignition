@@ -133,6 +133,11 @@ public:
     {
         return {vector[0], vector[1], vector[2]};
     }
+
+    static inline ignition::math::PID toIgnitionMath(const gympp::PID& pid)
+    {
+        return {pid.p, pid.i, pid.d};
+    }
 };
 
 LinkEntity IgnitionRobot::Impl::getLinkEntity(const LinkName& linkName)
@@ -980,6 +985,10 @@ bool IgnitionRobot::setJointControlMode(const gympp::Robot::JointName& jointName
     // Clean up possible old references
     pImpl->buffers.joints.references.erase(jointName);
 
+    // Clean the buffer that stores the force
+    pImpl->buffers.joints.appliedForces.erase(jointName);
+
+    // Update the control mode
     pImpl->buffers.joints.controlMode[jointName] = controlMode;
     return true;
 }
@@ -991,19 +1000,8 @@ bool IgnitionRobot::setJointPID(const gympp::Robot::JointName& jointName, const 
         return false;
     }
 
-    if (!pImpl->pidExists(jointName)) {
-        gymppDebug << "Creating new PID for joint " << jointName << std::endl;
-        pImpl->buffers.joints.pid[jointName] = DefaultPID;
-    }
-    else {
-        pImpl->buffers.joints.pid[jointName].Reset();
-    }
-
-    // Update the gains. The other PID parameters do not change.
-    pImpl->buffers.joints.pid[jointName].SetPGain(pid.p);
-    pImpl->buffers.joints.pid[jointName].SetIGain(pid.i);
-    pImpl->buffers.joints.pid[jointName].SetDGain(pid.d);
-
+    // Create a new PID
+    pImpl->buffers.joints.pid[jointName] = Impl::toIgnitionMath(pid);
     return true;
 }
 
@@ -1071,7 +1069,7 @@ bool IgnitionRobot::addExternalWrench(const gympp::Robot::LinkName& linkName,
     return true;
 }
 
-bool IgnitionRobot::update(const std::chrono::duration<double> time)
+bool IgnitionRobot::update(const std::chrono::duration<double>& simTime)
 {
     // Return if there are no references to actuate
     if (pImpl->buffers.joints.references.empty()) {
@@ -1085,7 +1083,7 @@ bool IgnitionRobot::update(const std::chrono::duration<double> time)
     }
 
     // Update the controller only if enough time is passed
-    std::chrono::duration<double> stepTime = time - pImpl->prevUpdateTime;
+    std::chrono::duration<double> stepTime = simTime - pImpl->prevUpdateTime;
 
     // Handle first iteration
     if (pImpl->prevUpdateTime == std::chrono::duration<double>(0.0)) {
@@ -1095,27 +1093,34 @@ bool IgnitionRobot::update(const std::chrono::duration<double> time)
     // If enough time is passed, store the time of this actuation step. In this case the state
     // of the robot is read and new force references are computed and actuated. Otherwise, the
     // same force of the last step is actuated.
-    bool updateCurrentState;
+    bool computeNewForce;
 
-    if (stepTime >= pImpl->dt) {
+    // Due to numerical floating point approximations, sometimes a comparison of chrono durations
+    // has an error in the 1e-18 order
+    auto greaterThen = [](const std::chrono::duration<double>& a,
+                          const std::chrono::duration<double>& b) -> bool {
+        return a.count() >= b.count() - std::numeric_limits<double>::epsilon();
+    };
+
+    if (greaterThen(stepTime, pImpl->dt)) {
         // Store the current update time
-        pImpl->prevUpdateTime = time;
+        pImpl->prevUpdateTime = simTime;
 
         // Enable using the PID to compute the new force
-        updateCurrentState = true;
+        computeNewForce = true;
     }
     else {
         // Disable the PID and send the same force reference as last update
-        updateCurrentState = false;
+        computeNewForce = false;
     }
 
-    // Actuate the references
-    // The references can be either position or velocity references
-    for (auto& [jointName, reference] : pImpl->buffers.joints.references) {
+    // Actuate the references.
+    // The references can be either position or velocity references.
+    for (const auto& [jointName, reference] : pImpl->buffers.joints.references) {
         assert(pImpl->pidExists(jointName));
 
         // Use the PID the compute the new force
-        if (updateCurrentState) {
+        if (computeNewForce) {
             double force = 0;
 
             // Get the PID
@@ -1140,11 +1145,8 @@ bool IgnitionRobot::update(const std::chrono::duration<double> time)
             pImpl->buffers.joints.appliedForces[jointName] = force;
         }
 
-        // Break if there is no force to actuate for this joint
-        if (pImpl->buffers.joints.appliedForces.find(jointName)
-            == pImpl->buffers.joints.appliedForces.end()) {
-            break;
-        }
+        assert(pImpl->buffers.joints.appliedForces.find(jointName)
+               != pImpl->buffers.joints.appliedForces.end());
 
         // Get the force
         auto force = pImpl->buffers.joints.appliedForces[jointName];

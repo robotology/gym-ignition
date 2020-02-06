@@ -100,7 +100,7 @@ public:
     bool addExternalWrench(const LinkName& linkName,
                            const std::array<double, 3>& force,
                            const std::array<double, 3>& torque) override;
-    bool update(const std::chrono::duration<double> time) override;
+    bool update(const std::chrono::duration<double>& simTime) override;
 
     // ==============
     // RobotBaseFrame
