@@ -985,6 +985,10 @@ bool IgnitionRobot::setJointControlMode(const gympp::Robot::JointName& jointName
     // Clean up possible old references
     pImpl->buffers.joints.references.erase(jointName);
 
+    // Clean the buffer that stores the force
+    pImpl->buffers.joints.appliedForces.erase(jointName);
+
+    // Update the control mode
     pImpl->buffers.joints.controlMode[jointName] = controlMode;
     return true;
 }
