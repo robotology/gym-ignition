@@ -1095,27 +1095,34 @@ bool IgnitionRobot::update(const std::chrono::duration<double> time)
     // If enough time is passed, store the time of this actuation step. In this case the state
     // of the robot is read and new force references are computed and actuated. Otherwise, the
     // same force of the last step is actuated.
-    bool updateCurrentState;
+    bool computeNewForce;
 
-    if (stepTime >= pImpl->dt) {
+    // Due to numerical floating point approximations, sometimes a comparison of chrono durations
+    // has an error in the 1e-18 order
+    auto greaterThen = [](const std::chrono::duration<double>& a,
+                          const std::chrono::duration<double>& b) -> bool {
+        return a.count() >= b.count() - std::numeric_limits<double>::epsilon();
+    };
+
+    if (greaterThen(stepTime, pImpl->dt)) {
         // Store the current update time
         pImpl->prevUpdateTime = time;
 
         // Enable using the PID to compute the new force
-        updateCurrentState = true;
+        computeNewForce = true;
     }
     else {
         // Disable the PID and send the same force reference as last update
-        updateCurrentState = false;
+        computeNewForce = false;
     }
 
-    // Actuate the references
-    // The references can be either position or velocity references
-    for (auto& [jointName, reference] : pImpl->buffers.joints.references) {
+    // Actuate the references.
+    // The references can be either position or velocity references.
+    for (const auto& [jointName, reference] : pImpl->buffers.joints.references) {
         assert(pImpl->pidExists(jointName));
 
         // Use the PID the compute the new force
-        if (updateCurrentState) {
+        if (computeNewForce) {
             double force = 0;
 
             // Get the PID
