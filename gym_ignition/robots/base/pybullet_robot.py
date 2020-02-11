@@ -114,8 +114,10 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     # PRIVATE METHODS AND PROPERTIES
     # ==============================
 
-    def delete_simulated_robot(self):
+    def delete_simulated_robot(self) -> None:
         if not self._pybullet or self._robot_id is None:
+            logger.warn("Failed to delete robot from the simulation. "
+                        "Simulator not running.")
             return
 
         # Remove the robot from the simulation
