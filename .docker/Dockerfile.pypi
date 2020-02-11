@@ -54,6 +54,7 @@ RUN apt-get update &&\
         -DIDYNTREE_USES_PYTHON_VERSION=3.6 \
         -DPYTHON_NUMPY_INCLUDE_DIR:PATH=/usr/lib/python3/dist-packages/numpy/core/include \
         -DBUILD_SHARED_LIBS:BOOL=OFF \
+        -DIDYNTREE_USES_IPOPT:BOOL=ON \
         &&\
     cmake --build . --target install &&\
     rm -r /tmp/idyntree
