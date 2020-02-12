@@ -50,6 +50,7 @@ public:
     JointNames jointNames() const override;
 
     JointType jointType(const JointName& jointName) const override;
+    double jointForce(const JointName& jointName) const override;
     double jointPosition(const JointName& jointName) const override;
     double jointVelocity(const JointName& jointName) const override;
     JointControlMode jointControlMode(const JointName& jointName) const override;

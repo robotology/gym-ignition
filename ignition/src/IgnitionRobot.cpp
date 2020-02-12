@@ -24,6 +24,7 @@
 #include <ignition/gazebo/components/ExternalWorldWrenchCmd.hh>
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/JointAxis.hh>
+#include <ignition/gazebo/components/JointForce.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
 #include <ignition/gazebo/components/JointType.hh>
@@ -381,11 +382,12 @@ bool IgnitionRobot::configureECM(const ignition::gazebo::Entity& entity,
         }
     }
 
-    // Create the joint position and velocity components.
-    // In this way this data is stored in these components after the physics step.
+    // Create the joint position, velocity and force components.
+    // In this way this data is stored in the components after the physics step.
     for (auto& [_, jointEntity] : pImpl->joints) {
         ecm->CreateComponent(jointEntity, ignition::gazebo::components::JointPosition());
         ecm->CreateComponent(jointEntity, ignition::gazebo::components::JointVelocity());
+        ecm->CreateComponent(jointEntity, ignition::gazebo::components::JointForce({0.0}));
     }
 
     // Get all the model links
@@ -539,6 +541,28 @@ gympp::JointType IgnitionRobot::jointType(const gympp::Robot::JointName& jointNa
     }
 
     return returnedType;
+}
+
+double IgnitionRobot::jointForce(const gympp::Robot::JointName& jointName) const
+{
+    JointEntity jointEntity = pImpl->getJointEntity(jointName);
+    if (jointEntity == ignition::gazebo::kNullEntity) {
+        assert(false);
+        return 0.0;
+    }
+
+    // Get the joint force component
+    auto jointForceComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::JointForce>(jointEntity);
+
+    // If the component does not exists, it means that no force command has been set
+    // in the previous step.
+    if (!(jointForceComponent && !jointForceComponent->Data().empty())) {
+        return 0.0;
+    }
+
+    // Return the last applied force reference (first DoF of the joint)
+    return jointForceComponent->Data().front();
 }
 
 double IgnitionRobot::jointPosition(const gympp::Robot::JointName& jointName) const
