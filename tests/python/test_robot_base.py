@@ -7,9 +7,9 @@ import pytest
 import numpy as np
 import pybullet_data
 import pybullet as p
-import gympp_bindings as bindings
 from pybullet_utils import bullet_client
 from gym_ignition.utils import resource_finder
+from gym_ignition import gympp_bindings as bindings
 from gym_ignition.robots.sim import gazebo, pybullet
 
 

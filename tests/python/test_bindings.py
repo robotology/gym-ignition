@@ -109,7 +109,7 @@ def test_box_space():
             "Wrong data type of the sample extracted from the box space"
         assert box.contains(sample), \
             "Sampled data is not contained in the box space object that created it"
-    
+
 
 def test_space_box_metadata(create_space_box_md):
     md = create_space_box_md
