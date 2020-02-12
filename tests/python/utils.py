@@ -6,11 +6,11 @@ import abc
 import numpy as np
 import pybullet_data
 import pybullet as p
-import gympp_bindings as bindings
 from gym_ignition.robots import sim
 from pybullet_utils import bullet_client
 from gym_ignition.robots import gazebo_robot
 from gym_ignition.utils import resource_finder
+from gym_ignition import gympp_bindings as bindings
 
 
 class Simulator(abc.ABC):
