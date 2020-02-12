@@ -58,7 +58,6 @@ register(
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
-            'hard_reset': True,
             })
 
 register(
@@ -72,7 +71,6 @@ register(
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
-            'hard_reset': True,
             })
 
 register(
@@ -86,7 +84,6 @@ register(
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
-            'hard_reset': True,
             })
 
 # =====================
@@ -104,7 +101,6 @@ register(
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
-            'hard_reset': True,
             })
 
 register(
@@ -120,5 +116,4 @@ register(
             'rtf': max_float,
             'agent_rate': 1000,
             'physics_rate': 1000,
-            'hard_reset': True,
             })

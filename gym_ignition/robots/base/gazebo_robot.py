@@ -50,6 +50,8 @@ class GazeboRobot(robot_abc.RobotABC,
 
     def delete_simulated_robot(self) -> None:
         if not self._gazebo or not self._gympp_robot:
+            logger.warn("Failed to delete robot from the simulation. "
+                        "Simulator not running.")
             return
 
         # Remove the robot from the simulation
