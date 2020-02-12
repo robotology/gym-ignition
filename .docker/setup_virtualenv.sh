@@ -9,9 +9,6 @@ if [ ! -x $(type -P ${PYTHON_EXE}) ] ; then
     exit 1
 fi
 
-# Install virtualenv
-pip3 install virtualenv
-
 # Create an empty virtualenv and enable it by default
 virtualenv -p $PYTHON_EXE ${VIRTUAL_ENV}
 
