@@ -340,6 +340,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         joint_idx = self._joints_name2index[joint_name]
         return self._pybullet.getJointState(self._robot_id, joint_idx)[1]
 
+    def joint_force(self, joint_name: str) -> float:
+        raise NotImplementedError
+
     def joint_positions(self) -> List[float]:
         joint_states = self._pybullet.getJointStates(self._robot_id, range(self.dofs()))
         joint_positions = [state[0] for state in joint_states]

@@ -203,6 +203,9 @@ class GazeboRobot(robot_abc.RobotABC,
     def joint_velocity(self, joint_name: str) -> float:
         return self.gympp_robot.jointVelocity(joint_name)
 
+    def joint_force(self, joint_name: str) -> float:
+        return self.gympp_robot.jointForce(joint_name)
+
     def joint_positions(self) -> List[float]:
         return self.gympp_robot.jointPositions()
 

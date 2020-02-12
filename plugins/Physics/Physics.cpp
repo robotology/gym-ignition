@@ -44,6 +44,7 @@
 #include <ignition/gazebo/components/Inertial.hh>
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/JointAxis.hh>
+#include <ignition/gazebo/components/JointForce.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
 #include <ignition/gazebo/components/JointType.hh>
@@ -1012,6 +1013,31 @@ void Physics::Impl::UpdateSim(EntityComponentManager& _ecm) const
             }
             return true;
         });
+
+    // joint force
+    _ecm.Each<components::Joint,
+              components::Name,
+              components::JointForce,
+              components::JointForceCmd>([&](const Entity& _entity,
+                                             components::Joint* /*_joint*/,
+                                             components::Name* _name,
+                                             components::JointForce* _force,
+                                             components::JointForceCmd* _forceCmd) -> bool {
+        // Get the data from the components
+        auto& jointForceData = _force->Data();
+        auto jointForceCmdData = _forceCmd->Data();
+
+        if (jointForceData.size() != jointForceCmdData.size()) {
+            ignwarn << "There is a mismatch in the degrees of freedom in"
+                    << " Joint [" << _name->Data() << "(Entity=" << _entity
+                    << ")] between its JointForce and JointForceCmd components." << std::endl;
+        }
+
+        // Copy the force cmd
+        jointForceData = jointForceCmdData;
+
+        return true;
+    });
 
     // pose/velocity/acceleration of non-link entities such as sensors /
     // collisions. These get updated only if another system has created a

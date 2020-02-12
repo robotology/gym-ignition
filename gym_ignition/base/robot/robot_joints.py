@@ -117,6 +117,28 @@ class RobotJoints(ABC):
         """
 
     @abstractmethod
+    def joint_force(self, joint_name: str) -> float:
+        """
+        Return the joint force applied to the specified joint in the last physics step.
+
+        The returned value is the effort or torque of the joint, since currently only
+        1 DoF joints are supported.
+
+        Note that the returned value depends on the rate of the enabled controllers.
+        For example, the JointControlMode.POSITION allows to specify a controller rate
+        different than the physics rate. In this case, this method will return only the
+        last applied force reference. If the PIDs are running faster than the code
+        that calls this `joint_force` method, the PIDs are generating forces that
+        are not returned.
+
+        Args:
+            joint_name: The name of the joint.
+
+        Returns:
+            The generalized joint force reference applied in the last physics step.
+        """
+
+    @abstractmethod
     def joint_positions(self) -> np.ndarray:
         """
         Return the generalized positions of the joints.
