@@ -29,31 +29,31 @@ def test_robot_fixed_base(simulator_name: str):
     assert np.allclose(robot.base_pose()[1], np.array([1.0, 0, 0, 0]), atol=1e-3)
 
 
-@pytest.mark.parametrize("simulator_name", ["gazebo", "pybullet"])
-def test_robot_floating_base(simulator_name: str):
-
-    if simulator_name == "gazebo":
-        simulator = utils.Gazebo(physics_rate=1000)
-    elif simulator_name == "pybullet":
-        simulator = utils.PyBullet(physics_rate=1000)
-    else:
-        raise ValueError(simulator_name)
-
-    # Get the pendulum robot and specify its base position
-    base_position = np.array([-3, 3, 2])  # TODO
-    robot = utils.get_pendulum(simulator=simulator, base_position=base_position)
-
-    assert np.allclose(robot.base_pose()[0], base_position, atol=1e-3)
-    assert np.allclose(robot.base_pose()[1], np.array([1.0, 0, 0, 0]), atol=1e-3)
-
-    old_pos_z = base_position[2]
-
-    # Robot will fall due to gravity
-    for _ in range(100):
-        simulator.step()
-        current_pos_z = robot.base_pose()[0][2]
-        assert current_pos_z < old_pos_z
-        old_pos_z = current_pos_z
+# @pytest.mark.parametrize("simulator_name", ["gazebo", "pybullet"])
+# def test_robot_floating_base(simulator_name: str):
+#
+#     if simulator_name == "gazebo":
+#         simulator = utils.Gazebo(physics_rate=1000)
+#     elif simulator_name == "pybullet":
+#         simulator = utils.PyBullet(physics_rate=1000)
+#     else:
+#         raise ValueError(simulator_name)
+#
+#     # Get the pendulum robot and specify its base position
+#     base_position = np.array([-3, 3, 2])
+#     robot = utils.get_pendulum(simulator=simulator, base_position=base_position)
+#
+#     assert np.allclose(robot.base_pose()[0], base_position, atol=1e-3)
+#     assert np.allclose(robot.base_pose()[1], np.array([1.0, 0, 0, 0]), atol=1e-3)
+#
+#     old_pos_z = base_position[2]
+#
+#     # Robot will fall due to gravity
+#     for _ in range(100):
+#         simulator.step()
+#         current_pos_z = robot.base_pose()[0][2]
+#         assert current_pos_z < old_pos_z
+#         old_pos_z = current_pos_z
 
 
 @pytest.mark.parametrize("simulator_name", ["pybullet"])
