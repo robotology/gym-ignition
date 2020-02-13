@@ -5,9 +5,7 @@
 import os
 import time
 import numpy as np
-import pybullet_data
 from gym_ignition import base, robots
-from pybullet_utils import bullet_client
 from gym_ignition.base.robot import robot_abc
 from gym_ignition.utils import logger, resource_finder
 from gym_ignition.utils.typing import State, Action, Observation, SeedList
@@ -94,7 +92,7 @@ class PyBulletRuntime(base.runtime.Runtime):
     # =======================
 
     @property
-    def pybullet(self) -> bullet_client.BulletClient:
+    def pybullet(self):
         if self._pybullet is not None:
             return self._pybullet
 
@@ -102,15 +100,18 @@ class PyBulletRuntime(base.runtime.Runtime):
 
         if self._render_enabled:
             import pybullet
+            from pybullet_utils import bullet_client
             self._pybullet = bullet_client.BulletClient(pybullet.GUI)
         else:
             # Connects to an existing instance or, if it fails, creates an headless
             # simulation (DIRECT)
+            from pybullet_utils import bullet_client
             self._pybullet = bullet_client.BulletClient()
 
         assert self._pybullet, "Failed to create the bullet client"
 
         # Find the ground plane
+        import pybullet_data
         resource_finder.add_path(pybullet_data.getDataPath())
         world_abs_path = resource_finder.find_resource(self._world)
 
