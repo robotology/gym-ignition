@@ -44,7 +44,7 @@ class GazeboRuntime(runtime.Runtime):
         self._physics_rate = physics_rate
         self._gazebo_wrapper = None
 
-        # Build the environment
+        # Create the Task object
         task = task_cls(agent_rate=agent_rate, **kwargs)
 
         assert isinstance(task, base.task.Task), \
