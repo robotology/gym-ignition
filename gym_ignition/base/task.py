@@ -35,9 +35,12 @@ class Task(gym.Env, abc.ABC):
     specialized for the different runtimes.
     """
 
-    def __init__(self) -> None:
-        # Private attributes
+    def __init__(self, agent_rate: float) -> None:
+        # Robot object associated with the task
         self._robot = None
+
+        # Rate of the agent, that matches the rate at which the Gym methods are called
+        self.agent_rate = agent_rate
 
         # Random Number Generator
         self.np_random = seeding.np_random()
