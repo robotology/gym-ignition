@@ -72,7 +72,7 @@ class PyBulletRuntime(base.runtime.Runtime):
         logger.debug(f"Physics rate = {agent_rate * self._num_of_physics_steps} Hz")
 
         logger.debug("Initializing the Task")
-        task = task_cls(**kwargs)
+        task = task_cls(agent_rate=agent_rate, **kwargs)
 
         assert isinstance(task, base.task.Task), \
             "'task_cls' object must inherit from Task"
