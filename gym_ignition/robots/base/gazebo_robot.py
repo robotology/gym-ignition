@@ -38,6 +38,7 @@ class GazeboRobot(robot_abc.RobotABC,
         self._robot_name = None
         self._gympp_robot = None
         self._base_frame = None
+        self._joint_names = None
         self._controller_rate = controller_rate
 
         # Create a random prefix that will be used for the robot name
@@ -170,7 +171,10 @@ class GazeboRobot(robot_abc.RobotABC,
         return len(self.joint_names())
 
     def joint_names(self) -> List[str]:
-        return list(self.gympp_robot.jointNames())
+        if self._joint_names is None:
+            self._joint_names = list(self.gympp_robot.jointNames())
+
+        return self._joint_names
 
     def joint_type(self, joint_name: str) -> robot_joints.JointType:
         joint_type = self.gympp_robot.jointType(joint_name)
