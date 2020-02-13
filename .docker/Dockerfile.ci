@@ -34,6 +34,7 @@ RUN apt-get update &&\
         python3.7 \
         libpython3.6-dev \
         libpython3.7-dev \
+        virtualenv \
         swig \
         &&\
     rm -rf /var/lib/apt/lists/*
@@ -49,7 +50,7 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_releas
 
 # Install idyntree
 RUN apt-get update &&\
-    apt-get install -y --no-install-recommends python3-numpy libxml2-dev coinor-libipopt-dev &&\
+    apt-get install -y --no-install-recommends python3-numpy libxml2-dev coinor-libipopt-dev libeigen3-dev &&\
     rm -rf /var/lib/apt/lists/* &&\
     git clone --depth 1 -b feature/numpy-and-ik https://github.com/diegoferigo/idyntree /tmp/idyntree &&\
     mkdir -p /tmp/idyntree/build && cd /tmp/idyntree/build &&\
