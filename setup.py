@@ -152,7 +152,6 @@ setup(
         'numpy',
         'pybullet',
         'gym_ignition_models',
-        # 'icub-model-pybullet @ {}'.format(icub_model_zip), 'pytest'
     ],
     packages=find_packages(),
     ext_modules=[CMakeExtension(name='InstallAllTargets', cmake_configuration='PyPI')],
