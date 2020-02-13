@@ -187,18 +187,17 @@ Execute all the setup commands in the same terminal.
 
 #### Common Steps
 
-1. Install the supported version of **Ignition Gazebo**:
+1. Install the LTS version of **Ignition Gazebo** (Citadel):
 
    ```sh
    sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" > /etc/apt/sources.list.d/gazebo-stable.list'
    wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
    sudo apt update
-   sudo apt install ignition-blueprint
+   sudo apt install ignition-citadel
    ```
 
-   We currently require the development version, that will be ABI-compatible with the **Blueprint** release.
-   Refer to the [official documentation](https://ignitionrobotics.org/docs/blueprint/install) for more detailed information.
-
+   Refer to the [official documentation](https://ignitionrobotics.org/docs/citadel/install) for more detailed information.
+   
 1. Create a Python [virtual environment](https://docs.python.org/3.6/tutorial/venv.html) as follows:
    ```sh
    sudo apt install virtualenv
@@ -225,6 +224,8 @@ You can now download and run the example [`launch_cartpole.py`](examples/python/
    ```
 
 1. Install [SWIG](https://github.com/swig/swig) with `apt install swig`
+
+1. Optionally install [iDynTree](https://github.com/robotology/idyntree) with enabled Python bindings
 
 1. Clone this repository
 
