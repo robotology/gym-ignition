@@ -40,7 +40,7 @@ class Task(gym.Env, abc.ABC):
         self._robot = None
 
         # Random Number Generator
-        self.np_random = seeding.np_random()
+        self.np_random, self._seed = seeding.np_random()
 
         # Optional public attribute to check robot features
         self.robot_features = None
@@ -169,12 +169,12 @@ class Task(gym.Env, abc.ABC):
         raise NotImplementedError
 
     def seed(self, seed: int = None) -> SeedList:
-        if not seed:
-            seed = np.random.randint(2**32 - 1)
+        # Create the seed if not passed
+        self._seed = np.random.randint(2**32 - 1) if seed is None else seed
 
         # Get an instance of the random number generator from gym utils.
         # This is necessary to have an independent rng for each environment.
-        self.np_random, new_seed = seeding.np_random(seed)
+        self.np_random, new_seed = seeding.np_random(self._seed)
 
         # Seed the spaces
         self.action_space.seed(new_seed)
