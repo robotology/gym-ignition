@@ -3,20 +3,26 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import numpy as np
+import gym_ignition_models
 from gym_ignition.robots import gazebo_robot
 
 
 class CartPoleGazeboRobot(gazebo_robot.GazeboRobot):
-    def __init__(self, model_file: str, gazebo, **kwargs):
+
+    def __init__(self, gazebo, model_file: str = None, **kwargs):
+
+        # Get the model
+        if model_file is None:
+            model_file = gym_ignition_models.get_model_file("cartpole")
+
         # Initialize base class
         super().__init__(model_file=model_file,
                          gazebo=gazebo,
                          controller_rate=kwargs.get("controller_rate"))
 
-        # Configure the pendulum as fixed-base robot
-        floating = False if "floating" not in kwargs else kwargs["floating"]
-        ok_floating = self.set_as_floating_base(floating)
-        assert ok_floating, "Failed to set the robot as floating base"
+        # Configure the cartpole as fixed-base robot
+        ok_floating = self.set_as_floating_base(False)
+        assert ok_floating, "Failed to set the robot as fixed base"
 
         # Initial base position
         base_position = np.array([0., 0., 0.]) \

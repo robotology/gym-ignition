@@ -3,11 +3,18 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import numpy as np
+import gym_ignition_models
 from gym_ignition.robots import pybullet_robot
 
 
 class CartPolePyBulletRobot(pybullet_robot.PyBulletRobot):
-    def __init__(self, p, model_file: str, plane_id: int, **kwargs):
+
+    def __init__(self, p, plane_id: int, model_file: str = None, **kwargs):
+
+        # Get the model
+        if model_file is None:
+            model_file = gym_ignition_models.get_model_file("pendulum")
+
         # Initialize base class
         super().__init__(
             p=p,
@@ -16,9 +23,8 @@ class CartPolePyBulletRobot(pybullet_robot.PyBulletRobot):
             keep_fixed_joints=False)
 
         # Configure the pendulum as fixed-base robot
-        floating = False if "floating" not in kwargs else kwargs["floating"]
-        ok_floating = self.set_as_floating_base(floating)
-        assert ok_floating, "Failed to set the robot as floating base"
+        ok_floating = self.set_as_floating_base(False)
+        assert ok_floating, "Failed to set the robot as fixed base"
 
         # Initial base position
         base_position = np.array([0., 0., 0.]) \
