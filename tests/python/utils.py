@@ -81,12 +81,10 @@ class PyBullet(Simulator):
 def get_pendulum(simulator: Simulator, **kwargs):
     if simulator.simulator_name == "gazebo":
         return sim.gazebo.pendulum.PendulumGazeboRobot(
-            model_file="Pendulum/Pendulum.urdf",
             gazebo=simulator.simulator,
             **kwargs)
     elif simulator.simulator_name == "pybullet":
         return sim.pybullet.pendulum.PendulumPyBulletRobot(
-            model_file="Pendulum/Pendulum.urdf",
             p=simulator.simulator,
             plane_id=simulator.plane_id,
             **kwargs)
@@ -97,12 +95,10 @@ def get_pendulum(simulator: Simulator, **kwargs):
 def get_cartpole(simulator: Simulator, **kwargs):
     if simulator.simulator_name == "gazebo":
         return sim.gazebo.cartpole.CartPoleGazeboRobot(
-            model_file="CartPole/CartPole.urdf",
             gazebo=simulator.simulator,
             **kwargs)
     elif simulator.simulator_name == "pybullet":
         return sim.pybullet.cartpole.CartPolePyBulletRobot(
-            model_file="CartPole/CartPole.urdf",
             p=simulator.simulator,
             plane_id=simulator.plane_id,
             **kwargs)

@@ -2,92 +2,24 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import abc
 import pytest
 import numpy as np
-import pybullet_data
-import pybullet as p
-from pybullet_utils import bullet_client
-from gym_ignition.utils import resource_finder
-from gym_ignition import gympp_bindings as bindings
-from gym_ignition.robots.sim import gazebo, pybullet
-
-
-class Simulator(abc.ABC):
-    simulator_name: str = ""
-    @abc.abstractmethod
-    def step(self): ...
-
-
-class Gazebo(Simulator):
-    simulator_name = "gazebo"
-
-    def __init__(self, physics_rate: float):
-        rtf = 1.0
-        iterations = 1
-        self._gazebo = bindings.GazeboWrapper(iterations, rtf, physics_rate)
-        assert self._gazebo
-
-        self._gazebo.setVerbosity(4)
-
-        empty_world = resource_finder.find_resource("DefaultEmptyWorld.world")
-        ok_world = self._gazebo.setupGazeboWorld(worldFile=empty_world)
-        assert ok_world
-
-        ok_initialize = self._gazebo.initialize()
-        assert ok_initialize
-
-    def step(self):
-        self._gazebo.run()
-
-
-class PyBullet(Simulator):
-    simulator_name = "pybullet"
-
-    def __init__(self, physics_rate: float):
-        self._pybullet = bullet_client.BulletClient(p.DIRECT)
-        assert self._pybullet
-
-        self._pybullet.setRealTimeSimulation(0)
-        self._pybullet.setGravity(0, 0, -9.81)
-        self._pybullet.setTimeStep(1.0 / physics_rate)
-
-        self._pybullet.setAdditionalSearchPath(pybullet_data.getDataPath())
-        self.plane_id = self._pybullet.loadURDF("plane_implicit.urdf")
-
-    def step(self):
-        self._pybullet.stepSimulation()
-
-
-def get_simulator(simulator_name: str) -> Simulator:
-    if simulator_name == "gazebo":
-        return Gazebo(500.0)
-    elif simulator_name == "pybullet":
-        return PyBullet(500.0)
-    else:
-        raise Exception(f"Simulator {simulator_name} not recognized")
-
-
-def get_robot(simulator: Simulator, **kwargs):
-    if simulator.simulator_name == "gazebo":
-        return gazebo.pendulum.PendulumGazeboRobot(model_file="Pendulum/Pendulum.urdf",
-                                                   gazebo=simulator._gazebo,
-                                                   **kwargs)
-    elif simulator.simulator_name == "pybullet":
-        return pybullet.pendulum.PendulumPyBulletRobot(
-            model_file="Pendulum/Pendulum.urdf",
-            p=simulator._pybullet,
-            plane_id=simulator.plane_id,
-            **kwargs)
-    else:
-        raise Exception(f"Simulator {simulator.simulator_name} not recognized")
+from . import utils
 
 
 @pytest.mark.parametrize("simulator_name", ["gazebo", "pybullet"])
 def test_robot_fixed_base(simulator_name: str):
-    simulator = get_simulator(simulator_name)
+
+    if simulator_name == "gazebo":
+        simulator = utils.Gazebo(physics_rate=1000)
+    elif simulator_name == "pybullet":
+        simulator = utils.PyBullet(physics_rate=1000)
+    else:
+        raise ValueError(simulator_name)
+
+    # Get the pendulum robot and specify its base position
     base_position = np.array([-3, 3, 2])
-    robot = get_robot(simulator, base_position=base_position, floating=False)
+    robot = utils.get_pendulum(simulator=simulator, base_position=base_position)
 
     # Robot should not fall due to gravity
     for _ in range(100):
@@ -99,9 +31,17 @@ def test_robot_fixed_base(simulator_name: str):
 
 @pytest.mark.parametrize("simulator_name", ["gazebo", "pybullet"])
 def test_robot_floating_base(simulator_name: str):
-    simulator = get_simulator(simulator_name)
-    base_position = np.array([-3, 3, 2])
-    robot = get_robot(simulator, base_position=base_position, floating=True)
+
+    if simulator_name == "gazebo":
+        simulator = utils.Gazebo(physics_rate=1000)
+    elif simulator_name == "pybullet":
+        simulator = utils.PyBullet(physics_rate=1000)
+    else:
+        raise ValueError(simulator_name)
+
+    # Get the pendulum robot and specify its base position
+    base_position = np.array([-3, 3, 2])  # TODO
+    robot = utils.get_pendulum(simulator=simulator, base_position=base_position)
 
     assert np.allclose(robot.base_pose()[0], base_position, atol=1e-3)
     assert np.allclose(robot.base_pose()[1], np.array([1.0, 0, 0, 0]), atol=1e-3)
@@ -118,9 +58,17 @@ def test_robot_floating_base(simulator_name: str):
 
 @pytest.mark.parametrize("simulator_name", ["pybullet"])
 def test_robot_floating_to_fixed(simulator_name: str):
-    simulator = get_simulator(simulator_name)
+
+    if simulator_name == "gazebo":
+        simulator = utils.Gazebo(physics_rate=1000)
+    elif simulator_name == "pybullet":
+        simulator = utils.PyBullet(physics_rate=1000)
+    else:
+        raise ValueError(simulator_name)
+
+    # Get the pendulum robot and specify its base position
     base_position = np.array([-3, 3, 2])
-    robot = get_robot(simulator, base_position=base_position, floating=True)
+    robot = utils.get_pendulum(simulator=simulator, base_position=base_position)
 
     # Let's make the robot fall a little
     for _ in range(10):
