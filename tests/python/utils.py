@@ -3,6 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
+import tempfile
 import numpy as np
 import pybullet_data
 import pybullet as p
@@ -81,12 +82,10 @@ class PyBullet(Simulator):
 def get_pendulum(simulator: Simulator, **kwargs):
     if simulator.simulator_name == "gazebo":
         return sim.gazebo.pendulum.PendulumGazeboRobot(
-            model_file="Pendulum/Pendulum.urdf",
             gazebo=simulator.simulator,
             **kwargs)
     elif simulator.simulator_name == "pybullet":
         return sim.pybullet.pendulum.PendulumPyBulletRobot(
-            model_file="Pendulum/Pendulum.urdf",
             p=simulator.simulator,
             plane_id=simulator.plane_id,
             **kwargs)
@@ -97,12 +96,10 @@ def get_pendulum(simulator: Simulator, **kwargs):
 def get_cartpole(simulator: Simulator, **kwargs):
     if simulator.simulator_name == "gazebo":
         return sim.gazebo.cartpole.CartPoleGazeboRobot(
-            model_file="CartPole/CartPole.urdf",
             gazebo=simulator.simulator,
             **kwargs)
     elif simulator.simulator_name == "pybullet":
         return sim.pybullet.cartpole.CartPolePyBulletRobot(
-            model_file="CartPole/CartPole.urdf",
             p=simulator.simulator,
             plane_id=simulator.plane_id,
             **kwargs)
@@ -111,7 +108,14 @@ def get_cartpole(simulator: Simulator, **kwargs):
 
 
 class CubeGazeboRobot(gazebo_robot.GazeboRobot):
-    def __init__(self, model_file: str, gazebo, initial_position: np.ndarray):
+
+    def __init__(self, gazebo, initial_position: np.ndarray, model_file: str = None):
+
+        # Serialize the cube urdf
+        handle, model_file = tempfile.mkstemp()
+        with open(handle, 'w') as f:
+            f.write(get_cube_urdf())
+
         # Initialize base class
         super().__init__(model_file=model_file,
                          gazebo=gazebo)

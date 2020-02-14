@@ -11,19 +11,12 @@ def test_contacts():
     # Get the simulator
     gazebo = utils.Gazebo(physics_rate=1000, iterations=1, rtf=100)
 
-    # Serialize the cube urdf
-    handle, model_file = tempfile.mkstemp()
-    with open(handle, 'w') as f:
-        f.write(utils.get_cube_urdf())
-
     # Create the first cube and insert it in the simulation
-    cube1 = utils.CubeGazeboRobot(model_file=model_file,
-                                  gazebo=gazebo.simulator,
+    cube1 = utils.CubeGazeboRobot(gazebo=gazebo.simulator,
                                   initial_position=np.array([0, 0, 1.0]))
 
     # Create the second cube and insert it in the simulation
-    cube2 = utils.CubeGazeboRobot(model_file=model_file,
-                                  gazebo=gazebo.simulator,
+    cube2 = utils.CubeGazeboRobot(gazebo=gazebo.simulator,
                                   initial_position=np.array([0, 0, 2.5]))
 
     # Execute the first simulation step
