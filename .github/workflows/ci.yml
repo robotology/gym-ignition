@@ -30,6 +30,7 @@ jobs:
           apt install -y git
 
       - uses: actions/checkout@master
+      - run: git fetch --prune --unshallow
 
       # The entrypoint is not called because it is overridden by GH Actions.
       # Even using the 'jobs.<job_id>.container.options' does not work because the
@@ -104,6 +105,7 @@ jobs:
           apt install -y git
 
       - uses: actions/checkout@master
+      - run: git fetch --prune --unshallow
 
       # The entrypoint is not called because it is overridden by GH Actions.
       # Even using the 'jobs.<job_id>.container.options' does not work because the
