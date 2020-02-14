@@ -167,10 +167,10 @@ We provide two different methods to test Gym-Ignition without the need to instal
    pip3 install rocker
    
    # Intel GPU
-   rocker --device /dev/dri --x11 diegoferigo/gym-ignition ./github/examples/python/launch_cartpole.py
+   rocker --devices /dev/dri --x11 diegoferigo/gym-ignition /github/examples/python/launch_cartpole.py
    
    # Nvidia GPU
-   rocker --x11 --nvidia diegoferigo/gym-ignition ./github/examples/python/launch_cartpole.py
+   rocker --x11 --nvidia diegoferigo/gym-ignition /github/examples/python/launch_cartpole.py
    ```
 
 ## Setup
