@@ -9,13 +9,14 @@
 add_library(ExtraComponents INTERFACE)
 target_sources(ExtraComponents INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/components/JointPositionReset.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/components/JointVelocityReset.h)
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/components/JointVelocityReset.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/components/WorldVelocityCmd.h)
 
 target_include_directories(ExtraComponents INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(ExtraComponents INTERFACE ignition-gazebo2::core)
+target_link_libraries(ExtraComponents INTERFACE ignition-gazebo3::core)
 
 # =====================
 # ENVIRONMENT CALLBACKS
@@ -68,7 +69,7 @@ target_include_directories(ECMSingleton PUBLIC
 
 target_link_libraries(ECMSingleton
     PUBLIC
-    ignition-gazebo2::core
+    ignition-gazebo3::core
     PRIVATE
     gympp)
 
@@ -92,7 +93,7 @@ target_link_libraries(GazeboWrapper
     RobotSingleton
     ECMSingleton
     IgnitionRobot
-    ignition-gazebo2::core
+    ignition-gazebo3::core
     tiny-process-library)
 
 set_target_properties(GazeboWrapper PROPERTIES
@@ -117,7 +118,7 @@ target_link_libraries(IgnitionEnvironment
     PRIVATE
     Task
     TaskSingleton
-    ignition-gazebo2::core)
+    ignition-gazebo3::core)
 
 set_target_properties(IgnitionEnvironment PROPERTIES
     PUBLIC_HEADER include/gympp/gazebo/IgnitionEnvironment.h)
@@ -140,7 +141,7 @@ add_library(RobotSingleton
 target_link_libraries(RobotSingleton
     PUBLIC
     gympp
-    ignition-gazebo2::core)
+    ignition-gazebo3::core)
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
     set_target_properties(RobotSingleton PROPERTIES

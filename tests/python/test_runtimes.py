@@ -22,7 +22,7 @@ if "Pendulum-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all()
         max_episode_steps=1000,
         kwargs={'task_cls': PendulumSwingUp,
                 'robot_cls': gazebo.pendulum.PendulumGazeboRobot,
-                'model': "Pendulum/Pendulum.sdf",
+                'model': "Pendulum/Pendulum.urdf",
                 'world': "DefaultEmptyWorld.world",
                 'rtf': 100,
                 'agent_rate': 4000,
@@ -52,7 +52,7 @@ if "CartPoleDiscrete-Ignition-PyTest-v0" not in [spec.id for spec in list(regist
         max_episode_steps=500,
         kwargs={'task_cls': CartPoleDiscrete,
                 'robot_cls': gazebo.cartpole.CartPoleGazeboRobot,
-                'model': "CartPole/CartPole.sdf",
+                'model': "CartPole/CartPole.urdf",
                 'world': "DefaultEmptyWorld.world",
                 'rtf': 100,
                 'agent_rate': 4000,
@@ -95,6 +95,7 @@ def template_compare_environments(env_name_a: str, env_name_b: str, max_error: f
     env_b.seed(42)
 
     range_obs = env_a.observation_space.high - env_a.observation_space.low
+    range_obs = np.where(np.isinf(range_obs), 1000, range_obs)
 
     for epoch in range(10):
         # Reset the environments

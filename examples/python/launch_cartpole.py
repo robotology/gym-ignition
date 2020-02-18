@@ -1,10 +1,9 @@
-#!/usr/bin/env python3
-
-# Copyright (C) 2019 Istituto Italiano di Tecnologia (IIT). All rights reserved.
+# Copyright (C) 2020 Istituto Italiano di Tecnologia (IIT). All rights reserved.
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
+import time
 
 # Set gym verbosity
 gym.logger.set_level(gym.logger.INFO)
@@ -23,11 +22,12 @@ env = gym.make("CartPoleDiscrete-Gazebo-v0")
 
 # Enable the rendering
 env.render('human')
+time.sleep(3)
 
 # Initialize the seed
 env.seed(42)
 
-for epoch in range(10):
+for epoch in range(30):
     # Reset the environment
     observation = env.reset()
 
@@ -53,6 +53,7 @@ for epoch in range(10):
             msg += "\t%.6f" % value
         logger.debug(msg)
 
-    logger.info("Total reward for episode #{}: {}".format(epoch, totalReward))
+    logger.info(f"Total reward for episode #{epoch}: {totalReward}")
 
 env.close()
+time.sleep(5)

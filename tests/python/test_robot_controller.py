@@ -22,7 +22,7 @@ def test_joint_controller():
     plugin_data.setClassName("gympp::plugins::RobotController")
 
     # Find and load the model SDF file
-    model_sdf_file = resource_finder.find_resource("CartPole/CartPole.sdf")
+    model_sdf_file = resource_finder.find_resource("CartPole/CartPole.urdf")
     with open(model_sdf_file, "r") as stream:
         model_sdf_string = stream.read()
 
@@ -74,6 +74,10 @@ def test_joint_controller():
 
     # Set the default update rate
     robot.setdt(1 / controller_rate)
+
+    # Control the cart joint in position
+    ok_cm = robot.setJointControlMode("linear", bindings.JointControlMode_Position)
+    assert ok_cm, "Failed to control the cart joint in position"
 
     # Set the PID of the cart joint
     pid = bindings.PID(10000, 1000, 1000)

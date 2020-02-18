@@ -32,6 +32,7 @@
 // Convert python list to std::array
 %template(Array3d) std::array<double, 3>;
 %template(Array4d) std::array<double, 4>;
+%template(Array6d) std::array<double, 6>;
 
 %include "gympp/Common.h"
 %template(BufferContainer_i) gympp::BufferContainer<int>;
@@ -89,6 +90,7 @@
 %ignore gympp::Robot::dt;
 %ignore gympp::Robot::setdt(const StepSize&);
 %include "gympp/Robot.h"
+%template(Vector_contact) std::vector<gympp::ContactData>;
 
 %inline %{
     std::shared_ptr<gympp::gazebo::IgnitionEnvironment> envToIgnEnv(gympp::EnvironmentPtr env) {

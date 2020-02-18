@@ -2,104 +2,14 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import gym
 import time
 import pytest
-import string
-import random
 import itertools
 import numpy as np
-import gym_ignition
+from . import utils
 from typing import List, Tuple
-from gym_ignition import gympp_bindings as bindings
-from gym_ignition.utils import logger, resource_finder
-
-# Set verbosity
-logger.set_level(gym.logger.ERROR)
-
-
-def get_gazebo_and_robot(rtf: float,
-                         physics_rate: float,
-                         agent_rate: float,
-                         # controller_rate: float = None,
-                         ) \
-        -> Tuple[bindings.GazeboWrapper, bindings.Robot]:
-
-    # ==========
-    # PARAMETERS
-    # ==========
-
-    model_sdf = "CartPole/CartPole.sdf"
-    world_sdf = "DefaultEmptyWorld.world"
-
-    plugin_data = bindings.PluginData()
-    plugin_data.setLibName("RobotController")
-    plugin_data.setClassName("gympp::plugins::RobotController")
-
-    # Find and load the model SDF file
-    model_sdf_file = resource_finder.find_resource(model_sdf)
-    with open(model_sdf_file, "r") as stream:
-        model_sdf_string = stream.read()
-
-    # Initialize the model data
-    model_data = bindings.ModelInitData()
-    model_data.setSdfString(model_sdf_string)
-
-    # Create a unique model name
-    letters_and_digits = string.ascii_letters + string.digits
-    prefix = ''.join(random.choice(letters_and_digits) for _ in range(6))
-
-    # Get the model name
-    model_name = bindings.GazeboWrapper.getModelNameFromSDF(model_sdf_string)
-    model_data.modelName = prefix + "::" + model_name
-    robot_name = model_data.modelName
-
-    num_of_iterations_per_gazebo_step = physics_rate / agent_rate
-    assert num_of_iterations_per_gazebo_step == int(num_of_iterations_per_gazebo_step)
-
-    # =============
-    # CONFIGURATION
-    # =============
-
-    # Create the gazebo wrapper
-    gazebo = bindings.GazeboWrapper(int(num_of_iterations_per_gazebo_step),
-                                    rtf,
-                                    physics_rate)
-    assert gazebo, "Failed to get the gazebo wrapper"
-
-    # Set verbosity
-    logger.set_level(gym.logger.DEBUG)
-
-    # Initialize the world
-    world_ok = gazebo.setupGazeboWorld(world_sdf)
-    assert world_ok, "Failed to initialize the gazebo world"
-
-    # Initialize the ignition gazebo wrapper (creates a paused simulation)
-    gazebo_initialized = gazebo.initialize()
-    assert gazebo_initialized, "Failed to initialize ignition gazebo"
-
-    # Insert the model
-    model_ok = gazebo.insertModel(model_data, plugin_data)
-    assert model_ok, "Failed to insert the model in the simulation"
-
-    assert bindings.RobotSingleton_get().exists(robot_name), \
-        "The robot interface was not registered in the singleton"
-
-    # Extract the robot interface from the singleton
-    robot_weak_ptr = bindings.RobotSingleton_get().getRobot(robot_name)
-    assert not robot_weak_ptr.expired(), "The Robot object has expired"
-    assert robot_weak_ptr.lock(), \
-        "The returned Robot object does not contain a valid interface"
-    assert robot_weak_ptr.lock().valid(), "The Robot object is not valid"
-
-    # Get the pointer to the robot interface
-    robot = robot_weak_ptr.lock()
-
-    # Set the joint controller period
-    robot.setdt(0.001 if physics_rate < 1000 else physics_rate)
-
-    # Return the simulator and the robot object
-    return gazebo, robot
+from gym_ignition.utils import logger
+from gym_ignition.base.robot.robot_joints import JointControlMode
 
 
 def almost_equal(first, second, epsilon=None) -> bool:
@@ -112,10 +22,10 @@ def almost_equal(first, second, epsilon=None) -> bool:
         print("----------------")
         print("ASSERTION FAILED")
         print("----------------")
-        print("#1={}".format(first))
-        print("#2={}".format(second))
+        print(f"#1={first}")
+        print(f"#2={second}")
         print("Error={}".format(np.abs(first-second)))
-        print("Tolerance={}".format(epsilon))
+        print(f"Tolerance={epsilon}")
         print("----------------")
 
     return res
@@ -124,15 +34,22 @@ def almost_equal(first, second, epsilon=None) -> bool:
 def template_test(rtf: float,
                   physics_rate: float,
                   agent_rate: float,
-                  # controller_rate: float = None,
                   ) -> None:
 
-    # Get the simulator and the robot objects
-    gazebo, robot = get_gazebo_and_robot(rtf=rtf,
-                                         physics_rate=physics_rate,
-                                         agent_rate=agent_rate,
-                                         # controller_rate=None,  # Does not matter
-                                         )
+    # Get the simulator
+    iterations = int(physics_rate / agent_rate)
+    gazebo = utils.Gazebo(physics_rate=physics_rate, iterations=iterations, rtf=rtf)
+
+    # Get the cartpole robot
+    robot = utils.get_cartpole(gazebo)
+    assert robot.valid(), "The robot object is not valid"
+
+    # Configure the cartpole
+    ok_cm = robot.set_joint_control_mode("linear", JointControlMode.POSITION)
+    assert ok_cm, "Failed to set the control mode"
+
+    # Set the joint controller period
+    robot.set_dt(0.001 if physics_rate < 1000 else physics_rate)
 
     # Trajectory specifications
     trajectory_dt = 1 / agent_rate
@@ -151,12 +68,12 @@ def template_test(rtf: float,
     logger.debug(f"Simulating {cart_ref.size} steps")
     for i, ref in enumerate(cart_ref):
         # Set the references
-        ok_ref = robot.setJointPositionTarget("linear", ref)
+        ok_ref = robot.set_joint_position("linear", ref)
         assert ok_ref, "Failed to set joint references"
 
         # Step the simulator
         now = time.time()
-        gazebo.run()
+        gazebo.step()
         this_step = time.time() - now
         avg_time_per_step = avg_time_per_step + 0.1 * (this_step - avg_time_per_step)
 
@@ -164,7 +81,6 @@ def template_test(rtf: float,
     elapsed_time = stop - start
 
     # Compute useful quantities
-    # simulation_dt = 1 / simulation_rate
     number_of_actions = tot_simulated_seconds / trajectory_dt
     physics_iterations_per_run = physics_rate / agent_rate
     simulation_dt = 1 / (physics_rate * rtf)
@@ -172,10 +88,10 @@ def template_test(rtf: float,
     assert number_of_actions == cart_ref.size
 
     print()
-    print("Elapsed time = {}".format(elapsed_time))
-    print("Average step time = {}".format(avg_time_per_step))
+    print(f"Elapsed time = {elapsed_time}")
+    print(f"Average step time = {avg_time_per_step}")
     print("Number of actions: = {}".format(tot_simulated_seconds / trajectory_dt))
-    print("Physics iteration per simulator step = {}".format(physics_iterations_per_run))
+    print(f"Physics iteration per simulator step = {physics_iterations_per_run}")
     print()
 
     # Check if the average time per step matches what expected
@@ -192,7 +108,7 @@ def template_test(rtf: float,
     gazebo.close()
 
 
-def create_test_matrix() -> List[Tuple]:
+def create_test_matrix() -> List[Tuple[float, float, float]]:
     rtf_list = [0.5, 1, 2, 5, 10]
     agent_rate_list = [100, 500, 1000]
     physics_rate_list = [100, 500, 1000]
@@ -218,15 +134,14 @@ def create_test_matrix() -> List[Tuple]:
     return matrix
 
 
-# @pytest.mark.xfail
 @pytest.mark.parametrize("rtf, agent_rate, physics_rate", create_test_matrix())
-def test_rates(rtf, agent_rate, physics_rate):
+def test_rates(rtf: float, agent_rate: float, physics_rate: float):
 
     print("========")
     print("Testing:")
     print("========")
-    print("RTF = {}".format(rtf))
-    print("Agent rate = {}".format(agent_rate))
-    print("Physics rate = {}".format(physics_rate))
+    print(f"RTF = {rtf}")
+    print(f"Agent rate = {agent_rate}")
+    print(f"Physics rate = {physics_rate}")
 
     template_test(rtf, physics_rate, agent_rate)

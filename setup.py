@@ -14,6 +14,7 @@ class CMakeExtension(Extension):
     """
     Custom setuptool extension to define parameters for configuring CMake.
     """
+
     def __init__(self,
                  name: str,
                  cmake_configuration: str,
@@ -28,6 +29,7 @@ class BuildExtension(build_ext):
     Setuptool build extension handler.
     It processes all the extensions listed in the 'ext_modules' entry.
     """
+
     def run(self):
         try:
             _ = subprocess.check_output(['cmake', '--version'])
@@ -115,7 +117,6 @@ this_directory = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_directory, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
-
 setup(
     name='gym-ignition',
     author="Diego Ferigo",
@@ -144,13 +145,13 @@ setup(
     use_scm_version={
         'local_scheme': 'dirty-tag',
     },
-    setup_requires=['setuptools_scm', 'ninja'],
+    setup_requires=['setuptools_scm'],
     python_requires='>=3.6',
     install_requires=[
         'gym >= 0.13.1',
         'numpy',
         'pybullet',
-        # 'icub-model-pybullet @ {}'.format(icub_model_zip), 'pytest'
+        'gym_ignition_models',
     ],
     packages=find_packages(),
     ext_modules=[CMakeExtension(name='InstallAllTargets', cmake_configuration='PyPI')],

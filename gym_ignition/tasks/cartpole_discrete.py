@@ -22,8 +22,13 @@ class RobotFeatures(robot_abc.RobotABC,
 
 class CartPoleDiscrete(task.Task, abc.ABC):
 
-    def __init__(self, reward_cart_at_center: bool = False) -> None:
-        super().__init__()
+    def __init__(self,
+                 agent_rate: float,
+                 reward_cart_at_center: bool = True,
+                 **kwargs) -> None:
+
+        # Initialize the Task base class
+        super().__init__(agent_rate=agent_rate)
 
         # Store the requested robot features for this task
         self.robot_features = RobotFeatures
@@ -36,12 +41,6 @@ class CartPoleDiscrete(task.Task, abc.ABC):
         # Variables limits
         self._x_threshold = 2.4
         self._theta_threshold_radians = np.deg2rad(12)
-
-        # Create the spaces
-        self.action_space, self.observation_space = self.create_spaces()
-
-        # Seed the environment
-        self.seed()
 
     def create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
         # Configure action space

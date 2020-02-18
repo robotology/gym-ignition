@@ -109,7 +109,7 @@ def test_box_space():
             "Wrong data type of the sample extracted from the box space"
         assert box.contains(sample), \
             "Sampled data is not contained in the box space object that created it"
-    
+
 
 def test_space_box_metadata(create_space_box_md):
     md = create_space_box_md
@@ -189,7 +189,7 @@ def test_gymfactory():
     md.setLibraryName("CartPolePlugin")
     md.setClassName("gympp::plugins::CartPole")
     md.setWorldFileName("DefaultEmptyWorld.world")
-    md.setModelFileName("CartPole/CartPole.sdf")
+    md.setModelFileName("CartPole/CartPole.urdf")
     md.setAgentRate(1000)
     md.setPhysicsData(bindings.PhysicsData(1.0, 0.001))
     action_space_md = bindings.SpaceMetadata()

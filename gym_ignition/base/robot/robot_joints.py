@@ -9,9 +9,10 @@ from typing import List, Tuple, Union
 
 
 class JointType(Enum):
+    INVALID = auto()
     FIXED = auto()
     REVOLUTE = auto()
-
+    PRISMATIC = auto()
 
 class JointControlMode(Enum):
     POSITION = auto()
@@ -33,8 +34,6 @@ class RobotJoints(ABC):
 
     This interface provides methods to get and set joint-related quantities.
     """
-
-    def __init__(self) -> None: ...
 
     @abstractmethod
     def dofs(self) -> int:
@@ -92,30 +91,6 @@ class RobotJoints(ABC):
         """
 
     @abstractmethod
-    def initial_positions(self) -> np.ndarray:
-        """
-        Return the initial joint positions.
-
-        Returns:
-            The initial joint positions.
-        """
-
-    @abstractmethod
-    def set_initial_positions(self, positions: np.ndarray) -> bool:
-        """
-        Set the initial joint positions.
-
-        Note that this does not actuate the robot, it only stores the initial joint
-        positions values.
-
-        Args:
-            positions: The initial joint positions.
-
-        Returns:
-             True if successful, False otherwise.
-        """
-
-    @abstractmethod
     def joint_position(self, joint_name: str) -> float:
         """
         Return the generalized position of the specified joint.
@@ -139,6 +114,28 @@ class RobotJoints(ABC):
         Returns:
             The joint generalized velocity.
 
+        """
+
+    @abstractmethod
+    def joint_force(self, joint_name: str) -> float:
+        """
+        Return the joint force applied to the specified joint in the last physics step.
+
+        The returned value is the effort or torque of the joint, since currently only
+        1 DoF joints are supported.
+
+        Note that the returned value depends on the rate of the enabled controllers.
+        For example, the JointControlMode.POSITION allows to specify a controller rate
+        different than the physics rate. In this case, this method will return only the
+        last applied force reference. If the PIDs are running faster than the code
+        that calls this `joint_force` method, the PIDs are generating forces that
+        are not returned.
+
+        Args:
+            joint_name: The name of the joint.
+
+        Returns:
+            The generalized joint force reference applied in the last physics step.
         """
 
     @abstractmethod

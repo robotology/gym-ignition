@@ -34,12 +34,13 @@ RUN apt-get update &&\
         python3.7 \
         libpython3.6-dev \
         libpython3.7-dev \
+        virtualenv \
         swig \
         &&\
     rm -rf /var/lib/apt/lists/*
 
 # Install ignition robotics
-ARG ignition_codename="blueprint"
+ARG ignition_codename="citadel"
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
         > /etc/apt/sources.list.d/gazebo-stable.list &&\
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
@@ -49,7 +50,7 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_releas
 
 # Install idyntree
 RUN apt-get update &&\
-    apt-get install -y --no-install-recommends python3-numpy libxml2-dev coinor-libipopt-dev &&\
+    apt-get install -y --no-install-recommends python3-numpy libxml2-dev coinor-libipopt-dev libeigen3-dev &&\
     rm -rf /var/lib/apt/lists/* &&\
     git clone --depth 1 -b feature/numpy-and-ik https://github.com/diegoferigo/idyntree /tmp/idyntree &&\
     mkdir -p /tmp/idyntree/build && cd /tmp/idyntree/build &&\
@@ -60,6 +61,7 @@ RUN apt-get update &&\
         -DPython_ADDITIONAL_VERSIONS=3.6 \
         -DIDYNTREE_USES_PYTHON_VERSION=3.6 \
         -DPYTHON_NUMPY_INCLUDE_DIR:PATH=/usr/lib/python3/dist-packages/numpy/core/include \
+        -DIDYNTREE_USES_IPOPT:BOOL=ON \
         &&\
     cmake --build . --target install &&\
     rm -r /tmp/idyntree

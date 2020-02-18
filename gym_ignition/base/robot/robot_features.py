@@ -12,6 +12,7 @@ class RobotFeatures(robot.robot_abc.RobotABC,
                     robot.robot_joints.RobotJoints,
                     robot.robot_links.RobotLinks,
                     robot.robot_contacts.RobotContacts,
+                    robot.robot_initialstate.RobotInitialState,
                     abc.ABC):
     pass
 

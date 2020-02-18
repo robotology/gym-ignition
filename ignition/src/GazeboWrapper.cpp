@@ -20,6 +20,11 @@
 #include <ignition/gazebo/SdfEntityCreator.hh>
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
+#include <ignition/gazebo/components/Collision.hh>
+#include <ignition/gazebo/components/ContactSensor.hh>
+#include <ignition/gazebo/components/ContactSensorData.hh>
+#include <ignition/gazebo/components/Joint.hh>
+#include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
@@ -382,6 +387,20 @@ bool GazeboWrapper::initialized()
     }
 }
 
+double GazeboWrapper::getSimulatedTime() const
+{
+    auto dt = pImpl->gazebo.physics.maxStepSize;
+    auto iterationCount = pImpl->getServer()->IterationCount();
+
+    if (!iterationCount) {
+        gymppError << "Failed to get the simulated time" << std::endl;
+        return 0.0;
+    }
+
+    // TODO: this will no longer work if Gazebo changes the step dynamically
+    return dt * iterationCount.value();
+}
+
 PhysicsData GazeboWrapper::getPhysicsData() const
 {
     return pImpl->gazebo.physics;
@@ -447,8 +466,9 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         return false;
     }
 
-    // Get the ECM
-    ignition::gazebo::EntityComponentManager* ecm = ECMSingleton::get().getECM(getWorldName());
+    // Get the ECM and the EventManager
+    auto* ecm = ECMSingleton::get().getECM(getWorldName());
+    auto* eventManager = ECMSingleton::get().getEventManager(getWorldName());
 
     // Get the SdfEntityCreator that abstracts the ECM to easily create entities
     auto sdfEntityCreator = pImpl->getSdfEntityCreator(getWorldName());
@@ -598,9 +618,11 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         // In order to handle the particular state of the initial iteration, we need a rather
         // involved synchronization logic. This allows avoiding to use the UserCommands system
         // to create entities, giving us full power.
-        assert(pImpl->gazebo.server->Paused().has_value());
-        if (pImpl->gazebo.server->Running() && pImpl->gazebo.server->Paused().value())
-            auto lock = ecmSingleton.waitPreUpdate(getWorldName());
+        assert(pImpl->getServer()->Paused().has_value());
+        std::unique_lock<std::mutex> lock;
+        if (pImpl->getServer()->Running() && pImpl->getServer()->Paused().value()) {
+            lock = ecmSingleton.waitPreUpdate(getWorldName());
+        }
 
         // Create the model entity. It will create a model with the name specified in the SDF.
         modelEntity = sdfEntityCreator->CreateEntities(modelSdfRoot.ModelByIndex(0));
@@ -618,6 +640,10 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         // Attach the model entity to the world entity
         sdfEntityCreator->SetParent(modelEntity, worldEntity);
 
+        // -------------------
+        // HANDLE INITIAL POSE
+        // -------------------
+
         // Create pose data
         ignition::math::Pose3d pose;
         pose.Pos() = ignition::math::Vector3<double>(
@@ -631,13 +657,112 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         auto poseComp = ecm->Component<ignition::gazebo::components::Pose>(modelEntity);
         *poseComp = ignition::gazebo::components::Pose(pose);
 
+        // ----------------------
+        // HANDLE CONTACT SENSORS
+        // ----------------------
+
+        // Store collision entities that need to be modified.
+        // We use an external data structure because editing the ECM within the Each() method
+        // can cause undefined behavior.
+        using CollisionName = std::string;
+        using CollisionEntity = ignition::gazebo::Entity;
+        std::unordered_map<CollisionName, CollisionEntity> collisions;
+
+        // Get the collision names of all the links that belong to the new model
+        ecm->Each<ignition::gazebo::components::Name,
+                  ignition::gazebo::components::Collision,
+                  ignition::gazebo::components::ParentEntity>(
+            [&](const ignition::gazebo::Entity& collisionEntity,
+                ignition::gazebo::components::Name* collisionName,
+                ignition::gazebo::components::Collision*,
+                ignition::gazebo::components::ParentEntity* parentEntity) -> bool {
+                // The parent entity of the collision must be a link
+                assert(parentEntity->Data());
+                auto parentLinkEntity = parentEntity->Data();
+                auto linkLinkComp =
+                    ecm->Component<ignition::gazebo::components::Link>(parentLinkEntity);
+
+                // And must have a name
+                assert(linkLinkComp);
+                auto linkNameComp =
+                    ecm->Component<ignition::gazebo::components::Name>(parentLinkEntity);
+                assert(linkNameComp);
+
+                // Get the model entity (parent of the link)
+                auto parentModelEntity = ecm->ParentEntity(parentLinkEntity);
+
+                // Discard all the links that do not belong to this model
+                if (parentModelEntity != modelEntity) {
+                    return true;
+                }
+
+                // Insert the collision entity in the map
+                collisions.insert({collisionName->Data(), collisionEntity});
+                return true;
+            });
+
+        // Create the ContactSensor and ContactSensorData components.
+        // Note that here we are bypassing the Contact system.
+        for (const auto& [collisionName, collisionEntity] : collisions) {
+            // Create the SDF element of the contact sensor
+            auto sensorElement = std::make_shared<sdf::Element>();
+            sensorElement->SetName("sensor");
+            sensorElement->AddAttribute("name", "string", "contact_sensor", true, "sensor name");
+            sensorElement->AddAttribute("type", "string", "contact", true, "sensor type");
+
+            auto alwaysOnElement = std::make_shared<sdf::Element>();
+            alwaysOnElement->SetName("always_on");
+            alwaysOnElement->SetParent(sensorElement);
+            sensorElement->InsertElement(alwaysOnElement);
+            alwaysOnElement->AddValue("bool", "1", true, "initialize the sensor status");
+
+            auto contactElement = std::make_shared<sdf::Element>();
+            contactElement->SetName("contact");
+            contactElement->SetParent(sensorElement);
+            sensorElement->InsertElement(contactElement);
+
+            auto collisionElement = std::make_shared<sdf::Element>();
+            collisionElement->SetName("collision");
+            collisionElement->SetParent(contactElement);
+            contactElement->InsertElement(collisionElement);
+            collisionElement->AddValue("string", collisionName, true, "collision element name");
+
+            // Parse the SDF contact element
+            sdf::Sensor contactSensor;
+            auto errors = contactSensor.Load(sensorElement);
+
+            if (!errors.empty()) {
+                gymppError << "Failed to load contact sensor sdf" << std::endl;
+                for (const auto& error : errors) {
+                    gymppError << error << std::endl;
+                }
+                return false;
+            }
+
+            // Create the ContactSensorData component inside the collision entity
+            ecm->CreateComponent(collisionEntity,
+                                 ignition::gazebo::components::ContactSensorData());
+
+            // Get the parent entity of the collision, which is a link entity
+            ignition::gazebo::Entity parentLinkEntity = ecm->ParentEntity(collisionEntity);
+
+            // Create the ContactSensor component inside the sensor entity
+            // Note: this is not strictly required. Let's leave it here in the case this component
+            //       is used for something else in the Physics system.
+            auto sensorEntity = sdfEntityCreator->CreateEntities(&contactSensor);
+            assert(sensorEntity != ignition::gazebo::kNullEntity);
+            sdfEntityCreator->SetParent(sensorEntity, parentLinkEntity);
+            assert(ecm->EntityHasComponentType(
+                sensorEntity, ignition::gazebo::components::ContactSensor().TypeId()));
+        }
+
         // ========================================================
         // CREATE THE ROBOT OBJECT AND REGISTER IT IN THE SINGLETON
         // ========================================================
 
         // Create an IgnitionRobot object from the ecm
         auto ignRobot = std::make_shared<gympp::gazebo::IgnitionRobot>();
-        if (!ignRobot->configureECM(modelEntity, modelSdfRoot.Element(), *ecm)) {
+        if (!ignRobot->configureECM(modelEntity, ecm, eventManager)) {
             gymppError << "Failed to configure the Robot interface" << std::endl;
             return false;
         }
@@ -653,8 +778,22 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
             return false;
         }
 
-        // In the first iteration, we need to notify the we finished to operate on the ECM
-        if (pImpl->gazebo.server->Running() && pImpl->gazebo.server->Paused().value()) {
+        // Set the base link
+        if (!modelData.baseLink.empty() && !ignRobot->setBaseFrame(modelData.baseLink)) {
+            gymppError << "Failed to set '" << modelData.baseLink << "' as base link" << std::endl;
+            return false;
+        }
+
+        // Handle the fixed base by creating a joint to fix the robot to the world.
+        // In this case the pose is already set when inserting the model in the world,
+        // and it is not necessary to also reset it through the robot interface.
+        if (!ignRobot->setAsFloatingBase(!modelData.fixedPose)) {
+            gymppError << "Failed to configure the robot as floating or fixed base" << std::endl;
+            return false;
+        }
+
+        // In the first iteration, we need to notify that we finished to operate on the ECM
+        if (pImpl->getServer()->Running() && pImpl->getServer()->Paused().value()) {
             ecmSingleton.notifyExecutorFinished(getWorldName());
         }
     }
@@ -662,6 +801,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
     // Add the model in a list of allocated models
     pImpl->modelPendingToRemove.push_back(finalModelEntityName);
 
+    gymppDebug << "New model successfully inserted in the world" << std::endl;
     return true;
 }
 
@@ -725,6 +865,7 @@ bool GazeboWrapper::removeModel(const std::string& modelName)
         pImpl->modelPendingToRemove.erase(it);
     }
 
+    gymppDebug << "Model successfully removed from the world" << std::endl;
     return true;
 }
 

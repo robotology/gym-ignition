@@ -26,9 +26,11 @@
 #include "Physics.h"
 #include "gympp/gazebo/components/JointPositionReset.h"
 #include "gympp/gazebo/components/JointVelocityReset.h"
+#include "gympp/gazebo/components/WorldVelocityCmd.h"
 
 #include <ignition/common/MeshManager.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
+#include <ignition/gazebo/Util.hh>
 #include <ignition/gazebo/components/AngularAcceleration.hh>
 #include <ignition/gazebo/components/AngularVelocity.hh>
 #include <ignition/gazebo/components/BatterySoC.hh>
@@ -42,6 +44,7 @@
 #include <ignition/gazebo/components/Inertial.hh>
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/JointAxis.hh>
+#include <ignition/gazebo/components/JointForce.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
 #include <ignition/gazebo/components/JointType.hh>
@@ -107,29 +110,35 @@ using namespace ignition;
 using namespace gympp::plugins;
 using namespace ignition::gazebo;
 using namespace ignition::gazebo::systems;
-namespace components = ignition::gazebo::components;
+using namespace ignition::gazebo::components;
 
 class Physics::Impl
 {
 public:
-    using MinimumFeatureList = ignition::physics::FeatureList< //
-        ignition::physics::FindFreeGroupFeature,
-        ignition::physics::SetFreeGroupWorldPose,
-        ignition::physics::AddLinkExternalForceTorque,
-        ignition::physics::ForwardStep,
-        ignition::physics::GetEntities,
-        ignition::physics::GetContactsFromLastStepFeature,
-        ignition::physics::RemoveEntities,
-        ignition::physics::mesh::AttachMeshShapeFeature,
-        ignition::physics::GetBasicJointProperties,
-        ignition::physics::GetBasicJointState,
-        ignition::physics::SetBasicJointState,
-        ignition::physics::SetJointVelocityCommandFeature,
-        ignition::physics::sdf::ConstructSdfCollision,
-        ignition::physics::sdf::ConstructSdfJoint,
-        ignition::physics::sdf::ConstructSdfLink,
-        ignition::physics::sdf::ConstructSdfModel,
-        ignition::physics::sdf::ConstructSdfWorld>;
+    struct MinimumFeatureList
+        : ignition::physics::FeatureList< //
+              ignition::physics::FindFreeGroupFeature,
+              ignition::physics::SetFreeGroupWorldPose,
+              ignition::physics::FreeGroupFrameSemantics,
+              ignition::physics::LinkFrameSemantics,
+              ignition::physics::SetFreeGroupWorldVelocity,
+              ignition::physics::AddLinkExternalForceTorque,
+              ignition::physics::ForwardStep,
+              ignition::physics::GetEntities,
+              ignition::physics::GetContactsFromLastStepFeature,
+              ignition::physics::RemoveEntities,
+              ignition::physics::mesh::AttachMeshShapeFeature,
+              ignition::physics::GetBasicJointProperties,
+              ignition::physics::GetBasicJointState,
+              ignition::physics::SetBasicJointState,
+              ignition::physics::SetJointVelocityCommandFeature,
+              ignition::physics::sdf::ConstructSdfCollision,
+              ignition::physics::sdf::ConstructSdfJoint,
+              ignition::physics::sdf::ConstructSdfLink,
+              ignition::physics::sdf::ConstructSdfModel,
+              ignition::physics::sdf::ConstructSdfVisual,
+              ignition::physics::sdf::ConstructSdfWorld>
+    {};
 
     using EnginePtrType =
         ignition::physics::EnginePtr<ignition::physics::FeaturePolicy3d, MinimumFeatureList>;
@@ -198,8 +207,12 @@ public:
     /// ign-physics.
     std::unordered_map<Entity, LinkPtrType> entityLinkMap;
 
-    /// \brief A map between collision entity ids in the ECM to Shape Entities in
-    /// ign-physics.
+    /// \brief Reverse of entityLinkMap. This is used for finding the Entity
+    /// associated with a physics Link
+    std::unordered_map<LinkPtrType, Entity> linkEntityMap;
+
+    /// \brief A map between collision entity ids in the ECM to Shape Entities
+    /// in ign-physics.
     std::unordered_map<Entity, ShapePtrType> entityCollisionMap;
 
     /// \brief A map between shape entities in ign-physics to collision entities
@@ -280,9 +293,10 @@ void Physics::Update(const UpdateInfo& _info, EntityComponentManager& _ecm)
             this->pImpl->UpdateSim(_ecm);
         }
 
-        // Entities scheduled to be removed should be removed from physics after the
-        // simulation step. Otherwise, since the to-be-removed entity still shows up
-        // in the ECM::Each the UpdatePhysics and UpdateSim calls will have an error
+        // Entities scheduled to be removed should be removed from physics after
+        // the simulation step. Otherwise, since the to-be-removed entity still
+        // shows up in the ECM::Each the UpdatePhysics and UpdateSim calls will
+        // have an error
         this->pImpl->RemovePhysicsEntities(_ecm);
     }
 }
@@ -338,7 +352,7 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
 
             sdf::Model model;
             model.SetName(_name->Data());
-            model.SetPose(_pose->Data());
+            model.SetRawPose(_pose->Data());
 
             auto staticComp = _ecm.Component<components::Static>(_entity);
             if (staticComp && staticComp->Data()) {
@@ -376,7 +390,7 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
 
             sdf::Link link;
             link.SetName(_name->Data());
-            link.SetPose(_pose->Data());
+            link.SetRawPose(_pose->Data());
 
             // get link inertial
             auto inertial = _ecm.Component<components::Inertial>(_entity);
@@ -386,6 +400,7 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
 
             auto linkPtrPhys = modelPtrPhys->ConstructLink(link);
             this->entityLinkMap.insert(std::make_pair(_entity, linkPtrPhys));
+            this->linkEntityMap.insert(std::make_pair(linkPtrPhys, _entity));
 
             return true;
         });
@@ -419,7 +434,12 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
         }
         auto linkPtrPhys = this->entityLinkMap.at(_parent->Data());
 
-        const sdf::Collision& collision = _collElement->Data();
+        // Make a copy of the collision DOM so we can set its pose which has
+        // been resolved and is now expressed w.r.t the parent link of the
+        // collision.
+        sdf::Collision collision = _collElement->Data();
+        collision.SetRawPose(_pose->Data());
+        collision.SetPoseRelativeTo("");
 
         ShapePtrType collisionPtrPhys;
         if (_geom->Data().Type() == sdf::GeometryType::MESH) {
@@ -431,9 +451,10 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
             }
 
             auto& meshManager = *ignition::common::MeshManager::Instance();
-            auto* mesh = meshManager.Load(meshSdf->Uri());
+            auto fullPath = asFullPath(meshSdf->Uri(), meshSdf->FilePath());
+            auto* mesh = meshManager.Load(fullPath);
             if (nullptr == mesh) {
-                ignwarn << "Failed to load mesh from [" << meshSdf->Uri() << "]." << std::endl;
+                ignwarn << "Failed to load mesh from [" << fullPath << "]." << std::endl;
                 return true;
             }
 
@@ -488,7 +509,7 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
             sdf::Joint joint;
             joint.SetName(_name->Data());
             joint.SetType(_jointType->Data());
-            joint.SetPose(_pose->Data());
+            joint.SetRawPose(_pose->Data());
             joint.SetThreadPitch(_threadPitch->Data());
 
             joint.SetParentLinkName(_parentLinkName->Data());
@@ -497,6 +518,9 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
             auto jointAxis = _ecm.Component<components::JointAxis>(_entity);
             auto jointAxis2 = _ecm.Component<components::JointAxis2>(_entity);
 
+            // Since we're making copies of the joint axes that were created using
+            // `Model::Load`, frame semantics should work for resolving their xyz
+            // axis
             if (jointAxis)
                 joint.SetAxis(0, jointAxis->Data());
             if (jointAxis2)
@@ -505,7 +529,11 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
             // Use the parent link's parent model as the model of this joint
             auto jointPtrPhys = modelPtrPhys->ConstructJoint(joint);
 
-            this->entityJointMap.insert(std::make_pair(_entity, jointPtrPhys));
+            if (jointPtrPhys.Valid()) {
+                // Some joints may not be supported, so only add them to the map if
+                // the physics entity is valid
+                this->entityJointMap.insert(std::make_pair(_entity, jointPtrPhys));
+            }
             return true;
         });
 
@@ -540,6 +568,12 @@ void Physics::Impl::RemovePhysicsEntities(const EntityComponentManager& _ecm)
                         this->collisionEntityMap.erase(collIt->second);
                         this->entityCollisionMap.erase(collIt);
                     }
+                }
+                // First erase the entry associated with this link from the
+                // linkEntityMap which is the reverse of entityLinkMap
+                auto linkPhysIt = this->entityLinkMap.find(childLink);
+                if (linkPhysIt != this->entityLinkMap.end()) {
+                    this->linkEntityMap.erase(linkPhysIt->second);
                 }
                 this->entityLinkMap.erase(childLink);
             }
@@ -595,12 +629,11 @@ void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
                 auto& jointVelocity = velReset->Data();
 
                 if (jointVelocity.size() != jointIt->second->GetDegreesOfFreedom()) {
-                    ignwarn << "There is a mismatch in the degrees of freedom "
-                            << "between Joint [" << _name->Data() << "(Entity=" << _entity
-                            << ")] and its JointVelocityReset "
-                            << "component. The joint has " << jointVelocity.size()
-                            << " while the component has " << jointIt->second->GetDegreesOfFreedom()
-                            << ".\n";
+                    ignwarn << "There is a mismatch in the degrees of freedom between "
+                            << "Joint [" << _name->Data() << "(Entity=" << _entity
+                            << ")] and its JointForceCmd component. The joint has "
+                            << jointIt->second->GetDegreesOfFreedom() << " while the "
+                            << " component has " << jointVelocity.size() << ".\n";
                 }
 
                 std::size_t nDofs =
@@ -616,12 +649,11 @@ void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
                 auto& jointPosition = posReset->Data();
 
                 if (jointPosition.size() != jointIt->second->GetDegreesOfFreedom()) {
-                    ignwarn << "There is a mismatch in the degrees of freedom "
-                            << "between Joint [" << _name->Data() << "(Entity=" << _entity
-                            << ")] and its JointPositionyReset "
-                            << "component. The joint has " << jointPosition.size()
-                            << " while the component has " << jointIt->second->GetDegreesOfFreedom()
-                            << ".\n";
+                    ignwarn << "There is a mismatch in the degrees of freedom between "
+                            << "Joint [" << _name->Data() << "(Entity=" << _entity
+                            << ")] and its JointForceCmd component. The joint has "
+                            << jointIt->second->GetDegreesOfFreedom() << " while the "
+                            << " component has " << jointPosition.size() << ".\n";
                 }
                 std::size_t nDofs =
                     std::min(jointPosition.size(), jointIt->second->GetDegreesOfFreedom());
@@ -638,8 +670,8 @@ void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
                     ignwarn << "There is a mismatch in the degrees of freedom between "
                             << "Joint [" << _name->Data() << "(Entity=" << _entity
                             << ")] and its JointForceCmd component. The joint has "
-                            << force->Data().size() << " while the component has "
-                            << jointIt->second->GetDegreesOfFreedom() << ".\n";
+                            << jointIt->second->GetDegreesOfFreedom() << " while the "
+                            << " component has " << force->Data().size() << ".\n";
                 }
                 std::size_t nDofs =
                     std::min(force->Data().size(), jointIt->second->GetDegreesOfFreedom());
@@ -661,12 +693,11 @@ void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
                     }
                     else {
                         if (velocityCmd.size() != jointIt->second->GetDegreesOfFreedom()) {
-                            ignwarn << "There is a mismatch in the degrees of freedom"
-                                    << " between Joint [" << _name->Data() << "(Entity=" << _entity
-                                    << ")] and its "
-                                    << "JointVelocityCmd component. The joint has "
-                                    << velocityCmd.size() << " while the component has "
-                                    << jointIt->second->GetDegreesOfFreedom() << ".\n";
+                            ignwarn << "There is a mismatch in the degrees of freedom between"
+                                    << " Joint [" << _name->Data() << "(Entity=" << _entity
+                                    << ")] and its JointVelocityCmd component. The joint has "
+                                    << jointIt->second->GetDegreesOfFreedom() << " while the "
+                                    << " component has " << velCmd->Data().size() << ".\n";
                         }
 
                         std::size_t nDofs =
@@ -705,22 +736,24 @@ void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
             if (modelIt == this->entityModelMap.end())
                 return true;
 
-            // Get canonical link offset
-            auto canonicalLink = _ecm.ChildrenByComponents(_entity, components::CanonicalLink());
-            if (canonicalLink.empty())
-                return true;
-
-            auto canonicalPoseComp = _ecm.Component<components::Pose>(canonicalLink[0]);
-            if (nullptr == canonicalPoseComp)
-                return true;
+            // The canonical link as specified by sdformat is different from the
+            // canonical link of the FreeGroup object
 
             // TODO(addisu) Store the free group instead of searching for it at
             // every iteration
             auto freeGroup = modelIt->second->FindFreeGroup();
-            if (freeGroup) {
-                freeGroup->SetWorldPose(
-                    math::eigen3::convert(_poseCmd->Data() * canonicalPoseComp->Data()));
-            }
+            if (!freeGroup)
+                return true;
+
+            // Get canonical link offset
+            auto linkEntityIt = this->linkEntityMap.find(freeGroup->CanonicalLink());
+            if (linkEntityIt == this->linkEntityMap.end())
+                return true;
+
+            auto canonicalPoseComp = _ecm.Component<components::Pose>(linkEntityIt->second);
+
+            freeGroup->SetWorldPose(
+                math::eigen3::convert(_poseCmd->Data() * canonicalPoseComp->Data()));
 
             // Process pose commands for static models here, as one-time changes
             const components::Static* staticComp = _ecm.Component<components::Static>(_entity);
@@ -738,6 +771,43 @@ void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
             return true;
         });
 
+    // Process WorldVelocityCmd
+    _ecm.Each<components::Model, components::WorldVelocityCmd>(
+        [&](const Entity& _entity,
+            const components::Model*,
+            components::WorldVelocityCmd* _modelWorldVelocityCmd) {
+            auto modelIt = this->entityModelMap.find(_entity);
+            if (modelIt == this->entityModelMap.end())
+                return true;
+
+            // The canonical link as specified by sdformat is different from the
+            // canonical link of the FreeGroup object
+
+            // TODO(addisu) Store the free group instead of searching for it at
+            // every iteration
+
+            // The FreeGroup is created only for floating-base object that do
+            // not have any defined joint between the world and their base
+            auto freeGroup = modelIt->second->FindFreeGroup();
+            if (!freeGroup) {
+                ignwarn << "Failed to find FreeGroup. Linear and angular "
+                           "velocities commands ignored."
+                        << std::endl;
+                return true;
+            }
+
+            ignition::math::Vector3d& modelWorldLinearVelocity =
+                _modelWorldVelocityCmd->Data().linear;
+            ignition::math::Vector3d& modelWorldAngularVelocity =
+                _modelWorldVelocityCmd->Data().angular;
+
+            freeGroup->SetWorldLinearVelocity(math::eigen3::convert(modelWorldLinearVelocity));
+            freeGroup->SetWorldAngularVelocity(math::eigen3::convert(modelWorldAngularVelocity));
+
+            // TODO(diego): static models from above
+            return true;
+        });
+
     // Clear pending commands
     // Note: Removing components from inside an Each call can be dangerous.
     // Instead, we collect all the entities that have the desired components and
@@ -751,6 +821,18 @@ void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
 
     for (const Entity& entity : entitiesWorldCmd) {
         _ecm.RemoveComponent<components::WorldPoseCmd>(entity);
+    }
+
+    // Clear WorldVelocityCmd
+    entitiesWorldCmd.clear();
+    _ecm.Each<components::WorldVelocityCmd>(
+        [&](const Entity& _entity, components::WorldVelocityCmd*) -> bool {
+            entitiesWorldCmd.push_back(_entity);
+            return true;
+        });
+
+    for (const Entity& entity : entitiesWorldCmd) {
+        _ecm.RemoveComponent<components::WorldVelocityCmd>(entity);
     }
 }
 
@@ -931,6 +1013,31 @@ void Physics::Impl::UpdateSim(EntityComponentManager& _ecm) const
             }
             return true;
         });
+
+    // joint force
+    _ecm.Each<components::Joint,
+              components::Name,
+              components::JointForce,
+              components::JointForceCmd>([&](const Entity& _entity,
+                                             components::Joint* /*_joint*/,
+                                             components::Name* _name,
+                                             components::JointForce* _force,
+                                             components::JointForceCmd* _forceCmd) -> bool {
+        // Get the data from the components
+        auto& jointForceData = _force->Data();
+        auto jointForceCmdData = _forceCmd->Data();
+
+        if (jointForceData.size() != jointForceCmdData.size()) {
+            ignwarn << "There is a mismatch in the degrees of freedom in"
+                    << " Joint [" << _name->Data() << "(Entity=" << _entity
+                    << ")] between its JointForce and JointForceCmd components." << std::endl;
+        }
+
+        // Copy the force cmd
+        jointForceData = jointForceCmdData;
+
+        return true;
+    });
 
     // pose/velocity/acceleration of non-link entities such as sensors /
     // collisions. These get updated only if another system has created a

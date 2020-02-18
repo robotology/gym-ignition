@@ -89,7 +89,7 @@ if "Pendulum-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all()
         max_episode_steps=1000,
         kwargs={'task_cls': PendulumSwingUp,
                 'robot_cls': gazebo.pendulum.PendulumGazeboRobot,
-                'model': "Pendulum/Pendulum.sdf",
+                'model': "Pendulum/Pendulum.urdf",
                 'world': "DefaultEmptyWorld.world",
                 'rtf': 100,
                 'agent_rate': 4000,
@@ -168,6 +168,8 @@ def template_pendulum_wrt_ground_truth(env_name: str, max_error_in_deg: float):
                 print(f"Theta Environment (deg): {theta}")
                 print("===================")
                 assert False, "Error in pendulum angle is bigger then the threshold"
+
+    env.close()
 
 
 @pytest.mark.parametrize("env_name, max_error_in_deg",

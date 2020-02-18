@@ -13,7 +13,7 @@ add_library(CartPolePlugin SHARED
 target_link_libraries(CartPolePlugin
     PUBLIC
     Task
-    ignition-gazebo2::core
+    ignition-gazebo3::core
     PRIVATE
     TaskSingleton
     RobotSingleton)

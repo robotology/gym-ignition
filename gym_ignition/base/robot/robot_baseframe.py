@@ -14,7 +14,29 @@ class RobotBaseFrame(ABC):
     This interface provides methods to get and set quantities related to the robot base.
     """
 
-    def __init__(self) -> None: ...
+    def __init__(self) -> None:
+        self._is_floating_base = True
+
+    @abstractmethod
+    def set_as_floating_base(self, floating: bool) -> bool:
+        """
+        Specify if the robot is floating or fixed base.
+
+        Args:
+            floating: True for floating base robots, False for fixed based robots.
+
+        Returns:
+            True if successful, False otherwise.
+        """
+
+    @abstractmethod
+    def is_floating_base(self) -> bool:
+        """
+        Check the base type of the robot.
+
+        Returns:
+            True if the robot is floating base, False is the robot is fixed base.
+        """
 
     @abstractmethod
     def set_base_frame(self, frame_name: str) -> bool:
@@ -41,7 +63,7 @@ class RobotBaseFrame(ABC):
     @abstractmethod
     def base_pose(self) -> Tuple[np.ndarray, np.ndarray]:
         """
-        Returns the pose of the robot base.
+        Return the pose of the robot base.
 
         The pose is composed of a position and a quaternion associated to the base frame,
         both expressed in the the world inertial frame.
@@ -65,14 +87,13 @@ class RobotBaseFrame(ABC):
             A Tuple containing the linear and angular velocity of the base:
 
             - linear velocity: a 3D array in the [vx, vy, vz] form.
-            - angular velocity: a 3D array in the [wx, wy, wx] form.
+            - angular velocity: a 3D array in the [wx, wy, wz] form.
         """
 
     @abstractmethod
     def reset_base_pose(self,
                         position: np.ndarray,
-                        orientation: np.ndarray,
-                        floating: bool = False) -> bool:
+                        orientation: np.ndarray) -> bool:
         """
         Reset the pose of the robot base.
 
@@ -85,8 +106,6 @@ class RobotBaseFrame(ABC):
         Args:
             position: 3D array in the [x, y, z] form
             orientation: a 4D array containing a quaternion in the [w, x, y, z] form.
-            floating: a boolean flag that, if false, fixes the base in the configured
-                position.
 
         Returns:
             True if successful, False otherwise.
@@ -107,7 +126,7 @@ class RobotBaseFrame(ABC):
 
         Args:
             linear_velocity: a 3D array in the [vx, vy, vz] form.
-            angular_velocity: a 3D array in the [wx, wy, wx] form.
+            angular_velocity: a 3D array in the [wx, wy, wz] form.
 
         Returns:
             True if successful, False otherwise.
