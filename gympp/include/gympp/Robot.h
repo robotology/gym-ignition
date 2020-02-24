@@ -131,6 +131,7 @@ public:
 
     virtual JointPositions initialJointPositions() const = 0;
 
+    virtual double jointEffortLimit(const JointName& jointName) const = 0;
     virtual Limit jointPositionLimits(const JointName& jointName) const = 0;
 
     virtual StepSize dt() const = 0;
@@ -153,6 +154,7 @@ public:
     virtual bool setdt(const StepSize& stepSize) = 0;
 
     virtual bool setJointForce(const JointName& jointName, const double jointForce) = 0;
+    virtual bool setJointEffortLimit(const JointName& jointName, const double effortLimit) = 0;
 
     virtual bool setJointPositionTarget(const JointName& jointName,
                                         const double jointPositionReference) = 0;
