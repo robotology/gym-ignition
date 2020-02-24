@@ -20,7 +20,7 @@
                 name="gympp::plugins::ECMProvider">
         </plugin>
 
-        <gui fullscreen="0">
+                <gui fullscreen="0">
             <!-- 3D scene -->
             <plugin filename="GzScene3D" name="3D View">
                 <ignition-gui>
@@ -32,7 +32,7 @@
                 <scene>scene</scene>
                 <ambient_light>0.4 0.4 0.4</ambient_light>
                 <background_color>0.8 0.8 0.8</background_color>
-                <camera_pose>-6 0 6 0 0.5 0</camera_pose>
+                <camera_pose>2 0 2 0 0.5 3.14</camera_pose>
                 <service>/world/default/scene/info</service>
                 <pose_topic>/world/default/pose/info</pose_topic>
             </plugin>
@@ -84,16 +84,16 @@
 
         <light type="directional" name="sun">
             <cast_shadows>true</cast_shadows>
-            <pose>10 0 3 0 0 0</pose>
-            <diffuse>0.8 0.8 0.8 1</diffuse>
-            <specular>0.2 0.2 0.2 1</specular>
+            <pose>0 0 10 0 0 0</pose>
+            <diffuse>1 1 1 1</diffuse>
+            <specular>0.5 0.5 0.5 1</specular>
             <attenuation>
                 <range>1000</range>
                 <constant>0.9</constant>
                 <linear>0.01</linear>
                 <quadratic>0.001</quadratic>
             </attenuation>
-            <direction>0.75 0.075 -0.667</direction>
+            <direction>-0.5 0.1 -0.9</direction>
         </light>
 
         <model name="ground_plane">
