@@ -482,6 +482,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
         return joint_info.jointMaxForce
 
+    def set_joint_force_limit(self, joint_name: str, limit: float) -> bool:
+        raise NotImplementedError
+
     # =====================================
     # robot_joints.RobotBaseFrame INTERFACE
     # =====================================
