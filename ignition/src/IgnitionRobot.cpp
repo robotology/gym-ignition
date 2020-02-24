@@ -1332,12 +1332,21 @@ bool IgnitionRobot::resetBasePose(const std::array<double, 3>& position,
     const ignition::math::Pose3d& world_H_model = world_H_base * model_H_base.Inverse();
 
     // Get the component that stores the new pose
-    auto& modelWorldPoseComponent =
+    auto& modelWorldPoseCmdComponent =
         pImpl->getOrCreateComponent<ignition::gazebo::components::WorldPoseCmd>(
             pImpl->model.Entity());
 
     // Store the pose data
-    modelWorldPoseComponent.Data() = world_H_model;
+    modelWorldPoseCmdComponent.Data() = world_H_model;
+
+    // Update the current pose of the model so that callers of getBasePose already
+    // read the new one.
+    auto* modelWorldPoseComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::Pose>(pImpl->model.Entity());
+    assert(modelWorldPoseComponent);
+
+    modelWorldPoseComponent->Data() = world_H_model;
+
     return true;
 }
 
