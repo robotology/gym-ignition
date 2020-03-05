@@ -215,6 +215,18 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         initial_base_position, initial_base_orientation = self.initial_base_pose()
         self.reset_base_pose(initial_base_position, initial_base_orientation)
 
+    def _get_joint_info(self, joint_name: str) -> JointInfoPyBullet:
+        # Get the joint index
+        joint_idx = self._joints_name2index[joint_name]
+
+        # Get the joint info from pybullet
+        joint_info_pybullet = self._pybullet.getJointInfo(self.robot_id, joint_idx)
+
+        # Store it in a namedtuple
+        joint_info = JointInfoPyBullet._make(joint_info_pybullet)
+
+        return joint_info
+
     def _get_joints_info(self) -> Dict[str, JointInfoPyBullet]:
         joints_info = {}
 
@@ -289,7 +301,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
     def joint_type(self, joint_name: str) -> robot.robot_joints.JointType:
         import pybullet
-        joint_info = self._get_joints_info()[joint_name]
+        joint_info = self._get_joint_info(joint_name)
         joint_type_pybullet = joint_info.jointType
 
         if joint_type_pybullet == pybullet.JOINT_FIXED:
@@ -518,13 +530,13 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
     def joint_position_limits(self, joint_name: str) -> Tuple[float, float]:
         # Get Joint info
-        joint_info = self._get_joints_info()[joint_name]
+        joint_info = self._get_joint_info(joint_name)
 
         return joint_info.jointLowerLimit, joint_info.jointUpperLimit
 
     def joint_force_limit(self, joint_name: str) -> float:
         # Get Joint info
-        joint_info = self._get_joints_info()[joint_name]
+        joint_info = self._get_joint_info(joint_name)
 
         return joint_info.jointMaxForce
 
