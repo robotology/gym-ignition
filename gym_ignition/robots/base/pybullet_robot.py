@@ -64,6 +64,13 @@ class JointInfoPyBullet(NamedTuple):
     parentIndex: int
 
 
+class JointStatePyBullet(NamedTuple):
+    jointPosition: float
+    jointVelocity: float
+    jointReactionForces: List[float]
+    appliedJointMotorTorque: float
+
+
 class PyBulletRobot(robot.robot_abc.RobotABC,
                     robot.robot_joints.RobotJoints,
                     robot.robot_contacts.RobotContacts,
@@ -357,23 +364,33 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
     def joint_position(self, joint_name: str) -> float:
         joint_idx = self._joints_name2index[joint_name]
-        return self._pybullet.getJointState(self.robot_id, joint_idx)[0]
+        joint_state_pybullet = self._pybullet.getJointState(self.robot_id, joint_idx)
+        joint_state = JointStatePyBullet._make(joint_state_pybullet)
+
+        return joint_state.jointPosition
 
     def joint_velocity(self, joint_name: str) -> float:
         joint_idx = self._joints_name2index[joint_name]
-        return self._pybullet.getJointState(self.robot_id, joint_idx)[1]
+        joint_state_pybullet = self._pybullet.getJointState(self.robot_id, joint_idx)
+        joint_state = JointStatePyBullet._make(joint_state_pybullet)
+
+        return joint_state.jointVelocity
 
     def joint_force(self, joint_name: str) -> float:
         raise NotImplementedError
 
     def joint_positions(self) -> np.ndarray:
         joint_states = self._pybullet.getJointStates(self.robot_id, range(self.dofs()))
-        joint_positions = [state[0] for state in joint_states]
+        joint_positions = \
+            [JointStatePyBullet._make(state).jointPosition for state in joint_states]
+
         return np.array(joint_positions)
 
     def joint_velocities(self) -> np.ndarray:
         joint_states = self._pybullet.getJointStates(self.robot_id, range(self.dofs()))
-        joint_velocities = [state[1] for state in joint_states]
+        joint_velocities = \
+            [JointStatePyBullet._make(state).jointVelocity for state in joint_states]
+
         return np.array(joint_velocities)
 
     def joint_pid(self, joint_name: str) -> Union[robot.PID, None]:
