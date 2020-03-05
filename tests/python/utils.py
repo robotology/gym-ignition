@@ -40,7 +40,7 @@ class Gazebo(Simulator):
         self.simulator.setVerbosity(4)
 
         empty_world = resource_finder.find_resource("DefaultEmptyWorld.world")
-        ok_world = self.simulator.setupGazeboWorld(worldFile=empty_world)
+        ok_world = self.simulator.setupGazeboWorld(empty_world)
         assert ok_world
 
         ok_initialize = self.simulator.initialize()
@@ -111,10 +111,11 @@ class CubeGazeboRobot(gazebo_robot.GazeboRobot):
 
     def __init__(self, gazebo, initial_position: np.ndarray, model_file: str = None):
 
-        # Serialize the cube urdf
-        handle, model_file = tempfile.mkstemp()
-        with open(handle, 'w') as f:
-            f.write(get_cube_urdf())
+        if model_file is None:
+            # Serialize the cube urdf
+            handle, model_file = tempfile.mkstemp()
+            with open(handle, 'w') as f:
+                f.write(get_cube_urdf())
 
         # Initialize base class
         super().__init__(model_file=model_file,
