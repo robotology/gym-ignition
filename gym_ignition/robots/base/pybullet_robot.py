@@ -399,25 +399,28 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         return self._jointname2jointcontrolinfo[joint_name].mode
 
     def set_joint_control_mode(self, joint_name: str, mode: JointControlMode) -> bool:
-        # Store the control mode and initialize the PID
-        if mode in {JointControlMode.TORQUE}:
-            pid = None
-            self._jointname2jointcontrolinfo[joint_name] = JointControlInfo(mode=mode)
-        elif mode in {JointControlMode.POSITION, JointControlMode.VELOCITY}:
-            # Initialize a default PID
-            pid = robot.PID(p=1, i=0, d=0)
-            self._jointname2jointcontrolinfo[joint_name] = JointControlInfo(
-                mode=mode, PID=pid)
-        elif mode == JointControlMode.POSITION_INTERPOLATED:
-            raise Exception("Control mode POSITION_INTERPOLATED is not supported")
-        else:
-            raise Exception(f"Control mode '{mode}' not recognized")
 
+        if joint_name not in self._jointname2jointcontrolinfo:
+            raise ValueError(joint_name)
+
+        current_pid = self._jointname2jointcontrolinfo[joint_name].PID
+
+        # Create a default PID if gains were never set
+        if mode in {JointControlMode.POSITION, JointControlMode.VELOCITY}:
+
+            if current_pid is None:
+                current_pid = robot.PID(p=1, i=0, d=0)
+
+        joint_control_info = JointControlInfo(mode=mode, PID=current_pid)
+        self._jointname2jointcontrolinfo[joint_name] = joint_control_info
+
+        # Get intermediate data
         mode_pybullet = controlmode_to_pybullet(mode)
+        pid = self._jointname2jointcontrolinfo[joint_name].PID
         joint_idx_pybullet = self._joints_name2index[joint_name]
 
-        # Disable the default joint motorization setting a 0 maximum force
         if mode == JointControlMode.TORQUE:
+            # Disable the default joint motorization setting a 0 maximum force
             import pybullet
             # Disable the PID if was configured
             self._pybullet.setJointMotorControl2(
@@ -433,15 +436,21 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
                 controlMode=pybullet.VELOCITY_CONTROL,
                 force=0)
 
-        # Change the control mode of the joint
-        if mode == JointControlMode.POSITION:
+        elif mode == JointControlMode.POSITION:
+            if pid.i != 0.0:
+                logger.warn("Integral PID gain not supported in POSITION mode")
+
             self._pybullet.setJointMotorControl2(
                 bodyIndex=self.robot_id,
                 jointIndex=joint_idx_pybullet,
                 controlMode=mode_pybullet,
                 positionGain=pid.p,
                 velocityGain=pid.d)
+
         elif mode == JointControlMode.VELOCITY:
+            if pid.d != 0.0:
+                logger.warn("Derivative PID gain not supported in VELOCITY mode")
+
             # TODO: verify that setting the gains in this way processes the reference
             #  correctly.
             self._pybullet.setJointMotorControl2(
@@ -538,7 +547,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             bodyUniqueId=self.robot_id,
             jointIndex=joint_idx_pybullet,
             controlMode=mode_pybullet,
-            targetVelocity=position,
+            targetPosition=position,
             positionGain=pid.p,
             velocityGain=pid.d)
 
@@ -571,24 +580,14 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
     def set_joint_pid(self, joint_name: str, pid: robot.PID) -> bool:
 
+        if joint_name not in self._jointname2jointcontrolinfo:
+            raise ValueError(joint_name)
+
         mode = self._jointname2jointcontrolinfo[joint_name].mode
-        assert mode != JointControlMode.POSITION_INTERPOLATED
+        self._jointname2jointcontrolinfo[joint_name] = \
+            JointControlInfo(mode=mode, PID=pid)
 
-        if mode == JointControlMode.TORQUE:
-            logger.warn(
-                f"Joint '{joint_name}' is torque controlled. "
-                f"Setting the PID has no effect")
-            return False
-
-        if mode == JointControlMode.POSITION and pid.i != 0.0:
-            raise Exception("Integral term not supported for POSITION mode")
-        elif mode == JointControlMode.VELOCITY and pid.d != 0.0:
-            raise Exception("Derivative term not supported for VELOCITY mode")
-
-        # Store the new PID
-        self._jointname2jointcontrolinfo[joint_name]._replace(PID=pid)
-
-        # Update the PIDs setting again the control mode
+        # Update the PIDs by setting again the control mode
         ok_mode = self.set_joint_control_mode(joint_name, mode)
         assert ok_mode, "Failed to set the control mode"
 
