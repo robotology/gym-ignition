@@ -71,7 +71,19 @@ class JointStatePyBullet(NamedTuple):
     appliedJointMotorTorque: float
 
 
+class LinkInfoPyBullet(NamedTuple):
+    linkWorldPosition: List[float]
+    linkWorldOrientation: List[float]
+    localInertialFramePosition: List[float]
+    localInertialFrameOrientation: List[float]
+    worldLinkFramePosition: List[float]
+    worldLinkFrameOrientation: List[float]
+    worldLinkLinearVelocity: List[float]
+    worldLinkAngularVelocity: List[float]
+
+
 class PyBulletRobot(robot.robot_abc.RobotABC,
+                    robot.robot_links.RobotLinks,
                     robot.robot_joints.RobotJoints,
                     robot.robot_contacts.RobotContacts,
                     robot.robot_baseframe.RobotBaseFrame,
@@ -169,6 +181,10 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
         self._links_name2index_dict = dict()
 
+        # Add the base link
+        self._links_name2index_dict[self.base_frame()] = -1
+
+        # Add the other links
         for _, info in self._get_joints_info().items():
             self._links_name2index_dict[info.linkName.decode()] = info.jointIndex
 
@@ -241,6 +257,52 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             joints_info[joint_info.jointName.decode()] = joint_info
 
         return joints_info
+
+    def _get_base_link_info(self) -> LinkInfoPyBullet:
+        # Get the base link info
+        base_position, base_orientation = self.base_pose()
+        base_lin_vel, base_ang_vel = self.base_velocity()
+        base_link_idx = self._links_name2index[self.base_frame()]
+        assert base_link_idx == -1
+
+        base_link_info = LinkInfoPyBullet(linkWorldPosition=base_position.tolist(),
+                                          linkWorldOrientation=base_orientation.tolist(),
+                                          localInertialFramePosition=None,
+                                          localInertialFrameOrientation=None,
+                                          worldLinkFramePosition=None,
+                                          worldLinkFrameOrientation=None,
+                                          worldLinkLinearVelocity=base_lin_vel.tolist(),
+                                          worldLinkAngularVelocity=base_ang_vel.tolist())
+
+        return base_link_info
+
+    def _get_link_info(self, link_name: str) -> LinkInfoPyBullet:
+        # Handle the base link
+        if link_name == self.base_frame():
+            return self._get_base_link_info()
+
+        # Get the link index
+        link_idx = self._links_name2index[link_name]
+
+        # Get the link info from pybullet
+        link_info_pybullet = self._pybullet.getLinkState(bodyUniqueId=self.robot_id,
+                                                         linkIndex=link_idx,
+                                                         computeLinkVelocity=1,
+                                                         computeForwardKinematics=1)
+
+        # Store it in a namedtuple
+        link_info = LinkInfoPyBullet._make(link_info_pybullet)
+
+        return link_info
+
+    def _get_links_info(self) -> Dict[str, LinkInfoPyBullet]:
+        links_info = {}
+
+        # Add the information of all other links
+        for name in set(self.link_names()):
+            links_info[name] = self._get_link_info(link_name=name)
+
+        return links_info
 
     def _get_contact_info(self) -> List[ContactPyBullet]:
         # Get the all contact points in the simulation
@@ -779,4 +841,59 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         assert linear.size == 3, "'linear' should be an array with 3 elements"
         assert angular.size == 4, "'angular' should be an array with 4 elements"
         self._initial_base_velocity = (linear, angular)
+        return True
+
+    # ==========
+    # RobotLinks
+    # ==========
+
+    def link_names(self) -> List[str]:
+        link_names = list()
+
+        # Append the base link that pybullet ignores
+        link_names.append(self.base_frame())
+
+        for _, info in self._get_joints_info().items():
+            link_names.append(info.linkName.decode())
+
+        return link_names
+
+    def link_pose(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        link_info = self._get_link_info(link_name)
+
+        link_position = link_info.linkWorldPosition
+        link_quaternion = link_info.linkWorldOrientation
+
+        return np.array(link_position), np.array(link_quaternion)
+
+    def link_velocity(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        link_info = self._get_link_info(link_name)
+
+        # TODO: CoM or frame?
+        link_lin_vel = link_info.worldLinkLinearVelocity
+        link_ang_vel = link_info.worldLinkAngularVelocity
+
+        return np.array(link_lin_vel), np.array(link_ang_vel)
+
+    def link_acceleration(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        raise NotImplementedError
+
+    def apply_external_force(self,
+                             link_name: str,
+                             force: np.ndarray,
+                             torque: np.ndarray) -> bool:
+        import pybullet
+        link_idx = self._links_name2index[link_name]
+
+        self._pybullet.applyExternalForce(self.robot_id,
+                                          link_idx,
+                                          force.tolist(),
+                                          [0, 0, 0],
+                                          flags=pybullet.LINK_FRAME)
+
+        self._pybullet.applyExternalTorque(self.robot_id,
+                                           link_idx,
+                                           torque.tolist(),
+                                           flags=pybullet.LINK_FRAME)
+
         return True
