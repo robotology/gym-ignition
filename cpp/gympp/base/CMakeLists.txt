@@ -3,14 +3,14 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 add_library(gympp
-    include/gympp/Environment.h
-    include/gympp/Common.h
-    include/gympp/Log.h
-    include/gympp/Random.h
-    include/gympp/Space.h
-    include/gympp/Robot.h
-    src/Space.cpp
-    src/Random.cpp)
+    include/gympp/base/Environment.h
+    include/gympp/base/Common.h
+    include/gympp/base/Log.h
+    include/gympp/base/Random.h
+    include/gympp/base/Space.h
+    include/gympp/base/Robot.h
+    Space.cpp
+    Random.cpp)
 
 find_package(ignition-common3 QUIET)
 

@@ -108,7 +108,7 @@ endif()
 add_subdirectory(deps)
 
 # Add the C++ sources subdirectory
-add_subdirectory(gympp)
+add_subdirectory(cpp/gympp)
 
 # ========
 # IGNITION
