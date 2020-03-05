@@ -397,10 +397,12 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         return self._jointname2jointcontrolinfo[joint_name].PID
 
     def dt(self) -> float:
-        raise NotImplementedError
+        logger.warn("This method is no-op")
+        return True
 
     def set_dt(self, step_size: float) -> bool:
-        raise NotImplementedError
+        logger.warn("This method is no-op")
+        return True
 
     def set_joint_force(self, joint_name: str, force: float, clip: bool = False) -> bool:
 
@@ -552,6 +554,10 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         return True
 
     def base_frame(self) -> str:
+        if not self._base_frame:
+            logger.warn("Base name not set. Returning dummy name.")
+            return "root"
+
         return self._base_frame
 
     def base_pose(self) -> Tuple[np.ndarray, np.ndarray]:
