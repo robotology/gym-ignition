@@ -20,9 +20,6 @@ class PandaRobot(gazebo_robot.GazeboRobot):
                          gazebo=gazebo,
                          controller_rate=kwargs.get("controller_rate"))
 
-        ok_floating = self.set_as_floating_base(False)
-        assert ok_floating, "Failed to set the robot as fixed base"
-
         base_position = np.array([0., 0., 0.]) \
             if "base_position" not in kwargs else kwargs["base_position"]
 
