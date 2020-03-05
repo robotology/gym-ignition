@@ -195,6 +195,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             assert ok_mode, \
                 f"Failed to initialize the control mode of joint '{name}'"
 
+        assert self.initial_joint_positions().size == self.dofs()
+        assert self.initial_joint_velocities().size == self.dofs()
+
         # Initialize the joints state
         for idx, name in enumerate(self.joint_names()):
             self.reset_joint(joint_name=name,
@@ -347,6 +350,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
                 positionGain=pid.i,
                 velocityGain=pid.p)
 
+        else:
+            raise RuntimeError(f"Control mode '{mode}' is not supported")
+
         return True
 
     def joint_position(self, joint_name: str) -> float:
@@ -360,15 +366,15 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     def joint_force(self, joint_name: str) -> float:
         raise NotImplementedError
 
-    def joint_positions(self) -> List[float]:
+    def joint_positions(self) -> np.ndarray:
         joint_states = self._pybullet.getJointStates(self.robot_id, range(self.dofs()))
         joint_positions = [state[0] for state in joint_states]
-        return joint_positions
+        return np.array(joint_positions)
 
-    def joint_velocities(self) -> List[float]:
+    def joint_velocities(self) -> np.ndarray:
         joint_states = self._pybullet.getJointStates(self.robot_id, range(self.dofs()))
         joint_velocities = [state[1] for state in joint_states]
-        return joint_velocities
+        return np.array(joint_velocities)
 
     def joint_pid(self, joint_name: str) -> Union[robot.PID, None]:
         return self._jointname2jointcontrolinfo[joint_name].PID
@@ -403,7 +409,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     def set_joint_position(self, joint_name: str, position: float) -> bool:
 
         if self._jointname2jointcontrolinfo[joint_name].mode != JointControlMode.POSITION:
-            raise Exception("Joint '{}' is not controlled in POSITION".format(joint_name))
+            raise RuntimeError(f"Joint '{joint_name}' is not controlled in POSITION")
 
         pid = self._jointname2jointcontrolinfo[joint_name].PID
 
