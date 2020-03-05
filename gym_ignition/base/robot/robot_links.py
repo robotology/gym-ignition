@@ -85,6 +85,7 @@ class RobotLinks(ABC):
             - angular acceleration: a 3D array in the [wdotx, wdoty, wdotz] form.
         """
 
+    @abstractmethod
     def apply_external_force(self,
                              link_name: str,
                              force: np.ndarray,

@@ -744,16 +744,20 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
                                  ignition::gazebo::components::ContactSensorData());
 
             // Get the parent entity of the collision, which is a link entity
-            ignition::gazebo::Entity parentLinkEntity = ecm->ParentEntity(collisionEntity);
+            //            ignition::gazebo::Entity parentLinkEntity =
+            //            ecm->ParentEntity(collisionEntity);
+
+            //            std::cout << contactSensor.Element()->ToString("") << std::endl;
 
             // Create the ContactSensor component inside the sensor entity
-            // Note: this is not strictly required. Let's leave it here in the case this component
-            //       is used for something else in the Physics system.
-            auto sensorEntity = sdfEntityCreator->CreateEntities(&contactSensor);
-            assert(sensorEntity != ignition::gazebo::kNullEntity);
-            sdfEntityCreator->SetParent(sensorEntity, parentLinkEntity);
-            assert(ecm->EntityHasComponentType(
-                sensorEntity, ignition::gazebo::components::ContactSensor().TypeId()));
+            // Note: this is not strictly required. Let's leave it here in the case
+            //       this component is used for something else in the Physics system.
+            //            auto sensorEntity = sdfEntityCreator->CreateEntities(&contactSensor);
+            //            assert(sensorEntity != ignition::gazebo::kNullEntity);
+            //            sdfEntityCreator->SetParent(sensorEntity, parentLinkEntity);
+            //            assert(ecm->EntityHasComponentType(
+            //                sensorEntity,
+            //                ignition::gazebo::components::ContactSensor().TypeId()));
         }
 
         // ========================================================
