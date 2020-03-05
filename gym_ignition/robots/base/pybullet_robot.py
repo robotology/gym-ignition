@@ -216,9 +216,11 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             model_id = self._pybullet.loadSDF(filename, **kwargs)[0]
         else:
             import pybullet
+            flags = pybullet.URDF_USE_INERTIA_FROM_FILE
+            flags = flags | pybullet.URDF_MERGE_FIXED_LINKS
             model_id = self._pybullet.loadURDF(
                 fileName=filename,
-                flags=pybullet.URDF_USE_INERTIA_FROM_FILE,
+                flags=flags,
                 **kwargs)
 
         return model_id
