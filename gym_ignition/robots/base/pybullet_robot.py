@@ -377,7 +377,11 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         return joint_state.jointVelocity
 
     def joint_force(self, joint_name: str) -> float:
-        raise NotImplementedError
+        joint_idx = self._joints_name2index[joint_name]
+        joint_state_pybullet = self._pybullet.getJointState(self.robot_id, joint_idx)
+        joint_state = JointStatePyBullet._make(joint_state_pybullet)
+
+        return joint_state.appliedJointMotorTorque
 
     def joint_positions(self) -> np.ndarray:
         joint_states = self._pybullet.getJointStates(self.robot_id, range(self.dofs()))
