@@ -155,12 +155,15 @@ class GymppEnv(gym.Env):
         assert observation_vector, "Failed to get the observation buffer"
         assert observation_vector.size() > 0, "The observation does not contain elements"
 
+        # Convert the SWIG type to a list
+        observation_list = list(observation_vector)
+
         # Convert the observation to a numpy array (this is the only required copy)
         if isinstance(self.observation_space, gym.spaces.Box):
-            observation = np.array(observation_vector)
+            observation = np.array(observation_list)
         elif isinstance(self.observation_space, gym.spaces.Discrete):
             assert observation_vector.size() == 1, "The buffer has the wrong dimension"
-            observation = observation_vector[0]
+            observation = observation_list[0]
         else:
             assert False, "Space not supported"
 
@@ -186,16 +189,19 @@ class GymppEnv(gym.Env):
         assert observation_vector, "Failed to get the observation buffer"
         assert observation_vector.size() > 0, "The observation does not contain elements"
 
+        # Convert the SWIG type to a list
+        observation_list = list(observation_vector)
+
         # Convert the observation to a numpy array (this is the only required copy)
         if isinstance(self.observation_space, gym.spaces.Box):
-            observation = np.array(observation_vector)
+            observation = np.array(observation_list)
         elif isinstance(self.observation_space, gym.spaces.Discrete):
             assert observation_vector.size() == 1, "The buffer has the wrong dimension"
-            observation = observation_vector[0]
+            observation = observation_list[0]
         else:
             assert False, "Space not supported"
 
-        assert self.observation_space.contains(observation),\
+        assert self.observation_space.contains(observation), \
             "The returned observation does not belong to the space"
 
         # Return the list
