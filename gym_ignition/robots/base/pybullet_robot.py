@@ -82,6 +82,24 @@ class LinkInfoPyBullet(NamedTuple):
     worldLinkAngularVelocity: List[float]
 
 
+class ConstraintInfoPyBullet(NamedTuple):
+    parentBodyUniqueId: int
+    parentJointIndex: int
+    childBodyUniqueId: int
+    childLinkIndex: int
+    constraintType: int
+    jointAxis: List[float]
+    jointPivotInParent: List[float]
+    jointPivotInChild: List[float]
+    jointFrameOrientationParent: List[float]
+    jointFrameOrientationChild: List[float]
+    maxAppliedForce: float
+    gearRatio: float
+    gearAuxLink: float
+    relativePositionTarget: float
+    erp: float
+
+
 class PyBulletRobot(robot.robot_abc.RobotABC,
                     robot.robot_links.RobotLinks,
                     robot.robot_joints.RobotJoints,
