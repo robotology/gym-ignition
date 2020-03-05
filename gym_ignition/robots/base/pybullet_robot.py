@@ -706,9 +706,6 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         if self._robot_id is not None:
             raise Exception("The robot object has been already created")
 
-        if positions.size != self.dofs():
-            return False
-
         self._initial_joint_positions = positions
         return True
 
@@ -721,9 +718,6 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     def set_initial_joint_velocities(self, velocities: np.ndarray) -> bool:
         if self._robot_id is not None:
             raise Exception("The robot object has been already created")
-
-        if velocities.size != self.dofs():
-            return False
 
         self._initial_joint_velocities = velocities
         return True
