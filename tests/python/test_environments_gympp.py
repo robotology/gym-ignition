@@ -13,6 +13,8 @@ def test_create_cpp_environment():
     env = gym.make("CartPoleDiscrete-Gympp-v0")
     assert env, "Failed to create 'CartPoleDiscrete-Gympp-v0' environment"
 
+    env.seed(42)
+
     action = env.action_space.sample()
     assert isinstance(action, int), "The sampled action is empty"
 
