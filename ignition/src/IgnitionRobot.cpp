@@ -922,6 +922,11 @@ bool IgnitionRobot::setJointEffortLimit(const gympp::Robot::JointName& jointName
         return false;
     }
 
+    if (effortLimit < 0) {
+        gymppError << "The effort must be greater or equal than 0" << std::endl;
+        return false;
+    }
+
     pImpl->buffers.joints.effortLimits[jointName] = effortLimit;
     return true;
 }

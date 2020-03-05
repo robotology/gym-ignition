@@ -260,7 +260,7 @@ class GazeboRobot(robot_abc.RobotABC,
         return float(limit)
 
     def set_joint_force_limit(self, joint_name: str, limit: float) -> bool:
-        if limit <= 0:
+        if limit < 0:
             raise ValueError(limit)
 
         ok_limit = self.gympp_robot.setJointEffortLimit(joint_name, limit)
