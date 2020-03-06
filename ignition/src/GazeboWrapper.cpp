@@ -7,7 +7,7 @@
  */
 
 #include "gympp/gazebo/GazeboWrapper.h"
-#include "gympp/Log.h"
+#include "gympp/base/Log.h"
 #include "gympp/gazebo/ECMSingleton.h"
 #include "gympp/gazebo/IgnitionRobot.h"
 #include "gympp/gazebo/RobotSingleton.h"

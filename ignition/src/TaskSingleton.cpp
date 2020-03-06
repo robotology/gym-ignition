@@ -7,7 +7,7 @@
  */
 
 #include "gympp/gazebo/TaskSingleton.h"
-#include "gympp/Log.h"
+#include "gympp/base/Log.h"
 #include "gympp/gazebo/Task.h"
 
 #include <cassert>

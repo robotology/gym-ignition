@@ -9,7 +9,7 @@
 #ifndef GYMPP_GAZEBO_IGNITIONROBOT_H
 #define GYMPP_GAZEBO_IGNITIONROBOT_H
 
-#include "gympp/Robot.h"
+#include "gympp/base/Robot.h"
 
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
@@ -25,7 +25,7 @@ namespace gympp {
     } // namespace gazebo
 } // namespace gympp
 
-class gympp::gazebo::IgnitionRobot : public gympp::Robot
+class gympp::gazebo::IgnitionRobot : public gympp::base::Robot
 {
 private:
     class Impl;
@@ -49,11 +49,11 @@ public:
     RobotName name() const override;
     JointNames jointNames() const override;
 
-    JointType jointType(const JointName& jointName) const override;
+    base::JointType jointType(const JointName& jointName) const override;
     double jointForce(const JointName& jointName) const override;
     double jointPosition(const JointName& jointName) const override;
     double jointVelocity(const JointName& jointName) const override;
-    JointControlMode jointControlMode(const JointName& jointName) const override;
+    base::JointControlMode jointControlMode(const JointName& jointName) const override;
 
     JointPositions jointPositions() const override;
     JointVelocities jointVelocities() const override;
@@ -61,20 +61,20 @@ public:
     JointPositions initialJointPositions() const override;
 
     double jointEffortLimit(const JointName& jointName) const override;
-    Limit jointPositionLimits(const JointName& jointName) const override;
+    base::Limit jointPositionLimits(const JointName& jointName) const override;
 
     StepSize dt() const override;
     PID jointPID(const JointName& jointName) const override;
 
     LinkNames linksInContact() const override;
-    std::vector<ContactData> contactData(const LinkName& linkName) const override;
+    std::vector<base::ContactData> contactData(const LinkName& linkName) const override;
 
     LinkNames linkNames() const override;
-    Pose linkPose(const LinkName& linkName) const override;
-    Velocity6D linkVelocity(const LinkName& linkName) const override;
-    Acceleration6D linkAcceleration(const LinkName& linkName) const override;
-    Velocity6D linkBodyFixedVelocity(const LinkName& linkName) const override;
-    Acceleration6D linkBodyFixedAcceleration(const LinkName& linkName) const override;
+    base::Pose linkPose(const LinkName& linkName) const override;
+    base::Velocity6D linkVelocity(const LinkName& linkName) const override;
+    base::Acceleration6D linkAcceleration(const LinkName& linkName) const override;
+    base::Velocity6D linkBodyFixedVelocity(const LinkName& linkName) const override;
+    base::Acceleration6D linkBodyFixedAcceleration(const LinkName& linkName) const override;
 
     // ===========
     // SET METHODS
@@ -93,7 +93,7 @@ public:
     bool setJointPosition(const JointName& jointName, const double jointPosition) override;
     bool setJointVelocity(const JointName& jointName, const double jointVelocity) override;
     bool setJointControlMode(const JointName& jointName,
-                             const JointControlMode controlMode) override;
+                             const base::JointControlMode controlMode) override;
 
     bool setJointPID(const JointName& jointName, const PID& pid) override;
 
@@ -113,8 +113,8 @@ public:
     LinkName baseFrame() override;
     bool setBaseFrame(const LinkName& baseLink) override;
 
-    Pose basePose() override;
-    Velocity6D baseVelocity() override;
+    base::Pose basePose() override;
+    base::Velocity6D baseVelocity() override;
     bool setAsFloatingBase(bool isFloating) override;
     bool resetBasePose(const std::array<double, 3>& position,
                        const std::array<double, 4>& orientation) override;

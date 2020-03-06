@@ -7,9 +7,9 @@
  */
 
 #include "gympp/gazebo/IgnitionEnvironment.h"
-#include "gympp/Log.h"
-#include "gympp/Random.h"
-#include "gympp/Space.h"
+#include "gympp/base/Log.h"
+#include "gympp/base/Random.h"
+#include "gympp/base/Space.h"
 #include "gympp/gazebo/Task.h"
 #include "gympp/gazebo/TaskSingleton.h"
 
@@ -198,13 +198,13 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
 std::vector<size_t> IgnitionEnvironment::seed(size_t seed)
 {
     if (seed != 0) {
-        gympp::Random::setSeed(seed);
+        gympp::base::Random::setSeed(seed);
     }
 
     return {seed};
 }
 
-gympp::EnvironmentPtr IgnitionEnvironment::env()
+gympp::base::EnvironmentPtr IgnitionEnvironment::env()
 {
     return shared_from_this();
 }

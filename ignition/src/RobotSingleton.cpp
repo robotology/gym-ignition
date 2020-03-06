@@ -7,7 +7,7 @@
  */
 
 #include "gympp/gazebo/RobotSingleton.h"
-#include "gympp/Log.h"
+#include "gympp/base/Log.h"
 
 #include <ostream>
 #include <unordered_map>
@@ -18,7 +18,7 @@ using RobotName = std::string;
 class RobotSingleton::Impl
 {
 public:
-    std::unordered_map<RobotName, RobotPtr> robots;
+    std::unordered_map<RobotName, base::RobotPtr> robots;
 };
 
 RobotSingleton::RobotSingleton()
@@ -41,7 +41,7 @@ bool RobotSingleton::exists(const std::string& robotName) const
     }
 }
 
-std::weak_ptr<gympp::Robot> RobotSingleton::getRobot(const std::string& robotName) const
+std::weak_ptr<gympp::base::Robot> RobotSingleton::getRobot(const std::string& robotName) const
 {
     if (robotName.empty()) {
         gymppError << "The robot name to register is empty" << std::endl;
@@ -57,7 +57,7 @@ std::weak_ptr<gympp::Robot> RobotSingleton::getRobot(const std::string& robotNam
     return pImpl->robots.at(robotName);
 }
 
-bool RobotSingleton::storeRobot(RobotPtr robot)
+bool RobotSingleton::storeRobot(base::RobotPtr robot)
 {
     if (!(robot && robot->valid())) {
         gymppError << "Trying to store an Robot pointer not valid" << std::endl;

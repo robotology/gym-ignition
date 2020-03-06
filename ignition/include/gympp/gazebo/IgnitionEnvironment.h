@@ -9,7 +9,7 @@
 #ifndef GYMPP_GAZEBO_IGNITIONENVIRONMENT
 #define GYMPP_GAZEBO_IGNITIONENVIRONMENT
 
-#include "gympp/Environment.h"
+#include "gympp/base/Environment.h"
 #include "gympp/gazebo/GazeboWrapper.h"
 
 #include <functional>
@@ -26,9 +26,9 @@ namespace gympp {
 } // namespace gympp
 
 class gympp::gazebo::IgnitionEnvironment
-    : public gympp::Environment
+    : public gympp::base::Environment
     , public gympp::gazebo::GazeboWrapper
-    , public std::enable_shared_from_this<gympp::Environment>
+    , public std::enable_shared_from_this<gympp::base::Environment>
 {
 private:
     class Impl;
@@ -43,7 +43,7 @@ private:
 
 protected:
 public:
-    using Environment = gympp::Environment;
+    using Environment = gympp::base::Environment;
     using Environment::Action;
     using Environment::Observation;
     using Environment::RenderMode;
@@ -63,7 +63,7 @@ public:
     std::optional<State> step(const Action& action) override;
     std::vector<size_t> seed(size_t seed = 0) override;
 
-    EnvironmentPtr env();
+    base::EnvironmentPtr env();
 };
 
 #endif // GYMPP_GAZEBO_IGNITIONENVIRONMENT

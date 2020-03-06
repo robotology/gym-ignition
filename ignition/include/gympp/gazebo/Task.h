@@ -9,7 +9,7 @@
 #ifndef GYMPP_GAZEBO_TASK_H
 #define GYMPP_GAZEBO_TASK_H
 
-#include "gympp/Environment.h"
+#include "gympp/base/Environment.h"
 #include <optional>
 
 namespace gympp {
@@ -21,9 +21,9 @@ namespace gympp {
 class gympp::gazebo::Task
 {
 public:
-    using Action = gympp::Environment::Action;
-    using Observation = gympp::Environment::Observation;
-    using Reward = gympp::Environment::Reward;
+    using Action = gympp::base::Environment::Action;
+    using Observation = gympp::base::Environment::Observation;
+    using Reward = gympp::base::Environment::Reward;
 
     virtual ~Task() = default;
 

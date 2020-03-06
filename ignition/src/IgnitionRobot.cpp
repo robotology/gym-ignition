@@ -7,7 +7,7 @@
  */
 
 #include "gympp/gazebo/IgnitionRobot.h"
-#include "gympp/Log.h"
+#include "gympp/base/Log.h"
 #include "gympp/gazebo/RobotSingleton.h"
 #include "gympp/gazebo/components/JointPositionReset.h"
 #include "gympp/gazebo/components/JointVelocityReset.h"
@@ -58,7 +58,7 @@ using JointEntity = ignition::gazebo::Entity;
 
 const std::string World2BaseJoint = "world2base";
 const ignition::math::PID DefaultPID(1, 0.1, 0.01, 1, -1, 10000, -10000);
-const gympp::JointControlMode DefaultJointControlMode = gympp::JointControlMode::Torque;
+const gympp::base::JointControlMode DefaultJointControlMode = gympp::base::JointControlMode::Torque;
 
 class IgnitionRobot::Impl
 {
@@ -67,17 +67,17 @@ public:
     {
         struct
         {
-            gympp::Robot::JointPositions positions;
-            gympp::Robot::JointVelocities velocities;
+            gympp::base::Robot::JointPositions positions;
+            gympp::base::Robot::JointVelocities velocities;
             std::map<JointName, double> references;
             std::map<JointName, ignition::math::PID> pid;
-            std::map<JointName, JointControlMode> controlMode;
+            std::map<JointName, base::JointControlMode> controlMode;
             std::map<JointName, double> appliedForces;
             std::map<JointName, double> effortLimits;
         } joints;
         struct
         {
-            std::unordered_map<LinkName, std::vector<gympp::ContactData>> contacts;
+            std::unordered_map<LinkName, std::vector<gympp::base::ContactData>> contacts;
         } links;
     } buffers;
 
@@ -122,8 +122,8 @@ public:
     template <typename ComponentType>
     ComponentType& getOrCreateComponent(const ignition::gazebo::Entity entity);
 
-    static gympp::Pose fromIgnitionMath(const ignition::math::Pose3d& ignitionPose);
-    static ignition::math::Pose3d toIgnitionMath(const gympp::Pose& pose);
+    static gympp::base::Pose fromIgnitionMath(const ignition::math::Pose3d& ignitionPose);
+    static ignition::math::Pose3d toIgnitionMath(const gympp::base::Pose& pose);
 
     static inline std::array<double, 3>
     fromIgnitionMath(const ignition::math::Vector3d& ignitionVector)
@@ -136,7 +136,7 @@ public:
         return {vector[0], vector[1], vector[2]};
     }
 
-    static inline ignition::math::PID toIgnitionMath(const gympp::PID& pid)
+    static inline ignition::math::PID toIgnitionMath(const gympp::base::PID& pid)
     {
         return {pid.p, pid.i, pid.d};
     }
@@ -243,7 +243,7 @@ void IgnitionRobot::Impl::gatherLinksContactData()
                     + "::" + getEntityName(contactData.collision2().id());
 
                 // Extract the contact data
-                ContactData contact;
+                base::ContactData contact;
                 contact.bodyA = scopedBodyA;
                 contact.bodyB = scopedBodyB;
                 contact.position[0] = contactData.position(i).x();
@@ -265,9 +265,9 @@ void IgnitionRobot::Impl::gatherLinksContactData()
         });
 }
 
-gympp::Pose IgnitionRobot::Impl::fromIgnitionMath(const ignition::math::Pose3d& ignitionPose)
+gympp::base::Pose IgnitionRobot::Impl::fromIgnitionMath(const ignition::math::Pose3d& ignitionPose)
 {
-    gympp::Pose pose;
+    gympp::base::Pose pose;
     pose.position[0] = ignitionPose.Pos().X();
     pose.position[1] = ignitionPose.Pos().Y();
     pose.position[2] = ignitionPose.Pos().Z();
@@ -278,7 +278,7 @@ gympp::Pose IgnitionRobot::Impl::fromIgnitionMath(const ignition::math::Pose3d& 
     return pose;
 }
 
-ignition::math::Pose3d IgnitionRobot::Impl::toIgnitionMath(const gympp::Pose& pose)
+ignition::math::Pose3d IgnitionRobot::Impl::toIgnitionMath(const gympp::base::Pose& pose)
 {
     ignition::math::Pose3d ignitionPose;
     ignitionPose.Pos() =
@@ -494,12 +494,12 @@ size_t IgnitionRobot::dofs() const
 // GET METHODS
 // ===========
 
-gympp::Robot::RobotName IgnitionRobot::name() const
+gympp::base::Robot::RobotName IgnitionRobot::name() const
 {
     return pImpl->name;
 }
 
-gympp::Robot::JointNames IgnitionRobot::jointNames() const
+gympp::base::Robot::JointNames IgnitionRobot::jointNames() const
 {
     JointNames names;
     names.reserve(pImpl->joints.size());
@@ -511,40 +511,41 @@ gympp::Robot::JointNames IgnitionRobot::jointNames() const
     return names;
 }
 
-gympp::JointType IgnitionRobot::jointType(const gympp::Robot::JointName& jointName) const
+gympp::base::JointType
+IgnitionRobot::jointType(const gympp::base::Robot::JointName& jointName) const
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
     if (jointEntity == ignition::gazebo::kNullEntity) {
-        return JointType::Invalid;
+        return base::JointType::Invalid;
     }
 
     auto typeComponent =
         pImpl->ecm->Component<ignition::gazebo::components::JointType>(jointEntity);
     assert(typeComponent);
 
-    gympp::JointType returnedType;
+    gympp::base::JointType returnedType;
     sdf::JointType type = typeComponent->Data();
 
     switch (type) {
         case sdf::JointType::FIXED:
-            returnedType = JointType::Fixed;
+            returnedType = base::JointType::Fixed;
             break;
         case sdf::JointType::REVOLUTE:
-            returnedType = JointType::Revolute;
+            returnedType = base::JointType::Revolute;
             break;
         case sdf::JointType::PRISMATIC:
-            returnedType = JointType::Prismatic;
+            returnedType = base::JointType::Prismatic;
             break;
         default:
             gymppError << "Joint type not recognized" << std::endl;
-            returnedType = JointType::Invalid;
+            returnedType = base::JointType::Invalid;
             break;
     }
 
     return returnedType;
 }
 
-double IgnitionRobot::jointForce(const gympp::Robot::JointName& jointName) const
+double IgnitionRobot::jointForce(const gympp::base::Robot::JointName& jointName) const
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
     if (jointEntity == ignition::gazebo::kNullEntity) {
@@ -566,7 +567,7 @@ double IgnitionRobot::jointForce(const gympp::Robot::JointName& jointName) const
     return jointForceComponent->Data().front();
 }
 
-double IgnitionRobot::jointPosition(const gympp::Robot::JointName& jointName) const
+double IgnitionRobot::jointPosition(const gympp::base::Robot::JointName& jointName) const
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
     assert(jointEntity != ignition::gazebo::kNullEntity);
@@ -592,7 +593,7 @@ double IgnitionRobot::jointPosition(const gympp::Robot::JointName& jointName) co
     return jointPositionComponent->Data()[0];
 }
 
-double IgnitionRobot::jointVelocity(const gympp::Robot::JointName& jointName) const
+double IgnitionRobot::jointVelocity(const gympp::base::Robot::JointName& jointName) const
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
     assert(jointEntity != ignition::gazebo::kNullEntity);
@@ -618,13 +619,13 @@ double IgnitionRobot::jointVelocity(const gympp::Robot::JointName& jointName) co
     return jointVelocityComponent->Data()[0];
 }
 
-gympp::JointControlMode
-IgnitionRobot::jointControlMode(const gympp::Robot::JointName& jointName) const
+gympp::base::JointControlMode
+IgnitionRobot::jointControlMode(const gympp::base::Robot::JointName& jointName) const
 {
     return pImpl->buffers.joints.controlMode[jointName];
 }
 
-gympp::Robot::JointPositions IgnitionRobot::jointPositions() const
+gympp::base::Robot::JointPositions IgnitionRobot::jointPositions() const
 {
     size_t i = 0;
     for (const auto& [jointName, _] : pImpl->joints) {
@@ -634,7 +635,7 @@ gympp::Robot::JointPositions IgnitionRobot::jointPositions() const
     return pImpl->buffers.joints.positions;
 }
 
-gympp::Robot::JointVelocities IgnitionRobot::jointVelocities() const
+gympp::base::Robot::JointVelocities IgnitionRobot::jointVelocities() const
 {
     size_t i = 0;
     for (const auto& [jointName, _] : pImpl->joints) {
@@ -644,7 +645,7 @@ gympp::Robot::JointVelocities IgnitionRobot::jointVelocities() const
     return pImpl->buffers.joints.velocities;
 }
 
-gympp::Robot::JointPositions IgnitionRobot::initialJointPositions() const
+gympp::base::Robot::JointPositions IgnitionRobot::initialJointPositions() const
 {
     JointPositions initialJointPositions;
     initialJointPositions.reserve(dofs());
@@ -669,7 +670,7 @@ gympp::Robot::JointPositions IgnitionRobot::initialJointPositions() const
     return initialJointPositions;
 }
 
-double IgnitionRobot::jointEffortLimit(const gympp::Robot::JointName& jointName) const
+double IgnitionRobot::jointEffortLimit(const gympp::base::Robot::JointName& jointName) const
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
     if (jointEntity == ignition::gazebo::kNullEntity) {
@@ -690,7 +691,8 @@ double IgnitionRobot::jointEffortLimit(const gympp::Robot::JointName& jointName)
     return effortLimits[jointName];
 }
 
-gympp::Limit IgnitionRobot::jointPositionLimits(const gympp::Robot::JointName& jointName) const
+gympp::base::Limit
+IgnitionRobot::jointPositionLimits(const gympp::base::Robot::JointName& jointName) const
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
     assert(jointEntity != ignition::gazebo::kNullEntity);
@@ -705,19 +707,20 @@ gympp::Limit IgnitionRobot::jointPositionLimits(const gympp::Robot::JointName& j
         return {};
     }
 
-    gympp::Limit limit;
+    gympp::base::Limit limit;
     limit.min = jointAxisComponent->Data().Lower();
     limit.max = jointAxisComponent->Data().Upper();
 
     return limit;
 }
 
-gympp::Robot::StepSize IgnitionRobot::dt() const
+gympp::base::Robot::StepSize IgnitionRobot::dt() const
 {
     return pImpl->dt;
 }
 
-gympp::Robot::PID IgnitionRobot::jointPID(const gympp::Robot::JointName& jointName) const
+gympp::base::Robot::PID
+IgnitionRobot::jointPID(const gympp::base::Robot::JointName& jointName) const
 {
     assert(pImpl->jointExists(jointName));
     assert(pImpl->pidExists(jointName));
@@ -726,7 +729,7 @@ gympp::Robot::PID IgnitionRobot::jointPID(const gympp::Robot::JointName& jointNa
     return PID(pid.PGain(), pid.IGain(), pid.DGain());
 }
 
-gympp::Robot::LinkNames IgnitionRobot::linksInContact() const
+gympp::base::Robot::LinkNames IgnitionRobot::linksInContact() const
 {
     // Acquire the data
     pImpl->gatherLinksContactData();
@@ -743,14 +746,14 @@ gympp::Robot::LinkNames IgnitionRobot::linksInContact() const
     return linksInContact;
 }
 
-std::vector<gympp::ContactData>
-IgnitionRobot::contactData(const gympp::Robot::LinkName& linkName) const
+std::vector<gympp::base::ContactData>
+IgnitionRobot::contactData(const gympp::base::Robot::LinkName& linkName) const
 {
     pImpl->gatherLinksContactData();
     return pImpl->buffers.links.contacts.at(linkName);
 }
 
-gympp::Robot::LinkNames IgnitionRobot::linkNames() const
+gympp::base::Robot::LinkNames IgnitionRobot::linkNames() const
 {
     LinkNames names;
     names.reserve(pImpl->links.size());
@@ -762,7 +765,7 @@ gympp::Robot::LinkNames IgnitionRobot::linkNames() const
     return names;
 }
 
-gympp::Pose IgnitionRobot::linkPose(const gympp::Robot::LinkName& linkName) const
+gympp::base::Pose IgnitionRobot::linkPose(const gympp::base::Robot::LinkName& linkName) const
 {
     LinkEntity linkEntity = pImpl->getLinkEntity(linkName);
     assert(linkEntity != ignition::gazebo::kNullEntity);
@@ -778,7 +781,8 @@ gympp::Pose IgnitionRobot::linkPose(const gympp::Robot::LinkName& linkName) cons
     return Impl::fromIgnitionMath(linkWorldPoseGazebo);
 }
 
-gympp::Velocity6D IgnitionRobot::linkVelocity(const gympp::Robot::LinkName& linkName) const
+gympp::base::Velocity6D
+IgnitionRobot::linkVelocity(const gympp::base::Robot::LinkName& linkName) const
 {
     LinkEntity linkEntity = pImpl->getLinkEntity(linkName);
     assert(linkEntity != ignition::gazebo::kNullEntity);
@@ -798,14 +802,15 @@ gympp::Velocity6D IgnitionRobot::linkVelocity(const gympp::Robot::LinkName& link
     const ignition::math::Vector3d& linkWorldAngVel = linkWorldAngVelComponent->Data();
 
     // Fill the output data structure
-    gympp::Velocity6D linkWorldVelocity;
+    gympp::base::Velocity6D linkWorldVelocity;
     linkWorldVelocity.linear = Impl::fromIgnitionMath(linkWorldLinVel);
     linkWorldVelocity.angular = Impl::fromIgnitionMath(linkWorldAngVel);
 
     return linkWorldVelocity;
 }
 
-gympp::Acceleration6D IgnitionRobot::linkAcceleration(const gympp::Robot::LinkName& linkName) const
+gympp::base::Acceleration6D
+IgnitionRobot::linkAcceleration(const gympp::base::Robot::LinkName& linkName) const
 {
     LinkEntity linkEntity = pImpl->getLinkEntity(linkName);
     assert(linkEntity != ignition::gazebo::kNullEntity);
@@ -825,14 +830,15 @@ gympp::Acceleration6D IgnitionRobot::linkAcceleration(const gympp::Robot::LinkNa
     const ignition::math::Vector3d& linkWorldAngAcc = linkWorldAngAccComponent->Data();
 
     // Fill the output data structure
-    gympp::Acceleration6D linkWorldAcceleration;
+    gympp::base::Acceleration6D linkWorldAcceleration;
     linkWorldAcceleration.linear = Impl::fromIgnitionMath(linkWorldLinAcc);
     linkWorldAcceleration.angular = Impl::fromIgnitionMath(linkWorldAngAcc);
 
     return linkWorldAcceleration;
 }
 
-gympp::Velocity6D IgnitionRobot::linkBodyFixedVelocity(const gympp::Robot::LinkName& linkName) const
+gympp::base::Velocity6D
+IgnitionRobot::linkBodyFixedVelocity(const gympp::base::Robot::LinkName& linkName) const
 {
     LinkEntity linkEntity = pImpl->getLinkEntity(linkName);
     assert(linkEntity != ignition::gazebo::kNullEntity);
@@ -852,15 +858,15 @@ gympp::Velocity6D IgnitionRobot::linkBodyFixedVelocity(const gympp::Robot::LinkN
     const ignition::math::Vector3d& linkBodyAngVel = linkBodyAngVelComponent->Data();
 
     // Fill the output data structure
-    gympp::Velocity6D linkBodyVelocity;
+    gympp::base::Velocity6D linkBodyVelocity;
     linkBodyVelocity.linear = Impl::fromIgnitionMath(linkBodyLinVel);
     linkBodyVelocity.angular = Impl::fromIgnitionMath(linkBodyAngVel);
 
     return linkBodyVelocity;
 }
 
-gympp::Acceleration6D
-IgnitionRobot::linkBodyFixedAcceleration(const gympp::Robot::LinkName& linkName) const
+gympp::base::Acceleration6D
+IgnitionRobot::linkBodyFixedAcceleration(const gympp::base::Robot::LinkName& linkName) const
 {
     LinkEntity linkEntity = pImpl->getLinkEntity(linkName);
     assert(linkEntity != ignition::gazebo::kNullEntity);
@@ -880,14 +886,14 @@ IgnitionRobot::linkBodyFixedAcceleration(const gympp::Robot::LinkName& linkName)
     const ignition::math::Vector3d& linkBodyAngAcc = linkBodyAngAccComponent->Data();
 
     // Fill the output data structure
-    gympp::Acceleration6D linkBodyAcceleration;
+    gympp::base::Acceleration6D linkBodyAcceleration;
     linkBodyAcceleration.linear = Impl::fromIgnitionMath(linkBodyLinAcc);
     linkBodyAcceleration.angular = Impl::fromIgnitionMath(linkBodyAngAcc);
 
     return linkBodyAcceleration;
 }
 
-bool IgnitionRobot::setdt(const gympp::Robot::StepSize& stepSize)
+bool IgnitionRobot::setdt(const gympp::base::Robot::StepSize& stepSize)
 {
     pImpl->dt = stepSize;
     return true;
@@ -897,7 +903,8 @@ bool IgnitionRobot::setdt(const gympp::Robot::StepSize& stepSize)
 // SET METHODS
 // ===========
 
-bool IgnitionRobot::setJointForce(const gympp::Robot::JointName& jointName, const double jointForce)
+bool IgnitionRobot::setJointForce(const gympp::base::Robot::JointName& jointName,
+                                  const double jointForce)
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
     if (jointEntity == ignition::gazebo::kNullEntity) {
@@ -914,7 +921,7 @@ bool IgnitionRobot::setJointForce(const gympp::Robot::JointName& jointName, cons
     return true;
 }
 
-bool IgnitionRobot::setJointEffortLimit(const gympp::Robot::JointName& jointName,
+bool IgnitionRobot::setJointEffortLimit(const gympp::base::Robot::JointName& jointName,
                                         const double effortLimit)
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
@@ -931,7 +938,7 @@ bool IgnitionRobot::setJointEffortLimit(const gympp::Robot::JointName& jointName
     return true;
 }
 
-bool IgnitionRobot::setJointPositionTarget(const gympp::Robot::JointName& jointName,
+bool IgnitionRobot::setJointPositionTarget(const gympp::base::Robot::JointName& jointName,
                                            const double jointPositionReference)
 {
     // The controller period must have been set in order to set references
@@ -940,7 +947,7 @@ bool IgnitionRobot::setJointPositionTarget(const gympp::Robot::JointName& jointN
         return false;
     }
 
-    if (jointControlMode(jointName) != JointControlMode::Position) {
+    if (jointControlMode(jointName) != base::JointControlMode::Position) {
         gymppError << "Cannot set the position target of joint '" << jointName
                    << "' not controlled in Position" << std::endl;
         return false;
@@ -961,7 +968,7 @@ bool IgnitionRobot::setJointPositionTarget(const gympp::Robot::JointName& jointN
     return true;
 }
 
-bool IgnitionRobot::setJointVelocityTarget(const gympp::Robot::JointName& jointName,
+bool IgnitionRobot::setJointVelocityTarget(const gympp::base::Robot::JointName& jointName,
                                            const double jointVelocityReference)
 {
     // The controller period must have been set in order to set references
@@ -970,7 +977,7 @@ bool IgnitionRobot::setJointVelocityTarget(const gympp::Robot::JointName& jointN
         return false;
     }
 
-    if (jointControlMode(jointName) != JointControlMode::Velocity) {
+    if (jointControlMode(jointName) != base::JointControlMode::Velocity) {
         gymppError << "Cannot set the velocity target of joint '" << jointName
                    << "' not controlled in Velocity" << std::endl;
         return false;
@@ -992,7 +999,7 @@ bool IgnitionRobot::setJointVelocityTarget(const gympp::Robot::JointName& jointN
     return true;
 }
 
-bool IgnitionRobot::setJointPosition(const gympp::Robot::JointName& jointName,
+bool IgnitionRobot::setJointPosition(const gympp::base::Robot::JointName& jointName,
                                      const double jointPosition)
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
@@ -1017,7 +1024,7 @@ bool IgnitionRobot::setJointPosition(const gympp::Robot::JointName& jointName,
     return true;
 }
 
-bool IgnitionRobot::setJointVelocity(const gympp::Robot::JointName& jointName,
+bool IgnitionRobot::setJointVelocity(const gympp::base::Robot::JointName& jointName,
                                      const double jointVelocity)
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
@@ -1042,8 +1049,8 @@ bool IgnitionRobot::setJointVelocity(const gympp::Robot::JointName& jointName,
     return true;
 }
 
-bool IgnitionRobot::setJointControlMode(const gympp::Robot::JointName& jointName,
-                                        const JointControlMode controlMode)
+bool IgnitionRobot::setJointControlMode(const gympp::base::Robot::JointName& jointName,
+                                        const base::JointControlMode controlMode)
 {
     // Clean up possible old references
     pImpl->buffers.joints.references.erase(jointName);
@@ -1056,7 +1063,7 @@ bool IgnitionRobot::setJointControlMode(const gympp::Robot::JointName& jointName
     return true;
 }
 
-bool IgnitionRobot::setJointPID(const gympp::Robot::JointName& jointName, const PID& pid)
+bool IgnitionRobot::setJointPID(const gympp::base::Robot::JointName& jointName, const PID& pid)
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
     if (jointEntity == ignition::gazebo::kNullEntity) {
@@ -1068,7 +1075,7 @@ bool IgnitionRobot::setJointPID(const gympp::Robot::JointName& jointName, const 
     return true;
 }
 
-bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName,
+bool IgnitionRobot::resetJoint(const gympp::base::Robot::JointName& jointName,
                                const double jointPosition,
                                const double jointVelocity)
 {
@@ -1101,7 +1108,7 @@ bool IgnitionRobot::resetJoint(const gympp::Robot::JointName& jointName,
     return true;
 }
 
-bool IgnitionRobot::addExternalWrench(const gympp::Robot::LinkName& linkName,
+bool IgnitionRobot::addExternalWrench(const gympp::base::Robot::LinkName& linkName,
                                       const std::array<double, 3>& force,
                                       const std::array<double, 3>& torque)
 {
@@ -1191,10 +1198,10 @@ bool IgnitionRobot::update(const std::chrono::duration<double>& simTime)
 
             // Use the PID to get the reference
             switch (pImpl->buffers.joints.controlMode[jointName]) {
-                case JointControlMode::Position:
+                case base::JointControlMode::Position:
                     force = pid.Update(jointPosition(jointName) - reference, stepTime);
                     break;
-                case JointControlMode::Velocity:
+                case base::JointControlMode::Velocity:
                     force = pid.Update(jointVelocity(jointName) - reference, stepTime);
                     break;
                 default:
@@ -1240,7 +1247,7 @@ bool IgnitionRobot::update(const std::chrono::duration<double>& simTime)
 // RobotBaseFrame
 // ==============
 
-gympp::Robot::LinkName IgnitionRobot::baseFrame()
+gympp::base::Robot::LinkName IgnitionRobot::baseFrame()
 {
     // Get all the canonical links of the model
     auto candidateBaseLinks = pImpl->ecm->EntitiesByComponents(
@@ -1259,7 +1266,7 @@ gympp::Robot::LinkName IgnitionRobot::baseFrame()
     return baseLinkName;
 }
 
-bool IgnitionRobot::setBaseFrame(const gympp::Robot::LinkName& baseLink)
+bool IgnitionRobot::setBaseFrame(const gympp::base::Robot::LinkName& baseLink)
 {
     if (!pImpl->linkExists(baseLink)) {
         gymppError << "Failed to set base frame to not existing link '" << baseLink << "'"
@@ -1276,7 +1283,7 @@ bool IgnitionRobot::setBaseFrame(const gympp::Robot::LinkName& baseLink)
     return false;
 }
 
-gympp::Pose IgnitionRobot::basePose()
+gympp::base::Pose IgnitionRobot::basePose()
 {
     // Get the pose component
     auto* modelWorldPoseComponent =
@@ -1289,7 +1296,7 @@ gympp::Pose IgnitionRobot::basePose()
     return Impl::fromIgnitionMath(world_H_model);
 }
 
-gympp::Velocity6D IgnitionRobot::baseVelocity()
+gympp::base::Velocity6D IgnitionRobot::baseVelocity()
 {
     // We can get the velocity of the base link. Since there's only a rigid
     // transformation between base and model frame, and the velocity is expressed
@@ -1299,14 +1306,14 @@ gympp::Velocity6D IgnitionRobot::baseVelocity()
     const LinkName& baseLink = baseFrame();
 
     // Get the velocity of the base link
-    gympp::Velocity6D baseVelocity = linkVelocity(baseLink);
+    gympp::base::Velocity6D baseVelocity = linkVelocity(baseLink);
 
     // Convert it to ignition math objects
     ignition::math::Vector3d baseLinVel = Impl::toIgnitionMath(baseVelocity.linear);
     ignition::math::Vector3d baseAngVel = Impl::toIgnitionMath(baseVelocity.angular);
 
     // Create the output data structure
-    gympp::Velocity6D modelVelocity;
+    gympp::base::Velocity6D modelVelocity;
     modelVelocity.linear = {baseLinVel.X(), baseLinVel.Y(), baseLinVel.Z()};
     modelVelocity.angular = {baseAngVel.X(), baseAngVel.Y(), baseAngVel.Z()};
 
@@ -1362,7 +1369,7 @@ bool IgnitionRobot::resetBasePose(const std::array<double, 3>& position,
     }
 
     // Construct the desired transform between world and base
-    gympp::Pose pose;
+    gympp::base::Pose pose;
     pose.position = position;
     pose.orientation = orientation;
     ignition::math::Pose3d world_H_base = Impl::toIgnitionMath(pose);

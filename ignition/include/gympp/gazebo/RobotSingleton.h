@@ -9,14 +9,13 @@
 #ifndef GYMPP_GAZEBO_ROBOTSINGLETON_H
 #define GYMPP_GAZEBO_ROBOTSINGLETON_H
 
-#include "gympp/Robot.h"
+#include "gympp/base/Robot.h"
 
 #include <functional>
 #include <memory>
 #include <string>
 
 namespace gympp {
-    class Robot;
     namespace gazebo {
         class RobotSingleton;
     } // namespace gazebo
@@ -38,9 +37,9 @@ public:
 
     bool exists(const std::string& robotName) const;
 
-    std::weak_ptr<gympp::Robot> getRobot(const std::string& robotName) const;
+    std::weak_ptr<gympp::base::Robot> getRobot(const std::string& robotName) const;
 
-    bool storeRobot(RobotPtr robot);
+    bool storeRobot(base::RobotPtr robot);
     bool deleteRobot(const std::string& robotName);
 };
 
