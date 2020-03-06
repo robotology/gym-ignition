@@ -6,12 +6,12 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#include "gympp/GymFactory.h"
-#include "gympp/PluginDatabase.h"
 #include "gympp/base/Common.h"
 #include "gympp/base/Environment.h"
 #include "gympp/base/Log.h"
 #include "gympp/base/Space.h"
+#include "gympp/utils/GymFactory.h"
+#include "gympp/utils/PluginDatabase.h"
 
 #include "clara.hpp"
 
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
     // ==========================
 
     // Create the environment
-    auto env = gympp::GymFactory::Instance()->make("CartPole");
+    auto env = gympp::utils::GymFactory::Instance()->make("CartPole");
 
     if (!env) {
         gymppError << "Failed to load the CartPole environment" << std::endl;

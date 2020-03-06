@@ -6,12 +6,12 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#include "gympp/GymFactory.h"
-#include "gympp/PluginDatabase.h"
 #include "gympp/base/Environment.h"
 #include "gympp/base/Log.h"
 #include "gympp/base/Random.h"
 #include "gympp/base/Space.h"
+#include "gympp/utils/GymFactory.h"
+#include "gympp/utils/PluginDatabase.h"
 
 #include "clara.hpp"
 
@@ -61,7 +61,7 @@ public:
 
     bool initialize()
     {
-        m_env = GymFactory::Instance()->make(m_environmentName);
+        m_env = utils::GymFactory::Instance()->make(m_environmentName);
 
         if (!m_env) {
             gymppError << "Failed to create environment '" << m_environmentName << "'" << std::endl;
