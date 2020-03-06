@@ -3,7 +3,5 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 add_subdirectory(Physics)
-add_subdirectory(CartPole)
-add_subdirectory(GymFactory)
 add_subdirectory(ECMProvider)
 add_subdirectory(RobotController)

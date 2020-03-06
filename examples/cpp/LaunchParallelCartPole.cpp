@@ -10,8 +10,8 @@
 #include "gympp/base/Log.h"
 #include "gympp/base/Random.h"
 #include "gympp/base/Space.h"
-#include "gympp/utils/GymFactory.h"
-#include "gympp/utils/PluginDatabase.h"
+#include "gympp/gazebo/GymFactory.h"
+#include "gympp/plugins/PluginDatabase.h"
 
 #include "clara.hpp"
 
@@ -61,7 +61,7 @@ public:
 
     bool initialize()
     {
-        m_env = utils::GymFactory::Instance()->make(m_environmentName);
+        m_env = gazebo::GymFactory::Instance()->make(m_environmentName);
 
         if (!m_env) {
             gymppError << "Failed to create environment '" << m_environmentName << "'" << std::endl;

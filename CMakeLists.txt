@@ -107,9 +107,6 @@ endif()
 # Dependencies
 add_subdirectory(deps)
 
-# Add the C++ sources subdirectory
-add_subdirectory(cpp/gympp)
-
 # ========
 # IGNITION
 # ========
@@ -117,6 +114,11 @@ add_subdirectory(cpp/gympp)
 find_package(ignition-gazebo3 COMPONENTS all)
 option(GYMIGNITION_USE_IGNITION
        "Build C++ code depending on Ignition Robotics" ${ignition-gazebo3_FOUND})
+
+# Add the C++ sources subdirectories
+add_subdirectory(cpp/gympp/base)
+add_subdirectory(cpp/gympp/gazebo)
+add_subdirectory(cpp/gympp/plugins)
 
 # Add the targets depending on Ignition Robotics
 if(${GYMIGNITION_USE_IGNITION})

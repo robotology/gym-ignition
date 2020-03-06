@@ -6,22 +6,22 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_PLUGINDATABASE_H
-#define GYMPP_PLUGINDATABASE_H
+#ifndef GYMPP_GAZEBO_PLUGINDATABASE_H
+#define GYMPP_GAZEBO_PLUGINDATABASE_H
 
-#include "gympp/GymFactory.h"
-#include "gympp/Metadata.h"
 #include "gympp/base/Log.h"
 #include "gympp/base/Space.h"
 #include "gympp/gazebo/GazeboWrapper.h"
+#include "gympp/gazebo/GymFactory.h"
+#include "gympp/gazebo/Metadata.h"
 
 class GymppPluginRegistrator_CartPole
 {
 public:
     GymppPluginRegistrator_CartPole()
     {
-        auto factory = gympp::GymFactory::Instance();
-        gympp::PluginMetadata cartPoleMetadata;
+        auto factory = gympp::gazebo::GymFactory::Instance();
+        gympp::gazebo::PluginMetadata cartPoleMetadata;
         gymppDebug << "Registering 'CartPole' plugin" << std::endl;
 
         cartPoleMetadata.setEnvironmentName("CartPole");
@@ -30,15 +30,15 @@ public:
         cartPoleMetadata.setModelFileName("CartPole/CartPole.urdf");
         cartPoleMetadata.setWorldFileName("DefaultEmptyWorld.world");
 
-        gympp::SpaceMetadata actionSpaceMetadata;
+        gympp::gazebo::SpaceMetadata actionSpaceMetadata;
         actionSpaceMetadata.setDimensions({3});
-        actionSpaceMetadata.setType(gympp::SpaceType::Discrete);
+        actionSpaceMetadata.setType(gympp::gazebo::SpaceType::Discrete);
 
         const double xThreshold = 2.5;
         const double thetaThreshold = 24;
 
-        gympp::SpaceMetadata observationSpaceMetadata;
-        observationSpaceMetadata.setType(gympp::SpaceType::Box);
+        gympp::gazebo::SpaceMetadata observationSpaceMetadata;
+        observationSpaceMetadata.setType(gympp::gazebo::SpaceType::Box);
         double maxDouble = std::numeric_limits<double>::max();
         observationSpaceMetadata.setLowLimit(
             gympp::base::spaces::Box::Limit{-xThreshold, -maxDouble, -thetaThreshold, -maxDouble});
@@ -61,4 +61,4 @@ public:
 
 static GymppPluginRegistrator_CartPole plugin;
 
-#endif // GYMPP_PLUGINDATABASE_H
+#endif // GYMPP_GAZEBO_PLUGINDATABASE_H

@@ -6,32 +6,34 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_GYMFACTORY
-#define GYMPP_GYMFACTORY
+#ifndef GYMPP_GAZEBO_GYMFACTORY
+#define GYMPP_GAZEBO_GYMFACTORY
 
 #include "gympp/base/Environment.h"
 #include <ignition/common/SingletonT.hh>
 
-#include <functional>
 #include <memory>
 #include <string>
 
 namespace gympp {
-    class GymFactory;
-    class PluginMetadata;
+    namespace gazebo {
+        class GymFactory;
+        class PluginMetadata;
+    } // namespace gazebo
 } // namespace gympp
 
-class gympp::GymFactory : public ignition::common::SingletonT<gympp::GymFactory>
+class gympp::gazebo::GymFactory : public ignition::common::SingletonT<gympp::gazebo::GymFactory>
 {
 private:
     class Impl;
-    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
+    std::unique_ptr<Impl> pImpl;
 
 public:
     GymFactory();
+    ~GymFactory();
 
     gympp::base::EnvironmentPtr make(const std::string& envName);
     bool registerPlugin(const PluginMetadata& md);
 };
 
-#endif // GYMPP_GYMFACTORY
+#endif // GYMPP_GAZEBO_GYMFACTORY

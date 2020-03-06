@@ -6,42 +6,41 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_ROBOT_TASKSINGLETON_H
-#define GYMPP_ROBOT_TASKSINGLETON_H
+#ifndef GYMPP_BASE_TASKSINGLETON_H
+#define GYMPP_BASE_TASKSINGLETON_H
 
-#include <functional>
 #include <memory>
 #include <string>
 #include <unordered_map>
 
 namespace gympp {
-    namespace gazebo {
+    namespace base {
         class Task;
         class TaskSingleton;
-    } // namespace gazebo
+    } // namespace base
 } // namespace gympp
 
-class gympp::gazebo::TaskSingleton
+class gympp::base::TaskSingleton
 {
 private:
     class Impl;
-    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
+    std::unique_ptr<Impl> pImpl;
 
 protected:
 public:
     using TaskName = std::string;
 
     TaskSingleton();
-    ~TaskSingleton() = default;
+    ~TaskSingleton();
     TaskSingleton(TaskSingleton&) = delete;
     void operator=(const TaskSingleton&) = delete;
 
     static TaskSingleton& get();
 
-    gympp::gazebo::Task* getTask(const TaskName& taskName);
+    gympp::base::Task* getTask(const TaskName& taskName);
 
-    bool storeTask(const TaskName& taskName, gympp::gazebo::Task* task);
+    bool storeTask(const TaskName& taskName, gympp::base::Task* task);
     bool removeTask(const TaskName& taskName);
 };
 
-#endif // GYMPP_ROBOT_TASKSINGLETON_H
+#endif // GYMPP_BASE_TASKSINGLETON_H

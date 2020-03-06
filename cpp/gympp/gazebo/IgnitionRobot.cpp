@@ -306,7 +306,7 @@ ComponentTypeT& IgnitionRobot::Impl::getOrCreateComponent(const ignition::gazebo
 // ==============
 
 IgnitionRobot::IgnitionRobot()
-    : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
+    : pImpl{new Impl()}
 {}
 
 IgnitionRobot::~IgnitionRobot() = default;

@@ -6,8 +6,8 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_METADATA
-#define GYMPP_METADATA
+#ifndef GYMPP_GAZEBO_METADATA
+#define GYMPP_GAZEBO_METADATA
 
 #include "gympp/base/Log.h"
 #include "gympp/base/Space.h"
@@ -17,21 +17,23 @@
 #include <vector>
 
 namespace gympp {
-    class GymFactory;
-    class SpaceMetadata;
-    class PluginMetadata;
+    namespace gazebo {
+        class GymFactory;
+        class SpaceMetadata;
+        class PluginMetadata;
 
-    enum class SpaceType
-    {
-        Discrete,
-        Box
-    };
+        enum class SpaceType
+        {
+            Discrete,
+            Box
+        };
+    } // namespace gazebo
 } // namespace gympp
 
-class gympp::SpaceMetadata
+class gympp::gazebo::SpaceMetadata
 {
 private:
-    friend gympp::GymFactory;
+    friend gympp::gazebo::GymFactory;
 
     SpaceType type;
     std::vector<size_t> dims;
@@ -95,10 +97,10 @@ public:
     }
 };
 
-class gympp::PluginMetadata
+class gympp::gazebo::PluginMetadata
 {
 private:
-    friend gympp::GymFactory;
+    friend gympp::gazebo::GymFactory;
     std::string environmentName;
     std::string libraryName;
     std::string className;
@@ -173,4 +175,4 @@ public:
     }
 };
 
-#endif // GYMPP_METADATA
+#endif // GYMPP_GAZEBO_METADATA

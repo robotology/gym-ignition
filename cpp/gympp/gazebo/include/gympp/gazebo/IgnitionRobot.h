@@ -16,7 +16,6 @@
 #include <ignition/gazebo/EventManager.hh>
 #include <sdf/Element.hh>
 
-#include <functional>
 #include <memory>
 
 namespace gympp {
@@ -29,7 +28,7 @@ class gympp::gazebo::IgnitionRobot : public gympp::base::Robot
 {
 private:
     class Impl;
-    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
+    std::unique_ptr<Impl> pImpl;
 
 public:
     IgnitionRobot();

@@ -9,7 +9,7 @@
 #ifndef GYMPP_PLUGINS_CARTPOLE
 #define GYMPP_PLUGINS_CARTPOLE
 
-#include "gympp/gazebo/Task.h"
+#include "gympp/base/Task.h"
 
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
@@ -32,7 +32,7 @@ class gympp::plugins::CartPole final
     , public ignition::gazebo::ISystemConfigure
     , public ignition::gazebo::ISystemPreUpdate
     , public ignition::gazebo::ISystemPostUpdate
-    , public gympp::gazebo::Task
+    , public gympp::base::Task
 {
 private:
     class Impl;

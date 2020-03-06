@@ -3,6 +3,25 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 # ===============
+# PLUGIN DATABASE
+# ===============
+
+add_library(PluginDatabase INTERFACE)
+target_sources(PluginDatabase INTERFACE
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/plugins/PluginDatabase.h)
+
+target_include_directories(PluginDatabase INTERFACE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+target_link_libraries(PluginDatabase INTERFACE gympp)
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    set_target_properties(PluginDatabase PROPERTIES
+        PUBLIC_HEADER ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/plugins/PluginDatabase.h)
+endif()
+
+# ===============
 # CartPole PLUGIN
 # ===============
 

@@ -6,42 +6,42 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_GAZEBO_IGNITIONENVIRONMENT
-#define GYMPP_GAZEBO_IGNITIONENVIRONMENT
+#ifndef GYMPP_GAZEBO_GAZEBOENVIRONMENT
+#define GYMPP_GAZEBO_GAZEBOENVIRONMENT
 
 #include "gympp/base/Environment.h"
 #include "gympp/gazebo/GazeboWrapper.h"
 
-#include <functional>
 #include <memory>
 #include <optional>
 #include <vector>
 
 namespace gympp {
-    class GymFactory;
-    namespace gazebo {
+    namespace base {
         class Task;
-        class IgnitionEnvironment;
+    } // namespace base
+    namespace gazebo {
+        class GymFactory;
+        class GazeboEnvironment;
     } // namespace gazebo
 } // namespace gympp
 
-class gympp::gazebo::IgnitionEnvironment
+class gympp::gazebo::GazeboEnvironment
     : public gympp::base::Environment
     , public gympp::gazebo::GazeboWrapper
     , public std::enable_shared_from_this<gympp::base::Environment>
 {
 private:
     class Impl;
-    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
-    gympp::gazebo::Task* getTask();
+    std::unique_ptr<Impl> pImpl;
+    gympp::base::Task* getTask();
 
-    friend class gympp::GymFactory;
+    friend class gympp::gazebo::GymFactory;
     bool initializeSimulation();
     void storeSDFModelFile(const std::string& modelSDF);
     void storeModelData(const gympp::gazebo::ModelInitData& modelData);
     void storePluginData(const gympp::gazebo::PluginData& pluginData);
 
-protected:
 public:
     using Environment = gympp::base::Environment;
     using Environment::Action;
@@ -50,13 +50,13 @@ public:
     using Environment::Reward;
     using Environment::State;
 
-    IgnitionEnvironment() = delete;
-    IgnitionEnvironment(const ActionSpacePtr aSpace,
-                        const ObservationSpacePtr oSpace,
-                        const double agentUpdateRate,
-                        const double realTimeFactor = 1,
-                        const double physicsUpdateRate = 1000);
-    ~IgnitionEnvironment() override = default;
+    GazeboEnvironment() = delete;
+    GazeboEnvironment(const ActionSpacePtr aSpace,
+                      const ObservationSpacePtr oSpace,
+                      const double agentUpdateRate,
+                      const double realTimeFactor = 1,
+                      const double physicsUpdateRate = 1000);
+    ~GazeboEnvironment() override;
 
     bool render(RenderMode mode) override;
     std::optional<Observation> reset() override;
@@ -66,4 +66,4 @@ public:
     base::EnvironmentPtr env();
 };
 
-#endif // GYMPP_GAZEBO_IGNITIONENVIRONMENT
+#endif // GYMPP_GAZEBO_GAZEBOENVIRONMENT

@@ -8,9 +8,9 @@
 #include "gympp/base/Space.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
 #include "gympp/gazebo/GazeboWrapper.h"
+#include "gympp/gazebo/GymFactory.h"
+#include "gympp/gazebo/Metadata.h"
 #include "gympp/gazebo/RobotSingleton.h"
-#include "gympp/GymFactory.h"
-#include "gympp/Metadata.h"
 #include <cstdint>
 %}
 
@@ -66,8 +66,8 @@
 %shared_ptr(gympp::gazebo::GazeboWrapper)
 %shared_ptr(gympp::gazebo::IgnitionEnvironment)
 %include "ignition/common/SingletonT.hh"
-%ignore ignition::common::SingletonT<gympp::GymFactory>::myself;
-%template(GymFactorySingleton) ignition::common::SingletonT<gympp::GymFactory>;
+%ignore ignition::common::SingletonT<gympp::gazebo::GymFactory>::myself;
+%template(GymFactorySingleton) ignition::common::SingletonT<gympp::gazebo::GymFactory>;
 
 %include "gympp/base/Environment.h"
 %include "gympp/gazebo/GazeboWrapper.h"
@@ -102,6 +102,6 @@
     }
 %}
 
-%include "gympp/Metadata.h"
-%include "gympp/GymFactory.h"
+%include "gympp/gazebo/Metadata.h"
+%include "gympp/gazebo/GymFactory.h"
 %include "gympp/gazebo/RobotSingleton.h"

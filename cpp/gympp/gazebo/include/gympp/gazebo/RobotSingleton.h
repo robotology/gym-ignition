@@ -11,7 +11,6 @@
 
 #include "gympp/base/Robot.h"
 
-#include <functional>
 #include <memory>
 #include <string>
 
@@ -25,11 +24,11 @@ class gympp::gazebo::RobotSingleton
 {
 private:
     class Impl;
-    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
+    std::unique_ptr<Impl> pImpl;
 
 public:
     RobotSingleton();
-    ~RobotSingleton() = default;
+    ~RobotSingleton();
     RobotSingleton(RobotSingleton&) = delete;
     void operator=(const RobotSingleton&) = delete;
 

@@ -6,14 +6,14 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#include "gympp/gazebo/TaskSingleton.h"
+#include "gympp/base/TaskSingleton.h"
 #include "gympp/base/Log.h"
-#include "gympp/gazebo/Task.h"
+#include "gympp/base/Task.h"
 
 #include <cassert>
 #include <ostream>
 
-using namespace gympp::gazebo;
+using namespace gympp::base;
 
 class TaskSingleton::Impl
 {
@@ -22,10 +22,12 @@ public:
 };
 
 TaskSingleton::TaskSingleton()
-    : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
+    : pImpl{new Impl()}
 {}
 
-gympp::gazebo::TaskSingleton& TaskSingleton::get()
+TaskSingleton::~TaskSingleton()= default;
+
+gympp::base::TaskSingleton& TaskSingleton::get()
 {
     static TaskSingleton instance;
     return instance;

@@ -6,19 +6,19 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_GAZEBO_TASK_H
-#define GYMPP_GAZEBO_TASK_H
+#ifndef GYMPP_BASE_TASK_H
+#define GYMPP_BASE_TASK_H
 
 #include "gympp/base/Environment.h"
 #include <optional>
 
 namespace gympp {
-    namespace gazebo {
+    namespace base {
         class Task;
     } // namespace gazebo
 } // namespace gympp
 
-class gympp::gazebo::Task
+class gympp::base::Task
 {
 public:
     using Action = gympp::base::Environment::Action;

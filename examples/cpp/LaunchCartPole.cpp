@@ -10,8 +10,8 @@
 #include "gympp/base/Environment.h"
 #include "gympp/base/Log.h"
 #include "gympp/base/Space.h"
-#include "gympp/utils/GymFactory.h"
-#include "gympp/utils/PluginDatabase.h"
+#include "gympp/gazebo/GymFactory.h"
+#include "gympp/plugins/PluginDatabase.h"
 
 #include "clara.hpp"
 
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
     // ==========================
 
     // Create the environment
-    auto env = gympp::utils::GymFactory::Instance()->make("CartPole");
+    auto env = gympp::gazebo::GymFactory::Instance()->make("CartPole");
 
     if (!env) {
         gymppError << "Failed to load the CartPole environment" << std::endl;

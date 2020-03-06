@@ -10,8 +10,8 @@
 #include "gympp/base/Log.h"
 #include "gympp/base/Random.h"
 #include "gympp/base/Space.h"
-#include "gympp/gazebo/Task.h"
-#include "gympp/gazebo/TaskSingleton.h"
+#include "gympp/base/Task.h"
+#include "gympp/base/TaskSingleton.h"
 
 #include <sdf/Element.hh>
 #include <sdf/Model.hh>
@@ -26,7 +26,7 @@ class IgnitionEnvironment::Impl
 {
 public:
     size_t id;
-    gympp::gazebo::Task* task = nullptr;
+    gympp::base::Task* task = nullptr;
 
     PluginData pluginData;
     gympp::gazebo::ModelInitData modelData;
@@ -83,10 +83,10 @@ bool IgnitionEnvironment::initializeSimulation()
     return true;
 }
 
-Task* IgnitionEnvironment::getTask()
+gympp::base::Task* IgnitionEnvironment::getTask()
 {
     if (!pImpl->task) {
-        auto& taskSingleton = TaskSingleton::get();
+        auto& taskSingleton = base::TaskSingleton::get();
         pImpl->task = taskSingleton.getTask(pImpl->modelData.modelName);
     }
 
@@ -112,7 +112,7 @@ IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
     , GazeboWrapper(static_cast<unsigned>(physicsUpdateRate / agentUpdateRate),
                     realTimeFactor,
                     physicsUpdateRate)
-    , pImpl{new IgnitionEnvironment::Impl, [](Impl* impl) { delete impl; }}
+    , pImpl{new IgnitionEnvironment::Impl}
 {
     gymppDebug << "Configuring gazebo for an agent running at " << agentUpdateRate << " Hz"
                << std::endl;
@@ -126,6 +126,8 @@ IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
                      << " from the nominal " << rateRatio << std::endl;
     }
 }
+
+IgnitionEnvironment::~IgnitionEnvironment() = default;
 
 std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action& action)
 {

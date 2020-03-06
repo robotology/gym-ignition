@@ -22,8 +22,10 @@ public:
 };
 
 RobotSingleton::RobotSingleton()
-    : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
+    : pImpl{new Impl()}
 {}
+
+RobotSingleton::~RobotSingleton() = default;
 
 RobotSingleton& RobotSingleton::get()
 {

@@ -6,19 +6,19 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#include "gympp/GymFactory.h"
-#include "gympp/Metadata.h"
+#include "gympp/gazebo/GymFactory.h"
 #include "gympp/base/Log.h"
 #include "gympp/base/Space.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
+#include "gympp/gazebo/Metadata.h"
 #include "sdf/Root.hh"
 
 #include <cassert>
 #include <ostream>
 #include <unordered_map>
 
-using namespace gympp;
 using namespace gympp::base;
+using namespace gympp::gazebo;
 
 class GymFactory::Impl
 {
@@ -31,13 +31,13 @@ public:
     std::unordered_map<EnvironmentName, const PluginMetadata> plugins;
 };
 
-gympp::base::spaces::SpacePtr gympp::GymFactory::Impl::makeSpace(const SpaceMetadata& md)
+gympp::base::spaces::SpacePtr GymFactory::Impl::makeSpace(const SpaceMetadata& md)
 {
     assert(md.isValid());
     gympp::base::spaces::SpacePtr space;
 
     switch (md.type) {
-        case gympp::SpaceType::Box: {
+        case gympp::gazebo::SpaceType::Box: {
             if (md.dims.empty()) {
                 space = std::make_shared<gympp::base::spaces::Box>(md.low, md.high);
             }
@@ -46,7 +46,7 @@ gympp::base::spaces::SpacePtr gympp::GymFactory::Impl::makeSpace(const SpaceMeta
             }
             break;
         }
-        case gympp::SpaceType::Discrete: {
+        case gympp::gazebo::SpaceType::Discrete: {
             space = std::make_shared<gympp::base::spaces::Discrete>(md.dims[0]);
             break;
         }
@@ -55,11 +55,13 @@ gympp::base::spaces::SpacePtr gympp::GymFactory::Impl::makeSpace(const SpaceMeta
     return space;
 }
 
-gympp::GymFactory::GymFactory()
-    : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
+GymFactory::GymFactory()
+    : pImpl{new Impl()}
 {}
 
-gympp::base::EnvironmentPtr gympp::GymFactory::make(const std::string& envName)
+GymFactory::~GymFactory() = default;
+
+gympp::base::EnvironmentPtr GymFactory::make(const std::string& envName)
 {
     if (!pImpl->exists(envName)) {
         gymppError << "Environment '" << envName << "' has never been registered" << std::endl;
@@ -118,7 +120,7 @@ gympp::base::EnvironmentPtr gympp::GymFactory::make(const std::string& envName)
     return ignGym->env();
 }
 
-bool gympp::GymFactory::registerPlugin(const PluginMetadata& md)
+bool GymFactory::registerPlugin(const PluginMetadata& md)
 {
     if (!md.isValid()) {
         gymppError << "The plugin metadata is not valid" << std::endl;

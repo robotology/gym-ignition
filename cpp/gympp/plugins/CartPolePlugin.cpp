@@ -11,8 +11,8 @@
 #include "gympp/base/Log.h"
 #include "gympp/base/Random.h"
 #include "gympp/base/Robot.h"
+#include "gympp/base/TaskSingleton.h"
 #include "gympp/gazebo/RobotSingleton.h"
-#include "gympp/gazebo/TaskSingleton.h"
 
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/components/Model.hh>
@@ -115,7 +115,7 @@ CartPole::CartPole()
 
 CartPole::~CartPole()
 {
-    if (!TaskSingleton::get().removeTask(pImpl->robot->name())) {
+    if (!base::TaskSingleton::get().removeTask(pImpl->robot->name())) {
         gymppError << "Failed to unregister the Task interface";
         assert(false);
     }
@@ -141,9 +141,9 @@ void CartPole::Configure(const ignition::gazebo::Entity& entity,
     // Auto-register the task
     gymppDebug << "Registering the Task interface for robot '" << pImpl->modelName << "'"
                << std::endl;
-    auto& taskSingleton = TaskSingleton::get();
+    auto& taskSingleton = base::TaskSingleton::get();
 
-    if (!taskSingleton.storeTask(pImpl->modelName, dynamic_cast<gympp::gazebo::Task*>(this))) {
+    if (!taskSingleton.storeTask(pImpl->modelName, dynamic_cast<gympp::base::Task*>(this))) {
         gymppError << "Failed to register the Task interface";
         assert(false);
         return;
@@ -309,7 +309,7 @@ bool CartPole::setAction(const Task::Action& action)
     return true;
 }
 
-std::optional<gympp::gazebo::Task::Reward> CartPole::computeReward()
+std::optional<gympp::base::Task::Reward> CartPole::computeReward()
 {
     std::lock_guard lock(pImpl->mutex);
     return 1.0;
@@ -318,7 +318,7 @@ std::optional<gympp::gazebo::Task::Reward> CartPole::computeReward()
     //           - std::abs(pImpl->observationBuffer[ObservationIndex::PoleVelocity]);
 }
 
-std::optional<gympp::gazebo::Task::Observation> CartPole::getObservation()
+std::optional<gympp::base::Task::Observation> CartPole::getObservation()
 {
     std::lock_guard lock(pImpl->mutex);
     return Observation(pImpl->observationBuffer);
@@ -329,4 +329,4 @@ IGNITION_ADD_PLUGIN(gympp::plugins::CartPole,
                     gympp::plugins::CartPole::ISystemConfigure,
                     gympp::plugins::CartPole::ISystemPreUpdate,
                     gympp::plugins::CartPole::ISystemPostUpdate,
-                    gympp::gazebo::Task)
+                    gympp::base::Task)
