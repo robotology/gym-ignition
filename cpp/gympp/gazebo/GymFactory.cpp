@@ -9,7 +9,7 @@
 #include "gympp/gazebo/GymFactory.h"
 #include "gympp/base/Log.h"
 #include "gympp/base/Space.h"
-#include "gympp/gazebo/IgnitionEnvironment.h"
+#include "gympp/gazebo/GazeboEnvironment.h"
 #include "gympp/gazebo/Metadata.h"
 #include "sdf/Root.hh"
 
@@ -80,12 +80,11 @@ gympp::base::EnvironmentPtr GymFactory::make(const std::string& envName)
     }
 
     // Create the environment
-    auto ignGym =
-        std::make_shared<gazebo::IgnitionEnvironment>(actionSpace,
-                                                      observationSpace,
-                                                      md.agentRate,
-                                                      md.getPhysicsData().rtf,
-                                                      1 / md.getPhysicsData().maxStepSize);
+    auto ignGym = std::make_shared<gazebo::GazeboEnvironment>(actionSpace,
+                                                              observationSpace,
+                                                              md.agentRate,
+                                                              md.getPhysicsData().rtf,
+                                                              1 / md.getPhysicsData().maxStepSize);
 
     // Setup the world
     if (!ignGym->setupGazeboWorld(md.worldFileName)) {

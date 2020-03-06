@@ -39,7 +39,8 @@ target_link_libraries(${swig_name} PUBLIC
     IgnitionRobot
     RobotSingleton
     GymFactory
-    IgnitionEnvironment
+    GazeboEnvironment
+    RobotSingleton
     GazeboWrapper
     ${PYTHON_LIBRARIES})
 

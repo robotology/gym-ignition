@@ -13,10 +13,10 @@ from gym_ignition.utils.typing import State, Action, Observation, SeedList
 
 
 class GymppEnv(gym.Env):
-    """Class that exposes C++ Ignition environments
+    """Class that exposes C++ Gazebo environments
 
     This class encapsulates environments created as C++ plugins. Plugins that implement
-    the provided gympp and ignition interfaces are inherently compatible with this
+    the provided gympp and gazebo interfaces are inherently compatible with this
     class if they support the C++ factory.
 
     The users of this class need to implement the following method:
@@ -47,7 +47,7 @@ class GymppEnv(gym.Env):
         assert(action_space and observation_space), "Failed to create spaces"
 
     @property
-    def gympp_env(self) -> bindings.IgnitionEnvironment:
+    def gympp_env(self) -> bindings.GazeboEnvironment:
         if self._env:
             return self._env
 

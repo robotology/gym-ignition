@@ -11,7 +11,6 @@
 
 #include "gympp/base/Log.h"
 #include "gympp/base/Space.h"
-#include "gympp/gazebo/IgnitionEnvironment.h"
 
 #include <string>
 #include <vector>

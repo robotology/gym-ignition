@@ -49,15 +49,15 @@ target_include_directories(RobotSingleton PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
-# ====================
-# IGNITION ENVIRONMENT
-# ====================
+# ==================
+# GAZEBO ENVIRONMENT
+# ==================
 
-add_library(IgnitionEnvironment
-    include/gympp/gazebo/IgnitionEnvironment.h
-    IgnitionEnvironment.cpp)
+add_library(GazeboEnvironment
+    include/gympp/gazebo/GazeboEnvironment.h
+    GazeboEnvironment.cpp)
 
-target_link_libraries(IgnitionEnvironment
+target_link_libraries(GazeboEnvironment
     PUBLIC
     gympp
     GazeboWrapper
@@ -66,10 +66,10 @@ target_link_libraries(IgnitionEnvironment
     TaskSingleton
     ignition-gazebo3::core)
 
-set_target_properties(IgnitionEnvironment PROPERTIES
-    PUBLIC_HEADER include/gympp/gazebo/IgnitionEnvironment.h)
+set_target_properties(GazeboEnvironment PROPERTIES
+    PUBLIC_HEADER include/gympp/gazebo/GazeboEnvironment.h)
 
-target_include_directories(IgnitionEnvironment PUBLIC
+target_include_directories(GazeboEnvironment PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
@@ -108,7 +108,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
         TARGETS
         IgnitionRobot
         RobotSingleton
-        IgnitionEnvironment
+        GazeboEnvironment
         GymFactory
         EXPORT gympp
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}

@@ -6,7 +6,7 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#include "gympp/gazebo/IgnitionEnvironment.h"
+#include "gympp/gazebo/GazeboEnvironment.h"
 #include "gympp/base/Log.h"
 #include "gympp/base/Random.h"
 #include "gympp/base/Space.h"
@@ -22,7 +22,7 @@
 
 using namespace gympp::gazebo;
 
-class IgnitionEnvironment::Impl
+class GazeboEnvironment::Impl
 {
 public:
     size_t id;
@@ -36,7 +36,7 @@ public:
 // IGNITION ENVIRONMENT
 // ====================
 
-bool IgnitionEnvironment::initializeSimulation()
+bool GazeboEnvironment::initializeSimulation()
 {
     // If the server is already running it means that the simulation has been already initialized
     if (GazeboWrapper::initialized()) {
@@ -83,7 +83,7 @@ bool IgnitionEnvironment::initializeSimulation()
     return true;
 }
 
-gympp::base::Task* IgnitionEnvironment::getTask()
+gympp::base::Task* GazeboEnvironment::getTask()
 {
     if (!pImpl->task) {
         auto& taskSingleton = base::TaskSingleton::get();
@@ -93,26 +93,26 @@ gympp::base::Task* IgnitionEnvironment::getTask()
     return pImpl->task;
 }
 
-void IgnitionEnvironment::storeModelData(const gympp::gazebo::ModelInitData& modelData)
+void GazeboEnvironment::storeModelData(const gympp::gazebo::ModelInitData& modelData)
 {
     pImpl->modelData = modelData;
 }
 
-void IgnitionEnvironment::storePluginData(const PluginData& pluginData)
+void GazeboEnvironment::storePluginData(const PluginData& pluginData)
 {
     pImpl->pluginData = pluginData;
 }
 
-IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
-                                         const ObservationSpacePtr oSpace,
-                                         const double agentUpdateRate,
-                                         const double realTimeFactor,
-                                         const double physicsUpdateRate)
+GazeboEnvironment::GazeboEnvironment(const ActionSpacePtr aSpace,
+                                     const ObservationSpacePtr oSpace,
+                                     const double agentUpdateRate,
+                                     const double realTimeFactor,
+                                     const double physicsUpdateRate)
     : Environment(aSpace, oSpace)
     , GazeboWrapper(static_cast<unsigned>(physicsUpdateRate / agentUpdateRate),
                     realTimeFactor,
                     physicsUpdateRate)
-    , pImpl{new IgnitionEnvironment::Impl}
+    , pImpl{new GazeboEnvironment::Impl}
 {
     gymppDebug << "Configuring gazebo for an agent running at " << agentUpdateRate << " Hz"
                << std::endl;
@@ -127,9 +127,9 @@ IgnitionEnvironment::IgnitionEnvironment(const ActionSpacePtr aSpace,
     }
 }
 
-IgnitionEnvironment::~IgnitionEnvironment() = default;
+GazeboEnvironment::~GazeboEnvironment() = default;
 
-std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action& action)
+std::optional<GazeboEnvironment::State> GazeboEnvironment::step(const Action& action)
 {
     assert(action_space);
     assert(observation_space);
@@ -194,10 +194,10 @@ std::optional<IgnitionEnvironment::State> IgnitionEnvironment::step(const Action
         return {};
     }
 
-    return IgnitionEnvironment::State{task->isDone(), {}, reward.value(), observation.value()};
+    return GazeboEnvironment::State{task->isDone(), {}, reward.value(), observation.value()};
 }
 
-std::vector<size_t> IgnitionEnvironment::seed(size_t seed)
+std::vector<size_t> GazeboEnvironment::seed(size_t seed)
 {
     if (seed != 0) {
         gympp::base::Random::setSeed(seed);
@@ -206,12 +206,12 @@ std::vector<size_t> IgnitionEnvironment::seed(size_t seed)
     return {seed};
 }
 
-gympp::base::EnvironmentPtr IgnitionEnvironment::env()
+gympp::base::EnvironmentPtr GazeboEnvironment::env()
 {
     return shared_from_this();
 }
 
-std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
+std::optional<GazeboEnvironment::Observation> GazeboEnvironment::reset()
 {
     // Check if the gazebo server is running. If reset() is executed as first method,
     // the server is initialized lazily.
@@ -237,7 +237,7 @@ std::optional<IgnitionEnvironment::Observation> IgnitionEnvironment::reset()
     return task->getObservation();
 }
 
-bool IgnitionEnvironment::render(RenderMode mode)
+bool GazeboEnvironment::render(RenderMode mode)
 {
     gymppDebug << "Rendering the environment" << std::endl;
 
