@@ -6,8 +6,8 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_ROBOT_H
-#define GYMPP_ROBOT_H
+#ifndef GYMPP_BASE_ROBOT_H
+#define GYMPP_BASE_ROBOT_H
 
 #include <array>
 #include <chrono>
@@ -17,32 +17,36 @@
 #include <vector>
 
 namespace gympp {
-    class Robot;
-    using RobotPtr = std::shared_ptr<gympp::Robot>;
+    namespace base {
+        class Robot;
+        using RobotPtr = std::shared_ptr<gympp::base::Robot>;
 
-    struct PID;
-    struct Limit;
-    struct Pose;
-    struct Velocity6D;
-    struct ContactData;
-    struct Acceleration6D;
-    enum class JointControlMode
-    {
-        Position,
-        PositionInterpolated,
-        Velocity,
-        Torque,
-    };
-    enum class JointType
-    {
-        Invalid,
-        Fixed,
-        Revolute,
-        Prismatic,
-    };
+        struct PID;
+        struct Limit;
+        struct Pose;
+        struct Velocity6D;
+        struct ContactData;
+        struct Acceleration6D;
+        enum class JointControlMode
+        {
+            Position,
+            PositionInterpolated,
+            Velocity,
+            Torque,
+        };
+        enum class JointType
+        {
+            Invalid,
+            Fixed,
+            Revolute,
+            Prismatic,
+            Ball,
+        };
+    } // namespace base
+
 } // namespace gympp
 
-struct gympp::PID
+struct gympp::base::PID
 {
     PID() = default;
     PID(double _p, double _i, double _d)
@@ -56,31 +60,38 @@ struct gympp::PID
     double d;
 };
 
-struct gympp::Pose
+struct gympp::base::Pose
 {
-    std::array<double, 3> position;
-    std::array<double, 4> orientation;
+    Pose() = default;
+    Pose(std::array<double, 3> p, std::array<double, 4> o)
+        : position(p)
+        , orientation(o)
+    {}
+
+    // TODO: constructor
+    std::array<double, 3> position = {0, 0, 0};
+    std::array<double, 4> orientation = {1, 0, 0, 0};
 };
 
-struct gympp::Velocity6D
+struct gympp::base::Velocity6D
 {
     std::array<double, 3> linear;
     std::array<double, 3> angular;
 };
 
-struct gympp::Acceleration6D
+struct gympp::base::Acceleration6D
 {
     std::array<double, 3> linear;
     std::array<double, 3> angular;
 };
 
-struct gympp::Limit
+struct gympp::base::Limit
 {
     double min = std::numeric_limits<double>::lowest();
     double max = std::numeric_limits<double>::max();
 };
 
-struct gympp::ContactData
+struct gympp::base::ContactData
 {
     std::string bodyA;
     std::string bodyB;
@@ -90,7 +101,7 @@ struct gympp::ContactData
     std::array<double, 3> position;
 };
 
-class gympp::Robot
+class gympp::base::Robot
 {
 public:
     using VectorContainer = std::vector<double>;
@@ -104,7 +115,7 @@ public:
     using JointPositions = VectorContainer;
     using JointVelocities = VectorContainer;
 
-    using PID = gympp::PID;
+    using PID = gympp::base::PID;
     using StepSize = std::chrono::duration<double>;
 
     Robot() = default;
@@ -194,4 +205,4 @@ public:
     virtual std::array<double, 6> baseWrench() = 0;
 };
 
-#endif // GYMPP_ROBOT_H
+#endif // GYMPP_BASE_ROBOT_H

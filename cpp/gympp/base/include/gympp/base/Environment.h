@@ -6,47 +6,49 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_ENVIRONMENT
-#define GYMPP_ENVIRONMENT
+#ifndef GYMPP_BASE_ENVIRONMENT
+#define GYMPP_BASE_ENVIRONMENT
 
 #include <memory>
 #include <optional>
 #include <string>
 #include <vector>
 
-#include "gympp/Common.h"
-#include "gympp/Space.h"
+#include "gympp/base/Common.h"
+#include "gympp/base/Space.h"
 
 namespace gympp {
-    class Environment;
-    using EnvironmentName = std::string;
-    using EnvironmentPtr = std::shared_ptr<gympp::Environment>;
+    namespace base {
+        class Environment;
+        using EnvironmentName = std::string;
+        using EnvironmentPtr = std::shared_ptr<Environment>;
 
-    struct State;
-    using Action = data::Sample;
-    using Reward = DataSupport;
-    using Observation = data::Sample;
+        struct State;
+        using Action = data::Sample;
+        using Reward = DataSupport;
+        using Observation = data::Sample;
+    } // namespace base
 } // namespace gympp
 
-struct gympp::State
+struct gympp::base::State
 {
     bool done;
     std::string info;
-    gympp::Reward reward;
-    gympp::Observation observation;
+    gympp::base::Reward reward;
+    gympp::base::Observation observation;
 };
 
 // TODO: https://hub.packtpub.com/openai-gym-environments-wrappers-and-monitors-tutorial/
 //       These C++ and their mapping to python / julia should allow using the Wrapper method
 
 // From https://github.com/openai/gym/blob/master/gym/core.py
-class gympp::Environment
+class gympp::base::Environment
 {
 public:
-    using Action = gympp::Action;
-    using Reward = gympp::Reward;
-    using Observation = gympp::Observation;
-    using State = gympp::State;
+    using Action = gympp::base::Action;
+    using Reward = gympp::base::Reward;
+    using Observation = gympp::base::Observation;
+    using State = gympp::base::State;
 
     enum class RenderMode
     {
@@ -55,11 +57,11 @@ public:
         ANSI,
     };
 
-    using ActionSpace = gympp::spaces::Space;
-    using ObservationSpace = gympp::spaces::Space;
+    using ActionSpace = gympp::base::spaces::Space;
+    using ObservationSpace = gympp::base::spaces::Space;
     using ActionSpacePtr = std::shared_ptr<ActionSpace>;
     using ObservationSpacePtr = std::shared_ptr<ObservationSpace>;
-    using RewardRange = gympp::Range;
+    using RewardRange = gympp::base::Range;
 
 public:
     ActionSpacePtr action_space;
@@ -85,4 +87,4 @@ public:
     // TODO: close()
 };
 
-#endif // GYMPP_ENVIRONMENT
+#endif // GYMPP_BASE_ENVIRONMENT

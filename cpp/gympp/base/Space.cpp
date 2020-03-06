@@ -6,9 +6,9 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#include "gympp/Space.h"
-#include "gympp/Log.h"
-#include "gympp/Random.h"
+#include "gympp/base/Space.h"
+#include "gympp/base/Log.h"
+#include "gympp/base/Random.h"
 
 #include <cassert>
 #include <ostream>
@@ -16,7 +16,7 @@
 #include <utility>
 #include <vector>
 
-using namespace gympp::spaces;
+using namespace gympp::base::spaces;
 
 // ===
 // BOX
@@ -148,7 +148,7 @@ Discrete::Sample Discrete::sample()
     std::uniform_int_distribution<> distr(0, static_cast<int>(pImpl->n) - 1);
 
     // Create the buffer
-    auto buffer = gympp::BufferContainer<Type>::type(1, Type{});
+    auto buffer = gympp::base::BufferContainer<Type>::type(1, Type{});
 
     // Fill it with data
     buffer[0] = distr(Random::engine());

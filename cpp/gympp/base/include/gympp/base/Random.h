@@ -6,16 +6,18 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_RANDOM
-#define GYMPP_RANDOM
+#ifndef GYMPP_BASE_RANDOM
+#define GYMPP_BASE_RANDOM
 
 #include <random>
 
 namespace gympp {
-    class Random;
-}
+    namespace base {
+        class Random;
+    } // namespace base
+} // namespace gympp
 
-class gympp::Random
+class gympp::base::Random
 {
 public:
     Random() = default;
@@ -27,4 +29,4 @@ public:
     static void setSeed(size_t seed);
 };
 
-#endif // GYMPP_RANDOM
+#endif // GYMPP_BASE_RANDOM

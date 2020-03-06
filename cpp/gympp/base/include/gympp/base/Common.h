@@ -6,8 +6,8 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#ifndef GYMPP_COMMON
-#define GYMPP_COMMON
+#ifndef GYMPP_BASE_COMMON
+#define GYMPP_BASE_COMMON
 
 #include <any>
 #include <memory>
@@ -17,30 +17,31 @@
 #include <vector>
 
 namespace gympp {
+    namespace base {
+        using DataSupport = double;
+        struct Range;
 
-    using DataSupport = double;
-    struct Range;
+        template <typename Type>
+        struct BufferContainer
+        {
+            typedef std::vector<Type> type;
+        };
 
-    template <typename Type>
-    struct BufferContainer
-    {
-        typedef std::vector<Type> type;
-    };
+        using BufferInt = BufferContainer<int>::type;
+        using BufferLong = BufferContainer<size_t>::type;
+        using BufferFloat = BufferContainer<float>::type;
+        using BufferDouble = BufferContainer<double>::type;
+        using GenericBuffer = std::variant<BufferInt, BufferLong, BufferFloat, BufferDouble>;
 
-    using BufferInt = BufferContainer<int>::type;
-    using BufferLong = BufferContainer<size_t>::type;
-    using BufferFloat = BufferContainer<float>::type;
-    using BufferDouble = BufferContainer<double>::type;
-    using GenericBuffer = std::variant<BufferInt, BufferLong, BufferFloat, BufferDouble>;
+        namespace data {
+            using Shape = std::vector<size_t>;
 
-    namespace data {
-        using Shape = std::vector<size_t>;
-
-        struct Sample;
-    } // namespace data
+            struct Sample;
+        } // namespace data
+    } // namespace base
 } // namespace gympp
 
-struct gympp::data::Sample
+struct gympp::base::data::Sample
 {
     GenericBuffer buffer;
 
@@ -88,7 +89,7 @@ struct gympp::data::Sample
     }
 };
 
-struct gympp::Range
+struct gympp::base::Range
 {
     Range(DataSupport minValue = std::numeric_limits<DataSupport>::lowest(),
           DataSupport maxValue = std::numeric_limits<DataSupport>::max())
@@ -102,4 +103,4 @@ struct gympp::Range
     bool contains(double value) { return (value <= max && value >= min) ? true : false; }
 };
 
-#endif // GYMPP_COMMON
+#endif // GYMPP_BASE_COMMON
