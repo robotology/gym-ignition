@@ -7,7 +7,7 @@
  */
 
 #include "gympp/gazebo/ECMSingleton.h"
-#include "gympp/Log.h"
+#include "gympp/base/Log.h"
 
 #include <mutex>
 #include <ostream>

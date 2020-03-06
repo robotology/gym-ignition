@@ -35,11 +35,13 @@ swig_add_library(${swig_name}
     SOURCES ${swig_name}.i)
 
 target_link_libraries(${swig_name} PUBLIC
+    gympp
+    IgnitionRobot
+    RobotSingleton
     GymFactory
-    IgnitionEnvironment
+    GazeboEnvironment
     RobotSingleton
     GazeboWrapper
-    IgnitionRobot
     ${PYTHON_LIBRARIES})
 
 set_property(TARGET ${swig_name} PROPERTY

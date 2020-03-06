@@ -45,22 +45,12 @@ struct gympp::gazebo::ModelInitData
     std::string modelName = "";
     std::array<double, 3> position = {0, 0, 0};
     std::array<double, 4> orientation = {1, 0, 0, 0};
-
-    inline void setFixedPose(const bool f) { fixedPose = f; }
-    inline void setBaseLink(const std::string& b) { baseLink = b; }
-    inline void setSdfString(const std::string& s) { sdfString = s; }
-    inline void setModelName(const std::string& m) { modelName = m; }
-    inline void setPosition(const std::array<double, 3> p) { position = p; }
-    inline void setOrientation(const std::array<double, 4> o) { orientation = o; }
 };
 
 struct gympp::gazebo::PluginData
 {
     std::string libName;
     std::string className;
-
-    inline void setLibName(const std::string& l) { libName = l; }
-    inline void setClassName(const std::string& c) { className = c; }
 };
 
 class gympp::gazebo::GazeboWrapper

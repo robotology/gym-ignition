@@ -2,15 +2,15 @@
 
 %{
 #define SWIG_FILE_WITH_INIT
-#include "gympp/Common.h"
-#include "gympp/Environment.h"
-#include "gympp/gazebo/IgnitionEnvironment.h"
+#include "gympp/base/Common.h"
+#include "gympp/base/Environment.h"
+#include "gympp/base/Robot.h"
+#include "gympp/base/Space.h"
+#include "gympp/gazebo/GazeboEnvironment.h"
 #include "gympp/gazebo/GazeboWrapper.h"
+#include "gympp/gazebo/GymFactory.h"
+#include "gympp/gazebo/Metadata.h"
 #include "gympp/gazebo/RobotSingleton.h"
-#include "gympp/GymFactory.h"
-#include "gympp/Metadata.h"
-#include "gympp/Robot.h"
-#include "gympp/Space.h"
 #include <cstdint>
 %}
 
@@ -34,46 +34,46 @@
 %template(Array4d) std::array<double, 4>;
 %template(Array6d) std::array<double, 6>;
 
-%include "gympp/Common.h"
-%template(BufferContainer_i) gympp::BufferContainer<int>;
-%template(BufferContainer_u) gympp::BufferContainer<size_t>;
-%template(BufferContainer_f) gympp::BufferContainer<float>;
-%template(BufferContainer_d) gympp::BufferContainer<double>;
-%template(get_i) gympp::data::Sample::get<int>;
-%template(get_u) gympp::data::Sample::get<size_t>;
-%template(get_f) gympp::data::Sample::get<float>;
-%template(get_d) gympp::data::Sample::get<double>;
-%template(getBuffer_i) gympp::data::Sample::getBuffer<int>;
-%template(getBuffer_u) gympp::data::Sample::getBuffer<size_t>;
-%template(getBuffer_f) gympp::data::Sample::getBuffer<float>;
-%template(getBuffer_d) gympp::data::Sample::getBuffer<double>;
+%include "gympp/base/Common.h"
+%template(BufferContainer_i) gympp::base::BufferContainer<int>;
+%template(BufferContainer_u) gympp::base::BufferContainer<size_t>;
+%template(BufferContainer_f) gympp::base::BufferContainer<float>;
+%template(BufferContainer_d) gympp::base::BufferContainer<double>;
+%template(get_i) gympp::base::data::Sample::get<int>;
+%template(get_u) gympp::base::data::Sample::get<size_t>;
+%template(get_f) gympp::base::data::Sample::get<float>;
+%template(get_d) gympp::base::data::Sample::get<double>;
+%template(getBuffer_i) gympp::base::data::Sample::getBuffer<int>;
+%template(getBuffer_u) gympp::base::data::Sample::getBuffer<size_t>;
+%template(getBuffer_f) gympp::base::data::Sample::getBuffer<float>;
+%template(getBuffer_d) gympp::base::data::Sample::getBuffer<double>;
 
 %include "optional.i"
 %template(Optional_i) std::optional<int>;
 %template(Optional_u) std::optional<size_t>;
 %template(Optional_f) std::optional<float>;
 %template(Optional_d) std::optional<double>;
-%template(Optional_state) std::optional<gympp::State>;
-%template(Optional_sample) std::optional<gympp::data::Sample>;
+%template(Optional_state) std::optional<gympp::base::State>;
+%template(Optional_sample) std::optional<gympp::base::data::Sample>;
 
 %include <std_shared_ptr.i>
-%shared_ptr(gympp::spaces::Space)
-%shared_ptr(gympp::spaces::Box)
-%shared_ptr(gympp::spaces::Discrete)
-%include "gympp/Space.h"
+%shared_ptr(gympp::base::spaces::Space)
+%shared_ptr(gympp::base::spaces::Box)
+%shared_ptr(gympp::base::spaces::Discrete)
+%include "gympp/base/Space.h"
 
-%shared_ptr(gympp::Environment)
+%shared_ptr(gympp::base::Environment)
 %shared_ptr(gympp::gazebo::GazeboWrapper)
-%shared_ptr(gympp::gazebo::IgnitionEnvironment)
+%shared_ptr(gympp::gazebo::GazeboEnvironment)
 %include "ignition/common/SingletonT.hh"
-%ignore ignition::common::SingletonT<gympp::GymFactory>::myself;
-%template(GymFactorySingleton) ignition::common::SingletonT<gympp::GymFactory>;
+%ignore ignition::common::SingletonT<gympp::gazebo::GymFactory>::myself;
+%template(GymFactorySingleton) ignition::common::SingletonT<gympp::gazebo::GymFactory>;
 
-%include "gympp/Environment.h"
+%include "gympp/base/Environment.h"
 %include "gympp/gazebo/GazeboWrapper.h"
-%include "gympp/gazebo/IgnitionEnvironment.h"
+%include "gympp/gazebo/GazeboEnvironment.h"
 
-%extend gympp::Robot {
+%extend gympp::base::Robot {
     bool setdt(const double dt) {
         return $self->setdt(std::chrono::duration<double>(dt));
     }
@@ -84,24 +84,24 @@
 }
 
 %include "weak_ptr.i"
-%shared_ptr(gympp::Robot)
-%template(RobotWeakPtr) std::weak_ptr<gympp::Robot>;
+%shared_ptr(gympp::base::Robot)
+%template(RobotWeakPtr) std::weak_ptr<gympp::base::Robot>;
 
-%ignore gympp::Robot::dt;
-%ignore gympp::Robot::setdt(const StepSize&);
-%include "gympp/Robot.h"
-%template(Vector_contact) std::vector<gympp::ContactData>;
+%ignore gympp::base::Robot::dt;
+%ignore gympp::base::Robot::setdt(const StepSize&);
+%include "gympp/base/Robot.h"
+%template(Vector_contact) std::vector<gympp::base::ContactData>;
 
 %inline %{
-    std::shared_ptr<gympp::gazebo::IgnitionEnvironment> envToIgnEnv(gympp::EnvironmentPtr env) {
-        return std::dynamic_pointer_cast<gympp::gazebo::IgnitionEnvironment>(env);
+    std::shared_ptr<gympp::gazebo::GazeboEnvironment> envToGazeboEnvironment(gympp::base::EnvironmentPtr env) {
+        return std::dynamic_pointer_cast<gympp::gazebo::GazeboEnvironment>(env);
     }
 
-    std::shared_ptr<gympp::gazebo::GazeboWrapper> envToGazeboWrapper(gympp::EnvironmentPtr env) {
+    std::shared_ptr<gympp::gazebo::GazeboWrapper> envToGazeboWrapper(gympp::base::EnvironmentPtr env) {
         return std::dynamic_pointer_cast<gympp::gazebo::GazeboWrapper>(env);
     }
 %}
 
-%include "gympp/Metadata.h"
-%include "gympp/GymFactory.h"
+%include "gympp/gazebo/Metadata.h"
+%include "gympp/gazebo/GymFactory.h"
 %include "gympp/gazebo/RobotSingleton.h"

@@ -217,7 +217,7 @@ def test_gymfactory():
     assert gazebo, "Failed to get gazebo wrapper"
 
     # Get the ignition environment
-    ign_env = bindings.envToIgnEnv(env)
+    ign_env = bindings.envToGazeboEnvironment(env)
     assert ign_env, "Failed to get the ignition environment"
 
     # Set verbosity

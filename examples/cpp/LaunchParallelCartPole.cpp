@@ -6,12 +6,12 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#include "gympp/Environment.h"
-#include "gympp/GymFactory.h"
-#include "gympp/Log.h"
-#include "gympp/PluginDatabase.h"
-#include "gympp/Random.h"
-#include "gympp/Space.h"
+#include "gympp/base/Environment.h"
+#include "gympp/base/Log.h"
+#include "gympp/base/Random.h"
+#include "gympp/base/Space.h"
+#include "gympp/gazebo/GymFactory.h"
+#include "gympp/plugins/PluginDatabase.h"
 
 #include "clara.hpp"
 
@@ -29,8 +29,9 @@
 #include <utility>
 #include <vector>
 
-using namespace gympp;
 using namespace clara;
+using namespace gympp;
+using namespace gympp::base;
 
 class Worker
 {
@@ -60,7 +61,7 @@ public:
 
     bool initialize()
     {
-        m_env = GymFactory::Instance()->make(m_environmentName);
+        m_env = gazebo::GymFactory::Instance()->make(m_environmentName);
 
         if (!m_env) {
             gymppError << "Failed to create environment '" << m_environmentName << "'" << std::endl;
@@ -156,7 +157,7 @@ private:
     size_t m_maxEpisodes;
     std::vector<std::unique_ptr<Worker>> m_workers;
     std::vector<std::thread> m_pool;
-    const gympp::EnvironmentName EnvName = "CartPole";
+    const gympp::base::EnvironmentName EnvName = "CartPole";
 
 public:
     MasterAgent(const size_t maxEpisodes)

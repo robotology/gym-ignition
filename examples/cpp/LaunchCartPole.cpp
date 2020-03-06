@@ -6,12 +6,12 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#include "gympp/Common.h"
-#include "gympp/Environment.h"
-#include "gympp/GymFactory.h"
-#include "gympp/Log.h"
-#include "gympp/PluginDatabase.h"
-#include "gympp/Space.h"
+#include "gympp/base/Common.h"
+#include "gympp/base/Environment.h"
+#include "gympp/base/Log.h"
+#include "gympp/base/Space.h"
+#include "gympp/gazebo/GymFactory.h"
+#include "gympp/plugins/PluginDatabase.h"
 
 #include "clara.hpp"
 
@@ -28,8 +28,8 @@
 #include <utility>
 #include <vector>
 
-using namespace gympp;
 using namespace clara;
+using namespace gympp::base;
 
 struct Config
 {
@@ -67,7 +67,7 @@ int main(int argc, char* argv[])
     // ==========================
 
     // Create the environment
-    auto env = GymFactory::Instance()->make("CartPole");
+    auto env = gympp::gazebo::GymFactory::Instance()->make("CartPole");
 
     if (!env) {
         gymppError << "Failed to load the CartPole environment" << std::endl;

@@ -13,10 +13,10 @@ from gym_ignition.utils.typing import State, Action, Observation, SeedList
 
 
 class GymppEnv(gym.Env):
-    """Class that exposes C++ Ignition environments
+    """Class that exposes C++ Gazebo environments
 
     This class encapsulates environments created as C++ plugins. Plugins that implement
-    the provided gympp and ignition interfaces are inherently compatible with this
+    the provided gympp and gazebo interfaces are inherently compatible with this
     class if they support the C++ factory.
 
     The users of this class need to implement the following method:
@@ -47,7 +47,7 @@ class GymppEnv(gym.Env):
         assert(action_space and observation_space), "Failed to create spaces"
 
     @property
-    def gympp_env(self) -> bindings.IgnitionEnvironment:
+    def gympp_env(self) -> bindings.GazeboEnvironment:
         if self._env:
             return self._env
 
@@ -155,12 +155,15 @@ class GymppEnv(gym.Env):
         assert observation_vector, "Failed to get the observation buffer"
         assert observation_vector.size() > 0, "The observation does not contain elements"
 
+        # Convert the SWIG type to a list
+        observation_list = list(observation_vector)
+
         # Convert the observation to a numpy array (this is the only required copy)
         if isinstance(self.observation_space, gym.spaces.Box):
-            observation = np.array(observation_vector)
+            observation = np.array(observation_list)
         elif isinstance(self.observation_space, gym.spaces.Discrete):
             assert observation_vector.size() == 1, "The buffer has the wrong dimension"
-            observation = observation_vector[0]
+            observation = observation_list[0]
         else:
             assert False, "Space not supported"
 
@@ -186,16 +189,19 @@ class GymppEnv(gym.Env):
         assert observation_vector, "Failed to get the observation buffer"
         assert observation_vector.size() > 0, "The observation does not contain elements"
 
+        # Convert the SWIG type to a list
+        observation_list = list(observation_vector)
+
         # Convert the observation to a numpy array (this is the only required copy)
         if isinstance(self.observation_space, gym.spaces.Box):
-            observation = np.array(observation_vector)
+            observation = np.array(observation_list)
         elif isinstance(self.observation_space, gym.spaces.Discrete):
             assert observation_vector.size() == 1, "The buffer has the wrong dimension"
-            observation = observation_vector[0]
+            observation = observation_list[0]
         else:
             assert False, "Space not supported"
 
-        assert self.observation_space.contains(observation),\
+        assert self.observation_space.contains(observation), \
             "The returned observation does not belong to the space"
 
         # Return the list

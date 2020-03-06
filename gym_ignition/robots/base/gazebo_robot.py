@@ -104,19 +104,19 @@ class GazeboRobot(robot_abc.RobotABC,
 
         # Initialize the model data
         model_data = bindings.ModelInitData()
-        model_data.setModelName(self._robot_name)
-        model_data.setSdfString(sdf_string)
-        model_data.setFixedPose(not self.is_floating_base())
-        model_data.setPosition(initial_base_pose.tolist())
-        model_data.setOrientation(initial_base_orientation.tolist())
+        model_data.modelName = self._robot_name
+        model_data.sdfString = sdf_string
+        model_data.fixedPose = not self.is_floating_base()
+        model_data.position =initial_base_pose.tolist()
+        model_data.orientation = initial_base_orientation.tolist()
 
         if self._base_frame is not None:
             model_data.setBaseLink(self._base_frame)
 
         # Initialize robot controller plugin
         plugin_data = bindings.PluginData()
-        plugin_data.setLibName("RobotController")
-        plugin_data.setClassName("gympp::plugins::RobotController")
+        plugin_data.libName = "RobotController"
+        plugin_data.className = "gympp::plugins::RobotController"
 
         # Insert the model
         ok_model = self._gazebo.insertModel(model_data, plugin_data)

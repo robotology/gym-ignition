@@ -7,8 +7,8 @@
  */
 
 #include "RobotController.h"
-#include "gympp/Log.h"
-#include "gympp/Robot.h"
+#include "gympp/base/Log.h"
+#include "gympp/base/Robot.h"
 #include "gympp/gazebo/RobotSingleton.h"
 
 #include <ignition/gazebo/Model.hh>
@@ -33,11 +33,11 @@ class RobotController::Impl
 public:
     std::string modelName;
     bool warningReported = false;
-    std::shared_ptr<gympp::Robot> robot = nullptr;
-    static gympp::RobotPtr getRobotPtr(const std::string& robotName);
+    std::shared_ptr<gympp::base::Robot> robot = nullptr;
+    static gympp::base::RobotPtr getRobotPtr(const std::string& robotName);
 };
 
-gympp::RobotPtr RobotController::Impl::getRobotPtr(const std::string& robotName)
+gympp::base::RobotPtr RobotController::Impl::getRobotPtr(const std::string& robotName)
 {
     // Get the robot interface
     auto robotPtr = RobotSingleton::get().getRobot(robotName).lock();
