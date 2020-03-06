@@ -24,9 +24,9 @@
  */
 
 #include "Physics.h"
-#include "gympp/gazebo/components/JointPositionReset.h"
-#include "gympp/gazebo/components/JointVelocityReset.h"
-#include "gympp/gazebo/components/WorldVelocityCmd.h"
+#include "scenario/gazebo/components/JointPositionReset.h"
+#include "scenario/gazebo/components/JointVelocityReset.h"
+#include "scenario/gazebo/components/WorldVelocityCmd.h"
 
 #include <ignition/common/MeshManager.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>

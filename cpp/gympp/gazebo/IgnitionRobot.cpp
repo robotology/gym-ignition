@@ -9,9 +9,9 @@
 #include "gympp/gazebo/IgnitionRobot.h"
 #include "gympp/base/Log.h"
 #include "gympp/gazebo/RobotSingleton.h"
-#include "gympp/gazebo/components/JointPositionReset.h"
-#include "gympp/gazebo/components/JointVelocityReset.h"
-#include "gympp/gazebo/components/WorldVelocityCmd.h"
+#include "scenario/gazebo/components/JointPositionReset.h"
+#include "scenario/gazebo/components/JointVelocityReset.h"
+#include "scenario/gazebo/components/WorldVelocityCmd.h"
 
 #include <eigen3/Eigen/Dense>
 #include <ignition/gazebo/Model.hh>

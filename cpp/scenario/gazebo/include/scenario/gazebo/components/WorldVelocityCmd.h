@@ -37,16 +37,21 @@ namespace ignition {
     namespace gazebo {
         // Inline bracket to help doxygen filtering.
         inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
-            struct WorldVelocity {
+            struct WorldVelocity
+            {
                 math::Vector3d linear;
                 math::Vector3d angular;
             };
 
+            bool operator==(const WorldVelocity& a, const WorldVelocity& b)
+            {
+                return a.linear == b.linear && a.angular == b.angular;
+            }
+
             namespace components {
                 /// \brief A component type that contains commanded velocity of an
                 /// entity in the world frame represented by ignition::math::Vector3d.
-                using WorldVelocityCmd =
-                    Component<WorldVelocity, class WorldVelocityCmdTag>;
+                using WorldVelocityCmd = Component<WorldVelocity, class WorldVelocityCmdTag>;
                 IGN_GAZEBO_REGISTER_COMPONENT("ign_gazebo_components.WorldVelocityCmdTag",
                                               WorldVelocityCmd)
             } // namespace components
