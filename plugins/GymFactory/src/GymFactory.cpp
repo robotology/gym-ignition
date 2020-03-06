@@ -7,9 +7,9 @@
  */
 
 #include "gympp/GymFactory.h"
-#include "gympp/Log.h"
 #include "gympp/Metadata.h"
-#include "gympp/Space.h"
+#include "gympp/base/Log.h"
+#include "gympp/base/Space.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
 #include "sdf/Root.hh"
 
@@ -18,6 +18,7 @@
 #include <unordered_map>
 
 using namespace gympp;
+using namespace gympp::base;
 
 class GymFactory::Impl
 {
@@ -30,23 +31,23 @@ public:
     std::unordered_map<EnvironmentName, const PluginMetadata> plugins;
 };
 
-gympp::spaces::SpacePtr gympp::GymFactory::Impl::makeSpace(const SpaceMetadata& md)
+gympp::base::spaces::SpacePtr gympp::GymFactory::Impl::makeSpace(const SpaceMetadata& md)
 {
     assert(md.isValid());
-    gympp::spaces::SpacePtr space;
+    gympp::base::spaces::SpacePtr space;
 
     switch (md.type) {
         case gympp::SpaceType::Box: {
             if (md.dims.empty()) {
-                space = std::make_shared<gympp::spaces::Box>(md.low, md.high);
+                space = std::make_shared<gympp::base::spaces::Box>(md.low, md.high);
             }
             else {
-                space = std::make_shared<gympp::spaces::Box>(md.low[0], md.high[0], md.dims);
+                space = std::make_shared<gympp::base::spaces::Box>(md.low[0], md.high[0], md.dims);
             }
             break;
         }
         case gympp::SpaceType::Discrete: {
-            space = std::make_shared<gympp::spaces::Discrete>(md.dims[0]);
+            space = std::make_shared<gympp::base::spaces::Discrete>(md.dims[0]);
             break;
         }
     }
@@ -58,7 +59,7 @@ gympp::GymFactory::GymFactory()
     : pImpl{new Impl(), [](Impl* impl) { delete impl; }}
 {}
 
-gympp::EnvironmentPtr gympp::GymFactory::make(const std::string& envName)
+gympp::base::EnvironmentPtr gympp::GymFactory::make(const std::string& envName)
 {
     if (!pImpl->exists(envName)) {
         gymppError << "Environment '" << envName << "' has never been registered" << std::endl;

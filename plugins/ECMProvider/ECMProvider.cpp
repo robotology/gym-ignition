@@ -7,7 +7,7 @@
  */
 
 #include "ECMProvider.h"
-#include "gympp/Log.h"
+#include "gympp/base/Log.h"
 #include "gympp/gazebo/ECMSingleton.h"
 
 #include <ignition/gazebo/Entity.hh>

@@ -10,9 +10,9 @@
 #define GYMPP_PLUGINDATABASE_H
 
 #include "gympp/GymFactory.h"
-#include "gympp/Log.h"
 #include "gympp/Metadata.h"
-#include "gympp/Space.h"
+#include "gympp/base/Log.h"
+#include "gympp/base/Space.h"
 #include "gympp/gazebo/GazeboWrapper.h"
 
 class GymppPluginRegistrator_CartPole
@@ -41,9 +41,9 @@ public:
         observationSpaceMetadata.setType(gympp::SpaceType::Box);
         double maxDouble = std::numeric_limits<double>::max();
         observationSpaceMetadata.setLowLimit(
-            gympp::spaces::Box::Limit{-xThreshold, -maxDouble, -thetaThreshold, -maxDouble});
+            gympp::base::spaces::Box::Limit{-xThreshold, -maxDouble, -thetaThreshold, -maxDouble});
         observationSpaceMetadata.setHighLimit(
-            gympp::spaces::Box::Limit{xThreshold, maxDouble, thetaThreshold, maxDouble});
+            gympp::base::spaces::Box::Limit{xThreshold, maxDouble, thetaThreshold, maxDouble});
 
         cartPoleMetadata.setActionSpaceMetadata(actionSpaceMetadata);
         cartPoleMetadata.setObservationSpaceMetadata(observationSpaceMetadata);

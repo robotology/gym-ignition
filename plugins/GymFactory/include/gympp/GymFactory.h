@@ -9,7 +9,7 @@
 #ifndef GYMPP_GYMFACTORY
 #define GYMPP_GYMFACTORY
 
-#include "gympp/Environment.h"
+#include "gympp/base/Environment.h"
 #include <ignition/common/SingletonT.hh>
 
 #include <functional>
@@ -30,7 +30,7 @@ private:
 public:
     GymFactory();
 
-    gympp::EnvironmentPtr make(const std::string& envName);
+    gympp::base::EnvironmentPtr make(const std::string& envName);
     bool registerPlugin(const PluginMetadata& md);
 };
 

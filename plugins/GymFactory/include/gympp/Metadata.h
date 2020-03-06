@@ -9,8 +9,8 @@
 #ifndef GYMPP_METADATA
 #define GYMPP_METADATA
 
-#include "gympp/Log.h"
-#include "gympp/Space.h"
+#include "gympp/base/Log.h"
+#include "gympp/base/Space.h"
 #include "gympp/gazebo/IgnitionEnvironment.h"
 
 #include <string>
@@ -36,8 +36,8 @@ private:
     SpaceType type;
     std::vector<size_t> dims;
 
-    gympp::spaces::Box::Limit low;
-    gympp::spaces::Box::Limit high;
+    gympp::base::spaces::Box::Limit low;
+    gympp::base::spaces::Box::Limit high;
 
     bool boxSpaceValid() const
     {
@@ -74,13 +74,13 @@ private:
 public:
     inline SpaceType getType() const { return type; }
     inline std::vector<size_t> getDimensions() const { return dims; }
-    inline gympp::spaces::Box::Limit getLowLimit() const { return low; }
-    inline gympp::spaces::Box::Limit getHighLimit() const { return high; }
+    inline gympp::base::spaces::Box::Limit getLowLimit() const { return low; }
+    inline gympp::base::spaces::Box::Limit getHighLimit() const { return high; }
 
     inline void setType(const SpaceType type) { this->type = type; }
     inline void setDimensions(const std::vector<size_t>& dims) { this->dims = dims; }
-    inline void setLowLimit(const gympp::spaces::Box::Limit& limit) { this->low = limit; }
-    inline void setHighLimit(const gympp::spaces::Box::Limit& limit) { this->high = limit; }
+    inline void setLowLimit(const gympp::base::spaces::Box::Limit& limit) { this->low = limit; }
+    inline void setHighLimit(const gympp::base::spaces::Box::Limit& limit) { this->high = limit; }
 
     bool isValid() const
     {

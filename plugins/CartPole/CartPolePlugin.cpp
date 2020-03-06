@@ -7,10 +7,10 @@
  */
 
 #include "CartPolePlugin.h"
-#include "gympp/Common.h"
-#include "gympp/Log.h"
-#include "gympp/Random.h"
-#include "gympp/Robot.h"
+#include "gympp/base/Common.h"
+#include "gympp/base/Log.h"
+#include "gympp/base/Random.h"
+#include "gympp/base/Robot.h"
 #include "gympp/gazebo/RobotSingleton.h"
 #include "gympp/gazebo/TaskSingleton.h"
 
@@ -30,10 +30,10 @@ using namespace gympp::gazebo;
 using namespace gympp::plugins;
 
 using ActionDataType = int;
-using ActionSample = gympp::BufferContainer<ActionDataType>::type;
+using ActionSample = gympp::base::BufferContainer<ActionDataType>::type;
 
 using ObservationDataType = double;
-using ObservationSample = gympp::BufferContainer<ObservationDataType>::type;
+using ObservationSample = gympp::base::BufferContainer<ObservationDataType>::type;
 
 enum ObservationIndex
 {
@@ -68,17 +68,17 @@ public:
     std::optional<CartPoleAction> action;
 
     std::string modelName;
-    gympp::RobotPtr robot;
-    static gympp::RobotPtr getRobotPtr(const std::string& robotName);
+    gympp::base::RobotPtr robot;
+    static gympp::base::RobotPtr getRobotPtr(const std::string& robotName);
 
     double getRandomThetaInRad()
     {
         std::uniform_real_distribution<> distr(-MaxTheta0Rad, MaxTheta0Rad);
-        return distr(gympp::Random::engine());
+        return distr(gympp::base::Random::engine());
     }
 };
 
-gympp::RobotPtr CartPole::Impl::getRobotPtr(const std::string& robotName)
+gympp::base::RobotPtr CartPole::Impl::getRobotPtr(const std::string& robotName)
 {
     // Get the robot interface
     auto robotPtr = RobotSingleton::get().getRobot(robotName).lock();
