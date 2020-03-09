@@ -42,6 +42,7 @@ target_link_libraries(${swig_name} PUBLIC
     GazeboEnvironment
     RobotSingleton
     GazeboWrapper
+    ScenarioGazebo
     ${PYTHON_LIBRARIES})
 
 set_property(TARGET ${swig_name} PROPERTY
