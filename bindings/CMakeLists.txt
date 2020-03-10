@@ -40,6 +40,7 @@ target_link_libraries(${swig_name} PUBLIC
     RobotSingleton
     GymFactory
     GazeboEnvironment
+    ECMSingleton
     RobotSingleton
     GazeboWrapper
     ScenarioGazebo
