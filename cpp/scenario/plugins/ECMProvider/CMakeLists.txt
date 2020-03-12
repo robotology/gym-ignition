@@ -34,7 +34,6 @@ target_link_libraries(ECMProvider
     PUBLIC
     ignition-gazebo3::core
     PRIVATE
-    gympp
     ECMSingleton
     ExtraComponents)
 
@@ -57,7 +56,7 @@ target_link_libraries(ECMSingleton
     PUBLIC
     ignition-gazebo3::core
     PRIVATE
-    gympp)
+    ScenarioGazebo)
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
     set_target_properties(ECMSingleton PROPERTIES

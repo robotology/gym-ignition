@@ -25,7 +25,7 @@
  */
 
 #include "scenario/plugins/gazebo/ECMProvider.h"
-#include "gympp/base/Log.h"
+#include "scenario/gazebo/Log.h"
 #include "scenario/gazebo/components/ECMMutex.h"
 #include "scenario/plugins/gazebo/ECMSingleton.h"
 

@@ -25,7 +25,7 @@
  */
 
 #include "scenario/plugins/gazebo/ECMSingleton.h"
-#include "gympp/base/Log.h"
+#include "scenario/gazebo/Log.h"
 
 #include <mutex>
 #include <ostream>
