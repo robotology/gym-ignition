@@ -35,7 +35,8 @@ target_link_libraries(ECMProvider
     ignition-gazebo3::core
     PRIVATE
     gympp
-    ECMSingleton)
+    ECMSingleton
+    ExtraComponents)
 
 target_include_directories(ECMProvider PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)

@@ -26,19 +26,17 @@
 
 #include "scenario/plugins/gazebo/ECMProvider.h"
 #include "gympp/base/Log.h"
+#include "scenario/gazebo/components/ECMMutex.h"
 #include "scenario/plugins/gazebo/ECMSingleton.h"
 
 #include <ignition/gazebo/Entity.hh>
-#include <ignition/gazebo/EntityComponentManager.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/World.hh>
 #include <ignition/plugin/Register.hh>
 
 #include <cassert>
-#include <chrono>
 #include <ostream>
 #include <string>
-#include <unordered_map>
 
 using namespace scenario::plugins::gazebo;
 
@@ -46,6 +44,7 @@ class ECMProvider::Impl
 {
 public:
     std::string worldName;
+    ignition::gazebo::Entity worldEntity;
 };
 
 ECMProvider::ECMProvider()
@@ -72,9 +71,9 @@ void ECMProvider::Configure(const ignition::gazebo::Entity& /*entity*/,
     }
 
     assert(worldEntities.size() == 1);
-    auto worldEntity = worldEntities[0];
+    pImpl->worldEntity = worldEntities[0];
 
-    auto nameComponent = ecm.Component<ignition::gazebo::components::Name>(worldEntity);
+    auto nameComponent = ecm.Component<ignition::gazebo::components::Name>(pImpl->worldEntity);
     pImpl->worldName = nameComponent->Data();
     assert(!pImpl->worldName.empty());
 
@@ -90,15 +89,6 @@ void ECMProvider::Configure(const ignition::gazebo::Entity& /*entity*/,
     }
 }
 
-void ECMProvider::PreUpdate(const ignition::gazebo::UpdateInfo& info,
-                            ignition::gazebo::EntityComponentManager& /*ecm*/)
-{
-    // Syncronize entity creation only when the simulation is paused
-    if (info.paused) {
-        ECMSingleton::get().notifyAndWaitPreUpdate(pImpl->worldName);
-    }
-}
 IGNITION_ADD_PLUGIN(scenario::plugins::gazebo::ECMProvider,
                     scenario::plugins::gazebo::ECMProvider::System,
-                    scenario::plugins::gazebo::ECMProvider::ISystemConfigure,
-                    scenario::plugins::gazebo::ECMProvider::ISystemPreUpdate)
+                    scenario::plugins::gazebo::ECMProvider::ISystemConfigure)

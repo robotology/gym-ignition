@@ -47,7 +47,6 @@ namespace scenario {
 class scenario::plugins::gazebo::ECMProvider final
     : public ignition::gazebo::System
     , public ignition::gazebo::ISystemConfigure
-    , public ignition::gazebo::ISystemPreUpdate
 {
 private:
     class Impl;
@@ -61,9 +60,6 @@ public:
                    const std::shared_ptr<const sdf::Element>& sdf,
                    ignition::gazebo::EntityComponentManager& ecm,
                    ignition::gazebo::EventManager& eventMgr) override;
-
-    void PreUpdate(const ignition::gazebo::UpdateInfo& info,
-                   ignition::gazebo::EntityComponentManager& ecm) override;
 };
 
 #endif // SCENARIO_PLUGINS_GAZEBO_ECMPROVIDER
