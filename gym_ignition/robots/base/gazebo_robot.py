@@ -21,7 +21,7 @@ class GazeboRobot(robot_abc.RobotABC,
 
     def __init__(self,
                  model_file: str,
-                 gazebo: bindings.GazeboWrapper,
+                 gazebo: bindings.GazeboSimulator,
                  controller_rate: float = None) -> None:
 
         # Find the model file
@@ -94,7 +94,7 @@ class GazeboRobot(robot_abc.RobotABC,
             sdf_string = stream.read()
 
         # Get the model name
-        original_name = bindings.GazeboWrapper.getModelNameFromSDF(sdf_string)
+        original_name = bindings.GazeboSimulator.getModelNameFromSDF(sdf_string)
         assert original_name, f"Failed to get model name from file {self.model_file}"
 
         # Create a unique robot name

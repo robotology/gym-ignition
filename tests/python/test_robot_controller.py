@@ -31,7 +31,7 @@ def test_joint_controller():
     model_data.sdfString = model_sdf_string
 
     # Get the model name
-    model_name = bindings.GazeboWrapper.getModelNameFromSDF(model_sdf_string)
+    model_name = bindings.GazeboSimulator.getModelNameFromSDF(model_sdf_string)
     robot_name = model_name
 
     # =============
@@ -41,7 +41,7 @@ def test_joint_controller():
     # Create the gazebo wrapper
     num_of_iterations = int(physics_rate / agent_rate)
     desired_rtf = float(np.finfo(np.float32).max)
-    gazebo = bindings.GazeboWrapper(num_of_iterations, desired_rtf, physics_rate)
+    gazebo = bindings.GazeboSimulator(num_of_iterations, desired_rtf, physics_rate)
     assert gazebo, "Failed to get the gazebo wrapper"
 
     # Set the verbosity

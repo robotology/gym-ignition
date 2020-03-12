@@ -221,7 +221,7 @@ def test_gymfactory():
     assert ign_env, "Failed to get the ignition environment"
 
     # Set verbosity
-    bindings.GazeboWrapper.setVerbosity(4)
+    bindings.GazeboSimulator.setVerbosity(4)
 
     # Use the environment
     env.reset()

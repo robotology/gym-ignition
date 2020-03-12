@@ -67,7 +67,7 @@ class GazeboRuntime(runtime.Runtime):
     # ==========
 
     @property
-    def gazebo(self) -> bindings.GazeboWrapper:
+    def gazebo(self) -> bindings.GazeboSimulator:
         if self._gazebo_wrapper:
             assert self._gazebo_wrapper.getPhysicsData().rtf == self._rtf, \
                 "The RTF of gazebo does not match the configuration"
@@ -101,8 +101,8 @@ class GazeboRuntime(runtime.Runtime):
             logger.debug("Setting {} iteration per simulator step"
                          .format(int(num_of_iterations_per_gazebo_step)))
 
-        # Create the GazeboWrapper object
-        self._gazebo_wrapper = bindings.GazeboWrapper(
+        # Create the GazeboSimulator object
+        self._gazebo_wrapper = bindings.GazeboSimulator(
             int(num_of_iterations_per_gazebo_step),
             self._rtf,
             self._physics_rate)

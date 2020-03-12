@@ -34,7 +34,7 @@ class Gazebo(Simulator):
                  physics_rate: float,
                  iterations: int = int(1),
                  rtf=float(np.finfo(np.float32).max)):
-        self.simulator = bindings.GazeboWrapper(iterations, rtf, physics_rate)
+        self.simulator = bindings.GazeboSimulator(iterations, rtf, physics_rate)
         assert self.simulator
 
         self.simulator.setVerbosity(4)
