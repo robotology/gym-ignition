@@ -111,7 +111,7 @@ class GazeboRobot(robot_abc.RobotABC,
         model_data.orientation = initial_base_orientation.tolist()
 
         if self._base_frame is not None:
-            model_data.setBaseLink(self._base_frame)
+            model_data.baseLink = self._base_frame
 
         # Initialize robot controller plugin
         plugin_data = bindings.PluginData()
