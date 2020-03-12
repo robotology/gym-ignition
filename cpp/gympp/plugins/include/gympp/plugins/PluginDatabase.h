@@ -11,9 +11,9 @@
 
 #include "gympp/base/Log.h"
 #include "gympp/base/Space.h"
-#include "gympp/gazebo/GazeboWrapper.h"
 #include "gympp/gazebo/GymFactory.h"
 #include "gympp/gazebo/Metadata.h"
+#include "scenario/gazebo/GazeboSimulator.h"
 
 class GymppPluginRegistrator_CartPole
 {
@@ -48,7 +48,7 @@ public:
         cartPoleMetadata.setActionSpaceMetadata(actionSpaceMetadata);
         cartPoleMetadata.setObservationSpaceMetadata(observationSpaceMetadata);
 
-        gympp::gazebo::PhysicsData physicsData;
+        scenario::gazebo::PhysicsData physicsData;
         physicsData.rtf = 1E9;
         physicsData.maxStepSize = 0.001;
         cartPoleMetadata.setPhysicsData(physicsData);

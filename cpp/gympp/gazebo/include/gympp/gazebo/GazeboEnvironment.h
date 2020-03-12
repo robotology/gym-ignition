@@ -10,7 +10,7 @@
 #define GYMPP_GAZEBO_GAZEBOENVIRONMENT
 
 #include "gympp/base/Environment.h"
-#include "gympp/gazebo/GazeboWrapper.h"
+#include "scenario/gazebo/GazeboSimulator.h"
 
 #include <memory>
 #include <optional>
@@ -28,7 +28,7 @@ namespace gympp {
 
 class gympp::gazebo::GazeboEnvironment
     : public gympp::base::Environment
-    , public gympp::gazebo::GazeboWrapper
+    , public scenario::gazebo::GazeboSimulator
     , public std::enable_shared_from_this<gympp::base::Environment>
 {
 private:
@@ -39,8 +39,8 @@ private:
     friend class gympp::gazebo::GymFactory;
     bool initializeSimulation();
     void storeSDFModelFile(const std::string& modelSDF);
-    void storeModelData(const gympp::gazebo::ModelInitData& modelData);
-    void storePluginData(const gympp::gazebo::PluginData& pluginData);
+    void storeModelData(const scenario::gazebo::ModelInitData& modelData);
+    void storePluginData(const scenario::gazebo::PluginData& pluginData);
 
 public:
     using Environment = gympp::base::Environment;

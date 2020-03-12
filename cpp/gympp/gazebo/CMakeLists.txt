@@ -60,7 +60,7 @@ add_library(GazeboEnvironment
 target_link_libraries(GazeboEnvironment
     PUBLIC
     gympp
-    GazeboWrapper
+    GazeboSimulator
     PRIVATE
     Task
     TaskSingleton
@@ -88,6 +88,7 @@ add_library(GymFactory
 target_link_libraries(GymFactory
     PUBLIC
     gympp
+    GazeboSimulator
     GazeboEnvironment
     ignition-gazebo3::core)
 

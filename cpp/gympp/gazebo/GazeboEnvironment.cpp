@@ -21,6 +21,7 @@
 #include <ostream>
 
 using namespace gympp::gazebo;
+using namespace scenario::gazebo;
 
 class GazeboEnvironment::Impl
 {
@@ -29,24 +30,20 @@ public:
     gympp::base::Task* task = nullptr;
 
     PluginData pluginData;
-    gympp::gazebo::ModelInitData modelData;
+    ModelInitData modelData;
 };
-
-// ====================
-// IGNITION ENVIRONMENT
-// ====================
 
 bool GazeboEnvironment::initializeSimulation()
 {
     // If the server is already running it means that the simulation has been already initialized
-    if (GazeboWrapper::initialized()) {
+    if (GazeboSimulator::initialized()) {
         return true;
     }
 
     gymppDebug << "Initializing the simulation" << std::endl;
 
     // Initialize gazebo and load the world file
-    if (!GazeboWrapper::initialize()) {
+    if (!GazeboSimulator::initialize()) {
         gymppError << "Failed to either initialize gazebo or gather the server" << std::endl;
         return false;
     }
@@ -74,7 +71,7 @@ bool GazeboEnvironment::initializeSimulation()
     pImpl->modelData.modelName = prefix + "::" + desiredModelNameWithoutPrefix;
 
     // Insert the model in the world
-    if (!insertModel(pImpl->modelData, pImpl->pluginData)) {
+    if (!GazeboSimulator::insertModel(pImpl->modelData, pImpl->pluginData)) {
         gymppError << "Failed to insert the model while resetting the environment" << std::endl;
         return false;
     }
@@ -93,7 +90,7 @@ gympp::base::Task* GazeboEnvironment::getTask()
     return pImpl->task;
 }
 
-void GazeboEnvironment::storeModelData(const gympp::gazebo::ModelInitData& modelData)
+void GazeboEnvironment::storeModelData(const scenario::gazebo::ModelInitData& modelData)
 {
     pImpl->modelData = modelData;
 }
@@ -109,9 +106,9 @@ GazeboEnvironment::GazeboEnvironment(const ActionSpacePtr aSpace,
                                      const double realTimeFactor,
                                      const double physicsUpdateRate)
     : Environment(aSpace, oSpace)
-    , GazeboWrapper(static_cast<unsigned>(physicsUpdateRate / agentUpdateRate),
-                    realTimeFactor,
-                    physicsUpdateRate)
+    , GazeboSimulator(static_cast<unsigned>(physicsUpdateRate / agentUpdateRate),
+                      realTimeFactor,
+                      physicsUpdateRate)
     , pImpl{new GazeboEnvironment::Impl}
 {
     gymppDebug << "Configuring gazebo for an agent running at " << agentUpdateRate << " Hz"
@@ -161,7 +158,7 @@ std::optional<GazeboEnvironment::State> GazeboEnvironment::step(const Action& ac
     }
 
     // TODO rename method
-    if (!GazeboWrapper::run()) {
+    if (!GazeboSimulator::run()) {
         gymppError << "Failed to step gazebo" << std::endl;
         return {};
     }
@@ -215,14 +212,14 @@ std::optional<GazeboEnvironment::Observation> GazeboEnvironment::reset()
 {
     // Check if the gazebo server is running. If reset() is executed as first method,
     // the server is initialized lazily.
-    if (!initializeSimulation()) {
+    if (!this->initializeSimulation()) {
         gymppError << "Failed to initialize the simulation" << std::endl;
         assert(false);
         return {};
     }
 
     // Get the task
-    auto* task = getTask();
+    auto* task = this->getTask();
     if (!task) {
         gymppError << "Failed to get the Task interface from the plugin" << std::endl;
         return {};
@@ -243,14 +240,14 @@ bool GazeboEnvironment::render(RenderMode mode)
 
     // Check if the gazebo server is running. If render() is executed as first method,
     // the server is initialized lazily.
-    if (!initializeSimulation()) {
+    if (!this->initializeSimulation()) {
         gymppError << "Failed to initialize the simulation" << std::endl;
         assert(false);
         return {};
     }
 
     if (mode == RenderMode::HUMAN) {
-        return GazeboWrapper::gui();
+        return GazeboSimulator::gui();
     }
 
     return false;
