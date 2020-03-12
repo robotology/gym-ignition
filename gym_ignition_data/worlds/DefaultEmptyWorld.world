@@ -5,7 +5,7 @@
         </physics>
         <plugin
                 filename="libPhysicsSystem.so"
-                name="gympp::plugins::Physics">
+                name="scenario::plugins::gazebo::Physics">
         </plugin>
         <plugin
                 filename="libignition-gazebo-user-commands-system.so"
@@ -17,10 +17,10 @@
         </plugin>
         <plugin
                 filename="libECMProvider.so"
-                name="gympp::plugins::ECMProvider">
+                name="scenario::plugins::gazebo::ECMProvider">
         </plugin>
 
-                <gui fullscreen="0">
+        <gui fullscreen="0">
             <!-- 3D scene -->
             <plugin filename="GzScene3D" name="3D View">
                 <ignition-gui>
