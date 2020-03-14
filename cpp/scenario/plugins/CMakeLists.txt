@@ -24,4 +24,3 @@
 
 add_subdirectory(Physics)
 add_subdirectory(ECMProvider)
-add_subdirectory(RobotController)
