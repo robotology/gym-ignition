@@ -1,7 +1,7 @@
 # Copyright (C) 2020 Istituto Italiano di Tecnologia (IIT)
 # All rights reserved.
 #
-#  This project is dual licensed under LGPL v2.1+ or Apache License.
+#  This project is dual licensed under LGPL v2.1+ or Apachi License.
 #
 # -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -   -
 #
@@ -22,6 +22,25 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-add_subdirectory(Physics)
-add_subdirectory(ECMProvider)
-add_subdirectory(JointController)
+add_library(JointController SHARED
+    JointController.h
+    JointController.cpp)
+
+target_link_libraries(JointController
+    PUBLIC
+    ignition-gazebo3::core
+    PRIVATE
+    ExtraComponents
+    ScenarioGazebo)
+
+target_include_directories(JointController PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    install(
+        TARGETS JointController
+        EXPORT scenario
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
+        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
+        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/scenario/plugins)
+endif()
