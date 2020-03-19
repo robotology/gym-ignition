@@ -107,33 +107,58 @@ endif()
 # Dependencies
 add_subdirectory(deps)
 
-# ========
-# IGNITION
-# ========
-
+# Find Ignition Gazebo
 find_package(ignition-gazebo3 COMPONENTS all)
 option(GYMIGNITION_USE_IGNITION
-       "Build C++ code depending on Ignition Robotics" ${ignition-gazebo3_FOUND})
+    "Build C++ code depending on Ignition Robotics" ${ignition-gazebo3_FOUND})
 
-# Add the C++ sources subdirectories
-add_subdirectory(cpp/gympp/base)
-add_subdirectory(cpp/gympp/gazebo)
-add_subdirectory(cpp/gympp/plugins)
-add_subdirectory(cpp/scenario/gazebo)
-add_subdirectory(cpp/scenario/plugins)
+# =====
+# GYMPP
+# =====
 
-# Add the targets depending on Ignition Robotics
-if(${GYMIGNITION_USE_IGNITION})
-    add_subdirectory(ignition)
-    add_subdirectory(gym_ignition_data)
-    add_subdirectory(examples/cpp)
+option(GYMIGNITION_ENABLE_GYMPP "Enable Gympp library" OFF)
 
-    option(ENABLE_BINDINGS "Enable swig bindings" ON)
-    if(ENABLE_BINDINGS)
-        add_subdirectory(bindings)
+if(GYMIGNITION_ENABLE_GYMPP)
+
+    add_subdirectory(cpp/gympp/base)
+
+    if(${GYMIGNITION_USE_IGNITION})
+
+        add_subdirectory(cpp/gympp/gazebo)
+        add_subdirectory(cpp/gympp/plugins)
+        add_subdirectory(examples/cpp)
+
     endif()
-else()
-    message(STATUS "Ignition Gazebo not found. Enabled only the gympp interface and classes.")
+
+endif()
+
+# ========
+# SCENARIO
+# ========
+
+option(GYMIGNITION_ENABLE_SCENARIO "Enable Scenario library" ON)
+
+if(GYMIGNITION_ENABLE_SCENARIO)
+
+    if(${GYMIGNITION_USE_IGNITION})
+
+        add_subdirectory(cpp/scenario/gazebo)
+        add_subdirectory(cpp/scenario/plugins)
+        add_subdirectory(cpp/scenario/controllers)
+        add_subdirectory(gym_ignition_data)
+
+    endif()
+
+endif()
+
+# ========
+# BINDINGS
+# ========
+
+option(GYMIGNITION_ENABLE_BINDINGS "Enable SWIG bindings" ON)
+
+if(GYMIGNITION_ENABLE_BINDINGS)
+    add_subdirectory(bindings)
 endif()
 
 # Add unistall target
