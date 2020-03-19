@@ -282,12 +282,14 @@ void Physics::Update(const UpdateInfo& _info, EntityComponentManager& _ecm)
 
     if (this->pImpl->engine) {
         this->pImpl->CreatePhysicsEntities(_ecm);
+        this->pImpl->UpdatePhysics(_ecm);
+
         // Only step if not paused.
         if (!_info.paused) {
-            this->pImpl->UpdatePhysics(_ecm);
             this->pImpl->Step(_info.dt);
-            this->pImpl->UpdateSim(_ecm);
         }
+
+        this->pImpl->UpdateSim(_ecm);
 
         // Entities scheduled to be removed should be removed from physics after
         // the simulation step. Otherwise, since the to-be-removed entity still
