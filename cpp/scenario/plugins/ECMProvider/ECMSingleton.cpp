@@ -44,7 +44,7 @@ ECMSingleton::ECMSingleton()
     : pImpl{new Impl()}
 {}
 
-ECMSingleton& ECMSingleton::get()
+ECMSingleton& ECMSingleton::Instance()
 {
     static ECMSingleton instance;
     return instance;

@@ -49,7 +49,7 @@ public:
     ECMSingleton(ECMSingleton&) = delete;
     void operator=(const ECMSingleton&) = delete;
 
-    static ECMSingleton& get();
+    static ECMSingleton& Instance();
 
     void clean();
     bool valid() const;

@@ -53,16 +53,17 @@ void ECMProvider::Configure(const ignition::gazebo::Entity& entity,
                             ignition::gazebo::EntityComponentManager& ecm,
                             ignition::gazebo::EventManager& eventMgr)
 {
-    if (ECMSingleton::get().valid()) {
-        gymppWarning << "The ECM singleton has been already configured" << std::endl;
+    if (ECMSingleton::Instance().valid()) {
+        gymppWarning << "The ECM singleton has been already configured"
+                     << std::endl;
         return;
     }
 
     gymppDebug << "Storing ECM resources in the singleton" << std::endl;
 
-    if (!ECMSingleton::get().storePtrs(&ecm, &eventMgr)) {
-        gymppError << "Failed to store ECM in the singleton for entity [" << entity << "]"
-                   << std::endl;
+    if (!ECMSingleton::Instance().storePtrs(&ecm, &eventMgr)) {
+        gymppError << "Failed to store ECM in the singleton for entity ["
+                   << entity << "]" << std::endl;
         return;
     }
 }
