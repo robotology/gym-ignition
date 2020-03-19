@@ -6,7 +6,7 @@ import os
 import numpy as np
 from gym_ignition.base import robot
 from gym_ignition.utils import logger, resource_finder
-from typing import List, Tuple, Dict, Union, NamedTuple
+from typing import List, Tuple, Dict, Optional, Union, NamedTuple
 from gym_ignition.base.robot.robot_joints import JointControlMode
 
 
@@ -64,7 +64,44 @@ class JointInfoPyBullet(NamedTuple):
     parentIndex: int
 
 
+class JointStatePyBullet(NamedTuple):
+    jointPosition: float
+    jointVelocity: float
+    jointReactionForces: List[float]
+    appliedJointMotorTorque: float
+
+
+class LinkInfoPyBullet(NamedTuple):
+    linkWorldPosition: List[float]
+    linkWorldOrientation: List[float]
+    localInertialFramePosition: List[float]
+    localInertialFrameOrientation: List[float]
+    worldLinkFramePosition: List[float]
+    worldLinkFrameOrientation: List[float]
+    worldLinkLinearVelocity: List[float]
+    worldLinkAngularVelocity: List[float]
+
+
+class ConstraintInfoPyBullet(NamedTuple):
+    parentBodyUniqueId: int
+    parentJointIndex: int
+    childBodyUniqueId: int
+    childLinkIndex: int
+    constraintType: int
+    jointAxis: List[float]
+    jointPivotInParent: List[float]
+    jointPivotInChild: List[float]
+    jointFrameOrientationParent: List[float]
+    jointFrameOrientationChild: List[float]
+    maxAppliedForce: float
+    gearRatio: float
+    gearAuxLink: float
+    relativePositionTarget: float
+    erp: float
+
+
 class PyBulletRobot(robot.robot_abc.RobotABC,
+                    robot.robot_links.RobotLinks,
                     robot.robot_joints.RobotJoints,
                     robot.robot_contacts.RobotContacts,
                     robot.robot_baseframe.RobotBaseFrame,
@@ -99,9 +136,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         self.model_file = model_abs_path
 
         # Private attributes
-        self._robot_id = None
         self._links_name2index_dict = None
         self._joints_name2index_dict = None
+        self._robot_id: Optional[int] = None
 
         # TODO
         self._base_frame = None
@@ -114,14 +151,31 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     # PRIVATE METHODS AND PROPERTIES
     # ==============================
 
+    @property
+    def robot_id(self) -> int:
+
+        if self._robot_id is not None:
+            return self._robot_id
+
+        raise ValueError("The robot has not yet been added in the simulation")
+
+    @robot_id.setter
+    def robot_id(self, robot_id: int) -> None:
+
+        if self._robot_id is not None:
+            raise RuntimeError("This object already has an associated robot id")
+
+        self._robot_id = robot_id
+
     def delete_simulated_robot(self) -> None:
-        if not self._pybullet or self._robot_id is None:
+        if not self._pybullet or self.robot_id is None:
             logger.warn("Failed to delete robot from the simulation. "
                         "Simulator not running.")
             return
 
         # Remove the robot from the simulation
-        self._pybullet.removeBody(self._robot_id)
+        self._pybullet.removeBody(self.robot_id)
+        self._robot_id = None
 
     @property
     def _joints_name2index(self) -> Dict[str, int]:
@@ -145,6 +199,10 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
         self._links_name2index_dict = dict()
 
+        # Add the base link
+        self._links_name2index_dict[self.base_frame()] = -1
+
+        # Add the other links
         for _, info in self._get_joints_info().items():
             self._links_name2index_dict[info.linkName.decode()] = info.jointIndex
 
@@ -158,17 +216,19 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             model_id = self._pybullet.loadSDF(filename, **kwargs)[0]
         else:
             import pybullet
+            flags = pybullet.URDF_USE_INERTIA_FROM_FILE
+            flags = flags | pybullet.URDF_MERGE_FIXED_LINKS
             model_id = self._pybullet.loadURDF(
                 fileName=filename,
-                flags=pybullet.URDF_USE_INERTIA_FROM_FILE,
+                flags=flags,
                 **kwargs)
 
         return model_id
 
     def initialize_model(self) -> None:
         # Load the model
-        self._robot_id = self._load_model(self.model_file)
-        assert self._robot_id is not None, "Failed to load the robot model"
+        self.robot_id = self._load_model(self.model_file)
+        assert self.robot_id is not None, "Failed to load the robot model"
 
         # Initialize all the joints in POSITION mode
         for name in self.joint_names():
@@ -177,6 +237,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             ok_mode = self.set_joint_control_mode(name, JointControlMode.POSITION)
             assert ok_mode, \
                 f"Failed to initialize the control mode of joint '{name}'"
+
+        assert self.initial_joint_positions().size == self.dofs()
+        assert self.initial_joint_velocities().size == self.dofs()
 
         # Initialize the joints state
         for idx, name in enumerate(self.joint_names()):
@@ -188,12 +251,24 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         initial_base_position, initial_base_orientation = self.initial_base_pose()
         self.reset_base_pose(initial_base_position, initial_base_orientation)
 
+    def _get_joint_info(self, joint_name: str) -> JointInfoPyBullet:
+        # Get the joint index
+        joint_idx = self._joints_name2index[joint_name]
+
+        # Get the joint info from pybullet
+        joint_info_pybullet = self._pybullet.getJointInfo(self.robot_id, joint_idx)
+
+        # Store it in a namedtuple
+        joint_info = JointInfoPyBullet._make(joint_info_pybullet)
+
+        return joint_info
+
     def _get_joints_info(self) -> Dict[str, JointInfoPyBullet]:
         joints_info = {}
 
-        for j in range(self._pybullet.getNumJoints(self._robot_id)):
+        for j in range(self._pybullet.getNumJoints(self.robot_id)):
             # Get the joint info from pybullet
-            joint_info_pybullet = self._pybullet.getJointInfo(self._robot_id, j)
+            joint_info_pybullet = self._pybullet.getJointInfo(self.robot_id, j)
 
             # Store it in a namedtuple
             joint_info = JointInfoPyBullet._make(joint_info_pybullet)
@@ -202,6 +277,52 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             joints_info[joint_info.jointName.decode()] = joint_info
 
         return joints_info
+
+    def _get_base_link_info(self) -> LinkInfoPyBullet:
+        # Get the base link info
+        base_position, base_orientation = self.base_pose()
+        base_lin_vel, base_ang_vel = self.base_velocity()
+        base_link_idx = self._links_name2index[self.base_frame()]
+        assert base_link_idx == -1
+
+        base_link_info = LinkInfoPyBullet(linkWorldPosition=base_position.tolist(),
+                                          linkWorldOrientation=base_orientation.tolist(),
+                                          localInertialFramePosition=None,
+                                          localInertialFrameOrientation=None,
+                                          worldLinkFramePosition=None,
+                                          worldLinkFrameOrientation=None,
+                                          worldLinkLinearVelocity=base_lin_vel.tolist(),
+                                          worldLinkAngularVelocity=base_ang_vel.tolist())
+
+        return base_link_info
+
+    def _get_link_info(self, link_name: str) -> LinkInfoPyBullet:
+        # Handle the base link
+        if link_name == self.base_frame():
+            return self._get_base_link_info()
+
+        # Get the link index
+        link_idx = self._links_name2index[link_name]
+
+        # Get the link info from pybullet
+        link_info_pybullet = self._pybullet.getLinkState(bodyUniqueId=self.robot_id,
+                                                         linkIndex=link_idx,
+                                                         computeLinkVelocity=1,
+                                                         computeForwardKinematics=1)
+
+        # Store it in a namedtuple
+        link_info = LinkInfoPyBullet._make(link_info_pybullet)
+
+        return link_info
+
+    def _get_links_info(self) -> Dict[str, LinkInfoPyBullet]:
+        links_info = {}
+
+        # Add the information of all other links
+        for name in set(self.link_names()):
+            links_info[name] = self._get_link_info(link_name=name)
+
+        return links_info
 
     def _get_contact_info(self) -> List[ContactPyBullet]:
         # Get the all contact points in the simulation
@@ -228,7 +349,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     def valid(self) -> bool:
         try:
             # TODO: improve the check
-            self._pybullet.getBasePositionAndOrientation(self._robot_id)
+            self._pybullet.getBasePositionAndOrientation(self.robot_id)
             return True
         except:
             return False
@@ -241,7 +362,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         dofs = len(self.joint_names())
 
         if self._keep_fixed_joints:
-            assert dofs == self._pybullet.getNumJoints(self._robot_id), \
+            assert dofs == self._pybullet.getNumJoints(self.robot_id), \
                 "Number of DoFs does not match with the simulated model"
 
         return dofs
@@ -262,7 +383,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
     def joint_type(self, joint_name: str) -> robot.robot_joints.JointType:
         import pybullet
-        joint_info = self._get_joints_info()[joint_name]
+        joint_info = self._get_joint_info(joint_name)
         joint_type_pybullet = joint_info.jointType
 
         if joint_type_pybullet == pybullet.JOINT_FIXED:
@@ -278,89 +399,117 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         return self._jointname2jointcontrolinfo[joint_name].mode
 
     def set_joint_control_mode(self, joint_name: str, mode: JointControlMode) -> bool:
-        # Store the control mode and initialize the PID
-        if mode in {JointControlMode.TORQUE}:
-            pid = None
-            self._jointname2jointcontrolinfo[joint_name] = JointControlInfo(mode=mode)
-        elif mode in {JointControlMode.POSITION, JointControlMode.VELOCITY}:
-            # Initialize a default PID
-            pid = robot.PID(p=1, i=0, d=0)
-            self._jointname2jointcontrolinfo[joint_name] = JointControlInfo(
-                mode=mode, PID=pid)
-        elif mode == JointControlMode.POSITION_INTERPOLATED:
-            raise Exception("Control mode POSITION_INTERPOLATED is not supported")
-        else:
-            raise Exception(f"Control mode '{mode}' not recognized")
 
+        if joint_name not in self._jointname2jointcontrolinfo:
+            raise ValueError(joint_name)
+
+        current_pid = self._jointname2jointcontrolinfo[joint_name].PID
+
+        # Create a default PID if gains were never set
+        if mode in {JointControlMode.POSITION, JointControlMode.VELOCITY}:
+
+            if current_pid is None:
+                current_pid = robot.PID(p=1, i=0, d=0)
+
+        joint_control_info = JointControlInfo(mode=mode, PID=current_pid)
+        self._jointname2jointcontrolinfo[joint_name] = joint_control_info
+
+        # Get intermediate data
         mode_pybullet = controlmode_to_pybullet(mode)
+        pid = self._jointname2jointcontrolinfo[joint_name].PID
         joint_idx_pybullet = self._joints_name2index[joint_name]
 
-        # Disable the default joint motorization setting a 0 maximum force
         if mode == JointControlMode.TORQUE:
+            # Disable the default joint motorization setting a 0 maximum force
             import pybullet
             # Disable the PID if was configured
             self._pybullet.setJointMotorControl2(
-                bodyIndex=self._robot_id,
+                bodyIndex=self.robot_id,
                 jointIndex=joint_idx_pybullet,
                 controlMode=pybullet.PD_CONTROL,
                 positionGain=0,
                 velocityGain=0)
             # Put the motor in IDLE for torque control
             self._pybullet.setJointMotorControl2(
-                bodyIndex=self._robot_id,
+                bodyIndex=self.robot_id,
                 jointIndex=joint_idx_pybullet,
                 controlMode=pybullet.VELOCITY_CONTROL,
                 force=0)
 
-        # Change the control mode of the joint
-        if mode == JointControlMode.POSITION:
+        elif mode == JointControlMode.POSITION:
+            if pid.i != 0.0:
+                logger.warn("Integral PID gain not supported in POSITION mode")
+
             self._pybullet.setJointMotorControl2(
-                bodyIndex=self._robot_id,
+                bodyIndex=self.robot_id,
                 jointIndex=joint_idx_pybullet,
                 controlMode=mode_pybullet,
                 positionGain=pid.p,
                 velocityGain=pid.d)
+
         elif mode == JointControlMode.VELOCITY:
+            if pid.d != 0.0:
+                logger.warn("Derivative PID gain not supported in VELOCITY mode")
+
             # TODO: verify that setting the gains in this way processes the reference
             #  correctly.
             self._pybullet.setJointMotorControl2(
-                bodyIndex=self._robot_id,
+                bodyIndex=self.robot_id,
                 jointIndex=joint_idx_pybullet,
                 controlMode=mode_pybullet,
                 positionGain=pid.i,
                 velocityGain=pid.p)
 
+        else:
+            raise RuntimeError(f"Control mode '{mode}' is not supported")
+
         return True
 
     def joint_position(self, joint_name: str) -> float:
         joint_idx = self._joints_name2index[joint_name]
-        return self._pybullet.getJointState(self._robot_id, joint_idx)[0]
+        joint_state_pybullet = self._pybullet.getJointState(self.robot_id, joint_idx)
+        joint_state = JointStatePyBullet._make(joint_state_pybullet)
+
+        return joint_state.jointPosition
 
     def joint_velocity(self, joint_name: str) -> float:
         joint_idx = self._joints_name2index[joint_name]
-        return self._pybullet.getJointState(self._robot_id, joint_idx)[1]
+        joint_state_pybullet = self._pybullet.getJointState(self.robot_id, joint_idx)
+        joint_state = JointStatePyBullet._make(joint_state_pybullet)
+
+        return joint_state.jointVelocity
 
     def joint_force(self, joint_name: str) -> float:
-        raise NotImplementedError
+        joint_idx = self._joints_name2index[joint_name]
+        joint_state_pybullet = self._pybullet.getJointState(self.robot_id, joint_idx)
+        joint_state = JointStatePyBullet._make(joint_state_pybullet)
 
-    def joint_positions(self) -> List[float]:
-        joint_states = self._pybullet.getJointStates(self._robot_id, range(self.dofs()))
-        joint_positions = [state[0] for state in joint_states]
-        return joint_positions
+        return joint_state.appliedJointMotorTorque
 
-    def joint_velocities(self) -> List[float]:
-        joint_states = self._pybullet.getJointStates(self._robot_id, range(self.dofs()))
-        joint_velocities = [state[1] for state in joint_states]
-        return joint_velocities
+    def joint_positions(self) -> np.ndarray:
+        joint_states = self._pybullet.getJointStates(self.robot_id, range(self.dofs()))
+        joint_positions = \
+            [JointStatePyBullet._make(state).jointPosition for state in joint_states]
+
+        return np.array(joint_positions)
+
+    def joint_velocities(self) -> np.ndarray:
+        joint_states = self._pybullet.getJointStates(self.robot_id, range(self.dofs()))
+        joint_velocities = \
+            [JointStatePyBullet._make(state).jointVelocity for state in joint_states]
+
+        return np.array(joint_velocities)
 
     def joint_pid(self, joint_name: str) -> Union[robot.PID, None]:
         return self._jointname2jointcontrolinfo[joint_name].PID
 
     def dt(self) -> float:
-        raise NotImplementedError
+        logger.warn("This method is no-op")
+        return True
 
     def set_dt(self, step_size: float) -> bool:
-        raise NotImplementedError
+        logger.warn("This method is no-op")
+        return True
 
     def set_joint_force(self, joint_name: str, force: float, clip: bool = False) -> bool:
 
@@ -376,7 +525,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             force = fmin if force < fmin else fmax if force > fmax else force
 
         # Set the joint force
-        self._pybullet.setJointMotorControl2(bodyUniqueId=self._robot_id,
+        self._pybullet.setJointMotorControl2(bodyUniqueId=self.robot_id,
                                              jointIndex=joint_idx_pybullet,
                                              controlMode=mode_pybullet,
                                              force=force)
@@ -386,7 +535,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     def set_joint_position(self, joint_name: str, position: float) -> bool:
 
         if self._jointname2jointcontrolinfo[joint_name].mode != JointControlMode.POSITION:
-            raise Exception("Joint '{}' is not controlled in POSITION".format(joint_name))
+            raise RuntimeError(f"Joint '{joint_name}' is not controlled in POSITION")
 
         pid = self._jointname2jointcontrolinfo[joint_name].PID
 
@@ -395,10 +544,10 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
         # Change the control mode of the joint
         self._pybullet.setJointMotorControl2(
-            bodyUniqueId=self._robot_id,
+            bodyUniqueId=self.robot_id,
             jointIndex=joint_idx_pybullet,
             controlMode=mode_pybullet,
-            targetVelocity=position,
+            targetPosition=position,
             positionGain=pid.p,
             velocityGain=pid.d)
 
@@ -417,7 +566,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
         # Change the control mode of the joint
         self._pybullet.setJointMotorControl2(
-            bodyUniqueId=self._robot_id,
+            bodyUniqueId=self.robot_id,
             jointIndex=joint_idx_pybullet,
             controlMode=mode_pybullet,
             targetVelocity=velocity,
@@ -431,24 +580,14 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
     def set_joint_pid(self, joint_name: str, pid: robot.PID) -> bool:
 
+        if joint_name not in self._jointname2jointcontrolinfo:
+            raise ValueError(joint_name)
+
         mode = self._jointname2jointcontrolinfo[joint_name].mode
-        assert mode != JointControlMode.POSITION_INTERPOLATED
+        self._jointname2jointcontrolinfo[joint_name] = \
+            JointControlInfo(mode=mode, PID=pid)
 
-        if mode == JointControlMode.TORQUE:
-            logger.warn(
-                f"Joint '{joint_name}' is torque controlled. "
-                f"Setting the PID has no effect")
-            return False
-
-        if mode == JointControlMode.POSITION and pid.i != 0.0:
-            raise Exception("Integral term not supported for POSITION mode")
-        elif mode == JointControlMode.VELOCITY and pid.d != 0.0:
-            raise Exception("Derivative term not supported for VELOCITY mode")
-
-        # Store the new PID
-        self._jointname2jointcontrolinfo[joint_name]._replace(PID=pid)
-
-        # Update the PIDs setting again the control mode
+        # Update the PIDs by setting again the control mode
         ok_mode = self.set_joint_control_mode(joint_name, mode)
         assert ok_mode, "Failed to set the control mode"
 
@@ -460,7 +599,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
                     velocity: float = None) -> bool:
 
         joint_idx_pybullet = self._joints_name2index[joint_name]
-        self._pybullet.resetJointState(bodyUniqueId=self._robot_id,
+        self._pybullet.resetJointState(bodyUniqueId=self.robot_id,
                                        jointIndex=joint_idx_pybullet,
                                        targetValue=position,
                                        targetVelocity=velocity)
@@ -472,13 +611,13 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
     def joint_position_limits(self, joint_name: str) -> Tuple[float, float]:
         # Get Joint info
-        joint_info = self._get_joints_info()[joint_name]
+        joint_info = self._get_joint_info(joint_name)
 
         return joint_info.jointLowerLimit, joint_info.jointUpperLimit
 
     def joint_force_limit(self, joint_name: str) -> float:
         # Get Joint info
-        joint_info = self._get_joints_info()[joint_name]
+        joint_info = self._get_joint_info(joint_name)
 
         return joint_info.jointMaxForce
 
@@ -512,11 +651,15 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         return True
 
     def base_frame(self) -> str:
+        if not self._base_frame:
+            logger.warn("Base name not set. Returning dummy name.")
+            return "root"
+
         return self._base_frame
 
     def base_pose(self) -> Tuple[np.ndarray, np.ndarray]:
         # Get the values
-        pos, quat = self._pybullet.getBasePositionAndOrientation(self._robot_id)
+        pos, quat = self._pybullet.getBasePositionAndOrientation(self.robot_id)
 
         # Convert tuples into lists
         pos = np.array(pos)
@@ -530,7 +673,7 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     def base_velocity(self) -> Tuple[np.ndarray, np.ndarray]:
         # TODO: double check
         # Get the values
-        lin, ang = self._pybullet.getBaseVelocity(self._robot_id)
+        lin, ang = self._pybullet.getBaseVelocity(self.robot_id)
 
         # Convert tuples into lists
         lin = np.array(lin)
@@ -560,11 +703,11 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
             # Set a constraint between base_link and world
             # TODO: check the floating base link
             self._base_constraint = self._pybullet.createConstraint(
-                self._robot_id, -1, -1, -1, self._pybullet.JOINT_FIXED,
+                self.robot_id, -1, -1, -1, self._pybullet.JOINT_FIXED,
                 [0, 0, 0], [0, 0, 0], position, orientation)
 
         self._pybullet.resetBasePositionAndOrientation(
-            self._robot_id, position, orientation)
+            self.robot_id, position, orientation)
 
         return True
 
@@ -592,8 +735,8 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
         # Extract only the robot contacts
         for contact in all_contacts:
-            if contact.bodyUniqueIdA == self._robot_id or \
-                    contact.bodyUniqueIdB == self._robot_id:
+            if contact.bodyUniqueIdA == self.robot_id or \
+                    contact.bodyUniqueIdB == self.robot_id:
                 contacts_robot.append(contact)
 
         # List containing the names of the link with active contacts
@@ -605,9 +748,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
             # Get the index of the link in contact.
             # The robot body could be either body A or body B.
-            if contact.bodyUniqueIdA == self._robot_id:
+            if contact.bodyUniqueIdA == self.robot_id:
                 link_idx_in_contact = contact.linkIndexA
-            elif contact.bodyUniqueIdB == self._robot_id:
+            elif contact.bodyUniqueIdB == self.robot_id:
                 link_idx_in_contact = contact.linkIndexB
 
             # Get the link name from the index and add it to the returned list
@@ -640,8 +783,8 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
 
         # Extract only the robot contacts
         for contact in all_contacts:
-            if contact.bodyUniqueIdA == self._robot_id or contact.bodyUniqueIdB == \
-                    self._robot_id:
+            if contact.bodyUniqueIdA == self.robot_id or contact.bodyUniqueIdB == \
+                    self.robot_id:
                 contacts_robot.append(contact)
 
         contact_link_idx = self._links_name2index[contact_link_name]
@@ -650,9 +793,9 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         contacts_link = []
 
         for contact in contacts_robot:
-            if contact.bodyUniqueIdA == self._robot_id and \
+            if contact.bodyUniqueIdA == self.robot_id and \
                     contact.linkIndexA == contact_link_idx or \
-               contact.bodyUniqueIdB == self._robot_id and \
+               contact.bodyUniqueIdB == self.robot_id and \
                     contact.linkIndexB == contact_link_idx:
                 contacts_link.append(contact)
 
@@ -683,9 +826,6 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         if self._robot_id is not None:
             raise Exception("The robot object has been already created")
 
-        if positions.size != self.dofs():
-            return False
-
         self._initial_joint_positions = positions
         return True
 
@@ -698,9 +838,6 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
     def set_initial_joint_velocities(self, velocities: np.ndarray) -> bool:
         if self._robot_id is not None:
             raise Exception("The robot object has been already created")
-
-        if velocities.size != self.dofs():
-            return False
 
         self._initial_joint_velocities = velocities
         return True
@@ -723,4 +860,59 @@ class PyBulletRobot(robot.robot_abc.RobotABC,
         assert linear.size == 3, "'linear' should be an array with 3 elements"
         assert angular.size == 4, "'angular' should be an array with 4 elements"
         self._initial_base_velocity = (linear, angular)
+        return True
+
+    # ==========
+    # RobotLinks
+    # ==========
+
+    def link_names(self) -> List[str]:
+        link_names = list()
+
+        # Append the base link that pybullet ignores
+        link_names.append(self.base_frame())
+
+        for _, info in self._get_joints_info().items():
+            link_names.append(info.linkName.decode())
+
+        return link_names
+
+    def link_pose(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        link_info = self._get_link_info(link_name)
+
+        link_position = link_info.linkWorldPosition
+        link_quaternion = link_info.linkWorldOrientation
+
+        return np.array(link_position), np.array(link_quaternion)
+
+    def link_velocity(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        link_info = self._get_link_info(link_name)
+
+        # TODO: CoM or frame?
+        link_lin_vel = link_info.worldLinkLinearVelocity
+        link_ang_vel = link_info.worldLinkAngularVelocity
+
+        return np.array(link_lin_vel), np.array(link_ang_vel)
+
+    def link_acceleration(self, link_name: str) -> Tuple[np.ndarray, np.ndarray]:
+        raise NotImplementedError
+
+    def apply_external_force(self,
+                             link_name: str,
+                             force: np.ndarray,
+                             torque: np.ndarray) -> bool:
+        import pybullet
+        link_idx = self._links_name2index[link_name]
+
+        self._pybullet.applyExternalForce(self.robot_id,
+                                          link_idx,
+                                          force.tolist(),
+                                          [0, 0, 0],
+                                          flags=pybullet.LINK_FRAME)
+
+        self._pybullet.applyExternalTorque(self.robot_id,
+                                           link_idx,
+                                           torque.tolist(),
+                                           flags=pybullet.LINK_FRAME)
+
         return True
