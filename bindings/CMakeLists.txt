@@ -26,54 +26,17 @@ set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
-set(swig_name "gympp_bindings")
-set_source_files_properties(${swig_name}.i PROPERTIES CPLUSPLUS ON)
+# This is needed to generate the install path of the plugins
+# during the packaging of the PyPI archives
+set(PYTHON_PACKAGE_IMPORT_NAME "gym_ignition" CACHE STRING
+    "Name of the installed package matching the desired 'import <package_name>'")
 
-swig_add_library(${swig_name}
-    TYPE SHARED
-    LANGUAGE python
-    SOURCES ${swig_name}.i)
+if(GYMIGNITION_ENABLE_SCENARIO)
+    add_subdirectory(scenario)
 
-target_link_libraries(${swig_name} PUBLIC
-    gympp
-    IgnitionRobot
-    RobotSingleton
-    GymFactory
-    GazeboEnvironment
-    ECMSingleton
-    RobotSingleton
-    GazeboSimulator
-    ScenarioGazebo
-    Python3::Python)
-
-set_property(TARGET ${swig_name} PROPERTY
-    SWIG_USE_TARGET_INCLUDE_DIRECTORIES TRUE)
-
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-
-    install(
-        TARGETS ${swig_name}
-        EXPORT gympp
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages)
-
-    install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/${swig_name}.py
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages)
-else()
-    set(PYTHON_PACKAGE_IMPORT_NAME "gym_ignition" CACHE STRING
-        "Name of the installed package matching the desired 'import <package_name>'")
-
-    install(
-        TARGETS ${swig_name}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX})
-
-    install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/${swig_name}.py
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
-
-    install(
-        TARGETS ECMProvider RobotController CartPolePlugin PhysicsSystem
-        LIBRARY DESTINATION ${PYTHON_PACKAGE_IMPORT_NAME}/plugins)
+    if(GYMIGNITION_ENABLE_GYMPP)
+        add_subdirectory(gympp)
+    endif()
 endif()
+
+
