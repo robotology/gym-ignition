@@ -1,13 +1,6 @@
 /*
- * Copyright (C) 2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2020 Open Source Robotics Foundation
  * All rights reserved.
- *
- * This software may be modified and distributed under the terms of the
- * GNU Lesser General Public License v2.1 or any later version.
- *
- * ==================================================
- *
- * Copyright (C) 2018 Open Source Robotics Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,7 +13,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
  */
 
 #include "Physics.h"
@@ -107,7 +99,7 @@
 #include <unordered_map>
 
 using namespace ignition;
-using namespace gympp::plugins;
+using namespace scenario::plugins::gazebo;
 using namespace ignition::gazebo;
 using namespace ignition::gazebo::systems;
 using namespace ignition::gazebo::components;

@@ -116,7 +116,7 @@ class GazeboRobot(robot_abc.RobotABC,
         # Initialize robot controller plugin
         plugin_data = bindings.PluginData()
         plugin_data.libName = "RobotController"
-        plugin_data.className = "gympp::plugins::RobotController"
+        plugin_data.className = "scenario::plugins::gazebo::RobotController"
 
         # Insert the model
         ok_model = self._gazebo.insertModel(model_data, plugin_data)

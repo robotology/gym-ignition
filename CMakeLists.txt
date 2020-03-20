@@ -120,11 +120,11 @@ add_subdirectory(cpp/gympp/base)
 add_subdirectory(cpp/gympp/gazebo)
 add_subdirectory(cpp/gympp/plugins)
 add_subdirectory(cpp/scenario/gazebo)
+add_subdirectory(cpp/scenario/plugins)
 
 # Add the targets depending on Ignition Robotics
 if(${GYMIGNITION_USE_IGNITION})
     add_subdirectory(ignition)
-    add_subdirectory(plugins)
     add_subdirectory(gym_ignition_data)
     add_subdirectory(examples/cpp)
 

@@ -1,14 +1,32 @@
 /*
- * Copyright (C) 2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
+ *
+ * This project is dual licensed under LGPL v2.1+ or Apache License.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *
  * This software may be modified and distributed under the terms of the
  * GNU Lesser General Public License v2.1 or any later version.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-#include "ECMProvider.h"
+#include "scenario/plugins/gazebo/ECMProvider.h"
 #include "gympp/base/Log.h"
-#include "gympp/gazebo/ECMSingleton.h"
+#include "scenario/plugins/gazebo/ECMSingleton.h"
 
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
@@ -22,8 +40,7 @@
 #include <string>
 #include <unordered_map>
 
-using namespace gympp::gazebo;
-using namespace gympp::plugins;
+using namespace scenario::plugins::gazebo;
 
 class ECMProvider::Impl
 {
@@ -33,7 +50,7 @@ public:
 
 ECMProvider::ECMProvider()
     : System()
-    , pImpl{new Impl(), [](Impl* impl) { delete impl; }}
+    , pImpl{new Impl()}
 {}
 
 ECMProvider::~ECMProvider()
@@ -81,8 +98,7 @@ void ECMProvider::PreUpdate(const ignition::gazebo::UpdateInfo& info,
         ECMSingleton::get().notifyAndWaitPreUpdate(pImpl->worldName);
     }
 }
-
-IGNITION_ADD_PLUGIN(gympp::plugins::ECMProvider,
-                    gympp::plugins::ECMProvider::System,
-                    gympp::plugins::ECMProvider::ISystemConfigure,
-                    gympp::plugins::ECMProvider::ISystemPreUpdate)
+IGNITION_ADD_PLUGIN(scenario::plugins::gazebo::ECMProvider,
+                    scenario::plugins::gazebo::ECMProvider::System,
+                    scenario::plugins::gazebo::ECMProvider::ISystemConfigure,
+                    scenario::plugins::gazebo::ECMProvider::ISystemPreUpdate)

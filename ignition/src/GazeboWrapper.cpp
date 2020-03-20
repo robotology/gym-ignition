@@ -8,10 +8,10 @@
 
 #include "gympp/gazebo/GazeboWrapper.h"
 #include "gympp/base/Log.h"
-#include "gympp/gazebo/ECMSingleton.h"
 #include "gympp/gazebo/IgnitionRobot.h"
 #include "gympp/gazebo/RobotSingleton.h"
 #include "process.hpp"
+#include "scenario/plugins/gazebo/ECMSingleton.h"
 
 #include <ignition/common/Console.hh>
 #include <ignition/common/SystemPaths.hh>
@@ -127,7 +127,7 @@ GazeboWrapper::Impl::getSdfEntityCreator(const std::string& worldName)
         return sdfEntityCreator;
     }
 
-    if (!ECMSingleton::get().valid(worldName)) {
+    if (!scenario::plugins::gazebo::ECMSingleton::get().valid(worldName)) {
         gymppError << "ECMSingleton not yet initialized. Failed to get the SdfEntityCreator"
                    << std::endl;
         return {};
@@ -135,7 +135,8 @@ GazeboWrapper::Impl::getSdfEntityCreator(const std::string& worldName)
 
     // Create the SdfEntityCreator
     sdfEntityCreator = std::make_unique<ignition::gazebo::SdfEntityCreator>(
-        *ECMSingleton::get().getECM(worldName), *ECMSingleton::get().getEventManager(worldName));
+        *scenario::plugins::gazebo::ECMSingleton::get().getECM(worldName),
+        *scenario::plugins::gazebo::ECMSingleton::get().getEventManager(worldName));
 
     return sdfEntityCreator;
 }
@@ -368,10 +369,10 @@ bool GazeboWrapper::close()
     }
 
     // Remove the ECM from the singleton
-    if (ECMSingleton::get().valid(getWorldName())) {
+    if (scenario::plugins::gazebo::ECMSingleton::get().valid(getWorldName())) {
         gymppDebug << "Cleaning the ECM singleton from world '" << getWorldName() << "'"
                    << std::endl;
-        ECMSingleton::get().clean(getWorldName());
+        scenario::plugins::gazebo::ECMSingleton::get().clean(getWorldName());
     }
 
     return true;
@@ -460,15 +461,16 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
     // ====================
 
     // Check that the ECM has been stored by the plugin
-    if (!ECMSingleton::get().valid(getWorldName())) {
+    if (!scenario::plugins::gazebo::ECMSingleton::get().valid(getWorldName())) {
         gymppError << "No ECM found for world '" << getWorldName()
                    << "'. Does your world file have the ECMProvider plugin?" << std::endl;
         return false;
     }
 
     // Get the ECM and the EventManager
-    auto* ecm = ECMSingleton::get().getECM(getWorldName());
-    auto* eventManager = ECMSingleton::get().getEventManager(getWorldName());
+    auto* ecm = scenario::plugins::gazebo::ECMSingleton::get().getECM(getWorldName());
+    auto* eventManager =
+        scenario::plugins::gazebo::ECMSingleton::get().getEventManager(getWorldName());
 
     // Get the SdfEntityCreator that abstracts the ECM to easily create entities
     auto sdfEntityCreator = pImpl->getSdfEntityCreator(getWorldName());
@@ -597,7 +599,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
     ignition::gazebo::Entity modelEntity;
 
     {
-        auto& ecmSingleton = ECMSingleton::get();
+        auto& ecmSingleton = scenario::plugins::gazebo::ECMSingleton::get();
 
         // The first iteration is quite delicate for two reasons:
         //
@@ -823,14 +825,15 @@ bool GazeboWrapper::removeModel(const std::string& modelName)
     // =======================
 
     // Check that the ECM has been stored by the plugin
-    if (!ECMSingleton::get().valid(getWorldName())) {
+    if (!scenario::plugins::gazebo::ECMSingleton::get().valid(getWorldName())) {
         gymppError << "No ECM found for world '" << getWorldName()
                    << "'. Does your world file have the ECMProvider plugin?" << std::endl;
         return false;
     }
 
     // Get the ECM
-    ignition::gazebo::EntityComponentManager* ecm = ECMSingleton::get().getECM(getWorldName());
+    ignition::gazebo::EntityComponentManager* ecm =
+        scenario::plugins::gazebo::ECMSingleton::get().getECM(getWorldName());
 
     // Get the SdfEntityCreator that abstracts the ECM to easily create entities
     auto sdfEntityCreator = pImpl->getSdfEntityCreator(getWorldName());
