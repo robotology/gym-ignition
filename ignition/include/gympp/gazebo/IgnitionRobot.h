@@ -60,6 +60,7 @@ public:
 
     JointPositions initialJointPositions() const override;
 
+    double jointEffortLimit(const JointName& jointName) const override;
     Limit jointPositionLimits(const JointName& jointName) const override;
 
     StepSize dt() const override;
@@ -82,6 +83,8 @@ public:
     bool setdt(const StepSize& stepSize) override;
 
     bool setJointForce(const JointName& jointName, const double jointForce) override;
+    bool setJointEffortLimit(const JointName& jointName, const double effortLimit) override;
+
     bool setJointPositionTarget(const JointName& jointName,
                                 const double jointPositionReference) override;
     bool setJointVelocityTarget(const JointName& jointName,

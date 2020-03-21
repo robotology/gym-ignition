@@ -73,6 +73,7 @@ public:
             std::map<JointName, ignition::math::PID> pid;
             std::map<JointName, JointControlMode> controlMode;
             std::map<JointName, double> appliedForces;
+            std::map<JointName, double> effortLimits;
         } joints;
         struct
         {
@@ -668,6 +669,27 @@ gympp::Robot::JointPositions IgnitionRobot::initialJointPositions() const
     return initialJointPositions;
 }
 
+double IgnitionRobot::jointEffortLimit(const gympp::Robot::JointName& jointName) const
+{
+    JointEntity jointEntity = pImpl->getJointEntity(jointName);
+    if (jointEntity == ignition::gazebo::kNullEntity) {
+        assert(false);
+        return 0.0;
+    }
+
+    // The effort limit specified in the SDF is not currently exposed in the ECM.
+    // We use our buffer to store the limit.
+    auto& effortLimits = pImpl->buffers.joints.effortLimits;
+
+    // Return the biggest double if no limit was set
+    if (effortLimits.find(jointName) == effortLimits.end()) {
+        return std::numeric_limits<double>::max();
+    }
+
+    assert(effortLimits[jointName] >= 0);
+    return effortLimits[jointName];
+}
+
 gympp::Limit IgnitionRobot::jointPositionLimits(const gympp::Robot::JointName& jointName) const
 {
     JointEntity jointEntity = pImpl->getJointEntity(jointName);
@@ -889,6 +911,23 @@ bool IgnitionRobot::setJointForce(const gympp::Robot::JointName& jointName, cons
     // Set the joint force
     forceComponent = ignition::gazebo::components::JointForceCmd({jointForce});
 
+    return true;
+}
+
+bool IgnitionRobot::setJointEffortLimit(const gympp::Robot::JointName& jointName,
+                                        const double effortLimit)
+{
+    JointEntity jointEntity = pImpl->getJointEntity(jointName);
+    if (jointEntity == ignition::gazebo::kNullEntity) {
+        return false;
+    }
+
+    if (effortLimit < 0) {
+        gymppError << "The effort must be greater or equal than 0" << std::endl;
+        return false;
+    }
+
+    pImpl->buffers.joints.effortLimits[jointName] = effortLimit;
     return true;
 }
 
@@ -1175,6 +1214,18 @@ bool IgnitionRobot::update(const std::chrono::duration<double>& simTime)
         // Get the force
         auto force = pImpl->buffers.joints.appliedForces[jointName];
 
+        // Get the effort limits
+        auto& effortLimits = pImpl->buffers.joints.effortLimits;
+
+        // Clip the force if an effort limit was set
+        if (effortLimits.find(jointName) != effortLimits.end()) {
+
+            if (std::abs(force) > effortLimits[jointName]) {
+                force = std::min(force, effortLimits[jointName]);
+                force = std::max(force, -effortLimits[jointName]);
+            }
+        }
+
         // Actuate the force
         if (!setJointForce(jointName, force)) {
             gymppError << "Failed to set force to joint '" << jointName << "'" << std::endl;
@@ -1332,12 +1383,21 @@ bool IgnitionRobot::resetBasePose(const std::array<double, 3>& position,
     const ignition::math::Pose3d& world_H_model = world_H_base * model_H_base.Inverse();
 
     // Get the component that stores the new pose
-    auto& modelWorldPoseComponent =
+    auto& modelWorldPoseCmdComponent =
         pImpl->getOrCreateComponent<ignition::gazebo::components::WorldPoseCmd>(
             pImpl->model.Entity());
 
     // Store the pose data
-    modelWorldPoseComponent.Data() = world_H_model;
+    modelWorldPoseCmdComponent.Data() = world_H_model;
+
+    // Update the current pose of the model so that callers of getBasePose already
+    // read the new one.
+    auto* modelWorldPoseComponent =
+        pImpl->ecm->Component<ignition::gazebo::components::Pose>(pImpl->model.Entity());
+    assert(modelWorldPoseComponent);
+
+    modelWorldPoseComponent->Data() = world_H_model;
+
     return true;
 }
 

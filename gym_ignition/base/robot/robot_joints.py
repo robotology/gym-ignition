@@ -350,3 +350,16 @@ class RobotJoints(ABC):
         Returns:
             The maximum generalized force supported by the joint.
         """
+
+    @abstractmethod
+    def set_joint_force_limit(self, joint_name: str, limit: float) -> bool:
+        """
+        Set the maximum effort of the specified joint.
+
+        Args:
+            joint_name: The name of the joint.
+            limit: The effort limit.
+
+        Returns:
+            True if successful, False otherwise.
+        """

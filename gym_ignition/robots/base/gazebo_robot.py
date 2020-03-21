@@ -104,19 +104,19 @@ class GazeboRobot(robot_abc.RobotABC,
 
         # Initialize the model data
         model_data = bindings.ModelInitData()
-        model_data.setModelName(self._robot_name)
-        model_data.setSdfString(sdf_string)
-        model_data.setFixedPose(not self.is_floating_base())
-        model_data.setPosition(initial_base_pose.tolist())
-        model_data.setOrientation(initial_base_orientation.tolist())
+        model_data.modelName = self._robot_name
+        model_data.sdfString = sdf_string
+        model_data.fixedPose = not self.is_floating_base()
+        model_data.position =initial_base_pose.tolist()
+        model_data.orientation = initial_base_orientation.tolist()
 
         if self._base_frame is not None:
-            model_data.setBaseLink(self._base_frame)
+            model_data.baseLink = self._base_frame
 
         # Initialize robot controller plugin
         plugin_data = bindings.PluginData()
-        plugin_data.setLibName("RobotController")
-        plugin_data.setClassName("gympp::plugins::RobotController")
+        plugin_data.libName = "RobotController"
+        plugin_data.className = "gympp::plugins::RobotController"
 
         # Insert the model
         ok_model = self._gazebo.insertModel(model_data, plugin_data)
@@ -210,11 +210,11 @@ class GazeboRobot(robot_abc.RobotABC,
     def joint_force(self, joint_name: str) -> float:
         return self.gympp_robot.jointForce(joint_name)
 
-    def joint_positions(self) -> List[float]:
-        return self.gympp_robot.jointPositions()
+    def joint_positions(self) -> np.ndarray:
+        return np.array(self.gympp_robot.jointPositions())
 
-    def joint_velocities(self) -> List[float]:
-        return self.gympp_robot.jointVelocities()
+    def joint_velocities(self) -> np.ndarray:
+        return np.array(self.gympp_robot.jointVelocities())
 
     def joint_pid(self, joint_name: str) -> Union[robot_joints.PID, None]:
         gazebo_pid = self.gympp_robot.jointPID(joint_name)
@@ -256,7 +256,15 @@ class GazeboRobot(robot_abc.RobotABC,
         return float(limit.min), float(limit.max)
 
     def joint_force_limit(self, joint_name: str) -> float:
-        raise NotImplementedError
+        limit = self.gympp_robot.jointEffortLimit(joint_name)
+        return float(limit)
+
+    def set_joint_force_limit(self, joint_name: str, limit: float) -> bool:
+        if limit < 0:
+            raise ValueError(limit)
+
+        ok_limit = self.gympp_robot.setJointEffortLimit(joint_name, limit)
+        return ok_limit
 
     # ==============
     # RobotBaseFrame

@@ -18,8 +18,8 @@ def test_joint_controller():
     controller_rate = 500.0
 
     plugin_data = bindings.PluginData()
-    plugin_data.setLibName("RobotController")
-    plugin_data.setClassName("gympp::plugins::RobotController")
+    plugin_data.libName = "RobotController"
+    plugin_data.className = "gympp::plugins::RobotController"
 
     # Find and load the model SDF file
     model_sdf_file = resource_finder.find_resource("CartPole/CartPole.urdf")
@@ -28,7 +28,7 @@ def test_joint_controller():
 
     # Initialize the model data
     model_data = bindings.ModelInitData()
-    model_data.setSdfString(model_sdf_string)
+    model_data.sdfString = model_sdf_string
 
     # Get the model name
     model_name = bindings.GazeboWrapper.getModelNameFromSDF(model_sdf_string)

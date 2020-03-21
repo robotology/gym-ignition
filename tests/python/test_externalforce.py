@@ -11,14 +11,8 @@ def test_external_force():
     # Get the simulator
     gazebo = utils.Gazebo(physics_rate=1000, iterations=1, rtf=100)
 
-    # Serialize the cube urdf
-    handle, model_file = tempfile.mkstemp()
-    with open(handle, 'w') as f:
-        f.write(utils.get_cube_urdf())
-
     # Create the first cube and insert it in the simulation
-    cube = utils.CubeGazeboRobot(model_file=model_file,
-                                 gazebo=gazebo.simulator,
+    cube = utils.CubeGazeboRobot(gazebo=gazebo.simulator,
                                  initial_position=np.array([0, 0, 1.0]))
 
     # Execute the first simulation step
