@@ -274,14 +274,14 @@ If you find interesting [PRs](https://github.com/robotology/gym-ignition/pulls) 
 ## Citation
 
 ```
-@misc{ferigo2019gymignition,
+@INPROCEEDINGS{ferigo2020gymignition,
     title={Gym-Ignition: Reproducible Robotic Simulations for Reinforcement Learning},
-    author={Diego Ferigo and Silvio Traversaro and Daniele Pucci},
-    year={2019},
-    eprint={1911.01715},
-    archivePrefix={arXiv},
-    primaryClass={cs.RO}
-}
+    author={D. {Ferigo} and S. {Traversaro} and G. {Metta} and D. {Pucci}},
+    booktitle={2020 IEEE/SICE International Symposium on System Integration (SII)},
+    year={2020},
+    pages={885-890},
+    doi={10.1109/SII46433.2020.9025951}
+} 
 ```
 
 ---
