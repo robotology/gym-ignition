@@ -280,6 +280,7 @@ If you find interesting [PRs](https://github.com/robotology/gym-ignition/pulls) 
     booktitle={2020 IEEE/SICE International Symposium on System Integration (SII)},
     year={2020},
     pages={885-890},
+    doi={10.1109/SII46433.2020.9025951}
 } 
 ```
 
