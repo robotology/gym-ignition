@@ -168,7 +168,7 @@ public:
 
     /// \brief Update physics from components
     /// \param[in] _ecm Constant reference to ECM.
-    void UpdatePhysics(EntityComponentManager& _ecm);
+    void UpdatePhysics(const ignition::gazebo::UpdateInfo& _info, EntityComponentManager& _ecm);
 
     /// \brief Step the simulationrfor each world
     /// \param[in] _dt Duration
@@ -176,7 +176,7 @@ public:
 
     /// \brief Update components from physics simulation
     /// \param[in] _ecm Mutable reference to ECM.
-    void UpdateSim(EntityComponentManager& _ecm) const;
+    void UpdateSim(const ignition::gazebo::UpdateInfo& _info, EntityComponentManager& _ecm) const;
 
     /// \brief Update collision components from physics simulation
     /// \param[in] _ecm Mutable reference to ECM.
@@ -293,14 +293,14 @@ void Physics::Update(const UpdateInfo& _info, EntityComponentManager& _ecm)
 
     if (this->pImpl->engine) {
         this->pImpl->CreatePhysicsEntities(_ecm);
-        this->pImpl->UpdatePhysics(_ecm);
+        this->pImpl->UpdatePhysics(_info, _ecm);
 
         // Only step if not paused.
         if (!_info.paused) {
             this->pImpl->Step(_info.dt);
         }
 
-        this->pImpl->UpdateSim(_ecm);
+        this->pImpl->UpdateSim(_info, _ecm);
 
         // Entities scheduled to be removed should be removed from physics after
         // the simulation step. Otherwise, since the to-be-removed entity still
@@ -646,7 +646,8 @@ void Physics::Impl::RemovePhysicsEntities(const EntityComponentManager& _ecm)
     });
 }
 
-void Physics::Impl::UpdatePhysics(EntityComponentManager& _ecm)
+void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
+                                  EntityComponentManager& _ecm)
 {
     // Battery state
     _ecm.Each<components::BatterySoC>(
@@ -905,7 +906,8 @@ void Physics::Impl::Step(const std::chrono::steady_clock::duration& _dt)
     }
 }
 
-void Physics::Impl::UpdateSim(EntityComponentManager& _ecm) const
+void Physics::Impl::UpdateSim(const ignition::gazebo::UpdateInfo& _info,
+                              EntityComponentManager& _ecm) const
 {
     // local pose
     _ecm.Each<components::Link, components::Pose, components::ParentEntity>(
