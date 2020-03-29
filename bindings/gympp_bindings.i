@@ -11,6 +11,10 @@
 #include "gympp/gazebo/GymFactory.h"
 #include "gympp/gazebo/Metadata.h"
 #include "gympp/gazebo/RobotSingleton.h"
+#include "scenario/gazebo/Joint.h"
+#include "scenario/gazebo/Link.h"
+#include "scenario/gazebo/Model.h"
+#include "scenario/gazebo/World.h"
 #include <cstdint>
 %}
 
@@ -105,3 +109,13 @@
 %include "gympp/gazebo/Metadata.h"
 %include "gympp/gazebo/GymFactory.h"
 %include "gympp/gazebo/RobotSingleton.h"
+
+%shared_ptr(scenario::gazebo::Joint)
+%shared_ptr(scenario::gazebo::Link)
+%shared_ptr(scenario::gazebo::Model)
+%shared_ptr(scenario::gazebo::World)
+
+%include "scenario/gazebo/Joint.h"
+%include "scenario/gazebo/Link.h"
+%include "scenario/gazebo/Model.h"
+%include "scenario/gazebo/World.h"
