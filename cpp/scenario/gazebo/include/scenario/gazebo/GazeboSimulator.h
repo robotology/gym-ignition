@@ -2,15 +2,32 @@
  * Copyright (C) 2019 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
+ * This project is dual licensed under LGPL v2.1+ or Apache License.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
  * This software may be modified and distributed under the terms of the
  * GNU Lesser General Public License v2.1 or any later version.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-#ifndef GYMPP_GAZEBO_GAZEBOWRAPPER
-#define GYMPP_GAZEBO_GAZEBOWRAPPER
+#ifndef SCENARIO_GAZEBO_GAZEBOSIMULATOR_H
+#define SCENARIO_GAZEBO_GAZEBOSIMULATOR_H
 
 #include <array>
-#include <functional>
 #include <memory>
 #include <optional>
 #include <string>
@@ -22,14 +39,14 @@
 #define DEFAULT_VERBOSITY 4
 #endif
 
-namespace gympp {
+namespace scenario {
     namespace gazebo {
         struct PluginData;
         struct PhysicsData;
         struct ModelInitData;
-        class GazeboWrapper;
+        class GazeboSimulator;
     } // namespace gazebo
-} // namespace gympp
+} // namespace scenario
 
 namespace sdf {
     inline namespace v9 {
@@ -37,7 +54,7 @@ namespace sdf {
     } // namespace v9
 } // namespace sdf
 
-struct gympp::gazebo::ModelInitData
+struct scenario::gazebo::ModelInitData
 {
     std::string sdfString;
     bool fixedPose = false;
@@ -47,26 +64,26 @@ struct gympp::gazebo::ModelInitData
     std::array<double, 4> orientation = {1, 0, 0, 0};
 };
 
-struct gympp::gazebo::PluginData
+struct scenario::gazebo::PluginData
 {
     std::string libName;
     std::string className;
 };
 
-class gympp::gazebo::GazeboWrapper
+class scenario::gazebo::GazeboSimulator
 {
 private:
     class Impl;
-    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl;
+    std::unique_ptr<Impl> pImpl;
 
 protected:
     bool findAndLoadSdf(const std::string& sdfFileName, sdf::Root& root);
 
 public:
-    GazeboWrapper(const size_t numOfIterations = 1,
-                  const double desiredRTF = std::numeric_limits<double>::max(),
-                  const double physicsUpdateRate = 1000);
-    virtual ~GazeboWrapper();
+    GazeboSimulator(const size_t numOfIterations = 1,
+                    const double desiredRTF = std::numeric_limits<double>::max(),
+                    const double physicsUpdateRate = 1000);
+    virtual ~GazeboSimulator();
 
     bool initialize();
     bool run();
@@ -79,8 +96,8 @@ public:
     PhysicsData getPhysicsData() const;
     static void setVerbosity(int level = DEFAULT_VERBOSITY);
 
-    bool insertModel(const gympp::gazebo::ModelInitData& modelData,
-                     const gympp::gazebo::PluginData& pluginData = {});
+    bool insertModel(const scenario::gazebo::ModelInitData& modelData,
+                     const scenario::gazebo::PluginData& pluginData = {});
     bool removeModel(const std::string& modelName);
     static std::string getModelNameFromSDF(const std::string& sdfString);
 
@@ -88,7 +105,7 @@ public:
     bool setupGazeboWorld(const std::string& worldFile);
 };
 
-struct gympp::gazebo::PhysicsData
+struct scenario::gazebo::PhysicsData
 {
     double rtf;
     double maxStepSize;
@@ -119,4 +136,4 @@ struct gympp::gazebo::PhysicsData
     }
 };
 
-#endif // GYMPP_GAZEBO_GAZEBOWRAPPER
+#endif // SCENARIO_GAZEBO_GAZEBOSIMULATOR_H

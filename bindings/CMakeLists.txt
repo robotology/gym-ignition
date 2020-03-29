@@ -42,7 +42,7 @@ target_link_libraries(${swig_name} PUBLIC
     GazeboEnvironment
     ECMSingleton
     RobotSingleton
-    GazeboWrapper
+    GazeboSimulator
     ScenarioGazebo
     ${PYTHON_LIBRARIES})
 

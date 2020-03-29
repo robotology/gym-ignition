@@ -2,11 +2,29 @@
  * Copyright (C) 2019 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
+ * This project is dual licensed under LGPL v2.1+ or Apache License.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
  * This software may be modified and distributed under the terms of the
  * GNU Lesser General Public License v2.1 or any later version.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
-#include "gympp/gazebo/GazeboWrapper.h"
+#include "scenario/gazebo/GazeboSimulator.h"
 #include "gympp/base/Log.h"
 #include "gympp/gazebo/IgnitionRobot.h"
 #include "gympp/gazebo/RobotSingleton.h"
@@ -41,8 +59,8 @@
 #include <cassert>
 #include <chrono>
 
-using namespace gympp::gazebo;
-const std::string GymppVerboseEnvVar = "GYMPP_VERBOSE";
+using namespace scenario::gazebo;
+const std::string ScenarioVerboseEnvVar = "SCENARIO_VERBOSE";
 
 // =====
 // PIMPL
@@ -57,7 +75,7 @@ struct GazeboData
     std::shared_ptr<ignition::gazebo::Server> server;
 };
 
-class GazeboWrapper::Impl
+class GazeboSimulator::Impl
 {
 public:
     size_t id;
@@ -79,7 +97,7 @@ public:
     ignition::common::SystemPaths systemPaths;
 };
 
-std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
+std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
 {
     // Lazy initialization of the server
     if (!gazebo.server) {
@@ -95,7 +113,7 @@ std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
         // To simplify debugging, use an environment variable to enable / disable
         // printing the SDF string
         std::string envVarContent{};
-        if (ignition::common::env(GymppVerboseEnvVar, envVarContent) && envVarContent == "1") {
+        if (ignition::common::env(ScenarioVerboseEnvVar, envVarContent) && envVarContent == "1") {
             gymppDebug << "Loading the following SDF file in the gazebo server:" << std::endl;
             std::cout << sdf.Element()->ToString("") << std::endl;
         }
@@ -121,7 +139,7 @@ std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
 }
 
 std::shared_ptr<ignition::gazebo::SdfEntityCreator>
-GazeboWrapper::Impl::getSdfEntityCreator(const std::string& worldName)
+GazeboSimulator::Impl::getSdfEntityCreator(const std::string& worldName)
 {
     if (sdfEntityCreator) {
         return sdfEntityCreator;
@@ -142,7 +160,7 @@ GazeboWrapper::Impl::getSdfEntityCreator(const std::string& worldName)
 }
 
 // TODO: there's a bug in the destructor of sdf::Physics that prevents returning std::optional
-bool GazeboWrapper::findAndLoadSdf(const std::string& sdfFileName, sdf::Root& root)
+bool GazeboSimulator::findAndLoadSdf(const std::string& sdfFileName, sdf::Root& root)
 {
     if (sdfFileName.empty()) {
         gymppError << "The SDF file name of the gazebo model is empty" << std::endl;
@@ -173,7 +191,7 @@ bool GazeboWrapper::findAndLoadSdf(const std::string& sdfFileName, sdf::Root& ro
     return true;
 }
 
-PhysicsData GazeboWrapper::Impl::getPhysicsData() const
+PhysicsData GazeboSimulator::Impl::getPhysicsData() const
 {
     assert(sdf.WorldCount() == 1);
     assert(sdf.WorldByIndex(0)->PhysicsCount() == 1);
@@ -186,7 +204,7 @@ PhysicsData GazeboWrapper::Impl::getPhysicsData() const
     return physics;
 }
 
-bool GazeboWrapper::Impl::setPhysics(const PhysicsData& physicsData)
+bool GazeboSimulator::Impl::setPhysics(const PhysicsData& physicsData)
 {
     assert(sdf.WorldCount() == 1);
     assert(sdf.WorldByIndex(0)->PhysicsCount() == 1);
@@ -238,13 +256,13 @@ bool GazeboWrapper::Impl::setPhysics(const PhysicsData& physicsData)
 }
 
 // =============
-// GAZEBOWRAPPER
+// GazeboSimulator
 // =============
 
-GazeboWrapper::GazeboWrapper(const size_t numOfIterations,
-                             const double desiredRTF,
-                             const double physicsUpdateRate)
-    : pImpl{new GazeboWrapper::Impl, [](Impl* impl) { delete impl; }}
+GazeboSimulator::GazeboSimulator(const size_t numOfIterations,
+                                 const double desiredRTF,
+                                 const double physicsUpdateRate)
+    : pImpl{std::make_unique<GazeboSimulator::Impl>()}
 {
     // Configure gazebo
     pImpl->gazebo.numOfIterations = numOfIterations;
@@ -268,13 +286,13 @@ GazeboWrapper::GazeboWrapper(const size_t numOfIterations,
     setVerbosity();
 }
 
-GazeboWrapper::~GazeboWrapper()
+GazeboSimulator::~GazeboSimulator()
 {
     // Close the gui if it was opened
     close();
 }
 
-bool GazeboWrapper::initialize()
+bool GazeboSimulator::initialize()
 {
     // Initialize the server
     // TODO: check that all the other configures have been called
@@ -286,7 +304,7 @@ bool GazeboWrapper::initialize()
     return true;
 }
 
-bool GazeboWrapper::run()
+bool GazeboSimulator::run()
 {
     // Get the gazebo server
     auto server = pImpl->getServer();
@@ -323,7 +341,7 @@ bool GazeboWrapper::run()
     return true;
 }
 
-bool GazeboWrapper::gui()
+bool GazeboSimulator::gui()
 {
     // If ign-gazebo-gui is already running, return without doing anything.
     int exit_status;
@@ -343,7 +361,7 @@ bool GazeboWrapper::gui()
     return true;
 }
 
-bool GazeboWrapper::close()
+bool GazeboSimulator::close()
 {
     if (pImpl->gazebo.gui) {
 #if defined(WIN32) || defined(_WIN32)
@@ -378,7 +396,7 @@ bool GazeboWrapper::close()
     return true;
 }
 
-bool GazeboWrapper::initialized()
+bool GazeboSimulator::initialized()
 {
     if (pImpl->gazebo.server) {
         return true;
@@ -388,7 +406,7 @@ bool GazeboWrapper::initialized()
     }
 }
 
-double GazeboWrapper::getSimulatedTime() const
+double GazeboSimulator::getSimulatedTime() const
 {
     auto dt = pImpl->gazebo.physics.maxStepSize;
     auto iterationCount = pImpl->getServer()->IterationCount();
@@ -402,17 +420,17 @@ double GazeboWrapper::getSimulatedTime() const
     return dt * iterationCount.value();
 }
 
-PhysicsData GazeboWrapper::getPhysicsData() const
+PhysicsData GazeboSimulator::getPhysicsData() const
 {
     return pImpl->gazebo.physics;
 }
 
-void GazeboWrapper::setVerbosity(int level)
+void GazeboSimulator::setVerbosity(int level)
 {
     ignition::common::Console::SetVerbosity(level);
 }
 
-std::string GazeboWrapper::getModelNameFromSDF(const std::string& sdfString)
+std::string GazeboSimulator::getModelNameFromSDF(const std::string& sdfString)
 {
     sdf::Root root;
 
@@ -429,7 +447,7 @@ std::string GazeboWrapper::getModelNameFromSDF(const std::string& sdfString)
     return root.ModelByIndex(0)->Name();
 }
 
-std::string GazeboWrapper::getWorldName() const
+std::string GazeboSimulator::getWorldName() const
 {
     if (pImpl->sdf.WorldCount() == 0) {
         gymppError << "Failed to find any world. Has the world been configured?" << std::endl;
@@ -446,8 +464,8 @@ std::string GazeboWrapper::getWorldName() const
     return pImpl->worldName;
 }
 
-bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
-                                const gympp::gazebo::PluginData& pluginData)
+bool GazeboSimulator::insertModel(const scenario::gazebo::ModelInitData& modelData,
+                                  const scenario::gazebo::PluginData& pluginData)
 {
     if (!initialized()) {
         gymppError << "The simulator was not initialized. Call initialize() first." << std::endl;
@@ -591,7 +609,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
     // To simplify debugging, use an environment variable to enable / disable
     // printing the final SDF model string
     std::string envVarContent{};
-    if (ignition::common::env(GymppVerboseEnvVar, envVarContent) && envVarContent == "1") {
+    if (ignition::common::env(ScenarioVerboseEnvVar, envVarContent) && envVarContent == "1") {
         gymppDebug << "Inserting a model from the following SDF:" << std::endl;
         std::cout << modelSdfRoot.Element()->ToString("") << std::endl;
     }
@@ -779,7 +797,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
         }
 
         // Store the robot in the singleton
-        if (!RobotSingleton::get().storeRobot(ignRobot)) {
+        if (!gympp::gazebo::RobotSingleton::get().storeRobot(ignRobot)) {
             gymppError << "Failed to store the robot in the singleton" << std::endl;
             return false;
         }
@@ -811,7 +829,7 @@ bool GazeboWrapper::insertModel(const gympp::gazebo::ModelInitData& modelData,
     return true;
 }
 
-bool GazeboWrapper::removeModel(const std::string& modelName)
+bool GazeboSimulator::removeModel(const std::string& modelName)
 {
     if (!initialized()) {
         gymppError << "The simulator was not initialized. Call initialize() first." << std::endl;
@@ -858,12 +876,12 @@ bool GazeboWrapper::removeModel(const std::string& modelName)
     // ===================================
 
     // Remove the robot from the singleton
-    if (!RobotSingleton::get().deleteRobot(modelName)) {
+    if (!gympp::gazebo::RobotSingleton::get().deleteRobot(modelName)) {
         gymppError << "The Robot object associated to the model was not in the singleton"
                    << std::endl;
     }
 
-    assert(!RobotSingleton::get().exists(modelName));
+    assert(!gympp::gazebo::RobotSingleton::get().exists(modelName));
 
     // Remove the model from the list of models pending to be removed
     auto it = std::find(
@@ -876,7 +894,7 @@ bool GazeboWrapper::removeModel(const std::string& modelName)
     return true;
 }
 
-bool GazeboWrapper::setupGazeboWorld(const std::string& worldFile)
+bool GazeboSimulator::setupGazeboWorld(const std::string& worldFile)
 {
     // Find and load the sdf file that contains the world
     if (!findAndLoadSdf(worldFile, pImpl->sdf)) {

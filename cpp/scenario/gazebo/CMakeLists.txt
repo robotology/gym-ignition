@@ -92,6 +92,32 @@ target_link_libraries(ScenarioGazebo
 set_target_properties(ScenarioGazebo PROPERTIES
     PUBLIC_HEADER "${SCENARIO_PUBLIC_HDRS}")
 
+# ===============
+# GazeboSimulator
+# ===============
+
+add_library(GazeboSimulator
+    include/scenario/gazebo/GazeboSimulator.h
+    src/GazeboSimulator.cpp)
+
+target_link_libraries(GazeboSimulator
+    PRIVATE
+    RobotSingleton
+    ECMSingleton
+    IgnitionRobot
+    ECMSingleton
+    ScenarioGazebo
+    ExtraComponents
+    ignition-gazebo3::core
+    tiny-process-library)
+
+set_target_properties(GazeboSimulator PROPERTIES
+    PUBLIC_HEADER include/scenario/gazebo/GazeboSimulator.h)
+
+target_include_directories(GazeboSimulator PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
 # ===================
 # Install the targets
 # ===================
@@ -107,7 +133,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/scenario/gazebo/components)
     install(
         TARGETS
-        ScenarioGazebo
+        ScenarioGazebo GazeboSimulator
         EXPORT scenario
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
