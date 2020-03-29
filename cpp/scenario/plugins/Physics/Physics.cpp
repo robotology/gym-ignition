@@ -16,6 +16,7 @@
  */
 
 #include "Physics.h"
+#include "scenario/gazebo/components/ExternalWorldWrenchCmdWithDuration.h"
 #include "scenario/gazebo/components/HistoryOfAppliedJointForces.h"
 #include "scenario/gazebo/components/JointPositionReset.h"
 #include "scenario/gazebo/components/JointVelocityReset.h"
@@ -785,6 +786,31 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
 
             return true;
         });
+
+    // Link wrenches with duration
+    if (!_info.paused) {
+        _ecm.Each<components::ExternalWorldWrenchCmdWithDuration>(
+            [&](const Entity& _entity,
+                components::ExternalWorldWrenchCmdWithDuration* _wrenchWithDurComp) {
+                auto linkIt = this->entityLinkMap.find(_entity);
+                if (linkIt == this->entityLinkMap.end())
+                    return true;
+
+                auto totalWrench = _wrenchWithDurComp->Data().totalWrench();
+                math::Vector3 force = msgs::Convert(totalWrench.force());
+                math::Vector3 torque = msgs::Convert(totalWrench.torque());
+
+                linkIt->second->AddExternalForce(math::eigen3::convert(force));
+                linkIt->second->AddExternalTorque(math::eigen3::convert(torque));
+
+                // NOTE: Cleaning could be moved to UpdateSim, but let's
+                //       keep things all together for now
+                auto simTimeAfterStep = _info.simTime;
+                _wrenchWithDurComp->Data().cleanExpired(simTimeAfterStep);
+
+                return true;
+            });
+    }
 
     _ecm.Each<components::Model, components::WorldPoseCmd>(
         [&](const Entity& _entity,
