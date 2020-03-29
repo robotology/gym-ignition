@@ -18,7 +18,9 @@
 #include "Physics.h"
 #include "scenario/gazebo/components/JointPositionReset.h"
 #include "scenario/gazebo/components/JointVelocityReset.h"
+#include "scenario/gazebo/components/SimulatedTime.h"
 #include "scenario/gazebo/components/WorldVelocityCmd.h"
+#include "scenario/gazebo/helpers.h"
 
 #include <ignition/common/MeshManager.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
@@ -279,6 +281,15 @@ void Physics::Update(const UpdateInfo& _info, EntityComponentManager& _ecm)
                 << std::chrono::duration_cast<std::chrono::seconds>(_info.dt).count()
                 << "s]. System may not work properly." << std::endl;
     }
+
+    // Update the component with the time in seconds that  the simulation will
+    // have after the step
+    _ecm.Each<components::World, components::SimulatedTime>(
+        [&](const Entity& worldEntity, const components::World*, components::SimulatedTime*) {
+            scenario::gazebo::utils::setExistingComponentData<
+                ignition::gazebo::components::SimulatedTime>(&_ecm, worldEntity, _info.simTime);
+            return true;
+        });
 
     if (this->pImpl->engine) {
         this->pImpl->CreatePhysicsEntities(_ecm);
@@ -1333,5 +1344,4 @@ physics::FrameData3d Physics::Impl::LinkFrameDataAtOffset(const LinkPtrType& _li
 }
 
 IGNITION_ADD_PLUGIN(Physics, ignition::gazebo::System, Physics::ISystemUpdate)
-
 IGNITION_ADD_PLUGIN_ALIAS(Physics, "ignition::gazebo::systems::Physics")

@@ -33,7 +33,8 @@ target_link_libraries(PhysicsSystem
     ignition-gazebo3::core
     PRIVATE
     ignition-physics2
-    ExtraComponents)
+    ExtraComponents
+    ScenarioGazebo)
 
 target_include_directories(PhysicsSystem PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
