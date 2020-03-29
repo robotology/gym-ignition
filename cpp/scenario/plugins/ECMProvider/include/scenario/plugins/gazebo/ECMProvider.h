@@ -34,7 +34,6 @@
 #include <sdf/Element.hh>
 
 #include <memory>
-#include <optional>
 
 namespace scenario {
     namespace plugins {
@@ -48,10 +47,6 @@ class scenario::plugins::gazebo::ECMProvider final
     : public ignition::gazebo::System
     , public ignition::gazebo::ISystemConfigure
 {
-private:
-    class Impl;
-    std::unique_ptr<Impl> pImpl = nullptr;
-
 public:
     ECMProvider();
     ~ECMProvider() override;
@@ -60,6 +55,10 @@ public:
                    const std::shared_ptr<const sdf::Element>& sdf,
                    ignition::gazebo::EntityComponentManager& ecm,
                    ignition::gazebo::EventManager& eventMgr) override;
+
+private:
+    class Impl;
+    std::unique_ptr<Impl> pImpl = nullptr;
 };
 
 #endif // SCENARIO_PLUGINS_GAZEBO_ECMPROVIDER

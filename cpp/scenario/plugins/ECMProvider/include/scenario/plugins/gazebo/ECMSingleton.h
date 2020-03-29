@@ -31,7 +31,6 @@
 #include "ignition/gazebo/EventManager.hh"
 
 #include <memory>
-#include <string>
 
 namespace scenario {
     namespace plugins {
@@ -43,33 +42,27 @@ namespace scenario {
 
 class scenario::plugins::gazebo::ECMSingleton
 {
-private:
-    class Impl;
-    std::unique_ptr<Impl> pImpl;
-
 public:
     ECMSingleton();
     ~ECMSingleton() = default;
+
     ECMSingleton(ECMSingleton&) = delete;
     void operator=(const ECMSingleton&) = delete;
 
     static ECMSingleton& get();
 
-    void clean(const std::string& worldName);
-    bool valid(const std::string& worldName) const;
+    void clean();
+    bool valid() const;
 
-    bool exist(const std::string& worldName) const;
+    ignition::gazebo::EventManager* getEventManager() const;
+    ignition::gazebo::EntityComponentManager* getECM() const;
 
-    ignition::gazebo::EventManager* getEventManager(const std::string& worldName) const;
-    ignition::gazebo::EntityComponentManager* getECM(const std::string& worldName) const;
-
-    bool storePtrs(const std::string& worldName,
-                   ignition::gazebo::EntityComponentManager* ecm,
+    bool storePtrs(ignition::gazebo::EntityComponentManager* ecm,
                    ignition::gazebo::EventManager* eventMgr);
 
-    void notifyExecutorFinished(const std::string& worldName);
-    void notifyAndWaitPreUpdate(const std::string& worldName);
-    std::unique_lock<std::mutex> waitPreUpdate(const std::string& worldName);
+private:
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 #endif // SCENARIO_PLUGINS_GAZEBO_ECMSINGLETON_H

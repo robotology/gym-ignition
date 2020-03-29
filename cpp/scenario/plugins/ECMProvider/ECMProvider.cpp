@@ -26,30 +26,21 @@
 
 #include "scenario/plugins/gazebo/ECMProvider.h"
 #include "scenario/gazebo/Log.h"
-#include "scenario/gazebo/components/ECMMutex.h"
 #include "scenario/plugins/gazebo/ECMSingleton.h"
 
 #include <ignition/gazebo/Entity.hh>
-#include <ignition/gazebo/components/Name.hh>
-#include <ignition/gazebo/components/World.hh>
 #include <ignition/plugin/Register.hh>
-
-#include <cassert>
-#include <ostream>
-#include <string>
 
 using namespace scenario::plugins::gazebo;
 
 class ECMProvider::Impl
 {
 public:
-    std::string worldName;
-    ignition::gazebo::Entity worldEntity;
 };
 
 ECMProvider::ECMProvider()
     : System()
-    , pImpl{new Impl()}
+    , pImpl{std::make_unique<Impl>()}
 {}
 
 ECMProvider::~ECMProvider()
@@ -57,35 +48,22 @@ ECMProvider::~ECMProvider()
     gymppDebug << "Destroying the ECMProvider" << std::endl;
 };
 
-void ECMProvider::Configure(const ignition::gazebo::Entity& /*entity*/,
+void ECMProvider::Configure(const ignition::gazebo::Entity& entity,
                             const std::shared_ptr<const sdf::Element>& /*sdf*/,
                             ignition::gazebo::EntityComponentManager& ecm,
                             ignition::gazebo::EventManager& eventMgr)
 {
-    auto worldEntities = ecm.EntitiesByComponents(ignition::gazebo::components::World());
-
-    if (worldEntities.size() == 0) {
-        gymppError << "Didn't find any world in the context of the ECMProvider plugin" << std::endl;
-        assert(false);
+    if (ECMSingleton::get().valid()) {
+        gymppWarning << "The ECM singleton has been already configured" << std::endl;
         return;
     }
 
-    assert(worldEntities.size() == 1);
-    pImpl->worldEntity = worldEntities[0];
+    gymppDebug << "Storing ECM resources in the singleton" << std::endl;
 
-    auto nameComponent = ecm.Component<ignition::gazebo::components::Name>(pImpl->worldEntity);
-    pImpl->worldName = nameComponent->Data();
-    assert(!pImpl->worldName.empty());
-
-    // Register the EntityComponentManager and the EventManager in the singleton
-    if (!ECMSingleton::get().valid(pImpl->worldName)) {
-        gymppDebug << "Inserting ECM for world '" << pImpl->worldName << "'" << std::endl;
-
-        if (!ECMSingleton::get().storePtrs(pImpl->worldName, &ecm, &eventMgr)) {
-            gymppError << "Failed to store ECM in the singleton for world '" << pImpl->worldName
-                       << "'" << std::endl;
-            return;
-        }
+    if (!ECMSingleton::get().storePtrs(&ecm, &eventMgr)) {
+        gymppError << "Failed to store ECM in the singleton for entity [" << entity << "]"
+                   << std::endl;
+        return;
     }
 }
 
