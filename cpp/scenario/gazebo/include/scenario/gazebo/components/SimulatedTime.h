@@ -24,34 +24,27 @@
  * limitations under the License.
  */
 
-#ifndef IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
-#define IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
-
-#include <vector>
+#ifndef IGNITION_GAZEBO_COMPONENTS_SIMULATEDTIME_H
+#define IGNITION_GAZEBO_COMPONENTS_SIMULATEDTIME_H
 
 #include <ignition/gazebo/components/Component.hh>
 #include <ignition/gazebo/components/Factory.hh>
-#include <ignition/gazebo/components/Serialization.hh>
 #include <ignition/gazebo/config.hh>
+
+#include <chrono>
 
 namespace ignition::gazebo {
     // Inline bracket to help doxygen filtering.
     inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
         namespace components {
-            /// \brief Joint velocities in SI units
-            ///        (rad/s for revolute, m/s for prismatic).
-            ///
-            /// The component wraps a std::vector of size equal to the
-            /// degrees of freedom of the joint.
-            using JointVelocityReset =
-                Component<std::vector<double>,
-                          class JointVelocityResetTag,
-                          serializers::VectorDoubleSerializer>;
-            IGN_GAZEBO_REGISTER_COMPONENT(
-                "ign_gazebo_components.JointVelocityReset",
-                JointVelocityReset)
+            /// \brief A component that holds the world's simulated time in
+            ///        seconds.
+            using SimulatedTime = Component<std::chrono::steady_clock::duration,
+                                            class SimulatedTimeTag>;
+            IGN_GAZEBO_REGISTER_COMPONENT("ign_gazebo_components.SimulatedTime",
+                                          SimulatedTime)
         } // namespace components
     } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
 } // namespace ignition::gazebo
 
-#endif // IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
+#endif // IGNITION_GAZEBO_COMPONENTS_SIMULATEDTIME_H

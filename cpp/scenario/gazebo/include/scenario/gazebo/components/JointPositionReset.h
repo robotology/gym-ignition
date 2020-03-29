@@ -1,13 +1,15 @@
 /*
- * Copyright (C) 2019 Istituto Italiano di Tecnologia (IIT)
+ * Copyright (C) 2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
+ *
+ * This project is dual licensed under LGPL v2.1+ or Apache License.
+ *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *
  * This software may be modified and distributed under the terms of the
  * GNU Lesser General Public License v2.1 or any later version.
  *
- * ==================================================
- *
- * Copyright (C) 2018 Open Source Robotics Foundation
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,8 +24,8 @@
  * limitations under the License.
  */
 
-#ifndef IGNITION_GAZEBO_COMPONENTS_JOINTPOSITIONRESET_HH_
-#define IGNITION_GAZEBO_COMPONENTS_JOINTPOSITIONRESET_HH_
+#ifndef IGNITION_GAZEBO_COMPONENTS_JOINTPOSITIONRESET_H
+#define IGNITION_GAZEBO_COMPONENTS_JOINTPOSITIONRESET_H
 
 #include <vector>
 
@@ -32,23 +34,24 @@
 #include <ignition/gazebo/components/Serialization.hh>
 #include <ignition/gazebo/config.hh>
 
-namespace ignition {
-    namespace gazebo {
-        // Inline bracket to help doxygen filtering.
-        inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
-            namespace components {
-                /// \brief Joint positions in SI units (rad for revolute, m for prismatic).
-                ///
-                /// The component wraps a std::vector of size equal to the degrees of freedom
-                /// of the joint.
-                using JointPositionReset = Component<std::vector<double>,
-                                                     class JointPositionResetTag,
-                                                     serializers::VectorDoubleSerializer>;
-                IGN_GAZEBO_REGISTER_COMPONENT("ign_gazebo_components.JointPositionReset",
-                                              JointPositionReset)
-            } // namespace components
-        } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
-    } // namespace gazebo
-} // namespace ignition
+namespace ignition::gazebo {
+    // Inline bracket to help doxygen filtering.
+    inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
+        namespace components {
+            /// \brief Joint positions in SI units (rad for revolute, m for
+            /// prismatic).
+            ///
+            /// The component wraps a std::vector of size equal to the
+            /// degrees of freedom of the joint.
+            using JointPositionReset =
+                Component<std::vector<double>,
+                          class JointPositionResetTag,
+                          serializers::VectorDoubleSerializer>;
+            IGN_GAZEBO_REGISTER_COMPONENT(
+                "ign_gazebo_components.JointPositionReset",
+                JointPositionReset)
+        } // namespace components
+    } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
+} // namespace ignition::gazebo
 
-#endif
+#endif // IGNITION_GAZEBO_COMPONENTS_JOINTPOSITIONRESET_H

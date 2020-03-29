@@ -24,8 +24,8 @@
  * limitations under the License.
  */
 
-#ifndef IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
-#define IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
+#ifndef IGNITION_GAZEBO_COMPONENTS_JOINTACCELERATIONTARGET_H
+#define IGNITION_GAZEBO_COMPONENTS_JOINTACCELERATIONTARGET_H
 
 #include <vector>
 
@@ -38,20 +38,21 @@ namespace ignition::gazebo {
     // Inline bracket to help doxygen filtering.
     inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
         namespace components {
-            /// \brief Joint velocities in SI units
-            ///        (rad/s for revolute, m/s for prismatic).
+            /// \brief Joint acceleration target in SI units (rad/s/s for
+            ///        revolute, m/s/s for prismatic) used by joint
+            ///        controllers.
             ///
             /// The component wraps a std::vector of size equal to the
             /// degrees of freedom of the joint.
-            using JointVelocityReset =
+            using JointAccelerationTarget =
                 Component<std::vector<double>,
-                          class JointVelocityResetTag,
+                          class JointAccelerationTargetTag,
                           serializers::VectorDoubleSerializer>;
             IGN_GAZEBO_REGISTER_COMPONENT(
-                "ign_gazebo_components.JointVelocityReset",
-                JointVelocityReset)
+                "ign_gazebo_components.JointAccelerationTarget",
+                JointAccelerationTarget)
         } // namespace components
     } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
 } // namespace ignition::gazebo
 
-#endif // IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
+#endif // IGNITION_GAZEBO_COMPONENTS_JOINTACCELERATIONTARGET_H

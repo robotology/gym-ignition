@@ -24,34 +24,32 @@
  * limitations under the License.
  */
 
-#ifndef IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
-#define IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
+#ifndef IGNITION_GAZEBO_COMPONENTS_HISTORYOFAPPLIEDJOINTFORCES_H
+#define IGNITION_GAZEBO_COMPONENTS_HISTORYOFAPPLIEDJOINTFORCES_H
 
-#include <vector>
+#include "scenario/gazebo/helpers.h"
 
 #include <ignition/gazebo/components/Component.hh>
 #include <ignition/gazebo/components/Factory.hh>
-#include <ignition/gazebo/components/Serialization.hh>
 #include <ignition/gazebo/config.hh>
 
 namespace ignition::gazebo {
     // Inline bracket to help doxygen filtering.
     inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
         namespace components {
-            /// \brief Joint velocities in SI units
-            ///        (rad/s for revolute, m/s for prismatic).
+            /// \brief Fixed-size queue that stores a window of applied joint
+            ///        forces.
             ///
-            /// The component wraps a std::vector of size equal to the
-            /// degrees of freedom of the joint.
-            using JointVelocityReset =
-                Component<std::vector<double>,
-                          class JointVelocityResetTag,
-                          serializers::VectorDoubleSerializer>;
+            /// The queue is associated to a joint and it is filled at each
+            /// physics step with as many values as degrees of freedom.
+            using HistoryOfAppliedJointForces =
+                Component<scenario::gazebo::utils::FixedSizeQueue,
+                          class HistoryOfAppliedJointForcesTag>;
             IGN_GAZEBO_REGISTER_COMPONENT(
-                "ign_gazebo_components.JointVelocityReset",
-                JointVelocityReset)
+                "ign_gazebo_components.HistoryOfAppliedJointForces",
+                HistoryOfAppliedJointForces)
         } // namespace components
     } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
 } // namespace ignition::gazebo
 
-#endif // IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
+#endif // IGNITION_GAZEBO_COMPONENTS_HISTORYOFAPPLIEDJOINTFORCES_H

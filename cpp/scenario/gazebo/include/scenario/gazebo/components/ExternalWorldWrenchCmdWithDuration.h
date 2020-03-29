@@ -24,34 +24,38 @@
  * limitations under the License.
  */
 
-#ifndef IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
-#define IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
+#ifndef IGNITION_GAZEBO_COMPONENTS_EXTERNALWORLDWRENCHCMDWITHDURATION_H
+#define IGNITION_GAZEBO_COMPONENTS_EXTERNALWORLDWRENCHCMDWITHDURATION_H
 
-#include <vector>
+#include "scenario/gazebo/helpers.h"
 
 #include <ignition/gazebo/components/Component.hh>
 #include <ignition/gazebo/components/Factory.hh>
-#include <ignition/gazebo/components/Serialization.hh>
 #include <ignition/gazebo/config.hh>
+
+#include <chrono>
 
 namespace ignition::gazebo {
     // Inline bracket to help doxygen filtering.
     inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
         namespace components {
-            /// \brief Joint velocities in SI units
-            ///        (rad/s for revolute, m/s for prismatic).
-            ///
-            /// The component wraps a std::vector of size equal to the
-            /// degrees of freedom of the joint.
-            using JointVelocityReset =
-                Component<std::vector<double>,
-                          class JointVelocityResetTag,
-                          serializers::VectorDoubleSerializer>;
+            /// \brief A component type that contains the external wrench to be
+            ///        applied for a given duration on an entity expressed in
+            ///        the world frame and represented by
+            ///        ignition::msgs::Wrench. Currently this is used for
+            ///        applying wrenches on links. Although the msg::Wrench type
+            ///        has a force_offset member, the value is currently
+            ///        ignored. Instead, the force is applied at the link
+            ///        origin. The wrench uses SI units (N for force and N⋅m for
+            ///        torque).
+            using ExternalWorldWrenchCmdWithDuration =
+                Component<scenario::gazebo::utils::LinkWrenchCmd,
+                          class ExternalWorldWrenchCmdWithDurationTag>;
             IGN_GAZEBO_REGISTER_COMPONENT(
-                "ign_gazebo_components.JointVelocityReset",
-                JointVelocityReset)
+                "ign_gazebo_components.ExternalWorldWrenchCmdWithDuration",
+                ExternalWorldWrenchCmdWithDuration)
         } // namespace components
     } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
 } // namespace ignition::gazebo
 
-#endif // IGNITION_GAZEBO_COMPONENTS_JOINTVELOCITYRESET_H
+#endif // IGNITION_GAZEBO_COMPONENTS_EXTERNALWORLDWRENCHCMDWITHDURATION_H
