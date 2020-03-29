@@ -16,6 +16,7 @@
  */
 
 #include "Physics.h"
+#include "scenario/gazebo/components/HistoryOfAppliedJointForces.h"
 #include "scenario/gazebo/components/JointPositionReset.h"
 #include "scenario/gazebo/components/JointVelocityReset.h"
 #include "scenario/gazebo/components/SimulatedTime.h"
@@ -1093,6 +1094,21 @@ void Physics::Impl::UpdateSim(const ignition::gazebo::UpdateInfo& _info,
 
         // Copy the force cmd
         jointForceData = jointForceCmdData;
+
+        // If the history is enabled, append the force command also there
+        auto historyComponent =
+            _ecm.Component<ignition::gazebo::components::HistoryOfAppliedJointForces>(_entity);
+
+        // Since the operation is an append, we have to perform it only when
+        // the physics step is actually performed
+        if (!_info.paused && historyComponent) {
+            auto& history = scenario::gazebo::utils::getExistingComponentData<
+                ignition::gazebo::components::HistoryOfAppliedJointForces>(&_ecm, _entity);
+
+            for (const auto& jointForce : jointForceData) {
+                history.push(jointForce);
+            }
+        }
 
         return true;
     });
