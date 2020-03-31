@@ -68,6 +68,7 @@ set(SCENARIO_PUBLIC_HDRS
     include/scenario/gazebo/Link.h
     include/scenario/gazebo/Log.h
     include/scenario/gazebo/utils.h
+    include/scenario/gazebo/signals.h
     include/scenario/gazebo/exceptions.h)
 
 add_library(ScenarioGazebo
@@ -78,6 +79,7 @@ add_library(ScenarioGazebo
     src/Joint.cpp
     src/Link.cpp
     src/utils.cpp
+    src/signals.cpp
     src/helpers.cpp)
 
 target_include_directories(ScenarioGazebo PUBLIC
