@@ -15,6 +15,7 @@
 
 // STL classes
 %include <stdint.i>
+%include <std_pair.i>
 %include <std_array.i>
 %include <std_string.i>
 %include <std_vector.i>
@@ -32,18 +33,35 @@
 %template(Array4d) std::array<double, 4>;
 %template(Array6d) std::array<double, 6>;
 
+// Pair instantiation
+%template(PosePair) std::pair<std::array<double, 3>, std::array<double, 4>>;
+
+// Public helpers
 %include "scenario/gazebo/utils.h"
 
-%shared_ptr(scenario::gazebo::GazeboSimulator)
-%include "scenario/gazebo/GazeboSimulator.h"
-
+// Other templates for ScenarI/O APIs
 %shared_ptr(scenario::gazebo::Joint)
 %shared_ptr(scenario::gazebo::Link)
 %shared_ptr(scenario::gazebo::Model)
 %shared_ptr(scenario::gazebo::World)
-
 %template(Vector_contact) std::vector<scenario::base::ContactData>;
+
+// Ignored methods
+%ignore scenario::gazebo::Joint::initialize;
+%ignore scenario::gazebo::Link::initialize;
+%ignore scenario::gazebo::Model::initialize;
+%ignore scenario::gazebo::World::initialize;
+%ignore scenario::gazebo::Joint::createECMResources;
+%ignore scenario::gazebo::Link::createECMResources;
+%ignore scenario::gazebo::Model::createECMResources;
+%ignore scenario::gazebo::World::createECMResources;
+
+// ScenarI/O headers
 %include "scenario/gazebo/Joint.h"
 %include "scenario/gazebo/Link.h"
 %include "scenario/gazebo/Model.h"
 %include "scenario/gazebo/World.h"
+
+// GazeboSimulator
+%shared_ptr(scenario::gazebo::GazeboSimulator)
+%include "scenario/gazebo/GazeboSimulator.h"
