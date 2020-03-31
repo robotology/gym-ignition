@@ -11,6 +11,7 @@
 
 #include "gympp/base/Log.h"
 #include "gympp/base/Space.h"
+#include "scenario/gazebo/GazeboSimulator.h"
 
 #include <string>
 #include <vector>
@@ -108,7 +109,7 @@ private:
     std::string worldFileName;
 
     double agentRate;
-    gazebo::PhysicsData physicsData;
+    scenario::gazebo::PhysicsData physicsData;
 
     SpaceMetadata actionSpace;
     SpaceMetadata observationSpace;
@@ -120,7 +121,7 @@ public:
     inline std::string getModelFileName() const { return modelFileName; }
     inline std::string getWorldFileName() const { return worldFileName; }
     inline double getAgentRate() const { return agentRate; }
-    inline gazebo::PhysicsData getPhysicsData() const { return physicsData; }
+    inline scenario::gazebo::PhysicsData getPhysicsData() const { return physicsData; }
     inline SpaceMetadata getActionSpaceMetadata() const { return actionSpace; }
     inline SpaceMetadata getObservationSpaceMetadata() const { return observationSpace; }
 
@@ -152,7 +153,7 @@ public:
 
     inline void setAgentRate(const double agentRate) { this->agentRate = agentRate; }
 
-    inline void setPhysicsData(const gazebo::PhysicsData& physicsData)
+    inline void setPhysicsData(const scenario::gazebo::PhysicsData& physicsData)
     {
         this->physicsData = physicsData;
     }

@@ -7,10 +7,10 @@
 #include "gympp/base/Robot.h"
 #include "gympp/base/Space.h"
 #include "gympp/gazebo/GazeboEnvironment.h"
-#include "gympp/gazebo/GazeboWrapper.h"
 #include "gympp/gazebo/GymFactory.h"
 #include "gympp/gazebo/Metadata.h"
 #include "gympp/gazebo/RobotSingleton.h"
+#include "scenario/gazebo/GazeboSimulator.h"
 #include "scenario/gazebo/Joint.h"
 #include "scenario/gazebo/Link.h"
 #include "scenario/gazebo/Model.h"
@@ -67,14 +67,14 @@
 %include "gympp/base/Space.h"
 
 %shared_ptr(gympp::base::Environment)
-%shared_ptr(gympp::gazebo::GazeboWrapper)
+%shared_ptr(scenario::gazebo::GazeboSimulator)
 %shared_ptr(gympp::gazebo::GazeboEnvironment)
 %include "ignition/common/SingletonT.hh"
 %ignore ignition::common::SingletonT<gympp::gazebo::GymFactory>::myself;
 %template(GymFactorySingleton) ignition::common::SingletonT<gympp::gazebo::GymFactory>;
 
 %include "gympp/base/Environment.h"
-%include "gympp/gazebo/GazeboWrapper.h"
+%include "scenario/gazebo/GazeboSimulator.h"
 %include "gympp/gazebo/GazeboEnvironment.h"
 
 %extend gympp::base::Robot {
@@ -101,8 +101,8 @@
         return std::dynamic_pointer_cast<gympp::gazebo::GazeboEnvironment>(env);
     }
 
-    std::shared_ptr<gympp::gazebo::GazeboWrapper> envToGazeboWrapper(gympp::base::EnvironmentPtr env) {
-        return std::dynamic_pointer_cast<gympp::gazebo::GazeboWrapper>(env);
+    std::shared_ptr<scenario::gazebo::GazeboSimulator> envToGazeboWrapper(gympp::base::EnvironmentPtr env) {
+        return std::dynamic_pointer_cast<scenario::gazebo::GazeboSimulator>(env);
     }
 %}
 

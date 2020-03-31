@@ -11,6 +11,7 @@
 #include "gympp/base/Space.h"
 #include "gympp/gazebo/GazeboEnvironment.h"
 #include "gympp/gazebo/Metadata.h"
+#include "scenario/gazebo/GazeboSimulator.h"
 #include "sdf/Root.hh"
 
 #include <cassert>
@@ -100,7 +101,7 @@ gympp::base::EnvironmentPtr GymFactory::make(const std::string& envName)
     }
 
     // Create the model initialization data
-    gazebo::ModelInitData modelData;
+    scenario::gazebo::ModelInitData modelData;
     modelData.sdfString = root.Element()->ToString("");
     // TODO: expose position and orientation?
 
@@ -108,7 +109,7 @@ gympp::base::EnvironmentPtr GymFactory::make(const std::string& envName)
     ignGym->storeModelData(modelData);
 
     // Create the gympp plugin data
-    gympp::gazebo::PluginData pluginData;
+    scenario::gazebo::PluginData pluginData;
     pluginData.libName = md.libraryName;
     pluginData.className = md.className;
 
