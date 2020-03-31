@@ -88,35 +88,3 @@ register(
             'agent_rate': 1000,
             'physics_rate': 1000,
             })
-
-# =====================
-# PYBULLET ENVIRONMENTS
-# =====================
-
-register(
-    id='Pendulum-PyBullet-v0',
-    entry_point='gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime',
-    max_episode_steps=5000,
-    kwargs={'task_cls': pendulum_swingup.PendulumSwingUp,
-            'robot_cls': sim.pybullet.pendulum.PendulumPyBulletRobot,
-            'model': "Pendulum/Pendulum.urdf",
-            'world': "plane_implicit.urdf",
-            'rtf': max_float,
-            'agent_rate': 1000,
-            'physics_rate': 1000,
-            })
-
-register(
-    id='CartPoleDiscrete-PyBullet-v0',
-    entry_point='gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime',
-    max_episode_steps=5000,
-    kwargs={
-            # PyBulletRuntime
-            'task_cls': cartpole_discrete.CartPoleDiscrete,
-            'robot_cls': sim.pybullet.cartpole.CartPolePyBulletRobot,
-            'model': "CartPole/CartPole.urdf",
-            'world': "plane_implicit.urdf",
-            'rtf': max_float,
-            'agent_rate': 1000,
-            'physics_rate': 1000,
-            })
