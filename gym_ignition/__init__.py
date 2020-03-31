@@ -34,10 +34,6 @@ resource_finder.add_path_from_env_var("IGN_GAZEBO_RESOURCE_PATH")
 from gym.envs.registration import register
 from gym_ignition.utils import resource_finder
 
-# Import the robots
-from gym_ignition.robots import rt
-from gym_ignition.robots import sim
-
 # Import the tasks
 from gym_ignition.tasks import pendulum_swingup
 from gym_ignition.tasks import cartpole_discrete
