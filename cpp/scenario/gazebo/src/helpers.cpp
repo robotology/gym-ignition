@@ -33,6 +33,7 @@
 #include <ignition/msgs/contact.pb.h>
 #include <sdf/Error.hh>
 #include <sdf/Model.hh>
+#include <sdf/Physics.hh>
 #include <sdf/World.hh>
 
 #include <cassert>
@@ -275,6 +276,57 @@ bool utils::renameSDFModel(sdf::Root& sdfRoot,
         gymppError << "Failed to insert rename model in SDF root" << std::endl;
         return false;
     }
+
+    return true;
+}
+
+bool utils::updateSDFPhysics(sdf::Root& sdfRoot,
+                             const double maxStepSize,
+                             const double rtf,
+                             const double realTimeUpdateRate,
+                             const size_t worldIndex)
+{
+    if (rtf <= 0) {
+        gymppError << "Invalid RTF value (" << rtf << ")" << std::endl;
+        return false;
+    }
+
+    if (maxStepSize <= 0) {
+        gymppError << "Invalid physics max step size (" << maxStepSize << ")"
+                   << std::endl;
+        return false;
+    }
+
+    const sdf::World* world = sdfRoot.WorldByIndex(worldIndex);
+
+    if (world->PhysicsCount() != 1) {
+        gymppError << "Found more than one physics profile" << std::endl;
+        return false;
+    }
+
+    // Set the physics properties using the helper.
+    // It sets the internal value but it does not update the DOM.
+    auto* physics = const_cast<sdf::Physics*>(world->PhysicsByIndex(0));
+    physics->SetMaxStepSize(maxStepSize);
+    physics->SetRealTimeFactor(rtf);
+
+    // Update the DOM operating directly on the raw elements
+    sdf::ElementPtr worldElement = world->Element();
+
+    sdf::ElementPtr physicsElement = worldElement->GetElement("physics");
+    assert(physicsElement);
+
+    sdf::ElementPtr max_step_size = physicsElement->GetElement("max_step_size");
+    max_step_size->AddValue("double", std::to_string(maxStepSize), true);
+
+    sdf::ElementPtr real_time_update_rate =
+        physicsElement->GetElement("real_time_update_rate");
+    real_time_update_rate->AddValue(
+        "double", std::to_string(realTimeUpdateRate), true);
+
+    sdf::ElementPtr real_time_factor =
+        physicsElement->GetElement("real_time_factor");
+    real_time_factor->AddValue("double", std::to_string(rtf), true);
 
     return true;
 }

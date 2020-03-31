@@ -42,7 +42,6 @@
 #include <ignition/transport/Node.hh>
 #include <ignition/transport/Publisher.hh>
 #include <sdf/Element.hh>
-#include <sdf/Param.hh>
 #include <sdf/Physics.hh>
 #include <sdf/Root.hh>
 #include <sdf/World.hh>
@@ -117,9 +116,7 @@ public:
     using WorldName = std::string;
     std::unordered_map<WorldName, scenario::gazebo::WorldPtr> worlds;
 
-    bool setPhysics(const detail::PhysicsData& physicsData);
     detail::PhysicsData getPhysicsData(const size_t worldIndex) const;
-
     bool sceneBroadcasterActive(const std::string& worldName);
 };
 
@@ -536,9 +533,16 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
         // overriding the default profile.
         // NOTE: this could be avoided if gazebo::Server would expose the
         //       SimulationRunner::SetStepSize method.
-        if (!this->setPhysics(gazebo.physics)) {
-            gymppError << "Failed to set physics profile" << std::endl;
-            return nullptr;
+        for (size_t worldIdx = 0; worldIdx < sdf->WorldCount(); ++worldIdx) {
+            if (!utils::updateSDFPhysics(*sdf,
+                                         gazebo.physics.maxStepSize,
+                                         gazebo.physics.rtf,
+                                         /*realTimeUpdateRate=*/-1,
+                                         worldIdx)) {
+                gymppError << "Failed to set physics profile" << std::endl;
+                return nullptr;
+            }
+            assert(this->getPhysicsData(worldIdx) == gazebo.physics);
         }
 
         gymppDebug << "Physics profile:" << std::endl
@@ -609,76 +613,6 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
     }
 
     return gazebo.server;
-}
-
-bool GazeboSimulator::Impl::setPhysics(const detail::PhysicsData& physicsData)
-{
-    if (physicsData.rtf <= 0) {
-        gymppError << "Invalid RTF value (" << physicsData.rtf << ")"
-                   << std::endl;
-        return false;
-    }
-
-    if (physicsData.maxStepSize <= 0) {
-        gymppError << "Invalid physics step size (" << physicsData.maxStepSize
-                   << ")" << std::endl;
-        return false;
-    }
-
-    if (std::isinf(physicsData.maxStepSize)) {
-        gymppError << "The physics step size cannot be infinite" << std::endl;
-        return false;
-    }
-
-    assert(sdf);
-    for (size_t idx = 0; idx < sdf->WorldCount(); ++idx) {
-
-        const sdf::World* world = sdf->WorldByIndex(idx);
-
-        if (world->PhysicsCount() != 1) {
-            gymppError << "Found more than one physics profile." << std::endl;
-            return false;
-        }
-
-        // Set the physics properties using the helper.
-        // This sets the internal value but it does not update the DOM.
-        auto* physics = const_cast<sdf::Physics*>(world->PhysicsByIndex(0));
-        physics->SetMaxStepSize(physicsData.maxStepSize);
-        physics->SetRealTimeFactor(physicsData.rtf);
-    }
-
-    // Update the DOM operating directly on the raw elements
-    sdf::ElementPtr world = sdf->Element()->GetElement("world");
-
-    if (!world) {
-        gymppError << "Failed to find any world" << std::endl;
-        return false;
-    }
-
-    while (world) {
-        sdf::ElementPtr physics = world->GetElement("physics");
-        assert(physics);
-
-        sdf::ElementPtr max_step_size = physics->GetElement("max_step_size");
-        max_step_size->AddValue(
-            "double", std::to_string(physicsData.maxStepSize), true);
-
-        sdf::ElementPtr real_time_update_rate =
-            physics->GetElement("real_time_update_rate");
-        real_time_update_rate->AddValue(
-            "double", std::to_string(physicsData.realTimeUpdateRate), true);
-
-        sdf::ElementPtr real_time_factor =
-            physics->GetElement("real_time_factor");
-        real_time_factor->AddValue(
-            "double", std::to_string(physicsData.rtf), true);
-
-        world = world->GetNextElement("world");
-    }
-
-    assert(this->getPhysicsData(0) == gazebo.physics);
-
-    return true;
 }
 
 detail::PhysicsData

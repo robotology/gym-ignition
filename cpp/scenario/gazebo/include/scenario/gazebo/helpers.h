@@ -142,6 +142,12 @@ namespace scenario::gazebo::utils {
                         const std::string& newModelName,
                         size_t modelIndex = 0);
 
+    bool updateSDFPhysics(sdf::Root& sdfRoot,
+                          const double maxStepSize,
+                          const double rtf,
+                          const double realTimeUpdateRate,
+                          const size_t worldIndex = 0);
+
     sdf::ElementPtr getPluginSDFElement(const std::string& libName,
                                         const std::string& className);
 
