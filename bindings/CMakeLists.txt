@@ -17,7 +17,7 @@ if(${CMAKE_VERSION} VERSION_GREATER 3.14)
     cmake_policy(SET CMP0086 NEW)
 endif()
 
-find_package(SWIG REQUIRED)
+find_package(SWIG 4.0 REQUIRED)
 set(UseSWIG_MODULE_VERSION 2)
 include(${SWIG_USE_FILE})
 

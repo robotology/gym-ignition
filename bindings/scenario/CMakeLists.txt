@@ -21,6 +21,9 @@ set_property(TARGET ${scenario_swig_name} PROPERTY
 
 #set_property(TARGET ${scenario_swig_name} PROPERTY SWIG_COMPILE_OPTIONS -builtin)
 
+set_property(TARGET ${scenario_swig_name} PROPERTY SWIG_COMPILE_OPTIONS -py3)
+set_property(TARGET ${scenario_swig_name} PROPERTY SWIG_COMPILE_OPTIONS -doxygen)
+
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
 
     set(PYTHON_FOLDER "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
