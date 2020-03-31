@@ -10,21 +10,17 @@
 #include "gympp/gazebo/GymFactory.h"
 #include "gympp/gazebo/Metadata.h"
 #include "gympp/gazebo/RobotSingleton.h"
-#include "scenario/gazebo/GazeboSimulator.h"
-#include "scenario/gazebo/Joint.h"
-#include "scenario/gazebo/Link.h"
-#include "scenario/gazebo/Model.h"
-#include "scenario/gazebo/World.h"
 #include <cstdint>
 %}
 
 %naturalvar;
 
+// STL classes
 %include <stdint.i>
-
 %include <std_array.i>
 %include <std_string.i>
 %include <std_vector.i>
+%include <std_shared_ptr.i>
 
 // Convert python list to std::vector
 %template(Vector_i) std::vector<int>;
@@ -60,21 +56,18 @@
 %template(Optional_state) std::optional<gympp::base::State>;
 %template(Optional_sample) std::optional<gympp::base::data::Sample>;
 
-%include <std_shared_ptr.i>
 %shared_ptr(gympp::base::spaces::Space)
 %shared_ptr(gympp::base::spaces::Box)
 %shared_ptr(gympp::base::spaces::Discrete)
 %include "gympp/base/Space.h"
 
 %shared_ptr(gympp::base::Environment)
-%shared_ptr(scenario::gazebo::GazeboSimulator)
 %shared_ptr(gympp::gazebo::GazeboEnvironment)
 %include "ignition/common/SingletonT.hh"
 %ignore ignition::common::SingletonT<gympp::gazebo::GymFactory>::myself;
 %template(GymFactorySingleton) ignition::common::SingletonT<gympp::gazebo::GymFactory>;
 
 %include "gympp/base/Environment.h"
-%include "scenario/gazebo/GazeboSimulator.h"
 %include "gympp/gazebo/GazeboEnvironment.h"
 
 %extend gympp::base::Robot {
@@ -109,13 +102,3 @@
 %include "gympp/gazebo/Metadata.h"
 %include "gympp/gazebo/GymFactory.h"
 %include "gympp/gazebo/RobotSingleton.h"
-
-%shared_ptr(scenario::gazebo::Joint)
-%shared_ptr(scenario::gazebo::Link)
-%shared_ptr(scenario::gazebo::Model)
-%shared_ptr(scenario::gazebo::World)
-
-%include "scenario/gazebo/Joint.h"
-%include "scenario/gazebo/Link.h"
-%include "scenario/gazebo/Model.h"
-%include "scenario/gazebo/World.h"
