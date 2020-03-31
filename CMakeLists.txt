@@ -96,12 +96,16 @@ endif()
 # Configure RPATH
 include(AddInstallRPATHSupport)
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    add_install_rpath_support(BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
-                              LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
-                                       "${CMAKE_INSTALL_FULL_LIBDIR}/lib"
-                              INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
-                              DEPENDS ENABLE_RPATH
-                              USE_LINK_PATH)
+    find_package(Python3 COMPONENTS Development REQUIRED)
+    set(PythonPath "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}")
+    add_install_rpath_support(
+        BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
+        LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
+                 "${CMAKE_INSTALL_FULL_LIBDIR}/${PythonPath}/site-packages"
+        INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
+        DEPENDS ENABLE_RPATH
+        USE_LINK_PATH)
+    unset(PythonPath)
 endif()
 
 # Dependencies
