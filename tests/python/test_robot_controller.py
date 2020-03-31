@@ -19,7 +19,7 @@ def test_joint_controller():
 
     plugin_data = bindings.PluginData()
     plugin_data.libName = "RobotController"
-    plugin_data.className = "gympp::plugins::RobotController"
+    plugin_data.className = "scenario::plugins::gazebo::RobotController"
 
     # Find and load the model SDF file
     model_sdf_file = resource_finder.find_resource("CartPole/CartPole.urdf")
