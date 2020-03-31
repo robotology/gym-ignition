@@ -102,9 +102,6 @@ add_library(GazeboSimulator
 
 target_link_libraries(GazeboSimulator
     PRIVATE
-    RobotSingleton
-    ECMSingleton
-    IgnitionRobot
     ECMSingleton
     ScenarioGazebo
     ExtraComponents
