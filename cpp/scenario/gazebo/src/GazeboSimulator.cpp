@@ -31,6 +31,7 @@
 #include "scenario/gazebo/components/SimulatedTime.h"
 #include "scenario/gazebo/components/Timestamp.h"
 #include "scenario/gazebo/helpers.h"
+#include "scenario/gazebo/signals.h"
 #include "scenario/gazebo/utils.h"
 #include "scenario/plugins/gazebo/ECMSingleton.h"
 
@@ -50,6 +51,7 @@
 #include <cassert>
 #include <chrono>
 #include <cmath>
+#include <csignal>
 #include <limits>
 #include <optional>
 #include <thread>
@@ -170,6 +172,18 @@ bool GazeboSimulator::initialize()
         gymppError << "Failed to get the Gazebo server" << std::endl;
         return false;
     }
+
+    auto cb = [&](int sig) {
+        this->close();
+        exit(sig);
+    };
+
+    // Setup signals callbacks.
+    // It must be done after the creation of the simulator since
+    // we override their callbacks.
+    base::SignalManager::Instance().setCallback(SIGINT, cb);
+    base::SignalManager::Instance().setCallback(SIGTERM, cb);
+    base::SignalManager::Instance().setCallback(SIGABRT, cb);
 
     return true;
 }
