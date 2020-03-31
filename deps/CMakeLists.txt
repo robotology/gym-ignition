@@ -21,21 +21,16 @@ if(NOT ${tiny-process-library_FOUND})
     if(NOT tinyprocesslibrary_POPULATED)
         message(STATUS "Bootstrapping Tiny Process Library")
         FetchContent_Populate(TinyProcessLibrary)
+
+        # Build the library as static
+        set(default_build_type ${BUILD_SHARED_LIBS})
+        set(BUILD_SHARED_LIBS OFF)
         add_subdirectory(${tinyprocesslibrary_SOURCE_DIR} ${tinyprocesslibrary_BINARY_DIR})
+        set(BUILD_SHARED_LIBS ${default_build_type})
 
         set_target_properties(tiny-process-library PROPERTIES
             PUBLIC_HEADER ${tinyprocesslibrary_SOURCE_DIR}/process.hpp
             POSITION_INDEPENDENT_CODE ON)
-
-        if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-            # Install the target
-            install(
-                TARGETS tiny-process-library
-                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-                PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
-        endif()
     endif()
 endif()
 
