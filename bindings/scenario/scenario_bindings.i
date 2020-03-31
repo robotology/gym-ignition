@@ -1,4 +1,4 @@
-%module scenario_bindings
+%module(moduleimport="import $module") scenario_bindings
 
 %{
 #define SWIG_FILE_WITH_INIT
