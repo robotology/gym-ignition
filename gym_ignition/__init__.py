@@ -21,70 +21,9 @@ if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
 else:
     import gympp_bindings
 
+    # try:
+    #     import gympp_bindings
+    # except:
+    #     pass
 
-# Configure OS environment variables
-from gym_ignition.utils import gazebo_env_vars, resource_finder
-gazebo_env_vars.setup_gazebo_env_vars()
-resource_finder.add_path_from_env_var("IGN_GAZEBO_RESOURCE_PATH")
 
-# =========================
-# REGISTER THE ENVIRONMENTS
-# =========================
-
-from gym.envs.registration import register
-from gym_ignition.utils import resource_finder
-
-# ======================
-# GYMPP C++ ENVIRONMENTS
-# ======================
-
-import numpy
-max_float = float(numpy.finfo(numpy.float32).max)
-
-register(
-    id='CartPoleDiscrete-Gympp-v0',
-    max_episode_steps=5000,
-    entry_point='gym_ignition.gympp.cartpole:CartPoleDiscrete')
-
-# ============================
-# IGNITION GAZEBO ENVIRONMENTS
-# ============================
-
-register(
-    id='Pendulum-Gazebo-v0',
-    entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
-    max_episode_steps=5000,
-    kwargs={'task_cls': pendulum_swingup.PendulumSwingUp,
-            'robot_cls': sim.gazebo.pendulum.PendulumGazeboRobot,
-            'model': "Pendulum/Pendulum.urdf",
-            'world': "DefaultEmptyWorld.world",
-            'rtf': max_float,
-            'agent_rate': 1000,
-            'physics_rate': 1000,
-            })
-
-register(
-    id='CartPoleDiscrete-Gazebo-v0',
-    entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
-    max_episode_steps=5000,
-    kwargs={'task_cls': cartpole_discrete.CartPoleDiscrete,
-            'robot_cls': sim.gazebo.cartpole.CartPoleGazeboRobot,
-            'model': "CartPole/CartPole.urdf",
-            'world': "DefaultEmptyWorld.world",
-            'rtf': max_float,
-            'agent_rate': 1000,
-            'physics_rate': 1000,
-            })
-
-register(
-    id='CartPoleContinuous-Gazebo-v0',
-    entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
-    max_episode_steps=5000,
-    kwargs={'task_cls': cartpole_continuous.CartPoleContinuous,
-            'robot_cls': sim.gazebo.cartpole.CartPoleGazeboRobot,
-            'model': "CartPole/CartPole.urdf",
-            'world': "DefaultEmptyWorld.world",
-            'rtf': max_float,
-            'agent_rate': 1000,
-            'physics_rate': 1000,
-            })
