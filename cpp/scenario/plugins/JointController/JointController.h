@@ -24,8 +24,8 @@
  * limitations under the License.
  */
 
-#ifndef SCENARIO_PLUGINS_GAZEBO_ROBOTCONTROLLER
-#define SCENARIO_PLUGINS_GAZEBO_ROBOTCONTROLLER
+#ifndef SCENARIO_PLUGINS_GAZEBO_JOINTCONTROLLER_H
+#define SCENARIO_PLUGINS_GAZEBO_JOINTCONTROLLER_H
 
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
@@ -38,23 +38,23 @@
 namespace scenario {
     namespace plugins {
         namespace gazebo {
-            class RobotController;
+            class JointController;
         } // namespace gazebo
     } // namespace plugins
 } // namespace scenario
 
-class scenario::plugins::gazebo::RobotController final
+class scenario::plugins::gazebo::JointController final
     : public ignition::gazebo::System
-    , public ignition::gazebo::ISystemPreUpdate
     , public ignition::gazebo::ISystemConfigure
+    , public ignition::gazebo::ISystemPreUpdate
 {
 private:
     class Impl;
     std::unique_ptr<Impl> pImpl = nullptr;
 
 public:
-    RobotController();
-    ~RobotController() override;
+    JointController();
+    ~JointController() override;
 
     void Configure(const ignition::gazebo::Entity& entity,
                    const std::shared_ptr<const sdf::Element>& sdf,
@@ -65,4 +65,4 @@ public:
                    ignition::gazebo::EntityComponentManager& ecm) override;
 };
 
-#endif // SCENARIO_PLUGINS_GAZEBO_ROBOTCONTROLLER
+#endif // SCENARIO_PLUGINS_GAZEBO_JOINTCONTROLLER_H

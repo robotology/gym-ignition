@@ -22,23 +22,23 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-add_library(RobotController SHARED
-    RobotController.h
-    RobotController.cpp)
+add_library(JointController SHARED
+    JointController.h
+    JointController.cpp)
 
-target_link_libraries(RobotController
+target_link_libraries(JointController
     PUBLIC
     ignition-gazebo3::core
     PRIVATE
-    gympp
-    RobotSingleton)
+    ExtraComponents
+    ScenarioGazebo)
 
-target_include_directories(RobotController PRIVATE
+target_include_directories(JointController PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
     install(
-        TARGETS RobotController
+        TARGETS JointController
         EXPORT scenario
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
