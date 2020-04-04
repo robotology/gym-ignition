@@ -2,7 +2,7 @@
  * Copyright (C) 2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
- * This project is dual licensed under LGPL v2.1+ or Apachi License.
+ * This project is dual licensed under LGPL v2.1+ or Apache License.
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *

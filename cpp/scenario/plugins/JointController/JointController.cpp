@@ -2,7 +2,7 @@
  * Copyright (C) 2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
- * This project is dual licensed under LGPL v2.1+ or Apachi License.
+ * This project is dual licensed under LGPL v2.1+ or Apache License.
  *
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
  *
@@ -36,20 +36,17 @@
 
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/components/Joint.hh>
-#include <ignition/gazebo/components/JointForceCmd.hh>
-#include <ignition/gazebo/components/JointPosition.hh>
-#include <ignition/gazebo/components/JointType.hh>
-#include <ignition/gazebo/components/JointVelocity.hh>
-#include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
+#include <ignition/math/PID.hh>
 #include <ignition/plugin/Register.hh>
-#include <sdf/Joint.hh>
 
 #include <cassert>
 #include <chrono>
-#include <ostream>
+#include <limits>
+#include <ratio>
 #include <string>
+#include <vector>
 
 using namespace scenario::gazebo;
 using namespace scenario::plugins::gazebo;
@@ -235,7 +232,6 @@ bool JointController::Impl::runPIDController(
             double force;
 
             if (computeNewForce) {
-                gymppWarning << "updating" << std::endl;
                 assert(current.size() == 1);
                 assert(reference.size() == 1);
 
@@ -246,7 +242,7 @@ bool JointController::Impl::runPIDController(
                 force = pid.Cmd();
             }
 
-            if (!joint.setForce(force)) {
+            if (!joint.setGeneralizedForceTarget(force)) {
                 gymppError << "Failed to set force of joint " << joint.name()
                            << std::endl;
                 return false;
