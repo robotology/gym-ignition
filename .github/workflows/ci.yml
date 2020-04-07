@@ -69,16 +69,16 @@ jobs:
       - name: Setup Python Package
         run: pip3 install -e .
 
-      - name: Python Tests
+      - name: Python Tests [ScenarI/O]
         run: |
-          cd tests/python
+          cd tests/scenario
           pytest -v
 
-      - name: Python Tests with Valgrind
+      - name: Python Tests with Valgrind [ScenarI/O]
         if: failure()
         run: |
           pip3 install colour-valgrind
-          cd tests/python
+          cd tests/scenario
           valgrind --log-file=/tmp/valgrind.log pytest -v -s || colour-valgrind -t /tmp/valgrind.log
 
   user:
@@ -121,14 +121,14 @@ jobs:
           cd dist
           pip install -v *.whl
 
-      - name: Python Tests
+      - name: Python Tests [ScenarI/O]
         run: |
-          cd tests/python
+          cd tests/scenario
           pytest -v
 
-      - name: Python Tests with Valgrind
+      - name: Python Tests with Valgrind [ScenarI/O]
         if: failure()
         run: |
           pip3 install colour-valgrind
-          cd tests/python
+          cd tests/scenario
           valgrind --log-file=/tmp/valgrind.log pytest -v -s || colour-valgrind -t /tmp/valgrind.log
