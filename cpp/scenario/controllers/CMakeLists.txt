@@ -42,12 +42,42 @@ target_include_directories(Controller INTERFACE
 
 set_target_properties(Controller PROPERTIES PUBLIC_HEADER "${CONTROLLER_HDRS}")
 
+# =======================
+# ComputedTorqueFixedBase
+# =======================
 
+add_library(ComputedTorqueFixedBase
+    include/scenario/controllers/ComputedTorqueFixedBase.h
+    src/ComputedTorqueFixedBase.cpp)
+
+target_link_libraries(ComputedTorqueFixedBase
+    PUBLIC
+    Controller
+    PRIVATE
+    ScenarioGazebo
+    Eigen3::Eigen
+    ignition-gazebo3::core
+    iDynTree::idyntree-core
+    iDynTree::idyntree-model
+    iDynTree::idyntree-modelio-urdf
+    iDynTree::idyntree-high-level)
+
+target_include_directories(ComputedTorqueFixedBase PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+set_target_properties(ComputedTorqueFixedBase PROPERTIES
+    PUBLIC_HEADER include/scenario/controllers/ComputedTorqueFixedBase.h)
+
+# ===================
+# Install the targets
+# ===================
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
     install(
         TARGETS
         Controller
+        ComputedTorqueFixedBase
         EXPORT scenario
         LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
         ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
