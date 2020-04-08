@@ -4,12 +4,10 @@
 #define SWIG_FILE_WITH_INIT
 #include "gympp/base/Common.h"
 #include "gympp/base/Environment.h"
-#include "gympp/base/Robot.h"
 #include "gympp/base/Space.h"
 #include "gympp/gazebo/GazeboEnvironment.h"
 #include "gympp/gazebo/GymFactory.h"
 #include "gympp/gazebo/Metadata.h"
-#include "gympp/gazebo/RobotSingleton.h"
 #include <cstdint>
 %}
 
@@ -70,25 +68,6 @@
 %include "gympp/base/Environment.h"
 %include "gympp/gazebo/GazeboEnvironment.h"
 
-%extend gympp::base::Robot {
-    bool setdt(const double dt) {
-        return $self->setdt(std::chrono::duration<double>(dt));
-    }
-
-    double dt() const {
-        return $self->dt().count();
-    }
-}
-
-%include "weak_ptr.i"
-%shared_ptr(gympp::base::Robot)
-%template(RobotWeakPtr) std::weak_ptr<gympp::base::Robot>;
-
-%ignore gympp::base::Robot::dt;
-%ignore gympp::base::Robot::setdt(const StepSize&);
-%include "gympp/base/Robot.h"
-%template(Vector_contact) std::vector<gympp::base::ContactData>;
-
 %inline %{
     std::shared_ptr<gympp::gazebo::GazeboEnvironment> envToGazeboEnvironment(gympp::base::EnvironmentPtr env) {
         return std::dynamic_pointer_cast<gympp::gazebo::GazeboEnvironment>(env);
@@ -101,4 +80,3 @@
 
 %include "gympp/gazebo/Metadata.h"
 %include "gympp/gazebo/GymFactory.h"
-%include "gympp/gazebo/RobotSingleton.h"

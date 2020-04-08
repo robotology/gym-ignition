@@ -14,8 +14,6 @@ target_link_libraries(${gympp_swig_name} PUBLIC
     gympp
     Task
     TaskSingleton
-    IgnitionRobot
-    RobotSingleton
     GazeboEnvironment
     GymFactory
     GazeboSimulator
