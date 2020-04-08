@@ -8,6 +8,7 @@
 #include "gympp/gazebo/GazeboEnvironment.h"
 #include "gympp/gazebo/GymFactory.h"
 #include "gympp/gazebo/Metadata.h"
+#include "scenario/gazebo/GazeboSimulator.h"
 #include <cstdint>
 %}
 
@@ -58,6 +59,9 @@
 %shared_ptr(gympp::base::spaces::Box)
 %shared_ptr(gympp::base::spaces::Discrete)
 %include "gympp/base/Space.h"
+
+%shared_ptr(scenario::gazebo::GazeboSimulator)
+%include "scenario/gazebo/GazeboSimulator.h"
 
 %shared_ptr(gympp::base::Environment)
 %shared_ptr(gympp::gazebo::GazeboEnvironment)
