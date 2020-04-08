@@ -29,8 +29,8 @@ jobs:
       # setup with ignition robotics installed from the official ppa
       image: diegoferigo/gym-ignition:ci-master
       env:
-        CC: gcc-7
-        CXX: g++-7
+        CC: gcc-8
+        CXX: g++-8
         PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
@@ -82,8 +82,8 @@ jobs:
       # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
       - name: Setup Environment
         run: |
-          echo "::set-env name=CC::gcc-7"
-          echo "::set-env name=CXX::g++-7"
+          echo "::set-env name=CC::gcc-8"
+          echo "::set-env name=CXX::g++-8"
           echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
           env
 
@@ -135,8 +135,8 @@ jobs:
     container:
       image: diegoferigo/gym-ignition:ci-master
       env:
-        CC: gcc-7
-        CXX: g++-7
+        CC: gcc-8
+        CXX: g++-8
         PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
