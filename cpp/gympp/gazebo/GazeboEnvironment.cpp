@@ -41,27 +41,6 @@ public:
                                           const std::string& modelFile);
 };
 
-bool GazeboEnvironment::initializeSimulation()
-{
-    // If the server is already running it means that the simulation has been
-    // already initialized
-    if (this->initialized()) {
-        return true;
-    }
-
-    gymppDebug << "Initializing the simulation" << std::endl;
-
-    // Initialize gazebo and load the world file
-    if (!this->initialize()) {
-        gymppError << "Failed to either initialize gazebo or gather the server"
-                   << std::endl;
-        return false;
-    }
-
-    gymppDebug << "Simulation initialized" << std::endl;
-    return true;
-}
-
 gympp::base::Task* GazeboEnvironment::getTask()
 {
     if (!pImpl->task) {
@@ -308,6 +287,27 @@ bool GazeboEnvironment::render(RenderMode mode)
     }
 
     return false;
+}
+
+bool GazeboEnvironment::initializeSimulation()
+{
+    // If the server is already running it means that the simulation has been
+    // already initialized
+    if (this->initialized()) {
+        return true;
+    }
+
+    gymppDebug << "Initializing the simulation" << std::endl;
+
+    // Initialize gazebo and load the world file
+    if (!this->initialize()) {
+        gymppError << "Failed to either initialize gazebo or gather the server"
+                   << std::endl;
+        return false;
+    }
+
+    gymppDebug << "Simulation initialized" << std::endl;
+    return true;
 }
 
 std::string

@@ -32,17 +32,6 @@ class gympp::gazebo::GazeboEnvironment
     , public scenario::gazebo::GazeboSimulator
     , public std::enable_shared_from_this<gympp::base::Environment>
 {
-private:
-    class Impl;
-    std::unique_ptr<Impl> pImpl;
-    gympp::base::Task* getTask();
-
-    friend class gympp::gazebo::GymFactory;
-    bool initializeSimulation();
-    void storeSDFModelFile(const std::string& modelSDF);
-    void storeModelData(const scenario::gazebo::ModelInitData& modelData);
-    void storePluginData(const scenario::gazebo::PluginData& pluginData);
-
 public:
     using Environment = gympp::base::Environment;
     using Environment::Action;
@@ -65,6 +54,17 @@ public:
     std::vector<size_t> seed(size_t seed = 0) override;
 
     base::EnvironmentPtr env();
+
+private:
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
+    gympp::base::Task* getTask();
+
+    friend class gympp::gazebo::GymFactory;
+    bool initializeSimulation();
+    void storeSDFModelFile(const std::string& modelSDF);
+    void storeModelData(const ModelInitData& modelData);
+    void storePluginData(const PluginData& pluginData);
 };
 
 #endif // GYMPP_GAZEBO_GAZEBOENVIRONMENT

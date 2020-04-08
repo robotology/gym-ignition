@@ -33,38 +33,30 @@ public:
     std::unordered_map<EnvironmentName, const PluginMetadata> plugins;
 };
 
-gympp::base::spaces::SpacePtr
-GymFactory::Impl::makeSpace(const SpaceMetadata& md)
-{
-    assert(md.isValid());
-    gympp::base::spaces::SpacePtr space;
-
-    switch (md.type) {
-        case gympp::gazebo::SpaceType::Box: {
-            if (md.dims.empty()) {
-                space =
-                    std::make_shared<gympp::base::spaces::Box>(md.low, md.high);
-            }
-            else {
-                space = std::make_shared<gympp::base::spaces::Box>(
-                    md.low[0], md.high[0], md.dims);
-            }
-            break;
-        }
-        case gympp::gazebo::SpaceType::Discrete: {
-            space = std::make_shared<gympp::base::spaces::Discrete>(md.dims[0]);
-            break;
-        }
-    }
-
-    return space;
-}
-
 GymFactory::GymFactory()
     : pImpl{new Impl()}
 {}
 
 GymFactory::~GymFactory() = default;
+
+bool GymFactory::registerPlugin(const PluginMetadata& md)
+{
+    if (!md.isValid()) {
+        gymppError << "The plugin metadata is not valid" << std::endl;
+        return false;
+    }
+
+    if (pImpl->exists(md.environmentName)) {
+        gymppWarning
+            << "Environment '" << md.environmentName
+            << "' has been already registered. This operation will be no-op."
+            << std::endl;
+        return true;
+    }
+
+    pImpl->plugins.insert({md.environmentName, md});
+    return true;
+}
 
 gympp::base::EnvironmentPtr GymFactory::make(const std::string& envName)
 {
@@ -127,21 +119,29 @@ gympp::base::EnvironmentPtr GymFactory::make(const std::string& envName)
     return ignGym->env();
 }
 
-bool GymFactory::registerPlugin(const PluginMetadata& md)
+gympp::base::spaces::SpacePtr
+GymFactory::Impl::makeSpace(const SpaceMetadata& md)
 {
-    if (!md.isValid()) {
-        gymppError << "The plugin metadata is not valid" << std::endl;
-        return false;
+    assert(md.isValid());
+    gympp::base::spaces::SpacePtr space;
+
+    switch (md.type) {
+        case gympp::gazebo::SpaceType::Box: {
+            if (md.dims.empty()) {
+                space =
+                    std::make_shared<gympp::base::spaces::Box>(md.low, md.high);
+            }
+            else {
+                space = std::make_shared<gympp::base::spaces::Box>(
+                    md.low[0], md.high[0], md.dims);
+            }
+            break;
+        }
+        case gympp::gazebo::SpaceType::Discrete: {
+            space = std::make_shared<gympp::base::spaces::Discrete>(md.dims[0]);
+            break;
+        }
     }
 
-    if (pImpl->exists(md.environmentName)) {
-        gymppWarning
-            << "Environment '" << md.environmentName
-            << "' has been already registered. This operation will be no-op."
-            << std::endl;
-        return true;
-    }
-
-    pImpl->plugins.insert({md.environmentName, md});
-    return true;
+    return space;
 }

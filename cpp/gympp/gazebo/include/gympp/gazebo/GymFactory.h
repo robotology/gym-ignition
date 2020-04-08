@@ -25,16 +25,16 @@ namespace gympp {
 class gympp::gazebo::GymFactory
     : public ignition::common::SingletonT<gympp::gazebo::GymFactory>
 {
-private:
-    class Impl;
-    std::unique_ptr<Impl> pImpl;
-
 public:
     GymFactory();
     ~GymFactory();
 
-    gympp::base::EnvironmentPtr make(const std::string& envName);
     bool registerPlugin(const PluginMetadata& md);
+    gympp::base::EnvironmentPtr make(const std::string& envName);
+
+private:
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 #endif // GYMPP_GAZEBO_GYMFACTORY
