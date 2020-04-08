@@ -85,6 +85,27 @@ RUN apt-get update &&\
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
 ENV PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python3/dist-packages
 
+# Apply minor patches to ign-gazebo
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends mercurial &&\
+    rm -rf /var/lib/apt/lists/* &&\
+    dpkg -r --force-depends \
+        libignition-gazebo3 \
+        libignition-gazebo3-plugins \
+        libignition-gazebo3-dev &&\
+    cd /tmp &&\
+    hg clone -u ign-gazebo3 https://bitbucket.org/ignitionrobotics/ign-gazebo &&\
+    cd ign-gazebo &&\
+    wget -q -O - https://gist.github.com/diegoferigo/ef860a73e5fc58d6236369ed684bf52e/raw/43cb64624b7c02a06dd120cb781bbbdd8e6b2173/SimulationRunner.patch | patch -p0 &&\
+    wget -q -O - https://gist.github.com/diegoferigo/ef860a73e5fc58d6236369ed684bf52e/raw/43cb64624b7c02a06dd120cb781bbbdd8e6b2173/RenderUtil.patch | patch -p0 &&\
+    mkdir build && cd build &&\
+    cmake \
+        -GNinja -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=RelWithDebInfo .. \
+        -DBUILD_TESTING:BOOL=OFF \
+        .. &&\
+    ninja install
+
 # Setup gym-ignition if installed from source
 ARG install_prefix="/usr/local"
 ENV PYTHONPATH="${PYTHONPATH}:${install_prefix}/lib/python3.6/site-packages:${install_prefix}/lib/python3.7/site-packages"
