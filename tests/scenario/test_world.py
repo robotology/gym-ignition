@@ -29,7 +29,7 @@ def test_load_default_world(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_load_default_world_from_file(gazebo: bindings.GazeboSimulator):
+def _test_load_default_world_from_file(gazebo: bindings.GazeboSimulator):
 
     empty_world_sdf = utils.get_empty_world_sdf()
     print(empty_world_sdf)
@@ -47,7 +47,7 @@ def test_load_default_world_from_file(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_rename_default_world(gazebo: bindings.GazeboSimulator):
+def _test_rename_default_world(gazebo: bindings.GazeboSimulator):
 
     empty_world_sdf = utils.get_empty_world_sdf()
     assert gazebo.insertWorldFromSDF(empty_world_sdf, "myWorld")
