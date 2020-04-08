@@ -57,8 +57,7 @@ jobs:
           cd build
           cmake .. \
             -GNinja \
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            -DPython_ADDITIONAL_VERSIONS=$PYTHON_VERSION
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build . --target install
 
       - name: Setup Python Package
