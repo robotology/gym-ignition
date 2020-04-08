@@ -12,7 +12,7 @@
 #include "gympp/gazebo/GazeboEnvironment.h"
 #include "gympp/gazebo/Metadata.h"
 #include "scenario/gazebo/GazeboSimulator.h"
-#include "sdf/Root.hh"
+#include "scenario/gazebo/utils.h"
 
 #include <cassert>
 #include <ostream>
@@ -28,11 +28,13 @@ public:
     {
         return plugins.find(name) != plugins.end();
     }
+
     spaces::SpacePtr makeSpace(const SpaceMetadata& md);
     std::unordered_map<EnvironmentName, const PluginMetadata> plugins;
 };
 
-gympp::base::spaces::SpacePtr GymFactory::Impl::makeSpace(const SpaceMetadata& md)
+gympp::base::spaces::SpacePtr
+GymFactory::Impl::makeSpace(const SpaceMetadata& md)
 {
     assert(md.isValid());
     gympp::base::spaces::SpacePtr space;
@@ -40,10 +42,12 @@ gympp::base::spaces::SpacePtr GymFactory::Impl::makeSpace(const SpaceMetadata& m
     switch (md.type) {
         case gympp::gazebo::SpaceType::Box: {
             if (md.dims.empty()) {
-                space = std::make_shared<gympp::base::spaces::Box>(md.low, md.high);
+                space =
+                    std::make_shared<gympp::base::spaces::Box>(md.low, md.high);
             }
             else {
-                space = std::make_shared<gympp::base::spaces::Box>(md.low[0], md.high[0], md.dims);
+                space = std::make_shared<gympp::base::spaces::Box>(
+                    md.low[0], md.high[0], md.dims);
             }
             break;
         }
@@ -65,7 +69,8 @@ GymFactory::~GymFactory() = default;
 gympp::base::EnvironmentPtr GymFactory::make(const std::string& envName)
 {
     if (!pImpl->exists(envName)) {
-        gymppError << "Environment '" << envName << "' has never been registered" << std::endl;
+        gymppError << "Environment '" << envName
+                   << "' has never been registered" << std::endl;
         return nullptr;
     }
 
@@ -81,35 +86,37 @@ gympp::base::EnvironmentPtr GymFactory::make(const std::string& envName)
     }
 
     // Create the environment
-    auto ignGym = std::make_shared<gazebo::GazeboEnvironment>(actionSpace,
-                                                              observationSpace,
-                                                              md.agentRate,
-                                                              md.getPhysicsData().rtf,
-                                                              1 / md.getPhysicsData().maxStepSize);
+    auto ignGym = std::make_shared<gazebo::GazeboEnvironment>(
+        actionSpace,
+        observationSpace,
+        md.agentRate,
+        md.getPhysicsData().rtf,
+        1 / md.getPhysicsData().maxStepSize);
 
-    // Setup the world
-    if (!ignGym->setupGazeboWorld(md.worldFileName)) {
-        gymppError << "Failed to setup gazebo world";
+    // Find the file if it is not an absolute path
+    std::string worldFile =
+        scenario::gazebo::utils::findSdfFile(md.worldFileName);
+
+    if (worldFile.empty()) {
         return nullptr;
     }
 
-    // Find and load the SDF file
-    sdf::Root root;
-    if (!ignGym->findAndLoadSdf(md.modelFileName, root)) {
-        gymppError << "Failed to find and load the SDF file" << std::endl;
+    // Insert the world
+    if (!ignGym->insertWorldFromSDF(worldFile)) {
+        gymppError << "Failed to insert an empty world" << std::endl;
         return nullptr;
     }
 
     // Create the model initialization data
-    scenario::gazebo::ModelInitData modelData;
-    modelData.sdfString = root.Element()->ToString("");
+    ModelInitData modelData;
+    modelData.modelFile = md.getModelFileName();
     // TODO: expose position and orientation?
 
     // Store the model data in the environment
     ignGym->storeModelData(modelData);
 
     // Create the gympp plugin data
-    scenario::gazebo::PluginData pluginData;
+    PluginData pluginData;
     pluginData.libName = md.libraryName;
     pluginData.className = md.className;
 
@@ -128,8 +135,10 @@ bool GymFactory::registerPlugin(const PluginMetadata& md)
     }
 
     if (pImpl->exists(md.environmentName)) {
-        gymppWarning << "Environment '" << md.environmentName
-                     << "' has been already registered. This operation will be no-op." << std::endl;
+        gymppWarning
+            << "Environment '" << md.environmentName
+            << "' has been already registered. This operation will be no-op."
+            << std::endl;
         return true;
     }
 

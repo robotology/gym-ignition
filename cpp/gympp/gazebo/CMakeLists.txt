@@ -64,6 +64,7 @@ target_link_libraries(GazeboEnvironment
     PRIVATE
     Task
     TaskSingleton
+    ScenarioGazebo
     ignition-gazebo3::core)
 
 set_target_properties(GazeboEnvironment PROPERTIES
@@ -88,6 +89,7 @@ add_library(GymFactory
 target_link_libraries(GymFactory
     PUBLIC
     gympp
+    ScenarioGazebo
     GazeboSimulator
     GazeboEnvironment
     ignition-gazebo3::core)

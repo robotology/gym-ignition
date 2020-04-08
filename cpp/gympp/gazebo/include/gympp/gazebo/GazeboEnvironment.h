@@ -10,6 +10,7 @@
 #define GYMPP_GAZEBO_GAZEBOENVIRONMENT
 
 #include "gympp/base/Environment.h"
+#include "gympp/gazebo/Metadata.h"
 #include "scenario/gazebo/GazeboSimulator.h"
 
 #include <memory>

@@ -22,7 +22,8 @@ namespace gympp {
     } // namespace gazebo
 } // namespace gympp
 
-class gympp::gazebo::GymFactory : public ignition::common::SingletonT<gympp::gazebo::GymFactory>
+class gympp::gazebo::GymFactory
+    : public ignition::common::SingletonT<gympp::gazebo::GymFactory>
 {
 private:
     class Impl;
