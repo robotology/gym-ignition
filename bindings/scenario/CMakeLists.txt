@@ -54,4 +54,11 @@ else()
         TARGETS ECMProvider PhysicsSystem ControllerRunner JointController
         LIBRARY DESTINATION ${PYTHON_PACKAGE_IMPORT_NAME}/plugins)
 
+    # Install other shared libraries.
+    # Required for libs that contain singletons otherwise when the
+    # project is statically compiled they do not work properly.
+    install(
+        TARGETS ECMSingleton
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX})
+
 endif()
