@@ -22,8 +22,6 @@ target_link_libraries(${gympp_swig_name} PUBLIC
 set_property(TARGET ${gympp_swig_name} PROPERTY
     SWIG_USE_TARGET_INCLUDE_DIRECTORIES TRUE)
 
-#set_property(TARGET ${gympp_swig_name} PROPERTY SWIG_COMPILE_OPTIONS -builtin)
-
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
 
     set(PYTHON_FOLDER "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
@@ -36,7 +34,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
         RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/${PYTHON_FOLDER})
 
     install(
-        FILES ${CMAKE_CURRENT_BINARY_DIR}/${gympp_swig_name}.py
+        FILES ${CMAKE_CURRENT_BINARY_DIR}/../${gympp_swig_name}.py
         DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PYTHON_FOLDER})
 
 else()
