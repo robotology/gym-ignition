@@ -48,7 +48,7 @@ else()
 
     install(
         FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/${scenario_swig_name}.py
+        ${CMAKE_CURRENT_BINARY_DIR}/../${scenario_swig_name}.py
         DESTINATION ${CMAKE_INSTALL_PREFIX})
 
     # Install the plugins
