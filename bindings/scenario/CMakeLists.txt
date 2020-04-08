@@ -51,7 +51,7 @@ else()
 
     # Install the plugins
     install(
-        TARGETS ECMProvider PhysicsSystem
+        TARGETS ECMProvider PhysicsSystem ControllerRunner JointController
         LIBRARY DESTINATION ${PYTHON_PACKAGE_IMPORT_NAME}/plugins)
 
 endif()
