@@ -31,6 +31,12 @@ RUN apt-get update &&\
         &&\
     rm -rf /var/lib/apt/lists/*
 
+# Update git (required by actions/checkout)
+RUN add-apt-repository ppa:git-core/ppa &&\
+    apt-get update &&\
+    apt install -y --no-install-recommends git &&\
+    rm -rf /var/lib/apt/lists/*
+
 # Install SWIG from sources
 ARG SWIG_REL="rel-4.0.1"
 RUN apt-get update &&\

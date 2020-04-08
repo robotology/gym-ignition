@@ -34,11 +34,6 @@ jobs:
         PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
-      - name: Update git
-        run: |
-          add-apt-repository ppa:git-core/ppa
-          apt update
-          apt install -y git
 
       - uses: actions/checkout@v2
       - run: git fetch --prune --unshallow
@@ -79,11 +74,6 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Update git
-        run: |
-          sudo add-apt-repository ppa:git-core/ppa
-          sudo apt update
-          sudo apt install -y git
 
       - uses: actions/checkout@v2
       - run: git fetch --prune --unshallow
@@ -150,11 +140,6 @@ jobs:
         PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
-      - name: Update git
-        run: |
-          add-apt-repository ppa:git-core/ppa
-          apt update
-          apt install -y git
 
       - uses: actions/checkout@v2
       - run: git fetch --prune --unshallow
