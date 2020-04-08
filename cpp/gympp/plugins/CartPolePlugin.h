@@ -17,7 +17,6 @@
 #include <ignition/gazebo/System.hh>
 #include <sdf/Element.hh>
 
-#include <functional>
 #include <memory>
 #include <optional>
 
@@ -34,10 +33,6 @@ class gympp::plugins::CartPole final
     , public ignition::gazebo::ISystemPostUpdate
     , public gympp::base::Task
 {
-private:
-    class Impl;
-    std::unique_ptr<Impl, std::function<void(Impl*)>> pImpl = nullptr;
-
 public:
     CartPole();
     ~CartPole() override;
@@ -50,14 +45,19 @@ public:
     void PreUpdate(const ignition::gazebo::UpdateInfo& info,
                    ignition::gazebo::EntityComponentManager& manager) override;
 
-    void PostUpdate(const ignition::gazebo::UpdateInfo& info,
-                    const ignition::gazebo::EntityComponentManager& manager) override;
+    void PostUpdate(
+        const ignition::gazebo::UpdateInfo& info,
+        const ignition::gazebo::EntityComponentManager& manager) override;
 
     bool isDone() override;
     bool resetTask() override;
     bool setAction(const Action& action) override;
     std::optional<Reward> computeReward() override;
     std::optional<Observation> getObservation() override;
+
+private:
+    class Impl;
+    std::unique_ptr<Impl> pImpl = nullptr;
 };
 
 #endif // GYMPP_PLUGINS_CARTPOLE

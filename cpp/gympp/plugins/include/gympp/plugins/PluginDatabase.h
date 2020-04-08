@@ -13,7 +13,6 @@
 #include "gympp/base/Space.h"
 #include "gympp/gazebo/GymFactory.h"
 #include "gympp/gazebo/Metadata.h"
-#include "scenario/gazebo/GazeboSimulator.h"
 
 class GymppPluginRegistrator_CartPole
 {
@@ -40,15 +39,15 @@ public:
         gympp::gazebo::SpaceMetadata observationSpaceMetadata;
         observationSpaceMetadata.setType(gympp::gazebo::SpaceType::Box);
         double maxDouble = std::numeric_limits<double>::max();
-        observationSpaceMetadata.setLowLimit(
-            gympp::base::spaces::Box::Limit{-xThreshold, -maxDouble, -thetaThreshold, -maxDouble});
-        observationSpaceMetadata.setHighLimit(
-            gympp::base::spaces::Box::Limit{xThreshold, maxDouble, thetaThreshold, maxDouble});
+        observationSpaceMetadata.setLowLimit(gympp::base::spaces::Box::Limit{
+            -xThreshold, -maxDouble, -thetaThreshold, -maxDouble});
+        observationSpaceMetadata.setHighLimit(gympp::base::spaces::Box::Limit{
+            xThreshold, maxDouble, thetaThreshold, maxDouble});
 
         cartPoleMetadata.setActionSpaceMetadata(actionSpaceMetadata);
         cartPoleMetadata.setObservationSpaceMetadata(observationSpaceMetadata);
 
-        scenario::gazebo::PhysicsData physicsData;
+        gympp::gazebo::PhysicsData physicsData;
         physicsData.rtf = 1E9;
         physicsData.maxStepSize = 0.001;
         cartPoleMetadata.setPhysicsData(physicsData);

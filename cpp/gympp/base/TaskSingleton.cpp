@@ -11,6 +11,7 @@
 #include "gympp/base/Task.h"
 
 #include <cassert>
+#include <memory>
 #include <ostream>
 
 using namespace gympp::base;
@@ -18,6 +19,7 @@ using namespace gympp::base;
 class TaskSingleton::Impl
 {
 public:
+    mutable std::mutex mutex;
     std::unordered_map<TaskName, Task*> tasks;
 };
 
@@ -25,7 +27,7 @@ TaskSingleton::TaskSingleton()
     : pImpl{new Impl()}
 {}
 
-TaskSingleton::~TaskSingleton()= default;
+TaskSingleton::~TaskSingleton() = default;
 
 gympp::base::TaskSingleton& TaskSingleton::get()
 {
@@ -35,11 +37,13 @@ gympp::base::TaskSingleton& TaskSingleton::get()
 
 Task* TaskSingleton::getTask(const TaskName& taskName)
 {
-    if (pImpl->tasks.find(taskName) == pImpl->tasks.end()) {
+
+    if (!this->hasTask(taskName)) {
         gymppError << "Failed to find Task '" << taskName << "'" << std::endl;
         return nullptr;
     }
 
+    std::unique_lock lock(pImpl->mutex);
     assert(pImpl->tasks.at(taskName));
     return pImpl->tasks.at(taskName);
 }
@@ -51,12 +55,17 @@ bool TaskSingleton::storeTask(const TaskName& taskName, Task* task)
         return false;
     }
 
-    if (pImpl->tasks.find(taskName) != pImpl->tasks.end()) {
-        gymppError << "Task '" << taskName << "' have been already registered" << std::endl;
+    if (this->hasTask(taskName)) {
+        gymppError << "Task '" << taskName << "' has been already registered"
+                   << std::endl;
+        return false;
     }
 
-    gymppDebug << "Storing Task '" << taskName << "'" << std::endl;
-    pImpl->tasks[taskName] = task;
+    {
+        std::unique_lock lock(pImpl->mutex);
+        gymppDebug << "Storing Task '" << taskName << "'" << std::endl;
+        pImpl->tasks[taskName] = task;
+    }
 
     return true;
 }
@@ -68,12 +77,22 @@ bool TaskSingleton::removeTask(const TaskName& taskName)
         return false;
     }
 
-    if (pImpl->tasks.find(taskName) == pImpl->tasks.end()) {
-        gymppError << "The task '" << taskName << "' have never been stored" << std::endl;
+    if (!this->hasTask(taskName)) {
+        gymppError << "The task '" << taskName << "' has never been stored"
+                   << std::endl;
         return false;
     }
 
-    gymppDebug << "Deleting task '" << taskName << "'" << std::endl;
-    pImpl->tasks.erase(taskName);
+    {
+        std::unique_lock lock(pImpl->mutex);
+        gymppDebug << "Deleting task '" << taskName << "'" << std::endl;
+        pImpl->tasks.erase(taskName);
+    }
+
     return true;
+}
+
+bool TaskSingleton::hasTask(const TaskSingleton::TaskName& taskName) const
+{
+    return pImpl->tasks.find(taskName) != pImpl->tasks.end();
 }

@@ -34,8 +34,9 @@ target_link_libraries(CartPolePlugin
     Task
     ignition-gazebo3::core
     PRIVATE
+    ECMSingleton
     TaskSingleton
-    RobotSingleton)
+    ScenarioGazebo)
 
 target_include_directories(CartPolePlugin PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)

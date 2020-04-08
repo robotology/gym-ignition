@@ -22,6 +22,10 @@ namespace gympp {
         class SpaceMetadata;
         class PluginMetadata;
 
+        struct PluginData;
+        struct PhysicsData;
+        struct ModelInitData;
+
         enum class SpaceType
         {
             Discrete,
@@ -29,6 +33,53 @@ namespace gympp {
         };
     } // namespace gazebo
 } // namespace gympp
+
+struct gympp::gazebo::PluginData
+{
+    std::string libName;
+    std::string className;
+};
+
+struct gympp::gazebo::ModelInitData
+{
+    std::string modelFile;
+    bool fixedPose = false;
+    std::string baseLink = "";
+    std::string modelName = "";
+    std::array<double, 3> position = {0, 0, 0};
+    std::array<double, 4> orientation = {1, 0, 0, 0};
+};
+
+struct gympp::gazebo::PhysicsData
+{
+    double rtf;
+    double maxStepSize;
+    const double realTimeUpdateRate = -1;
+
+    PhysicsData(double _rtf = 1, double _maxStepSize = 0.001)
+        : rtf(_rtf)
+        , maxStepSize(_maxStepSize)
+    {}
+
+    PhysicsData(const PhysicsData& other)
+        : rtf(other.rtf)
+        , maxStepSize(other.maxStepSize)
+        , realTimeUpdateRate(other.realTimeUpdateRate)
+    {}
+
+    PhysicsData& operator=(const PhysicsData& other)
+    {
+        rtf = other.rtf;
+        maxStepSize = other.maxStepSize;
+        return *this;
+    }
+
+    bool operator==(const PhysicsData& other)
+    {
+        return other.rtf == rtf && other.maxStepSize == maxStepSize
+               && other.realTimeUpdateRate == realTimeUpdateRate;
+    }
+};
 
 class gympp::gazebo::SpaceMetadata
 {
@@ -80,9 +131,18 @@ public:
     inline gympp::base::spaces::Box::Limit getHighLimit() const { return high; }
 
     inline void setType(const SpaceType type) { this->type = type; }
-    inline void setDimensions(const std::vector<size_t>& dims) { this->dims = dims; }
-    inline void setLowLimit(const gympp::base::spaces::Box::Limit& limit) { this->low = limit; }
-    inline void setHighLimit(const gympp::base::spaces::Box::Limit& limit) { this->high = limit; }
+    inline void setDimensions(const std::vector<size_t>& dims)
+    {
+        this->dims = dims;
+    }
+    inline void setLowLimit(const gympp::base::spaces::Box::Limit& limit)
+    {
+        this->low = limit;
+    }
+    inline void setHighLimit(const gympp::base::spaces::Box::Limit& limit)
+    {
+        this->high = limit;
+    }
 
     bool isValid() const
     {
@@ -109,7 +169,7 @@ private:
     std::string worldFileName;
 
     double agentRate;
-    scenario::gazebo::PhysicsData physicsData;
+    PhysicsData physicsData;
 
     SpaceMetadata actionSpace;
     SpaceMetadata observationSpace;
@@ -121,9 +181,12 @@ public:
     inline std::string getModelFileName() const { return modelFileName; }
     inline std::string getWorldFileName() const { return worldFileName; }
     inline double getAgentRate() const { return agentRate; }
-    inline scenario::gazebo::PhysicsData getPhysicsData() const { return physicsData; }
+    inline PhysicsData getPhysicsData() const { return physicsData; }
     inline SpaceMetadata getActionSpaceMetadata() const { return actionSpace; }
-    inline SpaceMetadata getObservationSpaceMetadata() const { return observationSpace; }
+    inline SpaceMetadata getObservationSpaceMetadata() const
+    {
+        return observationSpace;
+    }
 
     inline void setEnvironmentName(const std::string& environmentName)
     {
@@ -135,13 +198,20 @@ public:
         this->actionSpace = actionSpaceMetadata;
     }
 
-    inline void setObservationSpaceMetadata(const SpaceMetadata& observationSpaceMetadata)
+    inline void
+    setObservationSpaceMetadata(const SpaceMetadata& observationSpaceMetadata)
     {
         this->observationSpace = observationSpaceMetadata;
     }
 
-    inline void setLibraryName(const std::string& libraryName) { this->libraryName = libraryName; }
-    inline void setClassName(const std::string& className) { this->className = className; }
+    inline void setLibraryName(const std::string& libraryName)
+    {
+        this->libraryName = libraryName;
+    }
+    inline void setClassName(const std::string& className)
+    {
+        this->className = className;
+    }
     inline void setModelFileName(const std::string& modelFileName)
     {
         this->modelFileName = modelFileName;
@@ -151,9 +221,12 @@ public:
         this->worldFileName = worldFileName;
     }
 
-    inline void setAgentRate(const double agentRate) { this->agentRate = agentRate; }
+    inline void setAgentRate(const double agentRate)
+    {
+        this->agentRate = agentRate;
+    }
 
-    inline void setPhysicsData(const scenario::gazebo::PhysicsData& physicsData)
+    inline void setPhysicsData(const PhysicsData& physicsData)
     {
         this->physicsData = physicsData;
     }

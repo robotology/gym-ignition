@@ -4,6 +4,3 @@
 
 add_executable(LaunchCartPole LaunchCartPole.cpp)
 target_link_libraries(LaunchCartPole PRIVATE gympp PluginDatabase GymFactory Clara)
-
-add_executable(LaunchParallelCartPole LaunchParallelCartPole.cpp)
-target_link_libraries(LaunchParallelCartPole PRIVATE gympp PluginDatabase GymFactory Clara)

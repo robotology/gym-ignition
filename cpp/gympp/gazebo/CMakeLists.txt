@@ -2,53 +2,6 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-# ==============
-# IGNITION ROBOT
-# ==============
-
-add_library(IgnitionRobot
-    include/gympp/gazebo/IgnitionRobot.h
-    IgnitionRobot.cpp)
-
-target_link_libraries(IgnitionRobot
-    PUBLIC
-    gympp
-    ignition-gazebo3::core
-    PRIVATE
-    RobotSingleton
-    ExtraComponents)
-
-set_target_properties(IgnitionRobot PROPERTIES
-    PUBLIC_HEADER include/gympp/gazebo/IgnitionRobot.h)
-
-target_include_directories(IgnitionRobot PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
-# ===============
-# ROBOT SINGLETON
-# ===============
-
-add_library(RobotSingleton
-    include/gympp/gazebo/RobotSingleton.h
-    RobotSingleton.cpp)
-
-target_link_libraries(RobotSingleton
-    PUBLIC
-    gympp
-    PRIVATE
-    ignition-gazebo3::core
-    ExtraComponents)
-
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    set_target_properties(RobotSingleton PROPERTIES
-        PUBLIC_HEADER include/gympp/gazebo/RobotSingleton.h)
-endif()
-
-target_include_directories(RobotSingleton PUBLIC
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-
 # ==================
 # GAZEBO ENVIRONMENT
 # ==================
@@ -64,6 +17,7 @@ target_link_libraries(GazeboEnvironment
     PRIVATE
     Task
     TaskSingleton
+    ScenarioGazebo
     ignition-gazebo3::core)
 
 set_target_properties(GazeboEnvironment PROPERTIES
@@ -88,6 +42,7 @@ add_library(GymFactory
 target_link_libraries(GymFactory
     PUBLIC
     gympp
+    ScenarioGazebo
     GazeboSimulator
     GazeboEnvironment
     ignition-gazebo3::core)
@@ -107,8 +62,6 @@ target_include_directories(GymFactory PUBLIC
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
     install(
         TARGETS
-        IgnitionRobot
-        RobotSingleton
         GazeboEnvironment
         GymFactory
         EXPORT gympp

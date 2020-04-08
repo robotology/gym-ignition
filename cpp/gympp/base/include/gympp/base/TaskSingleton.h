@@ -22,11 +22,6 @@ namespace gympp {
 
 class gympp::base::TaskSingleton
 {
-private:
-    class Impl;
-    std::unique_ptr<Impl> pImpl;
-
-protected:
 public:
     using TaskName = std::string;
 
@@ -41,6 +36,11 @@ public:
 
     bool storeTask(const TaskName& taskName, gympp::base::Task* task);
     bool removeTask(const TaskName& taskName);
+    bool hasTask(const TaskName& taskName) const;
+
+private:
+    class Impl;
+    std::unique_ptr<Impl> pImpl;
 };
 
 #endif // GYMPP_BASE_TASKSINGLETON_H
