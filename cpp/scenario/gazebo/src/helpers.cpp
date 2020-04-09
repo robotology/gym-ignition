@@ -29,7 +29,9 @@
 #include "scenario/gazebo/Log.h"
 
 #include <ignition/gazebo/components/Component.hh>
+#include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/Name.hh>
+#include <ignition/gazebo/components/World.hh>
 #include <ignition/msgs/contact.pb.h>
 #include <sdf/Error.hh>
 #include <sdf/Model.hh>
@@ -447,4 +449,38 @@ utils::fromBaseToModelVelocity(const ignition::math::Vector3d& linBaseVelocity,
 
     // Return the mixed velocity of the model
     return {linModelVelocity, angModelVelocity};
+}
+
+WorldPtr utils::getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
+                               ignition::gazebo::EventManager* eventManager,
+                               const ignition::gazebo::Entity entity)
+{
+    auto worldEntity = getFirstParentEntityWithComponent< //
+        ignition::gazebo::components::World>(ecm, entity);
+
+    auto world = std::make_shared<World>();
+
+    if (!world->initialize(worldEntity, ecm, eventManager)) {
+        gymppError << "Failed to initialize world" << std::endl;
+        return nullptr;
+    }
+
+    return world;
+}
+
+ModelPtr utils::getParentModel(ignition::gazebo::EntityComponentManager* ecm,
+                               ignition::gazebo::EventManager* eventManager,
+                               const ignition::gazebo::Entity entity)
+{
+    auto modelEntity = getFirstParentEntityWithComponent< //
+        ignition::gazebo::components::World>(ecm, entity);
+
+    auto model = std::make_shared<Model>();
+
+    if (!model->initialize(modelEntity, ecm, eventManager)) {
+        gymppError << "Failed to initialize model" << std::endl;
+        return nullptr;
+    }
+
+    return model;
 }
