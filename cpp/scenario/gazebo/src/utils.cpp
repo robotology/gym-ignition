@@ -40,6 +40,7 @@
 #include <sdf/Element.hh>
 #include <sdf/Model.hh>
 #include <sdf/Root.hh>
+#include <sdf/World.hh>
 
 #include <cassert>
 #include <memory>
@@ -125,6 +126,30 @@ std::string utils::getModelNameFromSdf(const std::string& fileName,
     }
 
     return root->ModelByIndex(modelIndex)->Name();
+}
+
+std::string utils::getWorldNameFromSdf(const std::string& fileName,
+                                       const size_t worldIndex)
+{
+    auto root = utils::getSdfRootFromFile(fileName);
+
+    if (!root) {
+        return {};
+    }
+
+    if (root->WorldCount() == 0) {
+        gymppError << "Didn't find any world in file " << fileName << std::endl;
+        return {};
+    }
+
+    if (worldIndex >= root->WorldCount()) {
+        gymppError << "Model with index " << worldIndex
+                   << " not found. The model has only " << root->WorldCount()
+                   << " model(s)" << std::endl;
+        return {};
+    }
+
+    return root->WorldByIndex(worldIndex)->Name();
 }
 
 std::string utils::getEmptyWorld()

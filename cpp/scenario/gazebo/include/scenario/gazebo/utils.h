@@ -44,6 +44,8 @@ namespace scenario {
             std::string getSdfString(const std::string& fileName);
             std::string getModelNameFromSdf(const std::string& fileName,
                                             const size_t modelIndex = 0);
+            std::string getWorldNameFromSdf(const std::string& fileName,
+                                            const size_t worldIndex = 0);
             std::string getEmptyWorld();
             std::string getModelFileFromFuel(const std::string& URI,
                                              const bool useCache = false);
