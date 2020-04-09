@@ -196,6 +196,6 @@ bool ECMSingleton::storePtrs(ignition::gazebo::EntityComponentManager* ecm,
         return false;
     }
 
-    pImpl->resources[worldName] = {ecm, eventMgr};
+    pImpl->resources.emplace(worldName, Impl::ResourcePtrs(ecm, eventMgr));
     return true;
 }
