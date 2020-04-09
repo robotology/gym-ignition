@@ -6,5 +6,3 @@
 from . import task
 from . import runtime
 
-# Base C++ environment
-from . import gympp_env
