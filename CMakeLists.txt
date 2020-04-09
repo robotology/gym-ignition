@@ -91,7 +91,10 @@ find_package(YCM QUIET)
 
 # Bootstrap YCM if not found
 if(NOT ${YCM_FOUND})
-    include(BootstrapYCM)
+    include(FetchContent)
+    FetchContent_Declare(ycm GIT_REPOSITORY https://github.com/robotology/ycm.git)
+    FetchContent_MakeAvailable(ycm)
+    list(APPEND CMAKE_MODULE_PATH ${ycm_SOURCE_DIR}/modules)
 endif()
 
 # Find virtualenv's before system's interpreters
