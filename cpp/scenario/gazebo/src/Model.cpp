@@ -29,6 +29,7 @@
 #include "scenario/gazebo/Joint.h"
 #include "scenario/gazebo/Link.h"
 #include "scenario/gazebo/Log.h"
+#include "scenario/gazebo/World.h"
 #include "scenario/gazebo/components/BasePoseTarget.h"
 #include "scenario/gazebo/components/BaseWorldAccelerationTarget.h"
 #include "scenario/gazebo/components/BaseWorldVelocityTarget.h"
@@ -94,7 +95,16 @@ Model::Model()
 
 uint64_t Model::id() const
 {
-    return pImpl->modelEntity;
+    // Get the parent world
+    WorldPtr parentWorld = utils::getParentWorld(
+        pImpl->ecm, pImpl->eventManager, pImpl->modelEntity);
+    assert(parentWorld);
+
+    // Build a unique string identifier of this model
+    std::string scopedModelName = parentWorld->name() + "::" + this->name();
+
+    // Return the hashed string
+    return std::hash<std::string>{}(scopedModelName);
 }
 
 Model::~Model() = default;

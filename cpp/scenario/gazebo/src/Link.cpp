@@ -27,6 +27,8 @@
 #include "scenario/gazebo/Link.h"
 
 #include "scenario/gazebo/Log.h"
+#include "scenario/gazebo/Model.h"
+#include "scenario/gazebo/World.h"
 #include "scenario/gazebo/components/ExternalWorldWrenchCmdWithDuration.h"
 #include "scenario/gazebo/components/SimulatedTime.h"
 #include "scenario/gazebo/exceptions.h"
@@ -77,7 +79,22 @@ Link::Link()
 
 uint64_t Link::id() const
 {
-    return pImpl->linkEntity;
+    // Get the parent world
+    WorldPtr parentWorld = utils::getParentWorld(
+        pImpl->ecm, pImpl->eventManager, pImpl->linkEntity);
+    assert(parentWorld);
+
+    // Get the parent model
+    ModelPtr parentModel = utils::getParentModel(
+        pImpl->ecm, pImpl->eventManager, pImpl->linkEntity);
+    assert(parentModel);
+
+    // Build a unique string identifier of this joint
+    std::string scopedLinkName =
+        parentWorld->name() + "::" + parentModel->name() + "::" + this->name();
+
+    // Return the hashed string
+    return std::hash<std::string>{}(scopedLinkName);
 }
 
 Link::~Link() = default;

@@ -27,6 +27,8 @@
 #include "scenario/gazebo/Joint.h"
 
 #include "scenario/gazebo/Log.h"
+#include "scenario/gazebo/Model.h"
+#include "scenario/gazebo/World.h"
 #include "scenario/gazebo/components/HistoryOfAppliedJointForces.h"
 #include "scenario/gazebo/components/JointAccelerationTarget.h"
 #include "scenario/gazebo/components/JointControlMode.h"
@@ -72,7 +74,22 @@ Joint::Joint()
 
 uint64_t Joint::id() const
 {
-    return pImpl->jointEntity;
+    // Get the parent world
+    WorldPtr parentWorld = utils::getParentWorld(
+        pImpl->ecm, pImpl->eventManager, pImpl->jointEntity);
+    assert(parentWorld);
+
+    // Get the parent model
+    ModelPtr parentModel = utils::getParentModel(
+        pImpl->ecm, pImpl->eventManager, pImpl->jointEntity);
+    assert(parentModel);
+
+    // Build a unique string identifier of this joint
+    std::string scopedJointName =
+        parentWorld->name() + "::" + parentModel->name() + "::" + this->name();
+
+    // Return the hashed string
+    return std::hash<std::string>{}(scopedJointName);
 }
 
 Joint::~Joint() = default;

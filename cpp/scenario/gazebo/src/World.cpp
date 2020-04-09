@@ -48,6 +48,7 @@
 
 #include <algorithm>
 #include <cassert>
+#include <functional>
 #include <unordered_map>
 
 using namespace scenario::gazebo;
@@ -71,7 +72,7 @@ World::World()
 
 uint64_t World::id() const
 {
-    return pImpl->worldEntity;
+    return std::hash<std::string>{}(this->name());
 }
 
 World::~World() = default;
