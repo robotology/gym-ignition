@@ -94,6 +94,13 @@ if(NOT ${YCM_FOUND})
     include(BootstrapYCM)
 endif()
 
+# Find virtualenv's before system's interpreters
+set(Python3_FIND_VIRTUALENV "FIRST" CACHE STRING
+    "Configure the detection of virtual environments")
+set(Python3_FIND_VIRTUALENV_TYPES "FIRST" "ONLY" "STANDARD")
+mark_as_advanced(Python3_FIND_VIRTUALENV)
+set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTUALENV_TYPES})
+
 # Configure RPATH
 include(AddInstallRPATHSupport)
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
