@@ -27,10 +27,33 @@ RUN apt-get update &&\
         python3.6 \
         libpython3.6-dev \
         virtualenv \
-        swig \
         rename \
         &&\
     rm -rf /var/lib/apt/lists/*
+
+# Update git (required by actions/checkout)
+RUN add-apt-repository ppa:git-core/ppa &&\
+    apt-get update &&\
+    apt install -y --no-install-recommends git &&\
+    rm -rf /var/lib/apt/lists/*
+
+# Install SWIG from sources
+ARG SWIG_REL="rel-4.0.1"
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends \
+        autotools-dev \
+        automake \
+        bison \
+        libpcre3-dev &&\
+    rm -rf /var/lib/apt/lists/* &&\
+    cd /tmp/ &&\
+    git clone --depth 1 -b ${SWIG_REL} https://github.com/swig/swig.git &&\
+    cd swig &&\
+    sh autogen.sh &&\
+    ./configure &&\
+    make -j2 &&\
+    make install &&\
+    rm -r /tmp/swig
 
 # Install ignition robotics
 ARG ignition_codename="citadel"
@@ -61,6 +84,28 @@ RUN apt-get update &&\
     rm -r /tmp/idyntree
 ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
 ENV PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python3/dist-packages
+
+# Apply minor patches to ign-gazebo
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends mercurial &&\
+    rm -rf /var/lib/apt/lists/* &&\
+    dpkg -r --force-depends \
+        libignition-gazebo3 \
+        libignition-gazebo3-plugins \
+        libignition-gazebo3-dev &&\
+    cd /tmp &&\
+    hg clone -u ign-gazebo3 https://bitbucket.org/ignitionrobotics/ign-gazebo &&\
+    cd ign-gazebo &&\
+    wget -q -O - https://gist.github.com/diegoferigo/ef860a73e5fc58d6236369ed684bf52e/raw/43cb64624b7c02a06dd120cb781bbbdd8e6b2173/SimulationRunner.patch | patch -p0 &&\
+    wget -q -O - https://gist.github.com/diegoferigo/ef860a73e5fc58d6236369ed684bf52e/raw/43cb64624b7c02a06dd120cb781bbbdd8e6b2173/RenderUtil.patch | patch -p0 &&\
+    mkdir build && cd build &&\
+    cmake \
+        -GNinja -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release .. \
+        -DBUILD_TESTING:BOOL=OFF \
+        -DBUILD_SHARED_LIBS:BOOL=OFF \
+        .. &&\
+    ninja install
 
 # Prepare virtualenv variables
 ENV VIRTUAL_ENV=/venv

@@ -13,8 +13,8 @@ jobs:
         python: [3.6]
         build_type: [Debug]
         compiler:
-          - gcc7
-          #- gcc8
+          #- gcc7
+          - gcc8
           #- clang7
           #- clang8
     container:
@@ -23,11 +23,6 @@ jobs:
         PYTHON_VERSION: ${{ matrix.python }}
 
     steps:
-      - name: Update git
-        run: |
-          add-apt-repository ppa:git-core/ppa
-          apt update
-          apt install -y git
 
       - uses: actions/checkout@master
       - run: git fetch --prune --unshallow
@@ -62,23 +57,22 @@ jobs:
           cd build
           cmake .. \
             -GNinja \
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
-            -DPython_ADDITIONAL_VERSIONS=$PYTHON_VERSION
+            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build . --target install
 
       - name: Setup Python Package
         run: pip3 install -e .
 
-      - name: Python Tests
+      - name: Python Tests [ScenarI/O]
         run: |
-          cd tests/python
+          cd tests/scenario
           pytest -v
 
-      - name: Python Tests with Valgrind
+      - name: Python Tests with Valgrind [ScenarI/O]
         if: failure()
         run: |
           pip3 install colour-valgrind
-          cd tests/python
+          cd tests/scenario
           valgrind --log-file=/tmp/valgrind.log pytest -v -s || colour-valgrind -t /tmp/valgrind.log
 
   user:
@@ -94,15 +88,10 @@ jobs:
       image: diegoferigo/gym-ignition:ci-master
       env:
         PYTHON_VERSION: ${{ matrix.python }}
-        CC: gcc-7
-        CXX: g++-7
+        CC: gcc-8
+        CXX: g++-8
 
     steps:
-      - name: Update git
-        run: |
-          add-apt-repository ppa:git-core/ppa
-          apt update
-          apt install -y git
 
       - uses: actions/checkout@master
       - run: git fetch --prune --unshallow
@@ -121,14 +110,14 @@ jobs:
           cd dist
           pip install -v *.whl
 
-      - name: Python Tests
+      - name: Python Tests [ScenarI/O]
         run: |
-          cd tests/python
+          cd tests/scenario
           pytest -v
 
-      - name: Python Tests with Valgrind
+      - name: Python Tests with Valgrind [ScenarI/O]
         if: failure()
         run: |
           pip3 install colour-valgrind
-          cd tests/python
+          cd tests/scenario
           valgrind --log-file=/tmp/valgrind.log pytest -v -s || colour-valgrind -t /tmp/valgrind.log

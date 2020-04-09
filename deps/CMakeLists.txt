@@ -13,14 +13,14 @@ find_package(tiny-process-library QUIET)
 if(NOT ${tiny-process-library_FOUND})
 
     FetchContent_Declare(
-        TinyProcessLibrary
+        tinyprocesslibrary
         GIT_REPOSITORY https://gitlab.com/eidheim/tiny-process-library.git)
 
-    FetchContent_GetProperties(TinyProcessLibrary)
+    FetchContent_GetProperties(tinyprocesslibrary)
 
     if(NOT tinyprocesslibrary_POPULATED)
         message(STATUS "Bootstrapping Tiny Process Library")
-        FetchContent_Populate(TinyProcessLibrary)
+        FetchContent_Populate(tinyprocesslibrary)
 
         # Build the library as static
         set(default_build_type ${BUILD_SHARED_LIBS})

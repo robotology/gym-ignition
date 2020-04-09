@@ -29,16 +29,11 @@ jobs:
       # setup with ignition robotics installed from the official ppa
       image: diegoferigo/gym-ignition:ci-master
       env:
-        CC: gcc-7
-        CXX: g++-7
+        CC: gcc-8
+        CXX: g++-8
         PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
-      - name: Update git
-        run: |
-          add-apt-repository ppa:git-core/ppa
-          apt update
-          apt install -y git
 
       - uses: actions/checkout@v2
       - run: git fetch --prune --unshallow
@@ -57,9 +52,9 @@ jobs:
           cd dist
           pip install *.tar.gz
 
-      - name: Python tests
+      - name: Python Tests [ScenarI/O]
         run: |
-          cd tests/python
+          cd tests/scenario
           pytest -v
 
   # ========================
@@ -79,11 +74,6 @@ jobs:
     runs-on: ${{ matrix.os }}
 
     steps:
-      - name: Update git
-        run: |
-          sudo add-apt-repository ppa:git-core/ppa
-          sudo apt update
-          sudo apt install -y git
 
       - uses: actions/checkout@v2
       - run: git fetch --prune --unshallow
@@ -92,8 +82,8 @@ jobs:
       # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
       - name: Setup Environment
         run: |
-          echo "::set-env name=CC::gcc-7"
-          echo "::set-env name=CXX::g++-7"
+          echo "::set-env name=CC::gcc-8"
+          echo "::set-env name=CXX::g++-8"
           echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
           env
 
@@ -124,8 +114,8 @@ jobs:
       - name: Install bdist
         run: docker exec -i -w /dist test sh -c 'pip install *.whl'
 
-      - name: Python tests
-        run: docker exec -i -w /tests/python test sh -c 'pytest -v'
+      - name: Python Tests [ScenarI/O]
+        run: docker exec -i -w /tests/scenario test sh -c 'pytest -v'
 
   # =============
   # PUSH PACKAGES
@@ -145,16 +135,11 @@ jobs:
     container:
       image: diegoferigo/gym-ignition:ci-master
       env:
-        CC: gcc-7
-        CXX: g++-7
+        CC: gcc-8
+        CXX: g++-8
         PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
-      - name: Update git
-        run: |
-          add-apt-repository ppa:git-core/ppa
-          apt update
-          apt install -y git
 
       - uses: actions/checkout@v2
       - run: git fetch --prune --unshallow

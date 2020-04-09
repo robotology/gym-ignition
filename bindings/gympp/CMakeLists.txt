@@ -24,18 +24,16 @@ set_property(TARGET ${gympp_swig_name} PROPERTY
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
 
-    set(PYTHON_FOLDER "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
-
     install(
         TARGETS ${gympp_swig_name}
         EXPORT gympp
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PYTHON_FOLDER}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PYTHON_FOLDER}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/${PYTHON_FOLDER})
+        LIBRARY DESTINATION ${Python3_SITELIB}
+        ARCHIVE DESTINATION ${Python3_SITELIB}
+        RUNTIME DESTINATION ${Python3_SITELIB})
 
     install(
         FILES ${CMAKE_CURRENT_BINARY_DIR}/../${gympp_swig_name}.py
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PYTHON_FOLDER})
+        DESTINATION ${Python3_SITELIB})
 
 else()
 

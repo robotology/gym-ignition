@@ -44,7 +44,7 @@ target_include_directories(ECMProvider PRIVATE
 # ECMSingleton
 # ============
 
-add_library(ECMSingleton
+add_library(ECMSingleton SHARED
     include/scenario/plugins/gazebo/ECMSingleton.h
     ECMSingleton.cpp)
 

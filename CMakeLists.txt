@@ -91,22 +91,39 @@ find_package(YCM QUIET)
 
 # Bootstrap YCM if not found
 if(NOT ${YCM_FOUND})
-    include(BootstrapYCM)
+    include(FetchContent)
+    FetchContent_Declare(ycm GIT_REPOSITORY https://github.com/robotology/ycm.git)
+    FetchContent_MakeAvailable(ycm)
+    list(APPEND CMAKE_MODULE_PATH ${ycm_SOURCE_DIR}/modules)
 endif()
+
+# Find virtualenv's before system's interpreters
+set(Python3_FIND_VIRTUALENV "FIRST" CACHE STRING
+    "Configure the detection of virtual environments")
+set(Python3_FIND_VIRTUALENV_TYPES "FIRST" "ONLY" "STANDARD")
+mark_as_advanced(Python3_FIND_VIRTUALENV)
+set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTUALENV_TYPES})
+
+# Find Python3
+find_package(Python3 3.6 EXACT COMPONENTS Interpreter Development REQUIRED)
 
 # Configure RPATH
 include(AddInstallRPATHSupport)
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    find_package(Python3 COMPONENTS Development REQUIRED)
-    set(PythonPath "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}")
     add_install_rpath_support(
         BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
         LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
-                 "${CMAKE_INSTALL_FULL_LIBDIR}/${PythonPath}/site-packages"
+                 "${Python3_SITELIB}"
         INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
         DEPENDS ENABLE_RPATH
         USE_LINK_PATH)
-    unset(PythonPath)
+else()
+    add_install_rpath_support(
+        BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
+        LIB_DIRS "${Python3_SITELIB}"
+        INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
+        DEPENDS ENABLE_RPATH
+        USE_LINK_PATH)
 endif()
 
 # Dependencies

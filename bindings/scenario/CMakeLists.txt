@@ -26,19 +26,17 @@ set_property(TARGET ${scenario_swig_name} PROPERTY SWIG_COMPILE_OPTIONS -doxygen
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
 
-    set(PYTHON_FOLDER "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}/site-packages")
-
     install(
         TARGETS ${scenario_swig_name}
-        EXPORT gympp
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PYTHON_FOLDER}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PYTHON_FOLDER}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/${PYTHON_FOLDER})
+        EXPORT scenario
+        LIBRARY DESTINATION ${Python3_SITELIB}
+        ARCHIVE DESTINATION ${Python3_SITELIB}
+        RUNTIME DESTINATION ${Python3_SITELIB})
 
     install(
         FILES
         ${CMAKE_CURRENT_BINARY_DIR}/../${scenario_swig_name}.py
-        DESTINATION ${CMAKE_INSTALL_LIBDIR}/${PYTHON_FOLDER})
+        DESTINATION ${Python3_SITELIB})
 
 else()
 
@@ -48,12 +46,19 @@ else()
 
     install(
         FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/${scenario_swig_name}.py
+        ${CMAKE_CURRENT_BINARY_DIR}/../${scenario_swig_name}.py
         DESTINATION ${CMAKE_INSTALL_PREFIX})
 
     # Install the plugins
     install(
-        TARGETS ECMProvider PhysicsSystem
+        TARGETS ECMProvider PhysicsSystem ControllerRunner JointController
         LIBRARY DESTINATION ${PYTHON_PACKAGE_IMPORT_NAME}/plugins)
+
+    # Install other shared libraries.
+    # Required for libs that contain singletons otherwise when the
+    # project is statically compiled they do not work properly.
+    install(
+        TARGETS ECMSingleton
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX})
 
 endif()
