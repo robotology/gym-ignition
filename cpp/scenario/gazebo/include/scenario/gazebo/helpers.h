@@ -134,9 +134,8 @@ namespace scenario::gazebo::utils {
     fromIgnitionContactsMsgs(ignition::gazebo::EntityComponentManager* ecm,
                              const ignition::msgs::Contacts& contactsMsg);
 
-    bool renameSDFWorld(sdf::Root& sdfRoot,
-                        const std::string& newWorldName,
-                        size_t worldIndex = 0);
+    sdf::World renameSDFWorld(const sdf::World& world,
+                              const std::string& newWorldName);
 
     bool renameSDFModel(sdf::Root& sdfRoot,
                         const std::string& newModelName,

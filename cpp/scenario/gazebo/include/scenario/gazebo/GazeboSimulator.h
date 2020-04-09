@@ -61,8 +61,10 @@ public:
     bool pause();
     bool running() const;
 
-    bool loadSdfWorld(const std::string& worldFile,
-                      const std::string& worldName = "");
+    bool insertWorldFromSDF(const std::string& worldFile = "",
+                            const std::string& worldName = "");
+    bool insertWorldsFromSDF(const std::string& worldFile,
+                             const std::vector<std::string>& worldNames = {});
 
     std::vector<std::string> worldNames() const;
     std::shared_ptr<scenario::gazebo::World>
