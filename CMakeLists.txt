@@ -107,15 +107,20 @@ find_package(Python3 3.6 EXACT COMPONENTS Interpreter Development REQUIRED)
 # Configure RPATH
 include(AddInstallRPATHSupport)
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    set(PythonPath "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}")
     add_install_rpath_support(
         BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
         LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
-                 "${CMAKE_INSTALL_FULL_LIBDIR}/${PythonPath}/site-packages"
+                 "${Python3_SITELIB}"
         INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
         DEPENDS ENABLE_RPATH
         USE_LINK_PATH)
-    unset(PythonPath)
+else()
+    add_install_rpath_support(
+        BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
+        LIB_DIRS "${Python3_SITELIB}"
+        INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
+        DEPENDS ENABLE_RPATH
+        USE_LINK_PATH)
 endif()
 
 # Dependencies
