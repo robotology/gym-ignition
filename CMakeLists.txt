@@ -101,10 +101,12 @@ set(Python3_FIND_VIRTUALENV_TYPES "FIRST" "ONLY" "STANDARD")
 mark_as_advanced(Python3_FIND_VIRTUALENV)
 set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTUALENV_TYPES})
 
+# Find Python3
+find_package(Python3 3.6 EXACT COMPONENTS Interpreter Development REQUIRED)
+
 # Configure RPATH
 include(AddInstallRPATHSupport)
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    find_package(Python3 COMPONENTS Development REQUIRED)
     set(PythonPath "python${Python3_VERSION_MAJOR}.${Python3_VERSION_MINOR}")
     add_install_rpath_support(
         BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"

@@ -2,13 +2,6 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-find_package(Python3 COMPONENTS Development Interpreter REQUIRED)
-
-if(${Python3_VERSION} VERSION_LESS 3.6)
-    message(FATAL_ERROR
-        "Python libs must be >= v3.6 (found: ${Python3_VERSION})")
-endif()
-
 if(${CMAKE_VERSION} VERSION_GREATER 3.13)
     cmake_policy(SET CMP0078 NEW)
 endif()
