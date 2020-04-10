@@ -38,6 +38,9 @@
 #include <sdf/Root.hh>
 #include <sdf/World.hh>
 
+#include <ignition/fuel_tools/FuelClient.hh>
+#include <ignition/fuel_tools/Interface.hh>
+
 #include <cassert>
 #include <chrono>
 
@@ -56,6 +59,9 @@ struct GazeboData
     std::unique_ptr<TinyProcessLib::Process> gui;
     std::shared_ptr<ignition::gazebo::Server> server;
 };
+
+
+
 
 class GazeboWrapper::Impl
 {
@@ -78,6 +84,23 @@ public:
 
     ignition::common::SystemPaths systemPaths;
 };
+
+
+//////////////////////////////////////////////////
+std::string GazeboWrapper::myFetchResource(const std::string &_uri)
+{
+  ignition::fuel_tools::ClientConfig config;
+  ignition::fuel_tools::FuelClient fuelClient(config);
+
+  return ignition::fuel_tools::fetchResourceWithClient(_uri, fuelClient);
+}
+
+//////////////////////////////////////////////////
+std::string GazeboWrapper::myFetchResourceUri(const ignition::common::URI &_uri)
+{
+  return myFetchResource(_uri.Str());
+}
+
 
 std::shared_ptr<ignition::gazebo::Server> GazeboWrapper::Impl::getServer()
 {
@@ -147,6 +170,12 @@ bool GazeboWrapper::findAndLoadSdf(const std::string& sdfFileName, sdf::Root& ro
         gymppError << "The SDF file name of the gazebo model is empty" << std::endl;
         return false;
     }
+
+
+    // Configure SDF to fetch assets from ignition fuel.
+    sdf::setFindCallback(myFetchResource);
+    ignition::common::addFindFileURICallback(myFetchResourceUri);
+
 
     // Find the file
     // TODO: add install directory of our world and model files

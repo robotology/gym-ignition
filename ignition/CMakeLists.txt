@@ -6,6 +6,8 @@
 # COMPONENTS
 # ==========
 
+
+
 add_library(ExtraComponents INTERFACE)
 target_sources(ExtraComponents INTERFACE
     ${CMAKE_CURRENT_SOURCE_DIR}/include/gympp/gazebo/components/JointPositionReset.h
@@ -86,6 +88,11 @@ add_library(GazeboWrapper
     include/gympp/gazebo/GazeboWrapper.h
     src/GazeboWrapper.cpp)
 
+#--------------------------------------
+# Find ignition-fuel_tools
+ign_find_package(ignition-fuel_tools4 REQUIRED VERSION 4.1)
+set(IGN_FUEL_TOOLS_VER ${ignition-fuel_tools4_VERSION_MAJOR})
+
 target_link_libraries(GazeboWrapper
     PRIVATE
     Task
@@ -94,7 +101,8 @@ target_link_libraries(GazeboWrapper
     ECMSingleton
     IgnitionRobot
     ignition-gazebo3::core
-    tiny-process-library)
+    tiny-process-library
+    ignition-fuel_tools${IGN_FUEL_TOOLS_VER}::ignition-fuel_tools${IGN_FUEL_TOOLS_VER})
 
 set_target_properties(GazeboWrapper PROPERTIES
     PUBLIC_HEADER include/gympp/gazebo/GazeboWrapper.h)

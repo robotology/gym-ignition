@@ -16,6 +16,10 @@
 #include <string>
 #include <vector>
 
+#include <ignition/common/URI.hh>
+#include <ignition/fuel_tools/ClientConfig.hh>
+#include <ignition/fuel_tools/FuelClient.hh>
+
 #ifdef NDEBUG
 #define DEFAULT_VERBOSITY 2
 #else
@@ -86,6 +90,10 @@ public:
 
     std::string getWorldName() const;
     bool setupGazeboWorld(const std::string& worldFile);
+
+    static std::string myFetchResource(const std::string &_uri);
+    static std::string myFetchResourceUri(const ignition::common::URI &_uri);
+
 };
 
 struct gympp::gazebo::PhysicsData
