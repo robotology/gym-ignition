@@ -2,163 +2,96 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import gym
+import gym_ignition_models
 from gym_ignition import base
-from gym_ignition.utils import logger
 from gym_ignition.base import runtime
-from gym_ignition.base.robot import robot_abc
-from gym_ignition import gympp_bindings as bindings
-from gym_ignition.utils.typing import State, Action, Observation, SeedList
+from gym_ignition.utils import logger
+from gym_ignition.utils.typing import *
+from gym_ignition.utils import scenario
+from gym_ignition import scenario_bindings as bindings
 
 
 class GazeboRuntime(runtime.Runtime):
+    """
+    Implementation of :py:class:`~gym_ignition.base.runtime.Runtime` for the Ignition
+    Gazebo simulator.
+
+    Args:
+        task_cls: The class of the handled task.
+        agent_rate: The rate at which the environment is called.
+        physics_rate: The rate of the physics engine.
+        real_time_factor: The desired RTF of the simulation.
+        world (optional): The path to an SDF world file. The world should not contain any
+            physics plugin.
+    """
+
     metadata = {'render.modes': ['human']}
 
     def __init__(self,
                  task_cls: type,
-                 robot_cls: type,
-                 rtf: float,
                  agent_rate: float,
                  physics_rate: float,
-                 model: str = None,
-                 world: str = "DefaultEmptyWorld.world",
+                 real_time_factor: float,
+                 world: str = None,
                  **kwargs):
-
-        # Save the keyworded arguments.
-        # We use them to build the task and the robot objects, and allow custom class
-        # to accept user-defined parameters.
-        self._kwargs = kwargs
-
-        # Store the type of the class that provides RobotABC interface
-        self._robot_cls = robot_cls
 
         # Delete and create a new robot every environment reset
         self._first_run = True
 
-        # SDF files
-        self._model = model
-        self._world = world
-
-        # Gazebo simulation attributes
-        self._rtf = rtf
+        # Gazebo attributes
+        self._gazebo = None
         self._physics_rate = physics_rate
-        self._gazebo_wrapper = None
+        self._real_time_factor = real_time_factor
+
+        # World attributes
+        self._world = None
+        self._world_sdf = world
+        self._world_name = None
 
         # Create the Task object
         task = task_cls(agent_rate=agent_rate, **kwargs)
 
-        assert isinstance(task, base.task.Task), \
-            "'task_cls' object must inherit from Task"
+        if not isinstance(task, base.task.Task):
+            raise RuntimeError("The task is not compatible with the runtime")
 
-        # Wrap the environment with this class
+        # Wrap the task with the runtime
         super().__init__(task=task, agent_rate=agent_rate)
 
-        # Initialize the simulator and the robot
-        self.task.robot = self._get_robot()
+        # Trigger the initialization of the simulator and the world
+        _ = self.gazebo
+
+        # Store the world in the task
+        self.task.world = self.world
 
         # Initialize the spaces
-        self.task.action_space, self.task.observation_space = self.task.create_spaces()
+        self.action_space, self.observation_space = self.task.create_spaces()
+
+        # Store the spaces also in the task
+        self.task.action_space = self.action_space
+        self.task.observation_space = self.observation_space
 
         # Seed the environment
         self.seed()
-
-    # ==========
-    # PROPERTIES
-    # ==========
-
-    @property
-    def gazebo(self) -> bindings.GazeboSimulator:
-        if self._gazebo_wrapper:
-            assert self._gazebo_wrapper.getPhysicsData().rtf == self._rtf, \
-                "The RTF of gazebo does not match the configuration"
-            assert 1 / self._gazebo_wrapper.getPhysicsData().maxStepSize == \
-                self._physics_rate, \
-                "The physics rate of gazebo does not match the configuration"
-
-            return self._gazebo_wrapper
-
-        # =================
-        # INITIALIZE GAZEBO
-        # =================
-
-        assert self._rtf, "Real Time Factor was not set"
-        assert self.agent_rate, "Agent rate was not set"
-        assert self._physics_rate, "Physics rate was not set"
-
-        logger.debug("Starting gazebo")
-        logger.debug(f"Agent rate: {self.agent_rate} Hz")
-        logger.debug(f"Physics rate: {self._physics_rate} Hz")
-        logger.debug(f"Simulation RTF: {self._rtf}")
-
-        # Compute the number of physics iteration to execute at every environment step
-        num_of_iterations_per_gazebo_step = self._physics_rate / self.agent_rate
-
-        if num_of_iterations_per_gazebo_step != int(num_of_iterations_per_gazebo_step):
-            logger.warn("Rounding the number of iterations to {} from the nominal {}"
-                        .format(int(num_of_iterations_per_gazebo_step),
-                                num_of_iterations_per_gazebo_step))
-        else:
-            logger.debug("Setting {} iteration per simulator step"
-                         .format(int(num_of_iterations_per_gazebo_step)))
-
-        # Create the GazeboSimulator object
-        self._gazebo_wrapper = bindings.GazeboSimulator(
-            int(num_of_iterations_per_gazebo_step),
-            self._rtf,
-            self._physics_rate)
-
-        # Set the verbosity
-        logger.set_level(gym.logger.MIN_LEVEL)
-
-        # Initialize the world
-        world_ok = self._gazebo_wrapper.setupGazeboWorld(self._world)
-        assert world_ok, "Failed to initialize the gazebo world"
-
-        # Initialize the ignition gazebo wrapper
-        gazebo_initialized = self._gazebo_wrapper.initialize()
-        assert gazebo_initialized, "Failed to initialize ignition gazebo"
-
-        return self._gazebo_wrapper
-
-    def _get_robot(self):
-        if not self.gazebo:
-            raise Exception("Failed to instantiate the gazebo simulator")
-
-        # Build the robot object
-        logger.debug("Creating the robot object")
-        robot = self._robot_cls(model_file=self._model,
-                                gazebo=self.gazebo,
-                                **self._kwargs)
-        assert isinstance(robot, robot_abc.RobotABC), \
-            "'robot' object must inherit from RobotABC"
-
-        # Check the requested robot features
-        if self.task.robot_features:
-            self.task.robot_features.has_all_features(robot)
-
-        if not robot.valid():
-            raise Exception("The robot is not valid")
-
-        return robot
 
     # =================
     # Runtime interface
     # =================
 
     def timestamp(self) -> float:
-        return self.gazebo.getSimulatedTime()
 
-    # ===============
-    # gym.Env METHODS
-    # ===============
+        return self.world.time()
+
+    # =================
+    # gym.Env interface
+    # =================
 
     def step(self, action: Action) -> State:
+
         if not self.action_space.contains(action):
             logger.warn("The action does not belong to the action space")
 
         # Set the action
-        ok_action = self.task.set_action(action)
-        assert ok_action, "Failed to set the action"
+        self.task.set_action(action)
 
         # Step the simulator
         ok_gazebo = self.gazebo.run()
@@ -166,44 +99,34 @@ class GazeboRuntime(runtime.Runtime):
 
         # Get the observation
         observation = self.task.get_observation()
+        assert isinstance(observation, np.ndarray)
 
         if not self.observation_space.contains(observation):
             logger.warn("The observation does not belong to the observation space")
 
         # Get the reward
-        # TODO: use the wrapper method?
         reward = self.task.get_reward()
-        assert reward is not None, "Failed to get the reward"
+        assert isinstance(reward, float), "Failed to get the reward"
 
         # Check termination
         done = self.task.is_done()
 
-        return State((observation, reward, done, {}))
+        return State((Observation(observation), Reward(reward), Done(done), Info({})))
 
     def reset(self) -> Observation:
-        # Initialize gazebo if not yet done
-        gazebo = self.gazebo
-        assert gazebo, "Gazebo object not valid"
 
-        # Remove the robot and insert a new one
-        if not self._first_run:
-            logger.debug("Hard reset: deleting the robot")
-            self.task.robot.delete_simulated_robot()
+        # Reset the task
+        self.task.reset_task()
 
-            # Execute a dummy step to process model removal
-            self.gazebo.run()
+        # Execute a paused step
+        ok_run = self.gazebo.run(paused=True)
 
-            logger.debug("Hard reset: creating new robot")
-            self.task.robot = self._get_robot()
-        else:
-            self._first_run = False
-
-        # Reset the environment
-        ok_reset = self.task.reset_task()
-        assert ok_reset, "Failed to reset the task"
+        if not ok_run:
+            raise RuntimeError("Failed to run Gazebo")
 
         # Get the observation
         observation = self.task.get_observation()
+        assert isinstance(observation, np.ndarray)
 
         if not self.observation_space.contains(observation):
             logger.warn("The observation does not belong to the observation space")
@@ -211,30 +134,141 @@ class GazeboRuntime(runtime.Runtime):
         return Observation(observation)
 
     def render(self, mode: str = 'human', **kwargs) -> None:
-        if mode == 'human':
-            # Initialize gazebo if not yet done
-            gazebo = self.gazebo
-            assert gazebo, "Gazebo object not valid"
 
-            gui_ok = gazebo.gui()
-            assert gui_ok, "Failed to render the environment"
+        if mode == 'human':
+
+            gui_ok = self.gazebo.gui()
+
+            if not gui_ok:
+                raise RuntimeError("Failed to render the environment")
+
             return
 
-        raise Exception("Render mode '{}' not supported".format(mode))
+        raise Exception(f"Render mode '{mode}' not supported")
 
     def close(self) -> None:
-        self.gazebo.close()
+
+        ok_close = self.gazebo.close()
+
+        if not ok_close:
+            raise RuntimeError("Failed to close Gazebo")
 
     def seed(self, seed: int = None) -> SeedList:
-        # This method also seeds the spaces. To create them, the robot object is often
-        # needed. Here we check that is has been created.
-        assert self.task.has_robot(), "The robot has not yet been created"
 
-        # Seed the wrapped environment (task)
-        seed = self.env.seed(seed)
+        # This method also seeds the spaces. To create them, the task could use the world.
+        # Here we check that is has been created.
+        if not self.task.has_world():
+            raise RuntimeError("The world has never been created")
 
-        # Update the spaces of the wrapper
-        self.action_space = self.env.action_space
-        self.observation_space = self.env.observation_space
+        # Seed the task (it will also seed the spaces)
+        seed = self.task.seed_task(seed)
 
         return seed
+
+    # ==============================
+    # Properties and Private Methods
+    # ==============================
+
+    @property
+    def gazebo(self) -> bindings.GazeboSimulator:
+
+        if self._gazebo is not None:
+            assert self._gazebo.initialized()
+            return self._gazebo
+
+        # Compute the number of physics iteration to execute at every environment step
+        num_of_steps_per_run = self._physics_rate / self.agent_rate
+
+        if num_of_steps_per_run != int(num_of_steps_per_run):
+            logger.warn("Rounding the number of iterations to {} from the nominal {}"
+                        .format(int(num_of_steps_per_run), num_of_steps_per_run))
+
+        # Create the simulator
+        gazebo = bindings.GazeboSimulator(1.0 / self._physics_rate,
+                                          self._real_time_factor,
+                                          int(num_of_steps_per_run))
+
+        # Store the simulator
+        self._gazebo = gazebo
+
+        # Insert the world (it will initialize the simulator)
+        _ = self.world
+        assert self._gazebo.initialized()
+
+        return self._gazebo
+
+    @property
+    def world(self) -> bindings.World:
+
+        if self._world is not None:
+            assert self.gazebo.initialized()
+            return self._world
+
+        if self._gazebo is None:
+            raise RuntimeError("Gazebo has not yet been created")
+
+        if self._gazebo.initialized():
+            raise RuntimeError("Gazebo was already initialized, cannot insert world")
+
+        if self._world_sdf is None:
+            self._world_sdf = ""
+            self._world_name = scenario.get_unique_world_name("default")
+
+        else:
+            sdf_world_name = bindings.getWorldNameFromSdf(self._world_sdf)
+            self._world_name = scenario.get_unique_world_name(sdf_world_name)
+
+        # Load the world
+        ok_world = self._gazebo.insertWorldFromSDF(self._world_sdf, self._world_name)
+
+        if not ok_world:
+            raise RuntimeError("Failed to load SDF world")
+
+        # Initialize the simulator
+        ok_initialize = self._gazebo.initialize()
+
+        if not ok_initialize:
+            raise RuntimeError("Failed to initialize Gazebo")
+
+        if not self._gazebo.initialized():
+            raise RuntimeError("Gazebo was not initialized")
+
+        # Get the world
+        world = self._gazebo.getWorld(self._world_name)
+
+        assert self._world_sdf is not None
+        assert self._world_name in self._gazebo.worldNames()
+
+        if self._world_sdf == "":
+
+            # Insert the ground plane
+            ok_ground = world.insertModel(
+                gym_ignition_models.get_model_file("ground_plane"))
+
+            if not ok_ground:
+                raise RuntimeError("Failed to insert the ground plane")
+
+        # Load the physics
+        self._load_physics(world)
+
+        # Store the world
+        self._world = world
+
+        return self._world
+
+    @staticmethod
+    def _load_physics(world: bindings.World) -> None:
+        """
+        Load the physics in the world.
+
+        Note:
+            This class do not yet supports randomizing the physics. Likely overriding this
+            method will enable the implementation of physics randomization.
+        """
+
+        # Insert the physics
+        ok_physics = world.insertWorldPlugin("libPhysicsSystem.so",
+                                             "scenario::plugins::gazebo::Physics")
+
+        if not ok_physics:
+            raise RuntimeError("Failed to insert the physics plugin")
