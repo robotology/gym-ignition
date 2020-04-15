@@ -2,6 +2,8 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+from gym_ignition.utils import gazebo_env_vars
+
 # Import SWIG bindings
 # See https://github.com/robotology/gym-ignition/issues/7
 #     https://stackoverflow.com/a/45473441/12150968
@@ -36,3 +38,6 @@ else:
 
 # Configure the verbosity depending on the selected CMAKE_BUILD_TYPE
 scenario_bindings.setVerbosity()
+
+# Configure OS environment variables
+gazebo_env_vars.setup_gazebo_env_vars()
