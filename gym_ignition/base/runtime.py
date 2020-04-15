@@ -4,52 +4,70 @@
 
 import abc
 import gym
-from gym_ignition.base.task import Task
+from gym_ignition import base
 
 
-class Runtime(gym.Wrapper, abc.ABC):
+class Runtime(gym.Env, abc.ABC):
     """
-    Base class for defining Task runtimes.
+    Base class for defining executors of :py:class:`~gym_ignition.base.task.Task`
+    objects.
 
-    The runtime is the executor of a Task. Tasks are supposed to be generic and are not
-    tied to any specific Runtime. Implementations of the Runtime class contain all the
-    logic to define how to execute the Task, allowing to reuse the same Task class
-    e.g. on different simulators or in a real-time setting.
+    :py:class:`~gym_ignition.base.task.Task` classes are supposed to be generic and are
+     not tied to any specific runtime. Implementations of a runtime class contain all the
+    logic to define how to execute the task, allowing to run the same
+    :py:class:`~gym_ignition.base.task.Task` class on different simulators or in a
+    real-time setting.
 
-    Runtime objects are the real environments returned to the users when they use the
-    gym.make factory method. Despite they inherit from gym.Wrapper, they are exposed to
-    the user as gym.Env objects.
+    Runtimes are the real :py:class:`gym.Env` objects returned to the users when they call
+    the :py:class:`gym.make` factory method.
+
+    Args:
+        task: the :py:class:`~gym_ignition.base.task.Task` object to handle.
+        agent_rate: the rate at which the environment will be called. Sometimes tasks need
+            to know this information.
+
+    Example:
+
+        Here is minimal example of how the :py:class:`Runtime`, :py:class:`gym.Env` and
+        :py:class:`~gym_ignition.base.task.Task` could be integrated:
+
+    .. code-block:: python
+
+        class FooRuntime(Runtime):
+
+            def __init__(self, task):
+                super().__init__(task=task, agent_rate=agent_rate)
+                self.action_space, self.observation_space = self.task.create_spaces()
+
+            def reset(self):
+                self.task.reset_task()
+                return self.task.get_observation()
+
+            def step(self, action):
+                self.task.set_action(action)
+
+                # [...] code that performs the real step [...]
+
+                done = self.task.is_done()
+                reward = self.task.get_reward()
+                observation = self.task.get_observation()
+
+                return observation, reward, done, {}
+
+            def close(self):
+                pass
+
+    Note:
+        Runtimes can handle only one :py:class:`~gym_ignition.base.runtime.Task` object.
     """
 
-    # Add a spec class variable to make the wrapper look like an environment.
-    # This class variable overrides the gym.Wrapper.spec property and enables registering
-    # runtime objects in the environment factory, despite they inherit from Wrapper.
-    spec = None
+    def __init__(self, task: base.task.Task, agent_rate: float):
 
-    def __init__(self, task: Task, agent_rate: float):
-        # Initialize the gym.Wrapper class
-        super().__init__(env=task)
+        #: Task handled by the runtime.
+        self.task: base.task.Task = task
 
-        # All runtimes provide to the user the nominal rate of their execution
+        #: Rate of environment execution.
         self.agent_rate = agent_rate
-
-    @property
-    def task(self):
-        return self.env
-
-    @property
-    def unwrapped(self):
-        """
-        Expose Runtime objects as real gym.Env objects.
-
-        This method disables the gym.Wrapper logic to returned the wrapped environment.
-        In fact, the wrapped environment is a Task which contains not a implemented
-        gym.Env interface.
-
-        Returns:
-            The gym.Env environment of the Runtime.
-        """
-        return self
 
     @abc.abstractmethod
     def timestamp(self) -> float:
@@ -58,8 +76,8 @@ class Runtime(gym.Wrapper, abc.ABC):
 
         In real-time environments, the timestamp is the time read from the host system.
         In simulated environments, the timestamp is the simulated time, which might not
-        match the real-time in the case of RTF different than 1.
+        match the real-time in the case of a real-time factor different than 1.
 
         Returns:
-            A float indicating the current environment timestamp
+            The current environment timestamp.
         """
