@@ -9,21 +9,29 @@ import sys
 if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
     import os
     dlopen_flags = sys.getdlopenflags()
-    if "gympp_bindings" not in sys.modules:
+    if "scenario_bindings" not in sys.modules:
         sys.setdlopenflags(dlopen_flags | os.RTLD_GLOBAL)
     else:
         sys.setdlopenflags(dlopen_flags | os.RTLD_LAZY | os.RTLD_NOLOAD | os.RTLD_GLOBAL)
 
-    import gympp_bindings
+    import scenario_bindings
+    scenario_bindings.setVerbosity()
+
+    try:
+        import gympp_bindings
+    except ImportError:
+        pass
 
     # Restore the flags
     sys.setdlopenflags(dlopen_flags)
 else:
-    import gympp_bindings
+    import scenario_bindings
+    scenario_bindings.setVerbosity()
 
-    # try:
-    #     import gympp_bindings
-    # except:
-    #     pass
+    try:
+        import gympp_bindings
+    except ImportError:
+        pass
+
 
 
