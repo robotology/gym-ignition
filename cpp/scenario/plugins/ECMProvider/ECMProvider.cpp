@@ -26,11 +26,15 @@
 
 #include "scenario/plugins/gazebo/ECMProvider.h"
 #include "scenario/gazebo/Log.h"
+#include "scenario/gazebo/helpers.h"
 #include "scenario/plugins/gazebo/ECMSingleton.h"
 
 #include <ignition/gazebo/Entity.hh>
+#include <ignition/gazebo/components/Name.hh>
+#include <ignition/gazebo/components/World.hh>
 #include <ignition/plugin/Register.hh>
 
+using namespace scenario::gazebo;
 using namespace scenario::plugins::gazebo;
 
 class ECMProvider::Impl
@@ -45,6 +49,7 @@ ECMProvider::ECMProvider()
 
 ECMProvider::~ECMProvider()
 {
+    ECMSingleton::Instance().clean();
     gymppDebug << "Destroying the ECMProvider" << std::endl;
 };
 
@@ -53,19 +58,30 @@ void ECMProvider::Configure(const ignition::gazebo::Entity& entity,
                             ignition::gazebo::EntityComponentManager& ecm,
                             ignition::gazebo::EventManager& eventMgr)
 {
-    if (ECMSingleton::Instance().valid()) {
-        gymppWarning << "The ECM singleton has been already configured"
-                     << std::endl;
+    if (!ecm.EntityHasComponentType(
+            entity, ignition::gazebo::components::World().TypeId())) {
+        gymppError << "The ECMProvider plugin was not inserted "
+                   << "in a world element" << std::endl;
         return;
     }
 
-    gymppDebug << "Storing ECM resources in the singleton" << std::endl;
+    const auto& worldName = utils::getExistingComponentData< //
+        ignition::gazebo::components::Name>(&ecm, entity);
 
-    if (!ECMSingleton::Instance().storePtrs(&ecm, &eventMgr)) {
-        gymppError << "Failed to store ECM in the singleton for entity ["
+    if (ECMSingleton::Instance().hasWorld(worldName)) {
+        gymppWarning << "Resources of world " << worldName
+                     << " already inserted" << std::endl;
+        return;
+    }
+
+    if (!ECMSingleton::Instance().storePtrs(&ecm, &eventMgr, worldName)) {
+        gymppError << "Failed to store resources of world " << worldName << " ["
                    << entity << "]" << std::endl;
         return;
     }
+
+    gymppDebug << "World '" << worldName
+               << "' successfully processed by ECMProvider" << std::endl;
 }
 
 IGNITION_ADD_PLUGIN(scenario::plugins::gazebo::ECMProvider,

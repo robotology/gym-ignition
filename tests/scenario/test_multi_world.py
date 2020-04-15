@@ -15,7 +15,7 @@ bindings.setVerbosity(4)
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def _test_insert_multiple_worlds(gazebo: bindings.GazeboSimulator):
+def test_insert_multiple_worlds(gazebo: bindings.GazeboSimulator):
 
     empty_world_sdf = utils.get_empty_world_sdf()
     assert gazebo.insertWorldFromSDF(empty_world_sdf, "myWorld1")
@@ -39,7 +39,7 @@ def _test_insert_multiple_worlds(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def _test_insert_multiple_world(gazebo: bindings.GazeboSimulator):
+def test_insert_multiple_world(gazebo: bindings.GazeboSimulator):
 
     multi_world_sdf = utils.get_multi_world_sdf_file()
 
@@ -62,7 +62,7 @@ def _test_insert_multiple_world(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def _test_insert_multiple_world_rename(gazebo: bindings.GazeboSimulator):
+def test_insert_multiple_world_rename(gazebo: bindings.GazeboSimulator):
 
     multi_world_sdf = utils.get_multi_world_sdf_file()
 
@@ -86,7 +86,7 @@ def _test_insert_multiple_world_rename(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def _test_insert_world_multiple_calls(gazebo: bindings.GazeboSimulator):
+def test_insert_world_multiple_calls(gazebo: bindings.GazeboSimulator):
 
     single_world_sdf = utils.get_empty_world_sdf()
 

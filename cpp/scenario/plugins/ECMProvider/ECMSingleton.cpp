@@ -27,22 +27,41 @@
 #include "scenario/plugins/gazebo/ECMSingleton.h"
 #include "scenario/gazebo/Log.h"
 
-#include <atomic>
+#include <mutex>
 #include <ostream>
 #include <string>
+#include <unordered_map>
+#include <utility>
 
 using namespace scenario::plugins::gazebo;
 
 class ECMSingleton::Impl
 {
 public:
-    std::atomic<ignition::gazebo::EventManager*> eventMgr = nullptr;
-    std::atomic<ignition::gazebo::EntityComponentManager*> ecm = nullptr;
+    struct ResourcePtrs
+    {
+        ResourcePtrs() = delete;
+        ResourcePtrs(ignition::gazebo::EntityComponentManager* _ecm,
+                     ignition::gazebo::EventManager* _eventMgr)
+            : ecm(_ecm)
+            , eventMgr(_eventMgr)
+        {}
+
+        ignition::gazebo::EntityComponentManager* ecm = nullptr;
+        ignition::gazebo::EventManager* eventMgr = nullptr;
+    };
+
+    mutable std::recursive_mutex mutex;
+
+    using WorldName = std::string;
+    std::unordered_map<WorldName, ResourcePtrs> resources;
 };
 
 ECMSingleton::ECMSingleton()
     : pImpl{new Impl()}
 {}
+
+ECMSingleton::~ECMSingleton() = default;
 
 ECMSingleton& ECMSingleton::Instance()
 {
@@ -50,23 +69,113 @@ ECMSingleton& ECMSingleton::Instance()
     return instance;
 }
 
-bool ECMSingleton::valid() const
+void ECMSingleton::clean(const std::string& worldName)
 {
-    return pImpl->ecm && pImpl->eventMgr;
+    std::unique_lock lock(pImpl->mutex);
+
+    if (worldName.empty()) {
+        pImpl->resources.clear();
+        return;
+    }
+
+    if (!this->hasWorld(worldName)) {
+        gymppError << "Resources of world " << worldName << " not found"
+                   << std::endl;
+        return;
+    }
+
+    pImpl->resources.erase(worldName);
 }
 
-ignition::gazebo::EventManager* ECMSingleton::getEventManager() const
+bool ECMSingleton::valid(const std::string& worldName) const
 {
-    if (!this->valid()) {
-        gymppError << "The pointers are not valid" << std::endl;
+    std::unique_lock lock(pImpl->mutex);
+
+    if (!this->hasWorld(worldName)) {
+        gymppDebug << "World" << worldName << " not found" << std::endl;
+        return false;
+    }
+
+    if (!worldName.empty()) {
+        const auto& ptrs = pImpl->resources.at(worldName);
+        return ptrs.ecm && ptrs.eventMgr;
+    }
+    else {
+        bool valid = true;
+        for (const auto& [_, resources] : pImpl->resources) {
+            valid = valid && resources.ecm && resources.eventMgr;
+        }
+
+        return valid;
+    }
+}
+
+bool ECMSingleton::hasWorld(const std::string& worldName) const
+{
+    std::unique_lock lock(pImpl->mutex);
+
+    if (worldName.empty()) {
+        return pImpl->resources.size() != 0;
+    }
+
+    return pImpl->resources.find(worldName) != pImpl->resources.end();
+}
+
+std::vector<std::string> ECMSingleton::worldNames() const
+{
+    std::unique_lock lock(pImpl->mutex);
+    std::vector<std::string> worldNames;
+
+    for (const auto& [key, _] : pImpl->resources) {
+        worldNames.emplace_back(key);
+    }
+
+    return worldNames;
+}
+
+ignition::gazebo::EventManager*
+ECMSingleton::getEventManager(const std::string& worldName) const
+{
+    std::unique_lock lock(pImpl->mutex);
+
+    if (!this->hasWorld(worldName)) {
+        gymppError << "Resources of world " << worldName << " not found"
+                   << std::endl;
         return nullptr;
     }
 
-    return pImpl->eventMgr;
+    if (!this->valid(worldName)) {
+        gymppError << "Resources of world " << worldName << " not valid"
+                   << std::endl;
+        return nullptr;
+    }
+
+    return pImpl->resources.at(worldName).eventMgr;
+}
+
+ignition::gazebo::EntityComponentManager*
+ECMSingleton::getECM(const std::string& worldName) const
+{
+    std::unique_lock lock(pImpl->mutex);
+
+    if (!this->hasWorld(worldName)) {
+        gymppError << "Resources of world " << worldName << " not found"
+                   << std::endl;
+        return nullptr;
+    }
+
+    if (!this->valid(worldName)) {
+        gymppError << "Resources of world " << worldName << " not valid"
+                   << std::endl;
+        return nullptr;
+    }
+
+    return pImpl->resources.at(worldName).ecm;
 }
 
 bool ECMSingleton::storePtrs(ignition::gazebo::EntityComponentManager* ecm,
-                             ignition::gazebo::EventManager* eventMgr)
+                             ignition::gazebo::EventManager* eventMgr,
+                             const std::string& worldName)
 {
     if (!ecm || !eventMgr) {
         gymppError << "The pointer to the ECM or EventManager is not valid"
@@ -74,25 +183,19 @@ bool ECMSingleton::storePtrs(ignition::gazebo::EntityComponentManager* ecm,
         return false;
     }
 
-    pImpl->ecm = ecm;
-    pImpl->eventMgr = eventMgr;
-
-    return true;
-}
-
-ignition::gazebo::EntityComponentManager* ECMSingleton::getECM() const
-{
-
-    if (!this->valid()) {
-        gymppError << "The pointers are not valid" << std::endl;
-        return nullptr;
+    if (worldName.empty()) {
+        gymppError << "The world name is empty" << std::endl;
+        return false;
     }
 
-    return pImpl->ecm;
-}
+    std::unique_lock lock(pImpl->mutex);
 
-void ECMSingleton::clean()
-{
-    pImpl->ecm = nullptr;
-    pImpl->eventMgr = nullptr;
+    if (this->hasWorld(worldName)) {
+        gymppError << "Resources of world " << worldName
+                   << " have been already stored" << std::endl;
+        return false;
+    }
+
+    pImpl->resources.emplace(worldName, Impl::ResourcePtrs(ecm, eventMgr));
+    return true;
 }

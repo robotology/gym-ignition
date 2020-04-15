@@ -44,21 +44,26 @@ class scenario::plugins::gazebo::ECMSingleton
 {
 public:
     ECMSingleton();
-    ~ECMSingleton() = default;
+    ~ECMSingleton();
 
     ECMSingleton(ECMSingleton&) = delete;
     void operator=(const ECMSingleton&) = delete;
 
     static ECMSingleton& Instance();
 
-    void clean();
-    bool valid() const;
+    void clean(const std::string& worldName = {});
+    bool valid(const std::string& worldName = {}) const;
+    bool hasWorld(const std::string& worldName = {}) const;
 
-    ignition::gazebo::EventManager* getEventManager() const;
-    ignition::gazebo::EntityComponentManager* getECM() const;
+    std::vector<std::string> worldNames() const;
+    ignition::gazebo::EventManager*
+    getEventManager(const std::string& worldName) const;
+    ignition::gazebo::EntityComponentManager*
+    getECM(const std::string& worldName) const;
 
     bool storePtrs(ignition::gazebo::EntityComponentManager* ecm,
-                   ignition::gazebo::EventManager* eventMgr);
+                   ignition::gazebo::EventManager* eventMgr,
+                   const std::string& worldName);
 
 private:
     class Impl;

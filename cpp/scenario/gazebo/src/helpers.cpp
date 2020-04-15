@@ -29,7 +29,9 @@
 #include "scenario/gazebo/Log.h"
 
 #include <ignition/gazebo/components/Component.hh>
+#include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/Name.hh>
+#include <ignition/gazebo/components/World.hh>
 #include <ignition/msgs/contact.pb.h>
 #include <sdf/Error.hh>
 #include <sdf/Model.hh>
@@ -195,46 +197,51 @@ utils::fromIgnitionContactsMsgs(ignition::gazebo::EntityComponentManager* ecm,
     return contacts;
 }
 
-bool utils::renameSDFWorld(sdf::Root& sdfRoot,
-                           const std::string& newWorldName,
-                           size_t worldIndex)
+sdf::World utils::renameSDFWorld(const sdf::World& world,
+                                 const std::string& newWorldName)
 {
-    const size_t initialNrOfWorlds = sdfRoot.WorldCount();
+    const size_t initialNrOfModels = world.ModelCount();
 
     // Create a new world with the scoped name
-    auto renamedWorld = std::make_shared<sdf::Element>();
-    renamedWorld->SetName("world");
-    renamedWorld->AddAttribute("name", "string", newWorldName, true);
+    auto renamedWorldElement = std::make_shared<sdf::Element>();
+    renamedWorldElement->SetName("world");
+    renamedWorldElement->AddAttribute("name", "string", newWorldName, true);
 
-    sdf::ElementPtr child =
-        sdfRoot.WorldByIndex(worldIndex)->Element()->GetFirstElement();
+    // Get the element of the world
+    sdf::ElementPtr child = world.Element()->GetFirstElement();
 
     // Add all the children
     while (child) {
-        renamedWorld->InsertElement(child);
-        child->SetParent(renamedWorld);
+        renamedWorldElement->InsertElement(child);
         child = child->GetNextElement();
     }
 
-    // Remove the old world
-    auto originalWorldElement = sdfRoot.WorldByIndex(worldIndex)->Element();
-    sdfRoot.WorldByIndex(worldIndex)->Element()->RemoveFromParent();
+    // Create a new world
+    sdf::World renamedWorld;
 
-    //  Insert the renamed world
-    renamedWorld->SetParent(sdfRoot.Element());
-    sdfRoot.Element()->InsertElement(renamedWorld->Clone());
+    auto errors = renamedWorld.Load(renamedWorldElement);
 
-    if (sdfRoot.WorldCount() != initialNrOfWorlds) {
-        gymppError << "Failed to rename SDF world" << std::endl;
-        return false;
+    if (!errors.empty()) {
+        gymppError << "Failed to create the World from the element"
+                   << std::endl;
+
+        for (const auto& error : errors) {
+            gymppError << error << std::endl;
+        }
+        return {};
     }
 
-    if (!sdfRoot.WorldNameExists(newWorldName)) {
-        gymppError << "Failed to insert renamed world in SDF root" << std::endl;
-        return false;
+    if (renamedWorld.Name() != newWorldName) {
+        gymppError << "Failed to rename the world" << std::endl;
+        return {};
     }
 
-    return true;
+    if (renamedWorld.ModelCount() != initialNrOfModels) {
+        gymppError << "Failed to copy all models to the new world" << std::endl;
+        return {};
+    }
+
+    return renamedWorld;
 }
 
 bool utils::renameSDFModel(sdf::Root& sdfRoot,
@@ -442,4 +449,38 @@ utils::fromBaseToModelVelocity(const ignition::math::Vector3d& linBaseVelocity,
 
     // Return the mixed velocity of the model
     return {linModelVelocity, angModelVelocity};
+}
+
+WorldPtr utils::getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
+                               ignition::gazebo::EventManager* eventManager,
+                               const ignition::gazebo::Entity entity)
+{
+    auto worldEntity = getFirstParentEntityWithComponent< //
+        ignition::gazebo::components::World>(ecm, entity);
+
+    auto world = std::make_shared<World>();
+
+    if (!world->initialize(worldEntity, ecm, eventManager)) {
+        gymppError << "Failed to initialize world" << std::endl;
+        return nullptr;
+    }
+
+    return world;
+}
+
+ModelPtr utils::getParentModel(ignition::gazebo::EntityComponentManager* ecm,
+                               ignition::gazebo::EventManager* eventManager,
+                               const ignition::gazebo::Entity entity)
+{
+    auto modelEntity = getFirstParentEntityWithComponent< //
+        ignition::gazebo::components::World>(ecm, entity);
+
+    auto model = std::make_shared<Model>();
+
+    if (!model->initialize(modelEntity, ecm, eventManager)) {
+        gymppError << "Failed to initialize model" << std::endl;
+        return nullptr;
+    }
+
+    return model;
 }

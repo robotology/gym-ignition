@@ -29,6 +29,8 @@
 
 #include "scenario/gazebo/Joint.h"
 #include "scenario/gazebo/Link.h"
+#include "scenario/gazebo/Model.h"
+#include "scenario/gazebo/World.h"
 #include "scenario/gazebo/exceptions.h"
 
 #include <ignition/gazebo/Entity.hh>
@@ -134,9 +136,8 @@ namespace scenario::gazebo::utils {
     fromIgnitionContactsMsgs(ignition::gazebo::EntityComponentManager* ecm,
                              const ignition::msgs::Contacts& contactsMsg);
 
-    bool renameSDFWorld(sdf::Root& sdfRoot,
-                        const std::string& newWorldName,
-                        size_t worldIndex = 0);
+    sdf::World renameSDFWorld(const sdf::World& world,
+                              const std::string& newWorldName);
 
     bool renameSDFModel(sdf::Root& sdfRoot,
                         const std::string& newModelName,
@@ -165,6 +166,14 @@ namespace scenario::gazebo::utils {
                             const ignition::math::Vector3d& angBaseVelocity,
                             const ignition::math::Pose3d& M_H_B,
                             const ignition::math::Quaterniond& W_R_B);
+
+    WorldPtr getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
+                            ignition::gazebo::EventManager* eventManager,
+                            const ignition::gazebo::Entity entity);
+
+    ModelPtr getParentModel(ignition::gazebo::EntityComponentManager* ecm,
+                            ignition::gazebo::EventManager* eventManager,
+                            const ignition::gazebo::Entity entity);
 
     template <typename ComponentType>
     ignition::gazebo::Entity getFirstParentEntityWithComponent(
