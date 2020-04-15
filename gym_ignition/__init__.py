@@ -2,7 +2,8 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from gym_ignition.utils import gazebo_env_vars
+import os
+from gym_ignition.utils import gazebo_env_vars, resource_finder
 
 # Import SWIG bindings
 # See https://github.com/robotology/gym-ignition/issues/7
@@ -41,3 +42,7 @@ scenario_bindings.setVerbosity()
 
 # Configure OS environment variables
 gazebo_env_vars.setup_gazebo_env_vars()
+
+# Add IGN_GAZEBO_RESOURCE_PATH to the default search path
+if "IGN_GAZEBO_RESOURCE_PATH" in os.environ:
+    resource_finder.add_path_from_env_var("IGN_GAZEBO_RESOURCE_PATH")
