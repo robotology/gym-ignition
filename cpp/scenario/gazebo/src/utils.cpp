@@ -231,3 +231,14 @@ std::string utils::getRandomString(const size_t length)
     std::generate_n(str.begin(), length, randchar);
     return str;
 }
+
+std::string utils::getInstallPrefix()
+{
+#ifdef GYMIGNITION_CMAKE_INSTALL_PREFIX
+    return GYMIGNITION_CMAKE_INSTALL_PREFIX;
+#else
+    gymppDebug << "User installation detected. The install prefix "
+               << "could be detected from the Python module path." << std::endl;
+    return "";
+#endif
+}

@@ -50,6 +50,7 @@ namespace scenario {
             std::string getModelFileFromFuel(const std::string& URI,
                                              const bool useCache = false);
             std::string getRandomString(const size_t length);
+            std::string getInstallPrefix();
         } // namespace utils
     } // namespace gazebo
 } // namespace scenario
