@@ -3,5 +3,5 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from . import pendulum_swingup
-from . import cartpole_discrete
-from . import cartpole_continuous
+from . import cartpole_discrete_balancing
+from . import cartpole_continuous_balancing
