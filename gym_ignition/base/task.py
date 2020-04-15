@@ -7,79 +7,99 @@ import gym
 import numpy as np
 from typing import Tuple
 from gym.utils import seeding
-from gym_ignition.base.robot import robot_abc, RobotFeatures
+from gym_ignition import scenario_bindings as bindings
 from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 from gym_ignition.utils.typing import Action, Observation, Reward, SeedList
 
 
-class Task(gym.Env, abc.ABC):
+class Task(abc.ABC):
     """
     Interface to define a decision-making task.
 
-    The Task is the central interface of each environment.
+    The Task is the central interface of each environment implementation.
     It defines the logic of the environment in a format that is agnostic of both the
-    runtime (either simulated or real-time) and the robot.
+    runtime (either simulated or real-time) and the models it operates on.
 
-    Beyond containing the logic of the task, objects that inherit from this interface
-    expose an empty gym.Env interface. This is required because the real environment
-    exposed to the agent consists of a Task wrapped by a runtime wrapper, that inherits
-    from gym.Wrapper. Runtime wrappers implement the gym.Env interface, and particularly
-    gym.Env.step. This method, depending on the runtime, can interface with a physics
-    engine and step the simulator, or can handle real-time execution.
+    :py:class:`~gym_ignition.base.runtime.Runtime` instances are the real objects returned
+    to the users when they call :py:class:`gym.make`. Depending on the type of the
+    runtime, it could contain one or more :py:class:`Task` objects.
+    The :py:class:`~gym_ignition.base.runtime.Runtime` is a relay class that calls the
+    logic of the :py:class:`Task` from its interface methods and implements the real
+    :py:meth:`gym.Env.step`.
+    In simulated runtimes, this method will step the physics engine, instead in real-time
+    runtimes, it will enforce real-time execution.
 
-    In order to make Task objects generic from the runtime, also the interfacing with the
-    robot needs to be abstracted. In fact, the access of robot data depends on the
-    selected runtime. For example, in simulation data can be directly gathered from the
-    physics engine, and in a real-time setting can be asked through a robotic middleware.
-    Tasks abstract this interfacing by operating on a Robot interface, which is then
-    specialized for the different runtimes.
+    A :py:class:`Task` object is meant to be:
+
+    - Independent from the selected :py:class:`~gym_ignition.base.runtime.Runtime`.
+      In fact, it defines only the decision making logic;
+    - Independent from the :py:class:`~scenario_bindings.Model` objects it operates on.
+      This is achieved thanks to the model abstraction provided by
+      :cpp:class:`scenario::gazebo::Model`.
+
+    The population of the world where the task operates is demanded to a
+    :py:class:`gym.Wrapper` object.
     """
 
-    def __init__(self, agent_rate: float) -> None:
-        # Robot object associated with the task
-        self._robot = None
+    action_space: gym.spaces.Space = None
+    observation_space: gym.spaces.Space = None
 
-        # Rate of the agent, that matches the rate at which the Gym methods are called
+    def __init__(self, agent_rate: float) -> None:
+
+        # World object
+        self._world = None
+
+        #: Rate of the agent.
+        #: It matches the rate at which the :py:class:`Gym.Env` methods are called.
         self.agent_rate = agent_rate
 
-        # Random Number Generator
-        self.np_random, self._seed = seeding.np_random()
+        #: RNG available to the object to ensure reproducibility.
+        #: Use it for all the random resources.
+        self.np_random: np.random.RandomState
 
-        # Optional public attribute to check robot features
-        self.robot_features = None
+        # Initialize the RNG and the seed
+        self.np_random, self._seed = seeding.np_random()
 
     # ==========
     # PROPERTIES
     # ==========
 
     @property
-    def robot(self) -> RobotFeatures:
-        if self._robot:
-            assert self._robot.valid(), "The robot interface is not valid"
-            return self._robot
+    def world(self) -> bindings.World:
+        """
+        Get the world where the task is operating.
 
-        raise Exception("The robot interface object was never stored")
+        Returns:
+            The world object.
+        """
 
-    @robot.setter
-    def robot(self, robot: robot_abc.RobotABC) -> None:
-        if not robot.valid():
-            raise Exception("Robot object is not valid")
+        if self._world:
+            assert self._world.id() != 0, "The world is not valid"
+            return self._world
 
-        if self.robot_features is not None:
-            self.robot_features.has_all_features(robot)
+        raise Exception("The world was never stored")
 
-        # Set the robot
-        self._robot = robot
+    @world.setter
+    def world(self, world: bindings.World) -> None:
 
-    def has_robot(self) -> bool:
-        if self._robot is None:
-            return False
-        else:
-            assert self._robot.valid(), "The robot object is not valid"
-            return True
+        if world.id() == 0:
+            raise Exception("World not valid")
+
+        # Store the world
+        self._world = world
+
+    def has_world(self) -> bool:
+        """
+        Check if the world was stored.
+
+        Returns:
+            True if the task has a valid world, False otherwise.
+        """
+
+        return self._world is not None and self._world.id() != 0
 
     # ==============
-    # TASK INTERFACE
+    # Task Interface
     # ==============
 
     @abc.abstractmethod
@@ -87,35 +107,47 @@ class Task(gym.Env, abc.ABC):
         """
         Create the action and observations spaces.
 
+        Note:
+            This method does not currently have access to the Models part of the
+            environment. If the Task is meant to work on different models, we recommend
+            using their URDF / SDF model to extract the information you need
+            (e.g. number of DoFs, joint position limits, etc). Since actions and
+            observations are often normalized, in many cases there's no need to extract
+            a lot of information from the model file.
+
+        Raises:
+            RuntimeError: In case of failure.
+
         Returns:
             A tuple containing the action and observation spaces.
         """
 
     @abc.abstractmethod
-    def reset_task(self) -> bool:
+    def reset_task(self) -> None:
         """
         Reset the task.
 
-        This method contains the logic of resetting the environment.
-        It is called in the gym.Env.reset method.
+        This method contains the logic for resetting the task.
+        It is called in the :py:meth:`gym.Env.reset` method of the corresponding
+        environment.
 
-        Returns:
-            True if successful, False otherwise.
+        Raises:
+            RuntimeError: In case of failure.
         """
 
     @abc.abstractmethod
-    def set_action(self, action: Action) -> bool:
+    def set_action(self, action: Action) -> None:
         """
         Set the task action.
 
-        This method contains the logic of setting the environment action.
-        It is called in the beginning of the gym.Env.step method.
+        This method contains the logic for setting the environment action.
+        It is called in the beginning of the :py:meth:`gym.Env.step` method.
 
         Args:
             action: The action to set.
 
-        Returns:
-            True if successful, False otherwise.
+        Raises:
+            RuntimeError: In case of failure.
         """
 
     @abc.abstractmethod
@@ -123,8 +155,12 @@ class Task(gym.Env, abc.ABC):
         """
         Return the task observation.
 
-        This method contains the logic of constructing the environment observation.
-        It is called in the end of both gym.Env.reset and gym.Env.step methods.
+        This method contains the logic for constructing the environment observation.
+        It is called in the end of both :py:meth:`gym.Env.reset` and
+        :py:meth:`gym.Env.step` methods.
+
+        Raises:
+            RuntimeError: In case of failure.
 
         Returns:
             The task observation.
@@ -135,8 +171,11 @@ class Task(gym.Env, abc.ABC):
         """
         Return the task reward.
 
-        This method contains the logic of computing the environment reward.
-        It is called in the end of the gym.Env.step method.
+        This method contains the logic for computing the environment reward.
+        It is called in the end of the :py:meth:`gym.Env.step` method.
+
+        Raises:
+            RuntimeError: In case of failure.
 
         Returns:
             The scalar reward.
@@ -147,31 +186,32 @@ class Task(gym.Env, abc.ABC):
         """
         Returns the task termination flag.
 
-        This method contains the logic of computing when the environment is terminated.
-        Subsequent actions should be preceded by an environment reset.
-        It is called in the end of the gym.Env.step method.
+        This method contains the logic for defining when the environment has terminated.
+        Subsequent calls to :py:meth:`Task.set_action` should be preceded by a task
+        reset through :py:meth:`Task.reset_task`.
+
+        It is called in the end of the :py:meth:`gym.Env.step` method.
+
+        Raises:
+            RuntimeError: In case of failure.
 
         Returns:
             True if the environment terminated, False otherwise.
         """
 
-    # =================
-    # gym.Env INTERFACE
-    # =================
+    def seed_task(self, seed: int = None) -> SeedList:
+        """
+        Seed the task.
 
-    def step(self, action):
-        raise NotImplementedError
+        This method configures the :py:attr:`Task.np_random` RNG.
 
-    def reset(self,):
-        raise NotImplementedError
+        Args:
+            seed: The seed number.
 
-    def render(self, mode='human'):
-        raise NotImplementedError
+        Return:
+            The list of seeds used by the task.
+        """
 
-    def close(self):
-        raise NotImplementedError
-
-    def seed(self, seed: int = None) -> SeedList:
         # Create the seed if not passed
         self._seed = np.random.randint(2**32 - 1) if seed is None else seed
 
