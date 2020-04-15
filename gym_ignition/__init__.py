@@ -34,4 +34,5 @@ else:
         pass
 
 
-
+# Configure the verbosity depending on the selected CMAKE_BUILD_TYPE
+scenario_bindings.setVerbosity()
