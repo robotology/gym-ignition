@@ -8,6 +8,7 @@
 #include "scenario/gazebo/Model.h"
 #include "scenario/gazebo/utils.h"
 #include "scenario/gazebo/World.h"
+#include "scenario/plugins/gazebo/ECMSingleton.h"
 #include <cstdint>
 %}
 
@@ -65,3 +66,10 @@
 // GazeboSimulator
 %shared_ptr(scenario::gazebo::GazeboSimulator)
 %include "scenario/gazebo/GazeboSimulator.h"
+
+// ECMSingleton
+%ignore scenario::plugins::gazebo::ECMSingleton::clean;
+%ignore scenario::plugins::gazebo::ECMSingleton::getECM;
+%ignore scenario::plugins::gazebo::ECMSingleton::getEventManager;
+%ignore scenario::plugins::gazebo::ECMSingleton::storePtrs;
+%include "scenario/plugins/gazebo/ECMSingleton.h"
