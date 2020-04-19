@@ -7,6 +7,7 @@ import gym
 import numpy as np
 from typing import Tuple
 from gym_ignition.base import task
+from gym_ignition import scenario_bindings as bindings
 from gym_ignition.utils.typing import Action, Reward, Observation
 from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 
@@ -25,15 +26,17 @@ class CartPoleDiscreteBalancing(task.Task, abc.ABC):
         self.model_name = None
 
         # Space for resetting the task
-        self._reset_space = None
+        self.reset_space = None
 
         # Private attributes
-        self._force_mag = 20.0
+        self._force_mag = 20.0  # Nm
         self._reward_cart_at_center = reward_cart_at_center
 
         # Variables limits
-        self._x_threshold = 2.4
-        self._q_threshold = np.deg2rad(12)
+        self._x_threshold = 2.4  # m
+        self._dx_threshold = 20.0  # m /s
+        self._q_threshold = np.deg2rad(12)  # rad
+        self._dq_threshold = np.deg2rad(3 * 360)  # rad / s
 
     def create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
 
@@ -42,16 +45,16 @@ class CartPoleDiscreteBalancing(task.Task, abc.ABC):
 
         # Configure reset limits
         high = np.array([
-            self._x_threshold,         # x
-            np.finfo(np.float32).max,  # dx
-            self._q_threshold,         # q
-            np.finfo(np.float32).max   # dq
+            self._x_threshold,   # x
+            self._dx_threshold,  # dx
+            self._q_threshold,   # q
+            self._dq_threshold   # dq
         ])
 
         # Configure the reset space
-        self._reset_space = gym.spaces.Box(low=-high,
-                                           high=high,
-                                           dtype=np.float32)
+        self.reset_space = gym.spaces.Box(low=-high,
+                                          high=high,
+                                          dtype=np.float32)
 
         # Configure the observation space
         obs_high = high.copy() * 1.2
@@ -94,6 +97,7 @@ class CartPoleDiscreteBalancing(task.Task, abc.ABC):
         reward = 1.0 if not self.is_done() else 0.0
 
         if self._reward_cart_at_center:
+
             # Get the observation
             x, dx, _, _ = self.get_observation()
 
@@ -110,7 +114,7 @@ class CartPoleDiscreteBalancing(task.Task, abc.ABC):
         observation = self.get_observation()
 
         # The environment is done if the observation is outside its space
-        done = not self._reset_space.contains(observation)
+        done = not self.reset_space.contains(observation)
 
         return done
 
@@ -118,3 +122,23 @@ class CartPoleDiscreteBalancing(task.Task, abc.ABC):
 
         if self.model_name not in self.world.modelNames():
             raise RuntimeError("Cartpole model not found in the world")
+
+        # Get the model
+        model = self.world.getModel(self.model_name)
+
+        # Control the cart in force mode
+        linear = model.getJoint("linear")
+        ok_control_mode = linear.setControlMode(bindings.JointControlMode_Force)
+
+        if not ok_control_mode:
+            raise RuntimeError("Failed to change the control mode of the cartpole")
+
+        # Create a new cartpole state
+        x, dx, q, dq = self.np_random.uniform(low=-0.05, high=0.05, size=(4,))
+
+        # Reset the cartpole state
+        ok_reset_pos = model.resetJointPositions([x, q], ["linear", "pivot"])
+        ok_reset_vel = model.resetJointVelocities([dx, dq], ["linear", "pivot"])
+
+        if not ok_reset_pos and not ok_reset_vel:
+            raise RuntimeError("Failed to reset the cartpole state")

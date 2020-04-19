@@ -7,6 +7,7 @@ import gym
 import numpy as np
 from typing import Tuple
 from gym_ignition.base import task
+from gym_ignition import scenario_bindings as bindings
 from gym_ignition.utils.typing import Action, Observation, Reward
 from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 
@@ -102,3 +103,28 @@ class PendulumSwingUp(task.Task, abc.ABC):
 
         if self.model_name not in self.world.modelNames():
             raise RuntimeError("The cartpole model was not inserted in the world")
+
+        # Get the model
+        model = self.world.getModel(self.model_name)
+
+        # Control the pendulum in force mode
+        pivot = model.getJoint("pivot")
+        ok_control_mode = pivot.setControlMode(bindings.JointControlMode_Force)
+
+        if not ok_control_mode:
+            raise RuntimeError("Failed to change the control mode of the pendulum")
+
+        # Sample an observation
+        cos_q, sin_q, dq = self.observation_space.sample()
+
+        # Compute the angle
+        q = np.arctan2(sin_q, cos_q)
+
+        # Convert to float
+        q, dq = float(q), float(dq)
+
+        # Reset the pendulum state
+        ok_reset = pivot.reset(q, dq)
+
+        if not ok_reset:
+            raise RuntimeError("Failed to reset the pendulum state")
