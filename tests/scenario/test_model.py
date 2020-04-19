@@ -20,7 +20,8 @@ def get_model(gazebo: bindings.GazeboSimulator,
     world = gazebo.getWorld()
     # TODO: assert world
 
-    world.insertWorldPlugin("libPhysicsSystem.so", "scenario::plugins::gazebo::Physics")
+    assert world.insertWorldPlugin("libPhysicsSystem.so",
+                                   "scenario::plugins::gazebo::Physics")
 
     model_urdf = gym_ignition_models.get_model_file(gym_ignition_model_name)
     assert world.insertModel(model_urdf,

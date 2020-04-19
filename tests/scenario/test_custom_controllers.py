@@ -29,7 +29,8 @@ def test_computed_torque_fixed_base(gazebo: bindings.GazeboSimulator):
     world = gazebo.getWorld()
 
     # Insert the physics
-    world.insertWorldPlugin("libPhysicsSystem.so", "scenario::plugins::gazebo::Physics")
+    assert world.insertWorldPlugin("libPhysicsSystem.so",
+                                   "scenario::plugins::gazebo::Physics")
 
     # Get the panda urdf
     panda_urdf = gym_ignition_models.get_model_file("panda")
