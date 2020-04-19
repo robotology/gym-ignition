@@ -2,7 +2,9 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+import gym
 import warnings
+import contextlib
 from gym import logger
 from gym.utils import colorize
 from gym.logger import debug, info, error
@@ -73,3 +75,12 @@ def set_level(level: int) -> None:
         bindings.setVerbosity(1)
     else:
         raise Exception("Verbosity level not recognized")
+
+
+@contextlib.contextmanager
+def verbosity(level: int):
+
+    old_level = gym.logger.MIN_LEVEL
+    gym.logger.set_level(level=level)
+    yield None
+    gym.logger.set_level(old_level)
