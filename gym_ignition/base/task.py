@@ -57,8 +57,11 @@ class Task(abc.ABC):
         #: Use it for all the random resources.
         self.np_random: np.random.RandomState
 
+        #: The seed of the task
+        self.seed: int
+
         # Initialize the RNG and the seed
-        self.np_random, self._seed = seeding.np_random()
+        self.np_random, self.seed = seeding.np_random()
 
     # ==========
     # PROPERTIES
@@ -213,14 +216,14 @@ class Task(abc.ABC):
         """
 
         # Create the seed if not passed
-        self._seed = np.random.randint(2**32 - 1) if seed is None else seed
+        seed = np.random.randint(2**32 - 1) if seed is None else seed
 
         # Get an instance of the random number generator from gym utils.
         # This is necessary to have an independent rng for each environment.
-        self.np_random, new_seed = seeding.np_random(self._seed)
+        self.np_random, self.seed = seeding.np_random(seed)
 
         # Seed the spaces
-        self.action_space.seed(new_seed)
-        self.observation_space.seed(new_seed)
+        self.action_space.seed(self.seed)
+        self.observation_space.seed(self.seed)
 
-        return SeedList([new_seed])
+        return SeedList([self.seed])
