@@ -4,9 +4,9 @@
 
 import pytest
 import numpy as np
-from . import utils
+from .. import utils
 import gym_ignition_models
-from .utils import gazebo_fixture as gazebo
+from ..utils import gazebo_fixture as gazebo
 from gym_ignition import scenario_bindings as bindings
 from gym_ignition.controllers.gazebo import computed_torque_fixed_base as context
 

@@ -3,8 +3,8 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
-from . import utils
-from .utils import gazebo_fixture as gazebo
+from .. import utils
+from ..utils import gazebo_fixture as gazebo
 from gym_ignition import scenario_bindings as bindings
 
 # Set the verbosity
@@ -32,7 +32,7 @@ def test_load_default_world(gazebo: bindings.GazeboSimulator):
 def test_load_default_world_from_file(gazebo: bindings.GazeboSimulator):
 
     empty_world_sdf = utils.get_empty_world_sdf()
-    print(empty_world_sdf)
+
     assert gazebo.insertWorldFromSDF(empty_world_sdf)
 
     assert gazebo.initialize()

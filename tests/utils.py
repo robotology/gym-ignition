@@ -3,8 +3,8 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
-import tempfile
 from typing import Tuple
+from gym_ignition.utils import misc
 from gym_ignition import scenario_bindings as bindings
 
 
@@ -15,6 +15,29 @@ def id_gazebo_fn(val: Tuple[float, float, float]):
 
 @pytest.fixture(scope="function")
 def gazebo_fixture(request):
+    """
+    Return an instance of the GazeboSimulator ensuring that it
+    is closed even in case of failure.
+
+    Example:
+
+        @pytest.mark.parametrize("gazebo", [(0.001, 1.0, 1)], indirect=True)
+        def test_foo(gazebo: bindings.GazeboSimulator):
+
+            assert gazebo.initialize()
+            ...
+
+        @pytest.mark.parametrize("gazebo, name",
+                                 [((0.001, 1.0, 1), "name_1"),
+                                  ((0.001, 1.0, 1), "name_2"),
+                                  ((0.001, 1.0, 1), "name_3")],
+                                  indirect="gazebo")
+        def test_foo(gazebo: bindings.GazeboSimulator, name: str):
+
+            model_name = name
+            assert gazebo.initialize()
+            ...
+    """
 
     step_size, rtf, iterations = request.param
     gazebo = bindings.GazeboSimulator(step_size, rtf, iterations)
@@ -35,11 +58,7 @@ def get_multi_world_sdf_file() -> str:
         </world>
     </sdf>"""
 
-    handle, multi_world_sdf = tempfile.mkstemp()
-
-    with open(handle, 'w') as f:
-        f.write(multi_world_sdf_string)
-
+    multi_world_sdf = misc.string_to_file(multi_world_sdf_string)
     return multi_world_sdf
 
 
@@ -76,10 +95,7 @@ def get_cube_urdf_string() -> str:
 
 def get_cube_urdf() -> str:
 
-    handle, model_file = tempfile.mkstemp()
-    with open(handle, 'w') as f:
-        f.write(get_cube_urdf_string())
-
+    model_file = misc.string_to_file(get_cube_urdf_string())
     return model_file
 
 
@@ -87,9 +103,5 @@ def get_empty_world_sdf() -> str:
 
     world_sdf_string = bindings.getEmptyWorld()
 
-    handle, world_file = tempfile.mkstemp()
-
-    with open(handle, 'w') as f:
-        f.write(world_sdf_string)
-
+    world_file = misc.string_to_file(world_sdf_string)
     return world_file

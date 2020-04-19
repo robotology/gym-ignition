@@ -3,9 +3,9 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
-from . import utils
+from .. import utils
 import gym_ignition_models
-from .utils import gazebo_fixture as gazebo
+from ..utils import gazebo_fixture as gazebo
 from gym_ignition import scenario_bindings as bindings
 
 # Set the verbosity
