@@ -3,6 +3,8 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+pytestmark = pytest.mark.scenario
+
 from .. import utils
 import gym_ignition_models
 from ..utils import gazebo_fixture as gazebo
