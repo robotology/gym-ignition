@@ -65,15 +65,27 @@ jobs:
 
       - name: Python Tests [ScenarI/O]
         run: |
-          cd tests/scenario
-          pytest -v
+          cd tests
+          pytest -m "scenario"
 
       - name: Python Tests with Valgrind [ScenarI/O]
         if: failure()
         run: |
           pip3 install colour-valgrind
-          cd tests/scenario
-          valgrind --log-file=/tmp/valgrind.log pytest -v -s || colour-valgrind -t /tmp/valgrind.log
+          cd tests
+          valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
+
+      - name: Python Tests [gym_ignition]
+        run: |
+          cd tests
+          pytest -m "gym_ignition"
+
+      - name: Python Tests with Valgrind [gym_ignition]
+        if: failure()
+        run: |
+          pip3 install colour-valgrind
+          cd tests
+          valgrind --log-file=/tmp/valgrind.log pytest -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
 
   user:
     name: User installation
@@ -112,12 +124,24 @@ jobs:
 
       - name: Python Tests [ScenarI/O]
         run: |
-          cd tests/scenario
-          pytest -v
+          cd tests
+          pytest -m "scenario"
 
       - name: Python Tests with Valgrind [ScenarI/O]
         if: failure()
         run: |
           pip3 install colour-valgrind
-          cd tests/scenario
-          valgrind --log-file=/tmp/valgrind.log pytest -v -s || colour-valgrind -t /tmp/valgrind.log
+          cd tests
+          valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
+
+      - name: Python Tests [gym_ignition]
+        run: |
+          cd tests
+          pytest -m "gym_ignition"
+
+      - name: Python Tests with Valgrind [gym_ignition]
+        if: failure()
+        run: |
+          pip3 install colour-valgrind
+          cd tests
+          valgrind --log-file=/tmp/valgrind.log pytest -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
