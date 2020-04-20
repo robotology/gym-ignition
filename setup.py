@@ -146,7 +146,6 @@ setup(
     install_requires=[
         'gym >= 0.13.1',
         'numpy',
-        'pybullet',
         'gym_ignition_models',
     ],
     packages=find_packages(),
