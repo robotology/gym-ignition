@@ -148,7 +148,8 @@ setup(
         'numpy',
         'gym_ignition_models',
     ],
-    packages=find_packages(),
+    packages=find_packages("python"),
+    package_dir={'': "python"},
     ext_modules=[CMakeExtension(name='InstallAllTargets', cmake_configuration='PyPI')],
     cmdclass={
         'build_ext': BuildExtension,
