@@ -162,6 +162,24 @@ namespace scenario {
              *         installed in Developer mode, an empty string otherwise.
              */
             std::string getInstallPrefix();
+
+            /**
+             * Convert a URDF file to a SDF string.
+             *
+             * @param urdfFile The absolute path to the URDF file.
+             * @return The SDF string if the file exists and it was successfully
+             *         converted, an empty string otherwise.
+             */
+            std::string URDFFileToSDFString(const std::string& urdfFile);
+
+            /**
+             * Convert a URDF string to a SDF string.
+             *
+             * @param urdfFile A URDF string.
+             * @return The SDF string if the URDF string was successfully
+             *         converted, an empty string otherwise.
+             */
+            std::string URDFStringToSDFString(const std::string& urdfString);
         } // namespace utils
     } // namespace gazebo
 } // namespace scenario
