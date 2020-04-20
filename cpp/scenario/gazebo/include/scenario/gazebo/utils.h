@@ -38,18 +38,129 @@
 namespace scenario {
     namespace gazebo {
         namespace utils {
+            /**
+             * Set the verbosity process-wise.
+             *
+             * Accepted levels are the following:
+             *
+             * - ``<= 0``: No messages.
+             * - ``1``: Error messages.
+             * - ``2``: Error and warning messages.
+             * - ``3``: Error, warning, and info messages.
+             * - ``>= 4``: Error, warning, info, and debug messages.
+             *
+             * If called without specifying the level, it will use
+             * level 2 or level 4 depending if the project was compiled
+             * respectively with Release or Debug flags.
+             *
+             * @param level The verbosity level.
+             */
             void setVerbosity(const int level = DEFAULT_VERBOSITY);
+
+            /**
+             * Find a SDF file in the filesystem.
+             *
+             * The search path is defined with the ``IGN_GAZEBO_RESOURCE_PATH``
+             * environment variable.
+             *
+             * @param fileName The SDF file name.
+             * @return The absolute path to the file if found, an empty string
+             *         otherwise.
+             */
             std::string findSdfFile(const std::string& fileName);
+
+            /**
+             * Check if a SDF string is valid.
+             *
+             * An SDF string could contain for instance an SDF model or
+             * an SDF world, and it is valid if it can be parsed successfully
+             * by the SDFormat library.
+             *
+             * @param sdfString The SDF string to check.
+             * @return True if the SDF string is valid, false otherwise.
+             */
             bool sdfStringValid(const std::string& sdfString);
+
+            /**
+             * Get an SDF string from a SDF file.
+             *
+             * @param fileName An SDF file. It could be either an absolute path
+             *        to the file or the file name if the parent folder is part
+             *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
+             * @return The SDF string if the file was found and is valid, an
+             *         empty string otherwise.
+             */
             std::string getSdfString(const std::string& fileName);
+
+            /**
+             * Get the name of a model from a SDF file.
+             *
+             * @param fileName An SDF file. It could be either an absolute path
+             *        to the file or the file name if the parent folder is part
+             *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
+             * @param modelIndex The index of the model in the SDF file. By
+             *        default it finds the first model.
+             * @return The name of the model.
+             */
             std::string getModelNameFromSdf(const std::string& fileName,
                                             const size_t modelIndex = 0);
+
+            /**
+             * Get the name of a world from a SDF file.
+             *
+             * @param fileName An SDF file. It could be either an absolute path
+             *        to the file or the file name if the parent folder is part
+             *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
+             * @param worldIndex The index of the world in the SDF file. By
+             *        default it finds the first world.
+             * @return The name of the world.
+             */
             std::string getWorldNameFromSdf(const std::string& fileName,
                                             const size_t worldIndex = 0);
+
+            /**
+             * Return a SDF string with an empty world.
+             *
+             * An empty world only has a sun and the default DART
+             * physics profile enabled.
+             *
+             * @note The empty world does not have any ground plane.
+             *
+             * @return A SDF string with the empty world.
+             */
             std::string getEmptyWorld();
+
+            /**
+             * Get a SDF model file from a Fuel URI.
+             *
+             * A valid URI has the following form:
+             *
+             * ``https://fuel.ignitionrobotics.org/openrobotics/models/model_name``
+             *
+             * @param URI A valid Fuel URI.
+             * @param useCache Load the model from the local cache.
+             * @return The absolute path to the SDF model.
+             */
             std::string getModelFileFromFuel(const std::string& URI,
                                              const bool useCache = false);
+
+            /**
+             * Generate a random alpha numeric string.
+             *
+             * @param length The length of the string.
+             * @return The random string.
+             */
             std::string getRandomString(const size_t length);
+
+            /**
+             * Get the install prefix used by the CMake project.
+             *
+             * @note It is defined only if the project is installed in
+             *       Developer mode.
+             *
+             * @return A string with the install prefix if the project is
+             *         installed in Developer mode, an empty string otherwise.
+             */
             std::string getInstallPrefix();
         } // namespace utils
     } // namespace gazebo
