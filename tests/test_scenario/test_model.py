@@ -3,9 +3,11 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
-from . import utils
+pytestmark = pytest.mark.scenario
+
+from ..common import utils
 import gym_ignition_models
-from .utils import gazebo_fixture as gazebo
+from ..common.utils import gazebo_fixture as gazebo
 from gym_ignition import scenario_bindings as bindings
 
 # Set the verbosity
@@ -18,7 +20,8 @@ def get_model(gazebo: bindings.GazeboSimulator,
     world = gazebo.getWorld()
     # TODO: assert world
 
-    world.insertWorldPlugin("libPhysicsSystem.so", "scenario::plugins::gazebo::Physics")
+    assert world.insertWorldPlugin("libPhysicsSystem.so",
+                                   "scenario::plugins::gazebo::Physics")
 
     model_urdf = gym_ignition_models.get_model_file(gym_ignition_model_name)
     assert world.insertModel(model_urdf,

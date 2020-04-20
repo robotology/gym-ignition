@@ -3,8 +3,10 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
-from . import utils
-from .utils import gazebo_fixture as gazebo
+pytestmark = pytest.mark.scenario
+
+from ..common import utils
+from ..common.utils import gazebo_fixture as gazebo
 from gym_ignition import scenario_bindings as bindings
 
 # Set the verbosity
@@ -32,7 +34,7 @@ def test_load_default_world(gazebo: bindings.GazeboSimulator):
 def test_load_default_world_from_file(gazebo: bindings.GazeboSimulator):
 
     empty_world_sdf = utils.get_empty_world_sdf()
-    print(empty_world_sdf)
+
     assert gazebo.insertWorldFromSDF(empty_world_sdf)
 
     assert gazebo.initialize()
@@ -162,7 +164,8 @@ def test_world_physics_plugin(gazebo: bindings.GazeboSimulator):
     assert world.time() == 0
 
     # Insert the Physics system
-    world.insertWorldPlugin("libPhysicsSystem.so", "scenario::plugins::gazebo::Physics")
+    assert world.insertWorldPlugin("libPhysicsSystem.so",
+                                   "scenario::plugins::gazebo::Physics")
 
     # After the first step, the physics catches up with time
     gazebo.run()
@@ -191,7 +194,8 @@ def test_sim_time_starts_from_zero(gazebo: bindings.GazeboSimulator):
     dt = gazebo.stepSize()
 
     assert world.time() == 0
-    world.insertWorldPlugin("libPhysicsSystem.so", "scenario::plugins::gazebo::Physics")
+    assert world.insertWorldPlugin("libPhysicsSystem.so",
+                                   "scenario::plugins::gazebo::Physics")
     assert world.time() == 0
 
     gazebo.run(paused=True)

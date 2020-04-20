@@ -52,10 +52,10 @@ jobs:
           cd dist
           pip install *.tar.gz
 
-      - name: Python Tests [ScenarI/O]
+      - name: Python Tests
         run: |
-          cd tests/scenario
-          pytest -v
+          cd tests
+          pytest
 
   # ========================
   # TEST BDIST_WHEEL PACKAGE
@@ -114,8 +114,8 @@ jobs:
       - name: Install bdist
         run: docker exec -i -w /dist test sh -c 'pip install *.whl'
 
-      - name: Python Tests [ScenarI/O]
-        run: docker exec -i -w /tests/scenario test sh -c 'pytest -v'
+      - name: Python Tests
+        run: docker exec -i -w /tests/scenario test sh -c 'pytest'
 
   # =============
   # PUSH PACKAGES

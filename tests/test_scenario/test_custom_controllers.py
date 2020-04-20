@@ -3,10 +3,12 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+pytestmark = pytest.mark.scenario
+
 import numpy as np
-from . import utils
 import gym_ignition_models
-from .utils import gazebo_fixture as gazebo
+from ..common import utils
+from ..common.utils import gazebo_fixture as gazebo
 from gym_ignition import scenario_bindings as bindings
 from gym_ignition.controllers.gazebo import computed_torque_fixed_base as context
 
@@ -27,7 +29,8 @@ def test_computed_torque_fixed_base(gazebo: bindings.GazeboSimulator):
     world = gazebo.getWorld()
 
     # Insert the physics
-    world.insertWorldPlugin("libPhysicsSystem.so", "scenario::plugins::gazebo::Physics")
+    assert world.insertWorldPlugin("libPhysicsSystem.so",
+                                   "scenario::plugins::gazebo::Physics")
 
     # Get the panda urdf
     panda_urdf = gym_ignition_models.get_model_file("panda")
