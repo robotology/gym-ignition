@@ -38,7 +38,7 @@
 
 namespace scenario {
     namespace base {
-        struct ContactData;
+        struct Contact;
         enum class JointControlMode;
     } // namespace base
     namespace gazebo {
@@ -113,7 +113,7 @@ public:
 
     std::vector<std::string> linksInContact() const;
 
-    std::vector<base::ContactData>
+    std::vector<base::Contact>
     contacts(const std::vector<std::string>& linkNames = {}) const;
 
     // ==================

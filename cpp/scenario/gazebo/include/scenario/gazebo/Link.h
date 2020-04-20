@@ -40,7 +40,8 @@
 namespace scenario {
     namespace base {
         struct Pose;
-        struct ContactData;
+        struct Contact;
+        struct ContactPoint;
     } // namespace base
     namespace gazebo {
         class Link;
@@ -86,7 +87,8 @@ public:
     bool enableContactDetection(const bool enable);
 
     bool inContact() const;
-    std::vector<scenario::base::ContactData> contactData() const;
+    std::vector<base::Contact> contacts() const;
+    std::array<double, 6> contactWrench() const;
 
     bool applyWorldForce(const std::array<double, 3>& force,
                          const double duration = 0.0);
@@ -127,14 +129,20 @@ struct scenario::base::Pose
     std::array<double, 4> orientation = {1, 0, 0, 0};
 };
 
-struct scenario::base::ContactData
+struct scenario::base::ContactPoint
+{
+    double depth;
+    std::array<double, 3> force;
+    std::array<double, 3> torque;
+    std::array<double, 3> normal;
+    std::array<double, 3> position;
+};
+
+struct scenario::base::Contact
 {
     std::string bodyA;
     std::string bodyB;
-    std::array<double, 3> depth;
-    std::array<double, 6> wrench;
-    std::array<double, 3> normal;
-    std::array<double, 3> position;
+    std::vector<ContactPoint> points;
 };
 
 #endif // SCENARIO_GAZEBO_LINK_H

@@ -487,16 +487,16 @@ std::vector<std::string> Model::linksInContact() const
     return linksInContact;
 }
 
-std::vector<scenario::base::ContactData>
+std::vector<scenario::base::Contact>
 Model::contacts(const std::vector<std::string>& linkNames) const
 {
     std::vector<std::string> linkSerialization =
         linkNames.empty() ? this->linkNames() : linkNames;
 
-    std::vector<scenario::base::ContactData> allContacts;
+    std::vector<scenario::base::Contact> allContacts;
 
     for (const auto& linkName : linkSerialization) {
-        auto contacts = this->getLink(linkName)->contactData();
+        auto contacts = this->getLink(linkName)->contacts();
         std::move(contacts.begin(), //
                   contacts.end(),
                   std::back_inserter(allContacts));
