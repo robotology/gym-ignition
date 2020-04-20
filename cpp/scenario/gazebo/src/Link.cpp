@@ -395,10 +395,10 @@ bool Link::enableContactDetection(const bool enable)
 
 bool Link::inContact() const
 {
-    return this->contactData().empty() ? false : true;
+    return this->contacts().empty() ? false : true;
 }
 
-std::vector<scenario::base::ContactData> Link::contactData() const
+std::vector<scenario::base::Contact> Link::contacts() const
 {
     std::vector<ignition::gazebo::Entity> collisionEntities;
 
@@ -411,7 +411,7 @@ std::vector<scenario::base::ContactData> Link::contactData() const
             ignition::gazebo::components::ContactSensorData*,
             ignition::gazebo::components::ParentEntity* parentEntityComponent)
             -> bool {
-            // Keep only the collision of this link
+            // Keep only the collisions of this link
             if (parentEntityComponent->Data() != pImpl->linkEntity) {
                 return true;
             }
@@ -424,27 +424,100 @@ std::vector<scenario::base::ContactData> Link::contactData() const
         return {};
     }
 
-    std::vector<base::ContactData> linkAllContacts;
+    using BodyNameA = std::string;
+    using BodyNameB = std::string;
+    using CollisionsInContact = std::pair<BodyNameA, BodyNameB>;
+    auto contactsMap = std::map<CollisionsInContact, base::Contact>();
 
     for (const auto collisionEntity : collisionEntities) {
 
         // Get the contact data for the selected collision entity
-        ignition::msgs::Contacts contactSensorData =
+        const ignition::msgs::Contacts& contactSensorData =
             utils::getExistingComponentData< //
                 ignition::gazebo::components::ContactSensorData>(
                 pImpl->ecm, collisionEntity);
 
         // Convert the ignition msg
-        std::vector<base::ContactData> collisionContacts =
+        std::vector<base::Contact> collisionContacts =
             utils::fromIgnitionContactsMsgs(pImpl->ecm, contactSensorData);
+        //        assert(collisionContacts.size() <= 1);
 
-        // Insert the collision contact data to the link's buffer
-        linkAllContacts.insert(linkAllContacts.end(),
-                               collisionContacts.begin(),
-                               collisionContacts.end());
+        for (const auto& contact : collisionContacts) {
+
+            assert(!contact.bodyA.empty());
+            assert(!contact.bodyB.empty());
+
+            auto key = std::make_pair(contact.bodyA, contact.bodyB);
+
+            if (contactsMap.find(key) != contactsMap.end()) {
+                contactsMap.at(key).points.insert(
+                    contactsMap.at(key).points.end(),
+                    contact.points.begin(),
+                    contact.points.end());
+            }
+            else {
+                contactsMap[key] = contact;
+            }
+        }
     }
 
-    return linkAllContacts;
+    // Move data from the map to the output vector
+    std::vector<base::Contact> allContacts;
+    allContacts.reserve(contactsMap.size());
+
+    for (auto& [_, contact] : contactsMap) {
+        allContacts.push_back(std::move(contact));
+    }
+
+    return allContacts;
+}
+
+std::array<double, 6> Link::contactWrench() const
+{
+    auto totalForce = ignition::math::Vector3d::Zero;
+    auto totalTorque = ignition::math::Vector3d::Zero;
+
+    const auto& contacts = this->contacts();
+
+    for (const auto& contact : contacts) {
+        // Each contact wrench is expressed with respect to the contact point
+        // and with the orientation of the world frame. We need to translate it
+        // to the link frame.
+
+        for (const auto& contactPoint : contact.points) {
+            // The contact points extracted from the physics do not have torque
+            constexpr std::array<double, 3> zero = {0, 0, 0};
+            assert(contactPoint.torque == zero);
+
+            // Link position
+            const auto& o_L = utils::toIgnitionVector3(this->position());
+
+            // Contact position
+            const auto& o_P = utils::toIgnitionVector3(contactPoint.position);
+
+            // Relative position
+            const auto L_o_P = o_P - o_L;
+
+            // The contact force and the total link force are both expressed
+            // with the orientation of the world frame. This simplifies the
+            // conversion since we have to take into account only the
+            // displacement.
+            auto force = utils::toIgnitionVector3(contactPoint.force);
+
+            // The force does not have to be changed
+            totalForce += force;
+
+            // There is however a torque that balances out the resulting moment
+            totalTorque += L_o_P.Cross(force);
+        }
+    }
+
+    return {totalForce[0],
+            totalForce[1],
+            totalForce[2],
+            totalTorque[0],
+            totalTorque[1],
+            totalTorque[2]};
 }
 
 bool Link::applyWorldForce(const std::array<double, 3>& force,
