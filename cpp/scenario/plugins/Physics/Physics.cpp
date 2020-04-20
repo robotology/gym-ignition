@@ -1313,30 +1313,52 @@ void Physics::Impl::UpdateCollisions(EntityComponentManager& _ecm) const
     // available
     auto worldPhys = this->entityWorldMap.at(worldEntity);
 
-    // Each contact object we get from ign-physics contains the EntityPtrs of the
-    // two colliding entities and other data about the contact such as the
+    // Struct containing pointer of contact data
+    struct AllContactData
+    {
+        const WorldType::ContactPoint* point;
+        const WorldType::ExtraContactData* extra;
+    };
+
+    // Each contact object we get from ign-physics contains the EntityPtrs of
+    // the two colliding entities and other data about the contact such as the
     // position. This map groups contacts so that it is easy to query all the
     // contacts of one entity.
-    using EntityContactMap = std::unordered_map<Entity, std::deque<const WorldType::ContactPoint*>>;
+    using EntityContactMap = std::unordered_map<Entity, std::deque<AllContactData>>;
 
-    // This data structure is essentially a mapping between a pair of entities and
-    // a list of pointers to their contact object. We use a map inside a map to
-    // create msgs::Contact objects conveniently later on.
+    // This data structure is essentially a mapping between a pair of entities
+    // and a list of pointers to their contact object. We use a map inside a map
+    // to create msgs::Contact objects conveniently later on.
     std::unordered_map<Entity, EntityContactMap> entityContactMap;
 
     // Note that we are temporarily storing pointers to elements in this
-    // ("allContacts") container. Thus, we must make sure it doesn't get destroyed
-    // until the end of this function.
+    // ("allContacts") container. Thus, we must make sure it doesn't get
+    // destroyed until the end of this function.
     auto allContacts = worldPhys->GetContactsFromLastStep();
     for (const auto& contactComposite : allContacts) {
+        // Get the RequireData
         const auto& contact = contactComposite.Get<WorldType::ContactPoint>();
         auto coll1It = this->collisionEntityMap.find(contact.collision1);
         auto coll2It = this->collisionEntityMap.find(contact.collision2);
 
+        // Check the ExpectData
+        const auto* extraContactData = contactComposite.Query<WorldType::ExtraContactData>();
+
         if ((coll1It != this->collisionEntityMap.end())
             && (coll2It != this->collisionEntityMap.end())) {
-            entityContactMap[coll1It->second][coll2It->second].push_back(&contact);
-            entityContactMap[coll2It->second][coll1It->second].push_back(&contact);
+
+            AllContactData allContactData;
+            allContactData.point = &contact;
+
+            if (extraContactData) {
+                allContactData.extra = extraContactData;
+            }
+
+            // Note that the ExtraContactData is valid only when the first
+            // collision is the first body. Quantities like the force and the
+            // normal must be flipped in the second case.
+            entityContactMap[coll1It->second][coll2It->second].push_back(allContactData);
+            entityContactMap[coll2It->second][coll1It->second].push_back(allContactData);
         }
     }
 
@@ -1358,14 +1380,71 @@ void Physics::Impl::UpdateCollisions(EntityComponentManager& _ecm) const
             msgs::Contacts contactsComp;
 
             for (const auto& [collEntity2, contactData] : contactMap) {
+
                 msgs::Contact* contactMsg = contactsComp.add_contact();
                 contactMsg->mutable_collision1()->set_id(_collEntity1);
                 contactMsg->mutable_collision2()->set_id(collEntity2);
+
                 for (const auto& contact : contactData) {
                     auto* position = contactMsg->add_position();
-                    position->set_x(contact->point.x());
-                    position->set_y(contact->point.y());
-                    position->set_z(contact->point.z());
+                    position->set_x(contact.point->point.x());
+                    position->set_y(contact.point->point.y());
+                    position->set_z(contact.point->point.z());
+
+                    if (contact.extra) {
+                        // Add the penetration depth
+                        contactMsg->add_depth(contact.extra->depth);
+
+                        // Get the name of the collisions
+                        auto collisionName1 =
+                            _ecm.Component<components::Name>(_collEntity1)->Data();
+                        auto collisionName2 = _ecm.Component<components::Name>(collEntity2)->Data();
+
+                        // Add the wrench (only the force component)
+                        auto* wrench = contactMsg->add_wrench();
+                        wrench->set_body_1_name(collisionName1);
+                        wrench->set_body_2_name(collisionName2);
+                        auto* wrench1 = wrench->mutable_body_1_wrench();
+                        auto* wrench2 = wrench->mutable_body_2_wrench();
+
+                        auto* force1 = wrench1->mutable_force();
+                        auto* force2 = wrench2->mutable_force();
+                        auto* torque1 = wrench1->mutable_torque();
+                        auto* torque2 = wrench2->mutable_torque();
+
+                        // The same ContactPoint and ExtraContactData are used
+                        // for the contact between collision1 and collision2. In
+                        // those structures there is some data, like the force
+                        // and normal, that cannot commute.
+                        if (_collEntity1
+                            == this->collisionEntityMap.at(contact.point->collision1)) {
+                            assert(collEntity2
+                                   == this->collisionEntityMap.at(contact.point->collision2));
+                            // Use the data as it is
+                            *force1 = msgs::Convert(math::eigen3::convert(contact.extra->force));
+                            *force2 = msgs::Convert(-math::eigen3::convert(contact.extra->force));
+                            // Add the wrench normal
+                            auto* normal = contactMsg->add_normal();
+                            normal->set_x(contact.extra->normal.x());
+                            normal->set_y(contact.extra->normal.y());
+                            normal->set_z(contact.extra->normal.z());
+                        }
+                        else {
+                            assert(collEntity2
+                                   == this->collisionEntityMap.at(contact.point->collision1));
+                            // Flip the force
+                            *force1 = msgs::Convert(-math::eigen3::convert(contact.extra->force));
+                            *force2 = msgs::Convert(math::eigen3::convert(contact.extra->force));
+                            // Flip the normal
+                            auto* normal = contactMsg->add_normal();
+                            normal->set_x(-contact.extra->normal.x());
+                            normal->set_y(-contact.extra->normal.y());
+                            normal->set_z(-contact.extra->normal.z());
+                        }
+
+                        *torque1 = msgs::Convert(math::Vector3d::Zero);
+                        *torque2 = msgs::Convert(math::Vector3d::Zero);
+                    }
                 }
             }
             *_contacts = components::ContactSensorData(contactsComp);
