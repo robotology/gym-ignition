@@ -4,8 +4,5 @@
 
 # Abstract classes
 from . import task
-from . import robot
 from . import runtime
 
-# Base C++ environment
-from . import gympp_env

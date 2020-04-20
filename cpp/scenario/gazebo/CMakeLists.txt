@@ -94,6 +94,11 @@ target_link_libraries(ScenarioGazebo
 set_target_properties(ScenarioGazebo PROPERTIES
     PUBLIC_HEADER "${SCENARIO_PUBLIC_HDRS}")
 
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    target_compile_options(ScenarioGazebo PRIVATE
+        -DGYMIGNITION_CMAKE_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
+endif()
+
 # ===============
 # GazeboSimulator
 # ===============

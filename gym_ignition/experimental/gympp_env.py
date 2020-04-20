@@ -69,7 +69,7 @@ class GymppEnv(gym.Env):
         return self._env
 
     @property
-    def gazebo(self) -> bindings.GazeboWrapper:
+    def gazebo(self) -> bindings.GazeboSimulator:
         return bindings.envToGazeboWrapper(self.gympp_env)
 
     @property
