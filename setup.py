@@ -147,6 +147,7 @@ setup(
         'gym >= 0.13.1',
         'numpy',
         'gym_ignition_models',
+        'lxml',
     ],
     packages=find_packages("python"),
     package_dir={'': "python"},
