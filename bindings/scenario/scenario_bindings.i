@@ -45,7 +45,8 @@
 %shared_ptr(scenario::gazebo::Link)
 %shared_ptr(scenario::gazebo::Model)
 %shared_ptr(scenario::gazebo::World)
-%template(Vector_contact) std::vector<scenario::base::ContactData>;
+%template(Vector_contact) std::vector<scenario::base::Contact>;
+%template(Vector_contact_point) std::vector<scenario::base::ContactPoint>;
 
 // Ignored methods
 %ignore scenario::gazebo::Joint::initialize;
