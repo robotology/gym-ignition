@@ -5,3 +5,5 @@
 from . import base
 from . import model
 from . import physics
+
+from . import gazebo_env_randomizer
