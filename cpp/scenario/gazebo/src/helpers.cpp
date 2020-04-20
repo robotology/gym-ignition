@@ -158,9 +158,9 @@ ignition::math::Pose3d utils::toIgnitionPose(const scenario::base::Pose& pose)
     return ignitionPose;
 }
 
-std::vector<scenario::base::ContactData>
-utils::fromIgnitionContactsMsgs(ignition::gazebo::EntityComponentManager* ecm,
-                                const ignition::msgs::Contacts& contactsMsg)
+scenario::base::Contact
+utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
+                               const ignition::msgs::Contact& contactMsg)
 {
     auto getEntityName =
         [&](const ignition::gazebo::Entity entity) -> std::string {
@@ -170,43 +170,77 @@ utils::fromIgnitionContactsMsgs(ignition::gazebo::EntityComponentManager* ecm,
         return nameComponent->Data();
     };
 
-    std::vector<base::ContactData> contacts;
+    // Get the names of the links in contact following:
+    // collision entity -> collision link -> link name
+    auto collisionEntityA = contactMsg.collision1().id();
+    auto collisionEntityB = contactMsg.collision2().id();
 
-    for (int i = 0; i < contactsMsg.contact_size(); ++i) {
-        // Extract the contact object
-        const ignition::msgs::Contact& contactData = contactsMsg.contact(i);
+    auto linkEntityA = ecm->ParentEntity(collisionEntityA);
+    auto linkEntityB = ecm->ParentEntity(collisionEntityB);
+    std::string linkNameA = getEntityName(linkEntityA);
+    std::string linkNameB = getEntityName(linkEntityB);
 
-        auto collisionEntityA = contactData.collision1().id();
-        auto collisionEntityB = contactData.collision2().id();
+    // Return the link names scoped with the model name
+    auto modelEntityA = ecm->ParentEntity(linkEntityA);
+    auto modelEntityB = ecm->ParentEntity(linkEntityB);
+    std::string modelNameA = getEntityName(modelEntityA);
+    std::string modelNameB = getEntityName(modelEntityB);
 
-        auto linkEntityA = ecm->ParentEntity(collisionEntityA);
-        auto linkEntityB = ecm->ParentEntity(collisionEntityB);
-        std::string linkNameA = getEntityName(linkEntityA);
-        std::string linkNameB = getEntityName(linkEntityB);
+    std::string scopedBodyA = modelNameA + "::" + linkNameA;
+    std::string scopedBodyB = modelNameB + "::" + linkNameB;
 
-        auto modelEntityA = ecm->ParentEntity(linkEntityA);
-        auto modelEntityB = ecm->ParentEntity(linkEntityB);
-        std::string modelNameA = getEntityName(modelEntityA);
-        std::string modelNameB = getEntityName(modelEntityB);
+    // Returned data structure
+    scenario::base::Contact contact;
+    contact.bodyA = scopedBodyA;
+    contact.bodyB = scopedBodyB;
 
-        std::string scopedBodyA = modelNameA + "::" + linkNameA;
-        std::string scopedBodyB = modelNameB + "::" + linkNameB;
+    // Dimensions of contact points data must match
+    auto numOfDepths = contactMsg.depth_size();
+    auto numOfNormals = contactMsg.normal_size();
+    auto numOfWrenches = contactMsg.wrench_size();
+    auto numOfPositions = contactMsg.position_size();
 
-        // Fill the contact data
-        base::ContactData contact;
-        contact.bodyA = scopedBodyA;
-        contact.bodyB = scopedBodyB;
-        contact.position[0] = contactData.position(i).x();
-        contact.position[1] = contactData.position(i).y();
-        contact.position[2] = contactData.position(i).z();
+    int numOfPoints = numOfDepths;
+    assert(numOfPoints == numOfNormals);
+    assert(numOfPoints == numOfWrenches);
+    assert(numOfPoints == numOfPositions);
 
-        // TODO: fill the normal, contacty depth, wrench magnitude
-        assert(contactData.depth_size() == 0);
-        assert(contactData.normal_size() == 0);
-        assert(contactData.wrench_size() == 0);
+    auto fromIgnMsg =
+        [](const ignition::msgs::Vector3d& vec) -> std::array<double, 3> {
+        return {vec.x(), vec.y(), vec.z()};
+    };
 
-        // Add the new contact data to the contacts vector
-        contacts.push_back(contact);
+    // Get all the contact points data
+    for (int pointIdx = 0; pointIdx < numOfPoints; ++pointIdx) {
+        // Create a contact point
+        scenario::base::ContactPoint contactPoint;
+        contactPoint.depth = contactMsg.depth(pointIdx);
+        contactPoint.normal = fromIgnMsg(contactMsg.normal(pointIdx));
+        contactPoint.position = fromIgnMsg(contactMsg.position(pointIdx));
+
+        // Get the wrench acting on bodyA
+        const ignition::msgs::JointWrench wrench = contactMsg.wrench(pointIdx);
+        const auto& wrench1 = wrench.body_1_wrench();
+        contactPoint.force = fromIgnMsg(wrench1.force());
+        contactPoint.torque = fromIgnMsg(wrench1.torque());
+
+        // Store the contact point
+        contact.points.push_back(contactPoint);
+    }
+
+    return contact;
+}
+
+std::vector<scenario::base::Contact>
+utils::fromIgnitionContactsMsgs(ignition::gazebo::EntityComponentManager* ecm,
+                                const ignition::msgs::Contacts& contactsMsg)
+{
+    std::vector<base::Contact> contacts;
+
+    for (int contactIdx = 0; contactIdx < contactsMsg.contact_size();
+         ++contactIdx) {
+        contacts.push_back(
+            fromIgnitionContactMsgs(ecm, contactsMsg.contact(contactIdx)));
     }
 
     return contacts;

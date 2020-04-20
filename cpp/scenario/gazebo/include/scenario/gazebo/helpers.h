@@ -136,7 +136,11 @@ namespace scenario::gazebo::utils {
 
     ignition::math::Pose3d toIgnitionPose(const scenario::base::Pose& pose);
 
-    std::vector<scenario::base::ContactData>
+    scenario::base::Contact
+    fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
+                            const ignition::msgs::Contact& contactMsg);
+
+    std::vector<scenario::base::Contact>
     fromIgnitionContactsMsgs(ignition::gazebo::EntityComponentManager* ecm,
                              const ignition::msgs::Contacts& contactsMsg);
 
