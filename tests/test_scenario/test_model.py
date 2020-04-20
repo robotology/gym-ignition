@@ -5,9 +5,9 @@
 import pytest
 pytestmark = pytest.mark.scenario
 
-from .. import utils
+from ..common import utils
 import gym_ignition_models
-from ..utils import gazebo_fixture as gazebo
+from ..common.utils import gazebo_fixture as gazebo
 from gym_ignition import scenario_bindings as bindings
 
 # Set the verbosity
