@@ -112,10 +112,6 @@ RUN apt-get update &&\
         .. &&\
     ninja install
 
-# Setup gym-ignition if installed from source
-ARG install_prefix="/usr/local"
-ENV PYTHONPATH="${PYTHONPATH}:${install_prefix}/lib/python3.6/site-packages:${install_prefix}/lib/python3.7/site-packages"
-
 # Prepare virtualenv variables
 ENV VIRTUAL_ENV=/venv
 ENV PATH=${VIRTUAL_ENV}/bin:${PATH}
