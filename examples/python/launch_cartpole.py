@@ -34,7 +34,7 @@ env = randomizers.cartpole_no_rand.CartpoleEnvNoRandomizations(env=make_env)
 # Wrap the environment with the randomizer.
 # This is a complex example that randomizes both the physics and the model.
 # env = randomizers.cartpole.CartpoleEnvRandomizer(
-#     env=make_env, seed=42, num_physics_rollouts=2)
+#     env=make_env, seed=42, num_physics_rollouts=5)
 
 # Enable the rendering
 # env.render('human')
