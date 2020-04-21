@@ -156,7 +156,7 @@ namespace scenario {
              * Get the install prefix used by the CMake project.
              *
              * @note It is defined only if the project is installed in
-             *       Developer mode.
+             * Developer mode.
              *
              * @return A string with the install prefix if the project is
              *         installed in Developer mode, an empty string otherwise.
