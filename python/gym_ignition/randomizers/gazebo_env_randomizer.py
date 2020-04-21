@@ -130,7 +130,7 @@ class GazeboEnvRandomizer(gym.Wrapper,
     def _create_from_callable(make_env: MakeEnvCallable,
                               **kwargs) -> gym.Env:
 
-        with logger.verbosity(level=gym.logger.WARN):
+        with logger.gym_verbosity(level=gym.logger.WARN):
             env = make_env(**kwargs)
 
         return env
@@ -138,7 +138,7 @@ class GazeboEnvRandomizer(gym.Wrapper,
     @staticmethod
     def _create_from_id(env_id: str, **kwargs) -> gym.Env:
 
-        with logger.verbosity(level=gym.logger.WARN):
+        with logger.gym_verbosity(level=gym.logger.WARN):
             env = gym.make(env_id, **kwargs)
 
         return env

@@ -20,7 +20,6 @@ if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
         sys.setdlopenflags(dlopen_flags | os.RTLD_LAZY | os.RTLD_NOLOAD | os.RTLD_GLOBAL)
 
     import scenario_bindings
-    scenario_bindings.setVerbosity()
 
     try:
         import gympp_bindings
@@ -31,16 +30,11 @@ if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
     sys.setdlopenflags(dlopen_flags)
 else:
     import scenario_bindings
-    scenario_bindings.setVerbosity()
 
     try:
         import gympp_bindings
     except ImportError:
         pass
-
-
-# Configure the verbosity depending on the selected CMAKE_BUILD_TYPE
-scenario_bindings.setVerbosity()
 
 # Configure OS environment variables
 from gym_ignition.utils import gazebo_env_vars, resource_finder

@@ -3,6 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import os
+import gym.logger
 from gym_ignition.utils import logger
 
 
@@ -28,6 +29,12 @@ def setup_gazebo_env_vars() -> None:
         detected_mode = "User"
 
     logger.debug(f"{detected_mode} setup")
+
+    # Configure verbosity
+    if detected_mode == "Developer":
+        logger.set_level(gym.logger.INFO)
+    else:
+        logger.set_level(gym.logger.WARN)
 
     # Add the plugins path
     if detected_mode == "Developer":
