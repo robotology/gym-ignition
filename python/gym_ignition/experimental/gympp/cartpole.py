@@ -3,26 +3,35 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import numpy as np
-from gym_ignition.base import gympp_env
-from gym_ignition import gympp_bindings as bindings
+import gym_ignition_models
+from gym_ignition.utils import misc
+from gym_ignition.experimental import gympp
+from gym_ignition.experimental.gympp import gympp_env
 
 
 class CartPoleDiscrete(gympp_env.GymppEnv):
+
     def __init__(self):
+
         # Initialize the parent class
         super().__init__()
 
     @property
-    def _plugin_metadata(self) -> bindings.PluginMetadata:
-        md = bindings.PluginMetadata()
+    def _plugin_metadata(self) -> "gympp_bindings.PluginMetadata":
+
+        # Lazy module import
+        from gym_ignition import gympp_bindings as bindings
+
+        # Get the empty world file
+        empty_world_sdf = misc.string_to_file(gympp.get_empty_world())
 
         # Configure ignition environment
+        md = bindings.PluginMetadata()
         md.setEnvironmentName("CartPole")
         md.setLibraryName("CartPolePlugin")
         md.setClassName("gympp::plugins::CartPole")
-        md.setWorldFileName("DefaultEmptyWorld.world")
-        md.setModelFileName("CartPole/CartPole.urdf")
-
+        md.setWorldFileName(empty_world_sdf)
+        md.setModelFileName(gym_ignition_models.get_model_file("cartpole"))
         md.setAgentRate(1000)
 
         real_time_factor = 1E9
