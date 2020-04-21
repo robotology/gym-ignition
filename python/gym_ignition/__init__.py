@@ -37,8 +37,8 @@ else:
         pass
 
 # Configure OS environment variables
-from gym_ignition.utils import gazebo_env_vars, resource_finder
-gazebo_env_vars.setup_gazebo_env_vars()
+from gym_ignition.utils import setup_environment, resource_finder
+setup_environment.setup_environment()
 
 # Add IGN_GAZEBO_RESOURCE_PATH to the default search path
 import os

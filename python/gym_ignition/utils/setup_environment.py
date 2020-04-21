@@ -7,7 +7,7 @@ import gym.logger
 from gym_ignition.utils import logger
 
 
-def setup_gazebo_env_vars() -> None:
+def setup_environment() -> None:
     """
     Configure the environment depending on the detected installation method
     (User or Developer).

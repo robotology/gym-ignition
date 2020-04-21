@@ -6,5 +6,5 @@ from . import misc
 from .typing import *
 from . import scenario
 from . import resource_finder
-from . import gazebo_env_vars
+from . import setup_environment
 from . import inverse_kinematics_nlp
