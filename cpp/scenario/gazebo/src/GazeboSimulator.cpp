@@ -323,6 +323,21 @@ bool GazeboSimulator::close()
         this->pause();
     }
 
+    // Remove the resources of the handled worlds from the singleton
+    if (this->initialized()) {
+        try {
+            for (const auto& worldName : this->worldNames()) {
+                plugins::gazebo::ECMSingleton::Instance().clean(worldName);
+            }
+        }
+        // This happens while tearing down everything. The ECMProvider plugin
+        // sometimes is destroyed before the simulator.
+        catch (std::runtime_error) {
+            gymppWarning << "Failed to clean the singleton from the worlds"
+                         << std::endl;
+        }
+    }
+
     // Delete the simulator
     pImpl->gazebo.server.reset();
 
