@@ -504,9 +504,20 @@ bool Joint::setAccelerationTarget(const double acceleration, const size_t dof)
 
 bool Joint::setGeneralizedForceTarget(const double force, const size_t dof)
 {
-    if (this->controlMode() != base::JointControlMode::Force) {
-        gymppError << "The active joint control mode does not accept a force"
-                   << std::endl;
+    const std::vector<base::JointControlMode> allowedControlModes = {
+        base::JointControlMode::Force,
+        base::JointControlMode::Position,
+        base::JointControlMode::PositionInterpolated,
+        base::JointControlMode::Velocity};
+
+    auto it = std::find(allowedControlModes.begin(),
+                        allowedControlModes.end(),
+                        this->controlMode());
+
+    if (it == allowedControlModes.end()) {
+        gymppError
+            << "The active joint control mode does not accept a force target"
+            << std::endl;
         return false;
     }
 
