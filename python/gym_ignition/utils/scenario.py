@@ -2,8 +2,10 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from typing import Tuple
+import gym.spaces
+import numpy as np
 import gym_ignition_models
+from typing import List, Tuple
 from gym_ignition import scenario_bindings as bindings
 
 
@@ -100,3 +102,30 @@ def init_gazebo_sim(step_size: float = 0.001,
         raise RuntimeError("Failed to insert the physics plugin")
 
     return gazebo, world
+
+
+def get_joint_positions_space(model: bindings.Model,
+                              considered_joints: List[str] = None) -> gym.spaces.Box:
+    """
+    Build a Box space from the joint position limits.
+
+    Args:
+        model: The model from which generating the joint space.
+        considered_joints: List of considered joints. It is helpful to restrict the set
+            of joints and to enforce a custom joint serialization.
+
+    Returns:
+        A box space created from the model's joint position limits.
+    """
+
+    if considered_joints is None:
+        considered_joints = model.jointNames()
+
+    # Get the joint limits
+    joint_limits = model.jointLimits(considered_joints)
+
+    # Build the space
+    space = gym.spaces.Box(low=np.array(joint_limits.min),
+                           high=np.array(joint_limits.max))
+
+    return space
