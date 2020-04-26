@@ -178,15 +178,18 @@ public:
 
     std::array<double, 3> basePosition() const;
     std::array<double, 4> baseOrientation() const;
-    std::array<double, 3> baseLinearVelocity() const;
-    std::array<double, 3> baseAngularVelocity() const;
+    std::array<double, 3> baseBodyLinearVelocity() const;
+    std::array<double, 3> baseBodyAngularVelocity() const;
+    std::array<double, 3> baseWorldLinearVelocity() const;
+    std::array<double, 3> baseWorldAngularVelocity() const;
 
-    bool
-    resetBaseLinearVelocity(const std::array<double, 3>& linear = {0, 0, 0});
-    bool
-    resetBaseAngularVelocity(const std::array<double, 3>& angular = {0, 0, 0});
-    bool resetBaseVelocity(const std::array<double, 3>& linear = {0, 0, 0},
-                           const std::array<double, 3>& angular = {0, 0, 0});
+    bool resetBaseWorldLinearVelocity(
+        const std::array<double, 3>& linear = {0, 0, 0});
+    bool resetBaseWorldAngularVelocity(
+        const std::array<double, 3>& angular = {0, 0, 0});
+    bool resetBaseWorldVelocity( //
+        const std::array<double, 3>& linear = {0, 0, 0},
+        const std::array<double, 3>& angular = {0, 0, 0});
 
     bool resetBasePose(const std::array<double, 3>& position = {0, 0, 0},
                        const std::array<double, 4>& orientation = {0, 0, 0, 0});
@@ -203,19 +206,22 @@ public:
     bool setBasePositionTarget(const std::array<double, 3>& position);
     bool setBaseOrientationTarget(const std::array<double, 4>& orientation);
 
-    bool setBaseVelocityTarget(const std::array<double, 3>& linear,
-                               const std::array<double, 3>& angular);
-    bool setBaseLinearVelocityTarget(const std::array<double, 3>& linear);
-    bool setBaseAngularVelocityTarget(const std::array<double, 3>& angular);
-    bool setBaseLinearAccelerationTarget(const std::array<double, 3>& linear);
-    bool setBaseAngularAccelerationTarget(const std::array<double, 3>& angular);
+    bool setBaseWorldVelocityTarget(const std::array<double, 3>& linear,
+                                    const std::array<double, 3>& angular);
+    bool setBaseWorldLinearVelocityTarget(const std::array<double, 3>& linear);
+    bool setBaseWorldAngularVelocityTarget( //
+        const std::array<double, 3>& angular);
+    bool setBaseWorldLinearAccelerationTarget( //
+        const std::array<double, 3>& linear);
+    bool setBaseWorldAngularAccelerationTarget( //
+        const std::array<double, 3>& angular);
 
     std::array<double, 3> basePositionTarget() const;
     std::array<double, 4> baseOrientationTarget() const;
-    std::array<double, 3> baseLinearVelocityTarget() const;
-    std::array<double, 3> baseAngularVelocityTarget() const;
-    std::array<double, 3> baseLinearAccelerationTarget() const;
-    std::array<double, 3> baseAngularAccelerationTarget() const;
+    std::array<double, 3> baseWorldLinearVelocityTarget() const;
+    std::array<double, 3> baseWorldAngularVelocityTarget() const;
+    std::array<double, 3> baseWorldLinearAccelerationTarget() const;
+    std::array<double, 3> baseWorldAngularAccelerationTarget() const;
 
 private:
     class Impl;
