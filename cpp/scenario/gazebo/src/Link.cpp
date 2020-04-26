@@ -255,8 +255,8 @@ std::array<double, 3> Link::worldAngularVelocity() const
 std::array<double, 3> Link::bodyLinearVelocity() const
 {
     auto linkBodyLinVel = utils::getComponentData< //
-        ignition::gazebo::components::AngularAcceleration>(pImpl->ecm,
-                                                           pImpl->linkEntity);
+        ignition::gazebo::components::LinearVelocity>(pImpl->ecm,
+                                                      pImpl->linkEntity);
 
     return utils::fromIgnitionVector(linkBodyLinVel);
 }
@@ -264,8 +264,8 @@ std::array<double, 3> Link::bodyLinearVelocity() const
 std::array<double, 3> Link::bodyAngularVelocity() const
 {
     auto linkBodyAngVel = utils::getComponentData< //
-        ignition::gazebo::components::AngularAcceleration>(pImpl->ecm,
-                                                           pImpl->linkEntity);
+        ignition::gazebo::components::AngularVelocity>(pImpl->ecm,
+                                                       pImpl->linkEntity);
 
     return utils::fromIgnitionVector(linkBodyAngVel);
 }
