@@ -8,6 +8,8 @@ from gym_ignition.base import runtime
 from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
 from gym_ignition.utils import scenario
+from gym_ignition.randomizers.base import physics
+from gym_ignition.randomizers.physics import dart
 from gym_ignition import scenario_bindings as bindings
 
 
@@ -21,8 +23,15 @@ class GazeboRuntime(runtime.Runtime):
         agent_rate: The rate at which the environment is called.
         physics_rate: The rate of the physics engine.
         real_time_factor: The desired RTF of the simulation.
-        world (optional): The path to an SDF world file. The world should not contain any
+        physics_randomizer: *(optional)* The physics randomizer.
+        world: *(optional)* The path to an SDF world file. The world should not contain any
             physics plugin.
+
+    Note:
+        Physics randomization is still experimental and it could change in the future.
+        Physics is loaded only once, when the simulator starts. In order to change the
+        physics, a new simulator should be created. This operation is quite demanding
+        and doing it every rollout is not recommended.
     """
 
     metadata = {'render.modes': ['human']}
@@ -32,6 +41,7 @@ class GazeboRuntime(runtime.Runtime):
                  agent_rate: float,
                  physics_rate: float,
                  real_time_factor: float,
+                 physics_randomizer: physics.PhysicsRandomizer = dart.DART(),
                  world: str = None,
                  **kwargs):
 
@@ -42,6 +52,9 @@ class GazeboRuntime(runtime.Runtime):
         self._gazebo = None
         self._physics_rate = physics_rate
         self._real_time_factor = real_time_factor
+
+        # Store the randomizer
+        self.physics_randomizer = physics_randomizer
 
         # World attributes
         self._world = None
@@ -248,27 +261,10 @@ class GazeboRuntime(runtime.Runtime):
             if not ok_ground:
                 raise RuntimeError("Failed to insert the ground plane")
 
-        # Load the physics
-        self._load_physics(world)
+        # Load and randomize the physics
+        self.physics_randomizer.randomize_physics(world=world)
 
         # Store the world
         self._world = world
 
         return self._world
-
-    @staticmethod
-    def _load_physics(world: bindings.World) -> None:
-        """
-        Load the physics in the world.
-
-        Note:
-            This class do not yet supports randomizing the physics. Likely overriding this
-            method will enable the implementation of physics randomization.
-        """
-
-        # Insert the physics
-        ok_physics = world.insertWorldPlugin("libPhysicsSystem.so",
-                                             "scenario::plugins::gazebo::Physics")
-
-        if not ok_physics:
-            raise RuntimeError("Failed to insert the physics plugin")

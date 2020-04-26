@@ -242,3 +242,25 @@ std::string utils::getInstallPrefix()
     return "";
 #endif
 }
+
+std::string utils::URDFFileToSDFString(const std::string& urdfFile)
+{
+    auto root = getSdfRootFromFile(urdfFile);
+
+    if (!root) {
+        return "";
+    }
+
+    return root->Element()->ToString("");
+}
+
+std::string utils::URDFStringToSDFString(const std::string& urdfString)
+{
+    auto root = getSdfRootFromString(urdfString);
+
+    if (!root) {
+        return "";
+    }
+
+    return root->Element()->ToString("");
+}
