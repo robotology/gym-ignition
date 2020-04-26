@@ -22,7 +22,7 @@ class TaskRandomizer(abc.ABC):
             gazebo: a :py:class:`~scenario_bindings.GazeboSimulator` instance.
 
         Note:
-            Note the each task has a :py:attr:`~gym_ignition.base.task.Task.world`
+            Note that each task has a :py:attr:`~gym_ignition.base.task.Task.world`
             property that provides access to the simulated
             :py:class:`scenario_bindings.World`.
         """
