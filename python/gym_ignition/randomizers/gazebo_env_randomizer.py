@@ -91,7 +91,7 @@ class GazeboEnvRandomizer(gym.Wrapper,
             self.env.task.np_random = np_random
 
         # Mark the beginning of a new rollout
-        self.env.physics_randomizer.add_rollout_to_physics()
+        self.env.physics_randomizer.increase_rollout_counter()
 
         # Reset the task through the TaskRandomizer
         self.randomize_task(self.env.task, self.env.gazebo, **kwargs)

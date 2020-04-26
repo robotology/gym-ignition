@@ -45,7 +45,7 @@ class PhysicsRandomizer(abc.ABC):
         """
         pass
 
-    def add_rollout_to_physics(self) -> None:
+    def increase_rollout_counter(self) -> None:
         """
         Increase the rollouts counter.
         """
