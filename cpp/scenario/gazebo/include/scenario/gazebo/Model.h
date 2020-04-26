@@ -27,6 +27,8 @@
 #ifndef SCENARIO_GAZEBO_MODEL_H
 #define SCENARIO_GAZEBO_MODEL_H
 
+#include "scenario/gazebo/Joint.h"
+
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
 #include <ignition/gazebo/EventManager.hh>
@@ -39,11 +41,9 @@
 namespace scenario {
     namespace base {
         struct ContactData;
-        enum class JointControlMode;
     } // namespace base
     namespace gazebo {
         class Link;
-        class Joint;
         class Model;
         using LinkPtr = std::shared_ptr<Link>;
         using JointPtr = std::shared_ptr<Joint>;
@@ -123,6 +123,9 @@ public:
     std::vector<double> jointPositions( //
         const std::vector<std::string>& jointNames = {}) const;
     std::vector<double> jointVelocities( //
+        const std::vector<std::string>& jointNames = {}) const;
+
+    base::JointLimit jointLimits( //
         const std::vector<std::string>& jointNames = {}) const;
 
     bool setJointControlMode(const base::JointControlMode mode,

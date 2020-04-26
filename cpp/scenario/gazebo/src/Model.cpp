@@ -525,6 +525,27 @@ Model::jointVelocities(const std::vector<std::string>& jointNames) const
     return Impl::getJointDataSerialized(this, jointNames, lambda);
 }
 
+scenario::base::JointLimit
+Model::jointLimits(const std::vector<std::string>& jointNames) const
+{
+    const std::vector<std::string> jointSerialization =
+        jointNames.empty() ? this->jointNames() : jointNames;
+
+    std::vector<double> low;
+    std::vector<double> high;
+
+    low.reserve(jointSerialization.size());
+    high.reserve(jointSerialization.size());
+
+    for (const auto& joint : this->joints(jointSerialization)) {
+        auto limit = joint->jointPositionLimit();
+        std::move(limit.min.begin(), limit.min.end(), std::back_inserter(low));
+        std::move(limit.max.begin(), limit.max.end(), std::back_inserter(high));
+    }
+
+    return base::JointLimit(low, high);
+}
+
 bool Model::setJointControlMode(const scenario::base::JointControlMode mode,
                                 const std::vector<std::string>& jointNames)
 {
