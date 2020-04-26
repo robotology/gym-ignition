@@ -107,7 +107,14 @@ std::string utils::getSdfString(const std::string& fileName)
 std::string utils::getModelNameFromSdf(const std::string& fileName,
                                        const size_t modelIndex)
 {
-    auto root = utils::getSdfRootFromFile(fileName);
+    std::string absFileName = findSdfFile(fileName);
+
+    if (absFileName.empty()) {
+        gymppError << "Failed to find file " << fileName << std::endl;
+        return {};
+    }
+
+    auto root = utils::getSdfRootFromFile(absFileName);
 
     if (!root) {
         return {};
@@ -131,7 +138,14 @@ std::string utils::getModelNameFromSdf(const std::string& fileName,
 std::string utils::getWorldNameFromSdf(const std::string& fileName,
                                        const size_t worldIndex)
 {
-    auto root = utils::getSdfRootFromFile(fileName);
+    std::string absFileName = findSdfFile(fileName);
+
+    if (absFileName.empty()) {
+        gymppError << "Failed to find file " << fileName << std::endl;
+        return {};
+    }
+
+    auto root = utils::getSdfRootFromFile(absFileName);
 
     if (!root) {
         return {};

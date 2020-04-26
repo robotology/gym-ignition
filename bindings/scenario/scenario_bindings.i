@@ -37,6 +37,11 @@
 // Pair instantiation
 %template(PosePair) std::pair<std::array<double, 3>, std::array<double, 4>>;
 
+// ScenarI/O templates
+%template(Vector_links) std::vector<scenario::gazebo::LinkPtr>;
+%template(Vector_joints) std::vector<scenario::gazebo::JointPtr>;
+%template(Vector_contact) std::vector<scenario::base::ContactData>;
+
 // Public helpers
 %include "scenario/gazebo/utils.h"
 
@@ -45,7 +50,6 @@
 %shared_ptr(scenario::gazebo::Link)
 %shared_ptr(scenario::gazebo::Model)
 %shared_ptr(scenario::gazebo::World)
-%template(Vector_contact) std::vector<scenario::base::ContactData>;
 
 // Ignored methods
 %ignore scenario::gazebo::Joint::initialize;

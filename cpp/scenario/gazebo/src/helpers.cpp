@@ -246,12 +246,12 @@ sdf::World utils::renameSDFWorld(const sdf::World& world,
 
 bool utils::renameSDFModel(sdf::Root& sdfRoot,
                            const std::string& newModelName,
-                           size_t modelIndex)
+                           const size_t modelIndex)
 {
     const size_t initialNrOfModels = sdfRoot.ModelCount();
 
     // Create a new model with the scoped name
-    sdf::ElementPtr renamedModel(new sdf::Element);
+    auto renamedModel = std::make_shared<sdf::Element>();
     renamedModel->SetName("model");
     renamedModel->AddAttribute("name", "string", newModelName, true);
 
@@ -280,7 +280,7 @@ bool utils::renameSDFModel(sdf::Root& sdfRoot,
     }
 
     if (!sdfRoot.ModelNameExists(newModelName)) {
-        gymppError << "Failed to insert rename model in SDF root" << std::endl;
+        gymppError << "Failed to insert renamed model in SDF root" << std::endl;
         return false;
     }
 

@@ -62,7 +62,7 @@ def find_resource(file_name: str) -> str:
             logger.debug(f"  Found resource: '{file_name}'")
             return file_name
         else:
-            raise Exception(f"Failed to find resource '{file_name}'")
+            raise FileNotFoundError(f"Failed to find resource '{file_name}'")
 
     # Handle if the path is relative
     for path in GYM_IGNITION_DATA_PATH:
@@ -76,6 +76,6 @@ def find_resource(file_name: str) -> str:
             break
 
     if not file_abs_path:
-        raise Exception(f"Failed to find resource '{file_name}'")
+        raise FileNotFoundError(f"Failed to find resource '{file_name}'")
 
     return file_abs_path

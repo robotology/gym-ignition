@@ -6,9 +6,7 @@ import gym
 import numpy as np
 from gym import spaces
 from numbers import Number
-from typing import Union, Tuple
 from gym_ignition.utils import logger
-from gym_ignition import gympp_bindings as bindings
 from gym_ignition.utils.typing import State, Action, Observation, SeedList
 
 
@@ -47,9 +45,11 @@ class GymppEnv(gym.Env):
         assert(action_space and observation_space), "Failed to create spaces"
 
     @property
-    def gympp_env(self) -> bindings.GazeboEnvironment:
+    def gympp_env(self):
         if self._env:
             return self._env
+
+        from gym_ignition import gympp_bindings as bindings
 
         # Get the metadata
         md = self._plugin_metadata
@@ -69,7 +69,8 @@ class GymppEnv(gym.Env):
         return self._env
 
     @property
-    def gazebo(self) -> bindings.GazeboSimulator:
+    def gazebo(self):
+        from gym_ignition import gympp_bindings as bindings
         return bindings.envToGazeboWrapper(self.gympp_env)
 
     @property
@@ -96,10 +97,12 @@ class GymppEnv(gym.Env):
         return self._observation_space
 
     @property
-    def robot(self) -> bindings.Robot:
+    def robot(self):
         if self._robot:
             assert self._robot.valid(), "The Robot object is not valid"
             return self._robot
+
+        from gym_ignition import gympp_bindings as bindings
 
         # Get the robot name
         gazebo_wrapper = bindings.envToGazeboWrapper(self.gympp_env)
@@ -140,6 +143,7 @@ class GymppEnv(gym.Env):
             action_list = list(action)
 
         # Create the gympp::Sample object
+        from gym_ignition import gympp_bindings as bindings
         action_buffer = getattr(bindings, 'Vector' + self._act_dt)(action_list)
         action_sample = bindings.Sample(action_buffer)
 
@@ -177,6 +181,7 @@ class GymppEnv(gym.Env):
         return State((observation, state.reward, state.done, info))
 
     def reset(self) -> Observation:
+
         # Get std::optional<gympp::Observation>
         obs_optional = self.gympp_env.reset()
         assert obs_optional.has_value(), "The environment didn't return the observation"
@@ -208,14 +213,19 @@ class GymppEnv(gym.Env):
         return observation
 
     def render(self, mode: str = 'human') -> None:
+
+        from gym_ignition import gympp_bindings as bindings
+
         render_mode = {'human': bindings.Environment.RenderMode_HUMAN}
         ok = self.gympp_env.render(render_mode[mode])
+
         assert ok, "Failed to render environment"
 
     def close(self) -> None:
         return
 
     def seed(self, seed: int = None) -> SeedList:
+
         if not seed:
             seed = np.random.randint(2**32 - 1)
 
@@ -233,7 +243,7 @@ class GymppEnv(gym.Env):
         return SeedList(list(vector_seeds))
 
     @property
-    def _plugin_metadata(self) -> bindings.PluginMetadata:
+    def _plugin_metadata(self):
         """Return metadata of the gympp plugin
 
         Loading an environment created with gympp in python requires the knowledge of
@@ -246,8 +256,7 @@ class GymppEnv(gym.Env):
         raise NotImplementedError
 
     @classmethod
-    def _create_space(cls, md: bindings.SpaceMetadata = None) \
-            -> Union[Tuple[bindings.Box, str], Tuple[bindings.Discrete, str]]:
+    def _create_space(cls, md=None):
         """Create an object of the gym.space package from gympp space metadata
 
         Note: In order to map the dynamically typed nature of python to C++, this class
@@ -256,6 +265,7 @@ class GymppEnv(gym.Env):
               also a method suffix string (such as "_d" for double) that is appended to
               the calls of the swig bindings methods (e.g. obs.getBuffer_d()).
         """
+        from gym_ignition import gympp_bindings as bindings
         assert isinstance(md, bindings.SpaceMetadata), "Wrong type for method argument"
 
         space_type = md.getType()

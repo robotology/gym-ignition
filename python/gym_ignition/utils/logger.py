@@ -9,12 +9,6 @@ from gym import logger
 from gym.utils import colorize
 from gym.logger import debug, info, error
 
-try:
-    from gym_ignition import scenario_bindings as bindings
-    bindings_found = True
-except ImportError:
-    bindings_found = False
-
 
 def custom_formatwarning(msg, *args, **kwargs):
     """
@@ -61,7 +55,9 @@ def set_level(level: int) -> None:
     # Set the gym verbosity
     logger.set_level(level)
 
-    if not bindings_found:
+    try:
+        from gym_ignition import scenario_bindings as bindings
+    except ImportError:
         return
 
     # Set the gympp verbosity
@@ -78,7 +74,7 @@ def set_level(level: int) -> None:
 
 
 @contextlib.contextmanager
-def verbosity(level: int):
+def gym_verbosity(level: int):
 
     old_level = gym.logger.MIN_LEVEL
     gym.logger.set_level(level=level)
