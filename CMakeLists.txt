@@ -83,19 +83,8 @@ if(NOT MSVC)
     mark_as_advanced(ENABLE_RPATH)
 endif()
 
-# Add custom functions / macros
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-
-# Find YCM
-find_package(YCM QUIET)
-
-# Bootstrap YCM if not found
-if(NOT ${YCM_FOUND})
-    include(FetchContent)
-    FetchContent_Declare(ycm GIT_REPOSITORY https://github.com/robotology/ycm.git)
-    FetchContent_MakeAvailable(ycm)
-    list(APPEND CMAKE_MODULE_PATH ${ycm_SOURCE_DIR}/modules)
-endif()
+# Dependencies
+add_subdirectory(deps)
 
 # Find virtualenv's before system's interpreters
 set(Python3_FIND_VIRTUALENV "FIRST" CACHE STRING
@@ -125,9 +114,6 @@ else()
         DEPENDS ENABLE_RPATH
         USE_LINK_PATH)
 endif()
-
-# Dependencies
-add_subdirectory(deps)
 
 # Find Ignition Gazebo
 find_package(ignition-gazebo3 COMPONENTS all)
@@ -179,7 +165,7 @@ endif()
 
 option(GYMIGNITION_ENABLE_BINDINGS "Enable SWIG bindings" ON)
 
-if(GYMIGNITION_ENABLE_BINDINGS)
+if(GYMIGNITION_ENABLE_BINDINGS AND GYMIGNITION_USE_IGNITION)
     add_subdirectory(bindings)
 endif()
 
