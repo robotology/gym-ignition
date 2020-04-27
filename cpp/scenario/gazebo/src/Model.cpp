@@ -77,6 +77,11 @@ public:
     std::unordered_map<LinkName, scenario::gazebo::LinkPtr> links;
     std::unordered_map<JointName, scenario::gazebo::JointPtr> joints;
 
+    struct
+    {
+        std::vector<std::string> linksInContact;
+    } buffers;
+
     static std::vector<double> getJointDataSerialized(
         const Model* model,
         const std::vector<std::string>& jointNames,
@@ -478,13 +483,15 @@ bool Model::enableSelfCollisions(const bool /*enable*/)
 
 std::vector<std::string> Model::linksInContact() const
 {
-    std::vector<std::string> linksInContact;
+    pImpl->buffers.linksInContact.clear();
 
-    for (const auto& linkName : this->linkNames()) {
-        linksInContact.push_back(linkName);
+    for (const auto& link : this->links()) {
+        if (link->inContact()) {
+            pImpl->buffers.linksInContact.push_back(link->name());
+        }
     }
 
-    return linksInContact;
+    return pImpl->buffers.linksInContact;
 }
 
 std::vector<scenario::base::ContactData>
