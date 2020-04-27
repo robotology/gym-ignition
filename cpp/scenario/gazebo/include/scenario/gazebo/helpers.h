@@ -75,6 +75,10 @@ namespace scenario::gazebo::utils {
     double steadyClockDurationToDouble(
         const std::chrono::steady_clock::duration duration);
 
+    void rowMajorToColumnMajor(std::vector<double>& input,
+                               const long rows,
+                               const long cols);
+
     class FixedSizeQueue
     {
     public:

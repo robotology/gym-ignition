@@ -28,6 +28,7 @@
 #include "ignition/common/Util.hh"
 #include "scenario/gazebo/Log.h"
 
+#include <Eigen/Dense>
 #include <ignition/gazebo/components/Component.hh>
 #include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/Name.hh>
@@ -109,6 +110,20 @@ double utils::steadyClockDurationToDouble(
 {
     // This is the value in seconds
     return std::chrono::duration<double>(duration).count();
+}
+
+void utils::rowMajorToColumnMajor(std::vector<double>& input,
+                                  const long rows,
+                                  const long cols)
+{
+    using namespace Eigen;
+    using RowMajorMat = Matrix<double, Dynamic, Dynamic, RowMajor>;
+    using ColMajorMat = Matrix<double, Dynamic, Dynamic, ColMajor>;
+
+    Map<RowMajorMat> rowMajorView(input.data(), rows, cols);
+    Map<ColMajorMat> colMajorView(input.data(), rows, cols);
+
+    colMajorView = rowMajorView.eval();
 }
 
 scenario::base::Pose
