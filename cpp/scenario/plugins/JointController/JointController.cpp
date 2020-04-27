@@ -99,6 +99,14 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
         return;
     }
 
+    // This plugin keep being called also after the model was removed
+    try {
+        pImpl->model.controllerPeriod();
+    }
+    catch (exceptions::ComponentNotFound) {
+        return;
+    }
+
     using namespace std::chrono;
 
     // Update the controller only if enough time is passed
