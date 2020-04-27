@@ -80,6 +80,10 @@ public:
     struct
     {
         std::vector<std::string> linksInContact;
+        std::optional<std::vector<std::string>> linkNames;
+        std::optional<std::vector<std::string>> scopedLinkNames;
+        std::optional<std::vector<std::string>> jointNames;
+        std::optional<std::vector<std::string>> scopedJointNames;
     } buffers;
 
     static std::vector<double> getJointDataSerialized(
@@ -353,6 +357,14 @@ scenario::gazebo::JointPtr Model::getJoint(const std::string& jointName) const
 
 std::vector<std::string> Model::linkNames(const bool scoped) const
 {
+    if (!scoped && pImpl->buffers.linkNames.has_value()) {
+        return pImpl->buffers.linkNames.value();
+    }
+
+    if (scoped && pImpl->buffers.scopedLinkNames.has_value()) {
+        return pImpl->buffers.scopedLinkNames.value();
+    }
+
     std::vector<std::string> linkNames;
 
     pImpl->ecm->Each<ignition::gazebo::components::Name,
@@ -381,11 +393,26 @@ std::vector<std::string> Model::linkNames(const bool scoped) const
             return true;
         });
 
-    return linkNames;
+    if (!scoped) {
+        pImpl->buffers.linkNames = std::move(linkNames);
+        return pImpl->buffers.linkNames.value();
+    }
+    else {
+        pImpl->buffers.scopedLinkNames = std::move(linkNames);
+        return pImpl->buffers.scopedLinkNames.value();
+    }
 }
 
 std::vector<std::string> Model::jointNames(const bool scoped) const
 {
+    if (!scoped && pImpl->buffers.jointNames.has_value()) {
+        return pImpl->buffers.jointNames.value();
+    }
+
+    if (scoped && pImpl->buffers.scopedLinkNames.has_value()) {
+        return pImpl->buffers.scopedLinkNames.value();
+    }
+
     std::vector<std::string> jointNames;
 
     pImpl->ecm->Each<ignition::gazebo::components::Name,
@@ -420,7 +447,14 @@ std::vector<std::string> Model::jointNames(const bool scoped) const
             return true;
         });
 
-    return jointNames;
+    if (!scoped) {
+        pImpl->buffers.jointNames = std::move(jointNames);
+        return pImpl->buffers.jointNames.value();
+    }
+    else {
+        pImpl->buffers.scopedJointNames = std::move(jointNames);
+        return pImpl->buffers.scopedJointNames.value();
+    }
 }
 
 double Model::controllerPeriod() const
