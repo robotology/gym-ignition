@@ -84,7 +84,7 @@ namespace scenario::gazebo::utils {
     public:
         FixedSizeQueue(const size_t size = 100)
             : m_size(size)
-            , m_deque(100, 0.0)
+            , m_deque(size, 0.0)
         {}
 
         void push(const double value)
