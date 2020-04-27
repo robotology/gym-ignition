@@ -531,7 +531,7 @@ std::vector<std::string> Model::linksInContact() const
 std::vector<scenario::base::ContactData>
 Model::contacts(const std::vector<std::string>& linkNames) const
 {
-    std::vector<std::string> linkSerialization =
+    const std::vector<std::string>& linkSerialization =
         linkNames.empty() ? this->linkNames() : linkNames;
 
     std::vector<scenario::base::ContactData> allContacts;
@@ -605,7 +605,7 @@ bool Model::setJointControlMode(const scenario::base::JointControlMode mode,
 std::vector<LinkPtr>
 Model::links(const std::vector<std::string>& linkNames) const
 {
-    std::vector<std::string> linkSerialization =
+    const std::vector<std::string>& linkSerialization =
         linkNames.empty() ? this->linkNames() : linkNames;
 
     std::vector<LinkPtr> links;
