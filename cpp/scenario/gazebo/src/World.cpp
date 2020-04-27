@@ -217,6 +217,11 @@ std::vector<std::string> World::modelNames() const
 
 scenario::gazebo::ModelPtr World::getModel(const std::string& modelName) const
 {
+    if (pImpl->models.find(modelName) != pImpl->models.end()) {
+        assert(pImpl->models.at(modelName));
+        return pImpl->models.at(modelName);
+    }
+
     // Find the model entity
     auto modelEntity = pImpl->ecm->EntityByComponents(
         ignition::gazebo::components::Name(modelName),
@@ -225,11 +230,6 @@ scenario::gazebo::ModelPtr World::getModel(const std::string& modelName) const
 
     if (modelEntity == ignition::gazebo::kNullEntity) {
         throw exceptions::ModelNotFound(modelName);
-    }
-
-    if (pImpl->models.find(modelName) != pImpl->models.end()) {
-        assert(pImpl->models.at(modelName));
-        return pImpl->models.at(modelName);
     }
 
     // Create and initialize the model

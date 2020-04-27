@@ -296,15 +296,15 @@ size_t Model::nrOfJoints() const
 
 scenario::gazebo::LinkPtr Model::getLink(const std::string& linkName) const
 {
+    if (pImpl->links.find(linkName) != pImpl->links.end()) {
+        assert(pImpl->links.at(linkName));
+        return pImpl->links.at(linkName);
+    }
+
     auto linkEntity = pImpl->model.LinkByName(*pImpl->ecm, linkName);
 
     if (linkEntity == ignition::gazebo::kNullEntity) {
         throw exceptions::LinkNotFound(linkName);
-    }
-
-    if (pImpl->links.find(linkName) != pImpl->links.end()) {
-        assert(pImpl->links.at(linkName));
-        return pImpl->links.at(linkName);
     }
 
     // Create the link
@@ -322,15 +322,15 @@ scenario::gazebo::LinkPtr Model::getLink(const std::string& linkName) const
 
 scenario::gazebo::JointPtr Model::getJoint(const std::string& jointName) const
 {
+    if (pImpl->joints.find(jointName) != pImpl->joints.end()) {
+        assert(pImpl->joints.at(jointName));
+        return pImpl->joints.at(jointName);
+    }
+
     auto jointEntity = pImpl->model.JointByName(*pImpl->ecm, jointName);
 
     if (jointEntity == ignition::gazebo::kNullEntity) {
         throw exceptions::JointNotFound(jointName);
-    }
-
-    if (pImpl->joints.find(jointName) != pImpl->joints.end()) {
-        assert(pImpl->joints.at(jointName));
-        return pImpl->joints.at(jointName);
     }
 
     // Create the joint
