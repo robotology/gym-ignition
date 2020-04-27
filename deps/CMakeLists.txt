@@ -22,6 +22,9 @@ if(NOT ${tiny-process-library_FOUND})
         message(STATUS "Bootstrapping Tiny Process Library")
         FetchContent_Populate(tinyprocesslibrary)
 
+        # Disable building the tests
+        set(BUILD_TESTING OFF)
+
         # Build the library as static
         set(default_build_type ${BUILD_SHARED_LIBS})
         set(BUILD_SHARED_LIBS OFF)
@@ -31,6 +34,8 @@ if(NOT ${tiny-process-library_FOUND})
         set_target_properties(tiny-process-library PROPERTIES
             PUBLIC_HEADER ${tinyprocesslibrary_SOURCE_DIR}/process.hpp
             POSITION_INDEPENDENT_CODE ON)
+
+        mark_as_advanced(BUILD_TESTING)
     endif()
 endif()
 
