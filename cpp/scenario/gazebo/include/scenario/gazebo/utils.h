@@ -28,6 +28,7 @@
 #define SCENARIO_GAZEBO_UTILS_H
 
 #include <string>
+#include <vector>
 
 #ifdef NDEBUG
 #define DEFAULT_VERBOSITY 2
@@ -180,6 +181,44 @@ namespace scenario {
              *         converted, an empty string otherwise.
              */
             std::string URDFStringToSDFString(const std::string& urdfString);
+
+            /**
+             * Normalize a vector in [-1, 1].
+             *
+             * The input, low and high arguments are broadcasted to a common
+             * size. Refer to the following for broadcasting definition:
+             *
+             * https://numpy.org/doc/stable/user/basics.broadcasting.html
+             *
+             * @throws std::invalid_argument If the arguments cannot be
+             * broadcasted.
+             * @param input The input vector.
+             * @param low The lower limit.
+             * @param high The higher limit.
+             * @return The normalized input.
+             */
+            std::vector<double> normalize(const std::vector<double>& input,
+                                          const std::vector<double>& low,
+                                          const std::vector<double>& high);
+
+            /**
+             * Denormalize a vector from [-1, 1].
+             *
+             * The input, low and high arguments are broadcasted to a common
+             * size. Refer to the following for broadcasting definition:
+             *
+             * https://numpy.org/doc/stable/user/basics.broadcasting.html
+             *
+             * @throws std::invalid_argument If the arguments cannot be
+             * broadcasted.
+             * @param input The input vector.
+             * @param low The lower limit.
+             * @param high The higher limit.
+             * @return The denormalized input.
+             */
+            std::vector<double> denormalize(const std::vector<double>& input,
+                                            const std::vector<double>& low,
+                                            const std::vector<double>& high);
         } // namespace utils
     } // namespace gazebo
 } // namespace scenario
