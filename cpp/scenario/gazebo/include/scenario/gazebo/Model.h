@@ -27,6 +27,8 @@
 #ifndef SCENARIO_GAZEBO_MODEL_H
 #define SCENARIO_GAZEBO_MODEL_H
 
+#include "scenario/gazebo/Joint.h"
+
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
 #include <ignition/gazebo/EventManager.hh>
@@ -39,11 +41,9 @@
 namespace scenario {
     namespace base {
         struct ContactData;
-        enum class JointControlMode;
     } // namespace base
     namespace gazebo {
         class Link;
-        class Joint;
         class Model;
         using LinkPtr = std::shared_ptr<Link>;
         using JointPtr = std::shared_ptr<Joint>;
@@ -125,6 +125,9 @@ public:
     std::vector<double> jointVelocities( //
         const std::vector<std::string>& jointNames = {}) const;
 
+    base::JointLimit jointLimits( //
+        const std::vector<std::string>& jointNames = {}) const;
+
     bool setJointControlMode(const base::JointControlMode mode,
                              const std::vector<std::string>& jointNames = {});
 
@@ -178,15 +181,18 @@ public:
 
     std::array<double, 3> basePosition() const;
     std::array<double, 4> baseOrientation() const;
-    std::array<double, 3> baseLinearVelocity() const;
-    std::array<double, 3> baseAngularVelocity() const;
+    std::array<double, 3> baseBodyLinearVelocity() const;
+    std::array<double, 3> baseBodyAngularVelocity() const;
+    std::array<double, 3> baseWorldLinearVelocity() const;
+    std::array<double, 3> baseWorldAngularVelocity() const;
 
-    bool
-    resetBaseLinearVelocity(const std::array<double, 3>& linear = {0, 0, 0});
-    bool
-    resetBaseAngularVelocity(const std::array<double, 3>& angular = {0, 0, 0});
-    bool resetBaseVelocity(const std::array<double, 3>& linear = {0, 0, 0},
-                           const std::array<double, 3>& angular = {0, 0, 0});
+    bool resetBaseWorldLinearVelocity(
+        const std::array<double, 3>& linear = {0, 0, 0});
+    bool resetBaseWorldAngularVelocity(
+        const std::array<double, 3>& angular = {0, 0, 0});
+    bool resetBaseWorldVelocity( //
+        const std::array<double, 3>& linear = {0, 0, 0},
+        const std::array<double, 3>& angular = {0, 0, 0});
 
     bool resetBasePose(const std::array<double, 3>& position = {0, 0, 0},
                        const std::array<double, 4>& orientation = {0, 0, 0, 0});
@@ -203,19 +209,22 @@ public:
     bool setBasePositionTarget(const std::array<double, 3>& position);
     bool setBaseOrientationTarget(const std::array<double, 4>& orientation);
 
-    bool setBaseVelocityTarget(const std::array<double, 3>& linear,
-                               const std::array<double, 3>& angular);
-    bool setBaseLinearVelocityTarget(const std::array<double, 3>& linear);
-    bool setBaseAngularVelocityTarget(const std::array<double, 3>& angular);
-    bool setBaseLinearAccelerationTarget(const std::array<double, 3>& linear);
-    bool setBaseAngularAccelerationTarget(const std::array<double, 3>& angular);
+    bool setBaseWorldVelocityTarget(const std::array<double, 3>& linear,
+                                    const std::array<double, 3>& angular);
+    bool setBaseWorldLinearVelocityTarget(const std::array<double, 3>& linear);
+    bool setBaseWorldAngularVelocityTarget( //
+        const std::array<double, 3>& angular);
+    bool setBaseWorldLinearAccelerationTarget( //
+        const std::array<double, 3>& linear);
+    bool setBaseWorldAngularAccelerationTarget( //
+        const std::array<double, 3>& angular);
 
     std::array<double, 3> basePositionTarget() const;
     std::array<double, 4> baseOrientationTarget() const;
-    std::array<double, 3> baseLinearVelocityTarget() const;
-    std::array<double, 3> baseAngularVelocityTarget() const;
-    std::array<double, 3> baseLinearAccelerationTarget() const;
-    std::array<double, 3> baseAngularAccelerationTarget() const;
+    std::array<double, 3> baseWorldLinearVelocityTarget() const;
+    std::array<double, 3> baseWorldAngularVelocityTarget() const;
+    std::array<double, 3> baseWorldLinearAccelerationTarget() const;
+    std::array<double, 3> baseWorldAngularAccelerationTarget() const;
 
 private:
     class Impl;

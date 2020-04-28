@@ -138,10 +138,10 @@ def test_model_base(gazebo: bindings.GazeboSimulator):
 
     # Reset the linear velocity
     lin_velocity = [0, 0, 5.0]
-    assert model.resetBaseLinearVelocity(lin_velocity)
-    assert model.baseLinearVelocity() == pytest.approx([0, 0, 0])
+    assert model.resetBaseWorldLinearVelocity(lin_velocity)
+    assert model.baseWorldLinearVelocity() == pytest.approx([0, 0, 0])
     gazebo.run()
-    assert model.baseLinearVelocity() == pytest.approx(lin_velocity, abs=0.01)
+    assert model.baseWorldLinearVelocity() == pytest.approx(lin_velocity, abs=0.01)
 
     # The linear velocity of the support must be the same
     assert "support" in model.linkNames()
@@ -150,10 +150,10 @@ def test_model_base(gazebo: bindings.GazeboSimulator):
 
     # Reset the angular velocity
     ang_velocity = [0.1, 0.5, -3.0]
-    assert model.resetBaseAngularVelocity(ang_velocity)
-    assert model.baseAngularVelocity() == pytest.approx([0, 0, 0])
+    assert model.resetBaseWorldAngularVelocity(ang_velocity)
+    assert model.baseWorldAngularVelocity() == pytest.approx([0, 0, 0])
     gazebo.run()
-    assert model.baseAngularVelocity() == pytest.approx(ang_velocity, abs=0.01)
+    assert model.baseWorldAngularVelocity() == pytest.approx(ang_velocity, abs=0.01)
 
     # The angular velocity of the support must be the same
     assert "support" in model.linkNames()
@@ -196,12 +196,12 @@ def test_model_references(gazebo: bindings.GazeboSimulator):
     assert model.basePositionTarget() == pytest.approx([0, 0, 5])
     assert model.baseOrientationTarget() == pytest.approx([0, 0, 1.0, 0])
 
-    assert model.setBaseLinearVelocityTarget([1, 2, 3])
-    assert model.setBaseAngularVelocityTarget([4, 5, 6])
-    assert model.setBaseAngularAccelerationTarget([-1, -2, -3])
-    assert model.baseLinearVelocityTarget() == pytest.approx([1, 2, 3])
-    assert model.baseAngularVelocityTarget() == pytest.approx([4, 5, 6])
-    assert model.baseAngularAccelerationTarget() == pytest.approx([-1, -2, -3])
+    assert model.setBaseWorldLinearVelocityTarget([1, 2, 3])
+    assert model.setBaseWorldAngularVelocityTarget([4, 5, 6])
+    assert model.setBaseWorldAngularAccelerationTarget([-1, -2, -3])
+    assert model.baseWorldLinearVelocityTarget() == pytest.approx([1, 2, 3])
+    assert model.baseWorldAngularVelocityTarget() == pytest.approx([4, 5, 6])
+    assert model.baseWorldAngularAccelerationTarget() == pytest.approx([-1, -2, -3])
 
 
 # def test_model_contacts():

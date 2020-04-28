@@ -4,6 +4,7 @@
 
 import pytest
 from typing import Tuple
+import gym_ignition_models
 from gym_ignition.utils import misc
 from gym_ignition import scenario_bindings as bindings
 
@@ -43,6 +44,26 @@ def gazebo_fixture(request):
     gazebo = bindings.GazeboSimulator(step_size, rtf, iterations)
 
     yield gazebo
+
+    gazebo.close()
+
+
+@pytest.fixture(scope="function")
+def default_world_fixture(request):
+    """
+    """
+
+    step_size, rtf, iterations = request.param
+    gazebo = bindings.GazeboSimulator(step_size, rtf, iterations)
+
+    assert gazebo.initialize()
+
+    world = gazebo.getWorld()
+    assert world.insertModel(gym_ignition_models.get_model_file("ground_plane"))
+    assert world.insertWorldPlugin("libPhysicsSystem.so",
+                                   "scenario::plugins::gazebo::Physics")
+
+    yield gazebo, world
 
     gazebo.close()
 
