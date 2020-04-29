@@ -185,10 +185,19 @@ namespace scenario {
             /**
              * Normalize a vector in [-1, 1].
              *
+             * The normalization applies the following equation, where
+             * \f$ v \f$ is the input, \f$ l \f$ and \f$ h \f$ are respectively
+             * the lower and higher limits:
+             *
+             * \f$ v_{normalized} = 2 \frac{v - l}{h - l} - 1 \f$
+             *
              * The input, low and high arguments are broadcasted to a common
              * size. Refer to the following for broadcasting definition:
              *
              * https://numpy.org/doc/stable/user/basics.broadcasting.html
+             *
+             * @note If the lower limit matches the higher limit, the
+             * corresponding input value is not normalized.
              *
              * @throws std::invalid_argument If the arguments cannot be
              * broadcasted.
@@ -203,6 +212,12 @@ namespace scenario {
 
             /**
              * Denormalize a vector from [-1, 1].
+             *
+             * The denormalization applies the following equation, where
+             * \f$ v \f$ is the input, \f$ l \f$ and \f$ h \f$ are respectively
+             * the lower and higher limits:
+             *
+             * \f$ v_{denormalized} = \frac{1}{2} (v + 1)(h - l) - l \f$
              *
              * The input, low and high arguments are broadcasted to a common
              * size. Refer to the following for broadcasting definition:
