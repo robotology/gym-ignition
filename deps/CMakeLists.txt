@@ -4,6 +4,35 @@
 
 include(FetchContent)
 
+# ===
+# YCM
+# ===
+
+find_package(YCM QUIET)
+
+if(NOT ${YCM_FOUND})
+
+    FetchContent_Declare(
+        ycm
+        GIT_REPOSITORY https://github.com/robotology/ycm.git)
+
+    FetchContent_GetProperties(ycm)
+
+    if(NOT ycm_POPULATED)
+        FetchContent_Populate(ycm)
+
+        add_subdirectory(${ycm_SOURCE_DIR}
+                         ${ycm_BINARY_DIR}
+                         EXCLUDE_FROM_ALL)
+    endif()
+
+    set(CMAKE_MODULE_PATH
+        "${CMAKE_MODULE_PATH};${ycm_SOURCE_DIR}/modules" PARENT_SCOPE)
+else()
+    set(CMAKE_MODULE_PATH
+        "${CMAKE_MODULE_PATH};${YCM_MODULE_PATH}" PARENT_SCOPE)
+endif()
+
 # ====================
 # TINY-PROCESS-LIBRARY
 # ====================
@@ -19,18 +48,24 @@ if(NOT ${tiny-process-library_FOUND})
     FetchContent_GetProperties(tinyprocesslibrary)
 
     if(NOT tinyprocesslibrary_POPULATED)
-        message(STATUS "Bootstrapping Tiny Process Library")
         FetchContent_Populate(tinyprocesslibrary)
+
+        # Disable building the tests
+        set(BUILD_TESTING OFF)
 
         # Build the library as static
         set(default_build_type ${BUILD_SHARED_LIBS})
         set(BUILD_SHARED_LIBS OFF)
-        add_subdirectory(${tinyprocesslibrary_SOURCE_DIR} ${tinyprocesslibrary_BINARY_DIR})
+        add_subdirectory(${tinyprocesslibrary_SOURCE_DIR}
+                         ${tinyprocesslibrary_BINARY_DIR}
+                         EXCLUDE_FROM_ALL)
         set(BUILD_SHARED_LIBS ${default_build_type})
 
         set_target_properties(tiny-process-library PROPERTIES
             PUBLIC_HEADER ${tinyprocesslibrary_SOURCE_DIR}/process.hpp
             POSITION_INDEPENDENT_CODE ON)
+
+        mark_as_advanced(BUILD_TESTING)
     endif()
 endif()
 
