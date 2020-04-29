@@ -54,7 +54,7 @@ using namespace scenario::plugins::gazebo;
 class JointController::Impl
 {
 public:
-    scenario::gazebo::Model model;
+    scenario::gazebo::ModelPtr model;
     ignition::gazebo::Entity modelEntity;
     std::chrono::steady_clock::duration prevUpdateTime{0};
 
@@ -82,10 +82,16 @@ void JointController::Configure(
     // Store the model entity
     pImpl->modelEntity = entity;
 
-    // Create a model and check its validity
-    pImpl->model.initialize(entity, &ecm, &eventMgr);
+    // Create a model that will be given to the controller
+    pImpl->model = std::make_shared<Model>();
 
-    if (!pImpl->model.valid()) {
+    // Create a model and check its validity
+    if (!pImpl->model->initialize(entity, &ecm, &eventMgr)) {
+        gymppError << "Failed to initialize model for controller" << std::endl;
+        return;
+    }
+
+    if (!pImpl->model->valid()) {
         gymppError << "Failed to create a model from Entity [" << entity << "]"
                    << std::endl;
         return;
@@ -99,6 +105,18 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
         return;
     }
 
+    if (!pImpl->model) {
+        return;
+    }
+
+    // This plugin keep being called also after the model was removed
+    try {
+        pImpl->model->controllerPeriod();
+    }
+    catch (exceptions::ComponentNotFound) {
+        return;
+    }
+
     using namespace std::chrono;
 
     // Update the controller only if enough time is passed
@@ -109,7 +127,7 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
     // Handle first iteration
     if (pImpl->prevUpdateTime.count() == 0) {
         elapsedFromLastUpdate =
-            duration<double>(pImpl->model.controllerPeriod());
+            duration<double>(pImpl->model->controllerPeriod());
     }
 
     // If enough time has passed, store the time of this actuation step. In this
@@ -125,7 +143,7 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
     };
 
     if (greaterThan(elapsedFromLastUpdate,
-                    duration<double>(pImpl->model.controllerPeriod()))) {
+                    duration<double>(pImpl->model->controllerPeriod()))) {
         // Store the current update time
         pImpl->prevUpdateTime = info.simTime;
 
@@ -164,7 +182,7 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
         std::string& jointName = utils::getExistingComponentData< //
             ignition::gazebo::components::Name>(&ecm, jointEntity);
 
-        auto joint = pImpl->model.getJoint(jointName);
+        auto joint = pImpl->model->getJoint(jointName);
         const std::vector<double>& position = joint->jointPosition();
 
         std::vector<double>& positionTarget = utils::getExistingComponentData<
@@ -196,7 +214,7 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
             utils::getExistingComponentData<ignition::gazebo::components::Name>(
                 &ecm, jointEntity);
 
-        auto joint = pImpl->model.getJoint(jointName);
+        auto joint = pImpl->model->getJoint(jointName);
         const std::vector<double>& velocity = joint->jointVelocity();
 
         std::vector<double>& velocityTarget = utils::getExistingComponentData<

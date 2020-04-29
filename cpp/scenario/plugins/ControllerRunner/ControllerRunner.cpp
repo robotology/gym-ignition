@@ -187,6 +187,18 @@ void ControllerRunner::PreUpdate(const ignition::gazebo::UpdateInfo& info,
         return;
     }
 
+    if (!pImpl->model) {
+        return;
+    }
+
+    // This plugin keep being called also after the model was removed
+    try {
+        pImpl->model->controllerPeriod();
+    }
+    catch (exceptions::ComponentNotFound) {
+        return;
+    }
+
     if (!pImpl->controller) {
         gymppError << "The controller was not initialized successfully"
                    << std::endl;
