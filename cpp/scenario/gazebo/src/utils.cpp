@@ -326,9 +326,14 @@ std::vector<double> utils::normalize(const std::vector<double>& input,
 
     outputEigen = 2.0 * (inputEigen - lowEigen) / (highEigen - lowEigen) - 1;
 
-    // Replace infinite with 0
-    outputEigen = outputEigen.unaryExpr(
-        [](const double v) { return std::isfinite(v) ? v : 0.0; });
+    // Replace infinite with the input value
+    std::transform(output.begin(),
+                   output.end(),
+                   input.begin(),
+                   output.begin(),
+                   [](const double& output, const double& input) {
+                       return std::isfinite(output) ? output : input;
+                   });
 
     return output;
 }
