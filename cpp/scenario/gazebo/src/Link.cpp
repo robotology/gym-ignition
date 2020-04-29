@@ -150,6 +150,11 @@ bool Link::createECMResources()
     pImpl->ecm->CreateComponent(pImpl->linkEntity,
                                 components::AngularAcceleration());
 
+    if (!this->enableContactDetection(true)) {
+        gymppError << "Failed to enable contact detection" << std::endl;
+        return false;
+    }
+
     return true;
 }
 
