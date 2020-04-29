@@ -86,7 +86,7 @@ public:
 
     bool valid() const;
 
-    size_t dofs() const;
+    size_t dofs(const std::vector<std::string>& jointNames = {}) const;
     std::string name() const;
 
     size_t nrOfLinks() const;

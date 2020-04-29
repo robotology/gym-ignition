@@ -285,11 +285,14 @@ bool Model::valid() const
     return pImpl->model.Valid(*pImpl->ecm);
 }
 
-size_t Model::dofs() const
+size_t Model::dofs(const std::vector<std::string>& jointNames) const
 {
+    const std::vector<std::string>& jointSerialization =
+        jointNames.empty() ? this->jointNames() : jointNames;
+
     size_t dofs = 0;
 
-    for (const auto& jointName : jointNames()) {
+    for (const auto& jointName : jointSerialization) {
         dofs += this->getJoint(jointName)->dofs();
     }
 
