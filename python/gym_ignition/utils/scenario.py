@@ -94,9 +94,7 @@ def init_gazebo_sim(step_size: float = 0.001,
     if not ok_ground:
         raise RuntimeError("Failed to insert the ground plane")
 
-    # Insert the physics
-    ok_physics = world.insertWorldPlugin("libPhysicsSystem.so",
-                                         "scenario::plugins::gazebo::Physics")
+    ok_physics = world.setPhysicsEngine(bindings.PhysicsEngine_Dart)
 
     if not ok_physics:
         raise RuntimeError("Failed to insert the physics plugin")
