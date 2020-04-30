@@ -153,7 +153,6 @@ if(GYMIGNITION_ENABLE_SCENARIO)
         add_subdirectory(cpp/scenario/gazebo)
         add_subdirectory(cpp/scenario/plugins)
         add_subdirectory(cpp/scenario/controllers)
-        add_subdirectory(gym_ignition_data)
 
     endif()
 

@@ -156,12 +156,4 @@ setup(
         'build_ext': BuildExtension,
     },
     zip_safe=False,
-    package_data={
-        'gym_ignition_data': [
-            './**/*.sdf',
-            './**/*.urdf',
-            './**/*.world',
-            './**/*.config',
-        ],
-    },
 )
