@@ -62,8 +62,7 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
 
     def randomize_physics(self, world: bindings.World) -> None:
 
-        ok_physics = world.insertWorldPlugin("libPhysicsSystem.so",
-                                             "scenario::plugins::gazebo::Physics")
+        ok_physics = world.setPhysicsEngine(bindings.PhysicsEngine_Dart)
 
         if not ok_physics:
             raise RuntimeError("Failed to insert the physics plugin")

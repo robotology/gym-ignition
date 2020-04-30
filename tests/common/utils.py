@@ -60,8 +60,7 @@ def default_world_fixture(request):
 
     world = gazebo.getWorld()
     assert world.insertModel(gym_ignition_models.get_model_file("ground_plane"))
-    assert world.insertWorldPlugin("libPhysicsSystem.so",
-                                   "scenario::plugins::gazebo::Physics")
+    assert world.setPhysicsEngine(bindings.PhysicsEngine_Dart)
 
     yield gazebo, world
 
