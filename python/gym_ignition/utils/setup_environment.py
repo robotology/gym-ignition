@@ -21,7 +21,7 @@ def setup_environment() -> None:
 
     # Get the install prefix from C++. It is defined only in Developer mode.
     from gym_ignition import scenario_bindings
-    install_prefix = scenario_bindings.getInstallPrefix()
+    install_prefix = scenario_bindings.get_install_prefix()
 
     if install_prefix != "":
         detected_mode = "Developer"

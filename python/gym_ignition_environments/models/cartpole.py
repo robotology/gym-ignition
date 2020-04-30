@@ -28,7 +28,7 @@ class CartPole(scenario.model_wrapper.ModelWrapper,
             model_file = CartPole.get_model_file()
 
         # Insert the model
-        ok_model = world.insertModel(model_file,
+        ok_model = world.insert_model(model_file,
                                      initial_pose,
                                      model_name)
 
@@ -36,7 +36,7 @@ class CartPole(scenario.model_wrapper.ModelWrapper,
             raise RuntimeError("Failed to insert model")
 
         # Get the model
-        model = world.getModel(model_name)
+        model = world.get_model(model_name)
 
         # Initialize base class
         super().__init__(model=model)
