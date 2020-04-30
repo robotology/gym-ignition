@@ -85,7 +85,9 @@ bool Box::contains(const Space::Sample& data) const
 
     // Check the type
     if (!bufferPtr) {
-        gymppError << "Failed to get the buffer or the supported type from the sample" << std::endl;
+        gymppError
+            << "Failed to get the buffer or the supported type from the sample"
+            << std::endl;
         return false;
     }
 
@@ -94,14 +96,17 @@ bool Box::contains(const Space::Sample& data) const
 
     if (bufferPtr->size() != pImpl->shape[0]) {
         gymppError << "The size of the buffer (" << bufferPtr->size()
-                   << ") does not match with the shape of the space (" << pImpl->shape[0] << ")"
-                   << std::endl;
+                   << ") does not match with the shape of the space ("
+                   << pImpl->shape[0] << ")" << std::endl;
         return false;
     }
 
     for (unsigned i = 0; i < bufferPtr->size(); ++i) {
-        if (((*bufferPtr)[i] > pImpl->high[i]) || ((*bufferPtr)[i] < pImpl->low[i])) {
-            gymppError << "The sample does not comply to the limits set for its space" << std::endl;
+        if (((*bufferPtr)[i] > pImpl->high[i])
+            || ((*bufferPtr)[i] < pImpl->low[i])) {
+            gymppError
+                << "The sample does not comply to the limits set for its space"
+                << std::endl;
             return false;
         }
     }
@@ -165,7 +170,9 @@ bool Discrete::contains(const Space::Sample& data) const
 
     // Check the type
     if (!bufferPtr) {
-        gymppError << "Failed to get the buffer or the supported type from the sample" << std::endl;
+        gymppError
+            << "Failed to get the buffer or the supported type from the sample"
+            << std::endl;
         return false;
     }
 
@@ -173,13 +180,15 @@ bool Discrete::contains(const Space::Sample& data) const
     assert(pImpl->shape.size() == 1);
     if (bufferPtr->size() != pImpl->shape.size()) {
         gymppError << "The size of the buffer (" << bufferPtr->size()
-                   << ") does not match with the shape of the space (" << pImpl->shape.size() << ")"
-                   << std::endl;
+                   << ") does not match with the shape of the space ("
+                   << pImpl->shape.size() << ")" << std::endl;
         return false;
     }
 
     if ((*bufferPtr)[0] < 0 || (*bufferPtr)[0] >= pImpl->n) {
-        gymppError << "The sample does not comply to the limits set for its space" << std::endl;
+        gymppError
+            << "The sample does not comply to the limits set for its space"
+            << std::endl;
         return false;
     }
 

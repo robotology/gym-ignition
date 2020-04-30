@@ -15,7 +15,7 @@
 namespace gympp {
     namespace base {
         class Task;
-    } // namespace gazebo
+    } // namespace base
 } // namespace gympp
 
 class gympp::base::Task
