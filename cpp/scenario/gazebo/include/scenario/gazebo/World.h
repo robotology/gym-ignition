@@ -42,6 +42,10 @@ namespace scenario {
     namespace gazebo {
         class World;
         class Model;
+        enum class PhysicsEngine
+        {
+            Dart,
+        };
         using ModelPtr = std::shared_ptr<Model>;
         using WorldPtr = std::shared_ptr<World>;
     } // namespace gazebo
@@ -67,6 +71,7 @@ public:
                            const std::string& className,
                            const std::string& context = {});
 
+    bool setPhysicsEngine(const PhysicsEngine engine);
     std::array<double, 3> gravity() const;
     bool setGravity(const std::array<double, 3>& gravity);
 

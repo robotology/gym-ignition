@@ -147,6 +147,26 @@ bool World::insertWorldPlugin(const std::string& libName,
     return true;
 }
 
+bool World::setPhysicsEngine(const PhysicsEngine engine)
+{
+    std::string libName;
+    std::string className;
+
+    switch (engine) {
+        case PhysicsEngine::Dart:
+            libName = "libPhysicsSystem.so";
+            className = "scenario::plugins::gazebo::Physics";
+            break;
+    }
+
+    if (!this->insertWorldPlugin(libName, className)) {
+        gymppError << "Failed to insert the physics plugin" << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
 std::array<double, 3> World::gravity() const
 {
     auto gravity = utils::getExistingComponentData< //
