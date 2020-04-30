@@ -31,7 +31,8 @@ namespace gympp {
         using BufferLong = BufferContainer<size_t>::type;
         using BufferFloat = BufferContainer<float>::type;
         using BufferDouble = BufferContainer<double>::type;
-        using GenericBuffer = std::variant<BufferInt, BufferLong, BufferFloat, BufferDouble>;
+        using GenericBuffer =
+            std::variant<BufferInt, BufferLong, BufferFloat, BufferDouble>;
 
         namespace data {
             using Shape = std::vector<size_t>;
@@ -63,7 +64,8 @@ struct gympp::base::data::Sample
     template <typename T>
     std::optional<T> get(const size_t i) const
     {
-        auto bufferPtr = std::get_if<typename BufferContainer<T>::type>(&buffer);
+        auto bufferPtr =
+            std::get_if<typename BufferContainer<T>::type>(&buffer);
 
         if (!bufferPtr) {
             return {};
@@ -100,7 +102,10 @@ struct gympp::base::Range
     DataSupport min = 0;
     DataSupport max = 0;
 
-    bool contains(double value) { return (value <= max && value >= min) ? true : false; }
+    bool contains(double value)
+    {
+        return (value <= max && value >= min) ? true : false;
+    }
 };
 
 #endif // GYMPP_BASE_COMMON

@@ -38,9 +38,6 @@ struct gympp::base::State
     gympp::base::Observation observation;
 };
 
-// TODO: https://hub.packtpub.com/openai-gym-environments-wrappers-and-monitors-tutorial/
-//       These C++ and their mapping to python / julia should allow using the Wrapper method
-
 // From https://github.com/openai/gym/blob/master/gym/core.py
 class gympp::base::Environment
 {

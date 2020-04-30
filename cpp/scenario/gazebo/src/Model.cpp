@@ -135,7 +135,7 @@ bool Model::initialize(const ignition::gazebo::Entity modelEntity,
 
     // Check that the model is valid
     if (!pImpl->model.Valid(*ecm)) {
-        gymppError << "The model entity is not valid" << std::endl;
+        sError << "The model entity is not valid" << std::endl;
         return false;
     }
 
@@ -144,25 +144,23 @@ bool Model::initialize(const ignition::gazebo::Entity modelEntity,
 
 bool Model::createECMResources()
 {
-    gymppMessage << "Model: [" << pImpl->modelEntity << "] " << this->name()
-                 << std::endl;
+    sMessage << "Model: [" << pImpl->modelEntity << "] " << this->name()
+             << std::endl;
 
     // Create required link resources
-    gymppMessage << "Links:" << std::endl;
+    sMessage << "Links:" << std::endl;
     for (const auto& linkName : this->linkNames()) {
         if (!this->getLink(linkName)->createECMResources()) {
-            gymppError << "Failed to initialize ECM link resources"
-                       << std::endl;
+            sError << "Failed to initialize ECM link resources" << std::endl;
             return false;
         }
     }
 
     // Create required model resources
-    gymppMessage << "Joints:" << std::endl;
+    sMessage << "Joints:" << std::endl;
     for (const auto& jointName : this->jointNames()) {
         if (!this->getJoint(jointName)->createECMResources()) {
-            gymppError << "Failed to initialize ECM joint resources"
-                       << std::endl;
+            sError << "Failed to initialize ECM joint resources" << std::endl;
             return false;
         }
     }
@@ -503,8 +501,8 @@ double Model::controllerPeriod() const
 bool Model::setControllerPeriod(const double period)
 {
     if (period <= 0) {
-        gymppError << "The controller period must be greater than zero"
-                   << std::endl;
+        sError << "The controller period must be greater than zero"
+               << std::endl;
         return false;
     }
 
@@ -805,19 +803,19 @@ bool Model::setBaseFrame(const std::string& frameName)
 
     if (std::find(linkNames.begin(), linkNames.end(), frameName)
         == linkNames.end()) {
-        gymppError
+        sError
             << "Failed to set the model base on the frame of nonexistent link '"
             << frameName << "'" << std::endl;
         return false;
     }
 
     if (frameName == this->baseFrame()) {
-        gymppDebug << "Frame '" << baseFrame()
-                   << "' is already the current model base" << std::endl;
+        sDebug << "Frame '" << baseFrame()
+               << "' is already the current model base" << std::endl;
         return true;
     }
 
-    gymppError << "Changing the base link is not yet supported" << std::endl;
+    sError << "Changing the base link is not yet supported" << std::endl;
     throw exceptions::NotImplementedError(__FUNCTION__);
 }
 
@@ -945,7 +943,7 @@ bool Model::resetBasePose(const std::array<double, 3>& position,
         ignition::gazebo::components::ParentEntity(pImpl->modelEntity));
 
     if (canonicalLinkEntity == ignition::gazebo::kNullEntity) {
-        gymppError << "Failed to get entity of canonical link" << std::endl;
+        sError << "Failed to get entity of canonical link" << std::endl;
         return false;
     }
 
@@ -1234,9 +1232,9 @@ bool Model::Impl::setJointDataSerialized(
     }
 
     if (data.size() != expectedDOFs) {
-        gymppError << "The size of the forces does not match the considered "
-                      "joint's DOFs"
-                   << std::endl;
+        sError << "The size of the forces does not match the considered "
+                  "joint's DOFs"
+               << std::endl;
         return false;
     }
 
@@ -1245,8 +1243,8 @@ bool Model::Impl::setJointDataSerialized(
     for (auto& joint : model->joints(jointNames)) {
         for (size_t dof = 0; dof < joint->dofs(); ++dof) {
             if (!setJointData(joint, *it++, dof)) {
-                gymppError << "Failed to set force of joint '" << joint->name()
-                           << "'" << std::endl;
+                sError << "Failed to set force of joint '" << joint->name()
+                       << "'" << std::endl;
                 return false;
             }
         }

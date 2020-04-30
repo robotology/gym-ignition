@@ -50,7 +50,7 @@ ECMProvider::ECMProvider()
 ECMProvider::~ECMProvider()
 {
     ECMSingleton::Instance().clean();
-    gymppDebug << "Destroying the ECMProvider" << std::endl;
+    sDebug << "Destroying the ECMProvider" << std::endl;
 };
 
 void ECMProvider::Configure(const ignition::gazebo::Entity& entity,
@@ -60,8 +60,8 @@ void ECMProvider::Configure(const ignition::gazebo::Entity& entity,
 {
     if (!ecm.EntityHasComponentType(
             entity, ignition::gazebo::components::World().TypeId())) {
-        gymppError << "The ECMProvider plugin was not inserted "
-                   << "in a world element" << std::endl;
+        sError << "The ECMProvider plugin was not inserted "
+               << "in a world element" << std::endl;
         return;
     }
 
@@ -69,19 +69,19 @@ void ECMProvider::Configure(const ignition::gazebo::Entity& entity,
         ignition::gazebo::components::Name>(&ecm, entity);
 
     if (ECMSingleton::Instance().hasWorld(worldName)) {
-        gymppWarning << "Resources of world " << worldName
-                     << " already inserted" << std::endl;
+        sWarning << "Resources of world " << worldName << " already inserted"
+                 << std::endl;
         return;
     }
 
     if (!ECMSingleton::Instance().storePtrs(&ecm, &eventMgr, worldName)) {
-        gymppError << "Failed to store resources of world " << worldName << " ["
-                   << entity << "]" << std::endl;
+        sError << "Failed to store resources of world " << worldName << " ["
+               << entity << "]" << std::endl;
         return;
     }
 
-    gymppDebug << "World '" << worldName
-               << "' successfully processed by ECMProvider" << std::endl;
+    sDebug << "World '" << worldName
+           << "' successfully processed by ECMProvider" << std::endl;
 }
 
 IGNITION_ADD_PLUGIN(scenario::plugins::gazebo::ECMProvider,

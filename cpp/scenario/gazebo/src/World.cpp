@@ -160,7 +160,7 @@ bool World::setPhysicsEngine(const PhysicsEngine engine)
     }
 
     if (!this->insertWorldPlugin(libName, className)) {
-        gymppError << "Failed to insert the physics plugin" << std::endl;
+        sError << "Failed to insert the physics plugin" << std::endl;
         return false;
     }
 
@@ -185,8 +185,8 @@ bool World::setGravity(const std::array<double, 3>& gravity)
         utils::steadyClockDurationToDouble(simTimeAtWorldCreation);
 
     if (this->time() > simTimeAtWorldCreationInSeconds) {
-        gymppError << "Physics already processed the world and its"
-                   << "parameters cannot be modified" << std::endl;
+        sError << "Physics already processed the world and its"
+               << "parameters cannot be modified" << std::endl;
         return false;
     }
 
@@ -277,7 +277,7 @@ bool World::insertModel(const std::string& modelFile,
     }
 
     if (modelSdfRoot->ModelCount() != 1) {
-        gymppError << "The SDF file contains more than one model" << std::endl;
+        sError << "The SDF file contains more than one model" << std::endl;
         return false;
     }
 
@@ -300,9 +300,9 @@ bool World::insertModel(const std::string& modelFile,
     const std::vector<std::string> modelNames = this->modelNames();
     if (std::find(modelNames.begin(), modelNames.end(), finalModelEntityName)
         != modelNames.end()) {
-        gymppError << "Failed to insert model '" << finalModelEntityName
-                   << "'. Another entity with the same name already exists."
-                   << std::endl;
+        sError << "Failed to insert model '" << finalModelEntityName
+               << "'. Another entity with the same name already exists."
+               << std::endl;
         return false;
     }
 
@@ -317,12 +317,12 @@ bool World::insertModel(const std::string& modelFile,
     // receiving the model entity name, they receive the model sdf name.
     if (!utils::renameSDFModel(
             *modelSdfRoot, finalModelEntityName, ModelIndex)) {
-        gymppError << "Failed to rename SDF model" << std::endl;
+        sError << "Failed to rename SDF model" << std::endl;
         return false;
     }
 
     if (utils::verboseFromEnvironment()) {
-        gymppDebug << "Inserting a model from the following SDF:" << std::endl;
+        sDebug << "Inserting a model from the following SDF:" << std::endl;
         std::cout << modelSdfRoot->Element()->ToString("") << std::endl;
     }
 
@@ -366,7 +366,7 @@ bool World::insertModel(const std::string& modelFile,
     // Create required model resources. This call prepares all the necessary
     // components in the ECM to make our bindings work.
     if (!model->createECMResources()) {
-        gymppError << "Failed to initialize ECM model resources" << std::endl;
+        sError << "Failed to initialize ECM model resources" << std::endl;
         return false;
     }
 
@@ -381,14 +381,14 @@ bool World::removeModel(const std::string& modelName)
         ignition::gazebo::components::ParentEntity(pImpl->worldEntity));
 
     if (modelEntity == ignition::gazebo::kNullEntity) {
-        gymppError << "Model '" << modelName << "' not found in the world"
-                   << std::endl;
+        sError << "Model '" << modelName << "' not found in the world"
+               << std::endl;
         return false;
     }
 
     // Request the removal of the model
-    gymppDebug << "Requesting removal of entity [" << modelEntity << "]"
-               << std::endl;
+    sDebug << "Requesting removal of entity [" << modelEntity << "]"
+           << std::endl;
     pImpl->sdfEntityCreator->RequestRemoveEntity(modelEntity);
 
     // Remove the cached model

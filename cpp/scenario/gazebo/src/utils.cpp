@@ -57,7 +57,7 @@ void utils::setVerbosity(const int level)
 std::string utils::findSdfFile(const std::string& fileName)
 {
     if (fileName.empty()) {
-        gymppError << "The SDF file name is empty" << std::endl;
+        sError << "The SDF file name is empty" << std::endl;
         return {};
     }
 
@@ -69,9 +69,9 @@ std::string utils::findSdfFile(const std::string& fileName)
     std::string sdfFilePath = systemPaths.FindFile(fileName);
 
     if (sdfFilePath.empty()) {
-        gymppError << "Failed to find " << fileName << std::endl;
-        gymppError << "Check that it is part of IGN_GAZEBO_RESOURCE_PATH"
-                   << std::endl;
+        sError << "Failed to find " << fileName << std::endl;
+        sError << "Check that it is part of IGN_GAZEBO_RESOURCE_PATH"
+               << std::endl;
         return {};
     }
 
@@ -112,7 +112,7 @@ std::string utils::getModelNameFromSdf(const std::string& fileName,
     std::string absFileName = findSdfFile(fileName);
 
     if (absFileName.empty()) {
-        gymppError << "Failed to find file " << fileName << std::endl;
+        sError << "Failed to find file " << fileName << std::endl;
         return {};
     }
 
@@ -123,14 +123,14 @@ std::string utils::getModelNameFromSdf(const std::string& fileName,
     }
 
     if (root->ModelCount() == 0) {
-        gymppError << "Didn't find any model in file " << fileName << std::endl;
+        sError << "Didn't find any model in file " << fileName << std::endl;
         return {};
     }
 
     if (modelIndex >= root->ModelCount()) {
-        gymppError << "Model with index " << modelIndex
-                   << " not found. The model has only " << root->ModelCount()
-                   << " model(s)" << std::endl;
+        sError << "Model with index " << modelIndex
+               << " not found. The model has only " << root->ModelCount()
+               << " model(s)" << std::endl;
         return {};
     }
 
@@ -143,7 +143,7 @@ std::string utils::getWorldNameFromSdf(const std::string& fileName,
     std::string absFileName = findSdfFile(fileName);
 
     if (absFileName.empty()) {
-        gymppError << "Failed to find file " << fileName << std::endl;
+        sError << "Failed to find file " << fileName << std::endl;
         return {};
     }
 
@@ -154,14 +154,14 @@ std::string utils::getWorldNameFromSdf(const std::string& fileName,
     }
 
     if (root->WorldCount() == 0) {
-        gymppError << "Didn't find any world in file " << fileName << std::endl;
+        sError << "Didn't find any world in file " << fileName << std::endl;
         return {};
     }
 
     if (worldIndex >= root->WorldCount()) {
-        gymppError << "Model with index " << worldIndex
-                   << " not found. The model has only " << root->WorldCount()
-                   << " model(s)" << std::endl;
+        sError << "Model with index " << worldIndex
+               << " not found. The model has only " << root->WorldCount()
+               << " model(s)" << std::endl;
         return {};
     }
 
@@ -205,7 +205,7 @@ std::string utils::getModelFileFromFuel(const std::string& URI,
         modelFilePath = fuel_tools::fetchResource(URI);
 
         if (modelFilePath.empty()) {
-            gymppError << "Failed to download Fuel model" << std::endl;
+            sError << "Failed to download Fuel model" << std::endl;
             return {};
         }
     }
@@ -215,7 +215,7 @@ std::string utils::getModelFileFromFuel(const std::string& URI,
         auto result = client.CachedModel(common::URI(URI), modelFilePath);
 
         if (result.Type() != fuel_tools::ResultType::FETCH_ALREADY_EXISTS) {
-            gymppError << "Fuel model not found locally" << std::endl;
+            sError << "Fuel model not found locally" << std::endl;
             return {};
         }
     }
@@ -225,8 +225,8 @@ std::string utils::getModelFileFromFuel(const std::string& URI,
     std::string modelFile = common::joinPaths(modelFilePath, "model.sdf");
 
     if (!common::isFile(modelFile)) {
-        gymppError << "The model was downloaded from Fuel but it was not found "
-                   << "in the filesystem" << std::endl;
+        sError << "The model was downloaded from Fuel but it was not found "
+               << "in the filesystem" << std::endl;
         return {};
     }
 
@@ -253,8 +253,8 @@ std::string utils::getInstallPrefix()
 #ifdef GYMIGNITION_CMAKE_INSTALL_PREFIX
     return GYMIGNITION_CMAKE_INSTALL_PREFIX;
 #else
-    gymppDebug << "User installation detected. The install prefix "
-               << "could be detected from the Python module path." << std::endl;
+    sDebug << "User installation detected. The install prefix "
+           << "could be detected from the Python module path." << std::endl;
     return "";
 #endif
 }

@@ -87,13 +87,13 @@ void JointController::Configure(
 
     // Create a model and check its validity
     if (!pImpl->model->initialize(entity, &ecm, &eventMgr)) {
-        gymppError << "Failed to initialize model for controller" << std::endl;
+        sError << "Failed to initialize model for controller" << std::endl;
         return;
     }
 
     if (!pImpl->model->valid()) {
-        gymppError << "Failed to create a model from Entity [" << entity << "]"
-                   << std::endl;
+        sError << "Failed to create a model from Entity [" << entity << "]"
+               << std::endl;
         return;
     }
 }
@@ -195,9 +195,8 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
                                     info.dt,
                                     positionTarget,
                                     position)) {
-            gymppError << "Failed to run PID controller of joint "
-                       << joint->name() << " [" << jointEntity << "]"
-                       << std::endl;
+            sError << "Failed to run PID controller of joint " << joint->name()
+                   << " [" << jointEntity << "]" << std::endl;
         }
     }
 
@@ -227,9 +226,8 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
                                     info.dt,
                                     velocityTarget,
                                     velocity)) {
-            gymppError << "Failed to run PID controller of joint "
-                       << joint->name() << " [" << jointEntity << "]"
-                       << std::endl;
+            sError << "Failed to run PID controller of joint " << joint->name()
+                   << " [" << jointEntity << "]" << std::endl;
         }
     }
 }
@@ -261,8 +259,8 @@ bool JointController::Impl::runPIDController(
             }
 
             if (!joint.setGeneralizedForceTarget(force)) {
-                gymppError << "Failed to set force of joint " << joint.name()
-                           << std::endl;
+                sError << "Failed to set force of joint " << joint.name()
+                       << std::endl;
                 return false;
             }
             return true;
@@ -270,8 +268,8 @@ bool JointController::Impl::runPIDController(
         case base::JointType::Fixed:
         case base::JointType::Ball:
         case base::JointType::Invalid:
-            gymppWarning << "Type of joint '" << joint.name()
-                         << " not supported" << std::endl;
+            sWarning << "Type of joint '" << joint.name() << " not supported"
+                     << std::endl;
             return true;
     }
 

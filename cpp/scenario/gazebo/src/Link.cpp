@@ -104,7 +104,7 @@ bool Link::initialize(const ignition::gazebo::Entity linkEntity,
                       ignition::gazebo::EventManager* eventManager)
 {
     if (linkEntity == ignition::gazebo::kNullEntity || !ecm || !eventManager) {
-        gymppError << "Failed to initialize Link" << std::endl;
+        sError << "Failed to initialize Link" << std::endl;
         return false;
     }
 
@@ -116,7 +116,7 @@ bool Link::initialize(const ignition::gazebo::Entity linkEntity,
 
     // Check that the link is valid
     if (!pImpl->link.Valid(*ecm)) {
-        gymppError << "The link entity is not valid" << std::endl;
+        sError << "The link entity is not valid" << std::endl;
         return false;
     }
 
@@ -125,8 +125,7 @@ bool Link::initialize(const ignition::gazebo::Entity linkEntity,
 
 bool Link::createECMResources()
 {
-    gymppMessage << "  [" << pImpl->linkEntity << "] " << this->name()
-                 << std::endl;
+    sMessage << "  [" << pImpl->linkEntity << "] " << this->name() << std::endl;
 
     using namespace ignition::gazebo;
 
@@ -151,7 +150,7 @@ bool Link::createECMResources()
                                 components::AngularAcceleration());
 
     if (!this->enableContactDetection(true)) {
-        gymppError << "Failed to enable contact detection" << std::endl;
+        sError << "Failed to enable contact detection" << std::endl;
         return false;
     }
 

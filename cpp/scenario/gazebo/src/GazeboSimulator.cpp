@@ -163,13 +163,13 @@ size_t GazeboSimulator::stepsPerRun() const
 bool GazeboSimulator::initialize()
 {
     if (this->initialized()) {
-        gymppMessage << "The simulator is already initialized" << std::endl;
+        sMessage << "The simulator is already initialized" << std::endl;
         return true;
     }
 
     // Initialize the server
     if (!pImpl->getServer()) {
-        gymppError << "Failed to get the Gazebo server" << std::endl;
+        sError << "Failed to get the Gazebo server" << std::endl;
         return false;
     }
 
@@ -196,14 +196,14 @@ bool GazeboSimulator::initialized() const
 bool GazeboSimulator::run(const bool paused)
 {
     if (!this->initialized()) {
-        gymppError << "The simulator was not initialized" << std::endl;
+        sError << "The simulator was not initialized" << std::endl;
         return false;
     }
 
     // Get the gazebo server
     auto server = pImpl->getServer();
     if (!server) {
-        gymppError << "Failed to get the ignition server" << std::endl;
+        sError << "Failed to get the ignition server" << std::endl;
         return false;
     }
 
@@ -214,8 +214,7 @@ bool GazeboSimulator::run(const bool paused)
     bool deterministic = pImpl->gazebo.numOfIterations != 0 ? true : false;
 
     if (!deterministic && server->Running()) {
-        gymppWarning << "The server is already running in background"
-                     << std::endl;
+        sWarning << "The server is already running in background" << std::endl;
         return true;
     }
 
@@ -232,7 +231,7 @@ bool GazeboSimulator::run(const bool paused)
     if (!server->Run(/*blocking=*/deterministic,
                      /*iterations=*/iterations,
                      /*paused=*/paused)) {
-        gymppError << "The server couldn't execute the step" << std::endl;
+        sError << "The server couldn't execute the step" << std::endl;
         return false;
     }
 
@@ -242,7 +241,7 @@ bool GazeboSimulator::run(const bool paused)
 bool GazeboSimulator::gui(const int verbosity)
 {
     if (!this->initialized()) {
-        gymppError << "The simulator was not initialized" << std::endl;
+        sError << "The simulator was not initialized" << std::endl;
         return false;
     }
 
@@ -256,7 +255,7 @@ bool GazeboSimulator::gui(const int verbosity)
     std::vector<std::string> worldNames = this->worldNames();
 
     if (worldNames.empty()) {
-        gymppError << "Failed to find any world in the simulator" << std::endl;
+        sError << "Failed to find any world in the simulator" << std::endl;
         return false;
     }
 
@@ -264,12 +263,12 @@ bool GazeboSimulator::gui(const int verbosity)
     std::string worldName = worldNames[0];
 
     if (!pImpl->sceneBroadcasterActive(worldName)) {
-        gymppDebug << "Starting the SceneBroadcaster plugin" << std::endl;
+        sDebug << "Starting the SceneBroadcaster plugin" << std::endl;
         auto world = this->getWorld(worldName);
         if (!world->insertWorldPlugin(
                 "libignition-gazebo-scene-broadcaster-system.so",
                 "ignition::gazebo::systems::SceneBroadcaster")) {
-            gymppError << "Failed to load SceneBroadcaster plugin" << std::endl;
+            sError << "Failed to load SceneBroadcaster plugin" << std::endl;
         }
     }
 
@@ -290,7 +289,7 @@ bool GazeboSimulator::gui(const int verbosity)
     std::vector<std::string> serviceList;
 
     do {
-        gymppDebug << "Waiting GUI to show up... " << std::endl;
+        sDebug << "Waiting GUI to show up... " << std::endl;
         node.ServiceList(serviceList);
 
         for (const auto& serviceName : serviceList) {
@@ -303,7 +302,7 @@ bool GazeboSimulator::gui(const int verbosity)
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     } while (!guiServiceExists);
 
-    gymppDebug << "GUI up and running" << std::endl;
+    sDebug << "GUI up and running" << std::endl;
     return true;
 }
 
@@ -333,8 +332,8 @@ bool GazeboSimulator::close()
         // This happens while tearing down everything. The ECMProvider plugin
         // sometimes is destroyed before the simulator.
         catch (std::runtime_error) {
-            gymppWarning << "Failed to clean the singleton from the worlds"
-                         << std::endl;
+            sWarning << "Failed to clean the singleton from the worlds"
+                     << std::endl;
         }
     }
 
@@ -347,13 +346,13 @@ bool GazeboSimulator::close()
 bool GazeboSimulator::pause()
 {
     if (!this->initialized()) {
-        gymppMessage << "Couldn't pause the simulator, it was never initialized"
-                     << std::endl;
+        sMessage << "Couldn't pause the simulator, it was never initialized"
+                 << std::endl;
         return true;
     }
 
     if (!this->running()) {
-        gymppMessage << "The simulation is already paused" << std::endl;
+        sMessage << "The simulation is already paused" << std::endl;
         return true;
     }
 
@@ -369,7 +368,7 @@ bool GazeboSimulator::pause()
 bool GazeboSimulator::running() const
 {
     if (!this->initialized()) {
-        gymppMessage << "The simulator was not initialized" << std::endl;
+        sMessage << "The simulator was not initialized" << std::endl;
         return false;
     }
 
@@ -386,8 +385,8 @@ bool GazeboSimulator::insertWorldFromSDF(const std::string& worldFile,
         sdfRoot = utils::getSdfRootFromFile(worldFile);
     }
     else {
-        gymppMessage << "No world file passed, using the default empty world"
-                     << std::endl;
+        sMessage << "No world file passed, using the default empty world"
+                 << std::endl;
         sdfRoot = utils::getSdfRootFromString(utils::getEmptyWorld());
     }
 
@@ -397,7 +396,7 @@ bool GazeboSimulator::insertWorldFromSDF(const std::string& worldFile,
     }
 
     if (sdfRoot->WorldCount() != 1) {
-        gymppError << "The world file has more than one world" << std::endl;
+        sError << "The world file has more than one world" << std::endl;
         return false;
     }
 
@@ -428,13 +427,13 @@ bool GazeboSimulator::insertWorldsFromSDF(
     }
 
     if (sdfRoot->WorldCount() == 0) {
-        gymppError << "Failed to find any world in the SDF file" << std::endl;
+        sError << "Failed to find any world in the SDF file" << std::endl;
         return false;
     }
 
     if (!worldNames.empty() && sdfRoot->WorldCount() != worldNames.size()) {
-        gymppError << "The number of world names does not match the number of "
-                   << "worlds found in the SDF file" << std::endl;
+        sError << "The number of world names does not match the number of "
+               << "worlds found in the SDF file" << std::endl;
         return false;
     }
 
@@ -455,8 +454,8 @@ bool GazeboSimulator::insertWorldsFromSDF(
         }
 
         if (!pImpl->insertWorld(thisWorld)) {
-            gymppError << "Failed to insert world " << thisWorld.Name()
-                       << std::endl;
+            sError << "Failed to insert world " << thisWorld.Name()
+                   << std::endl;
             return false;
         }
     }
@@ -467,7 +466,7 @@ bool GazeboSimulator::insertWorldsFromSDF(
 std::vector<std::string> GazeboSimulator::worldNames() const
 {
     if (!this->initialized()) {
-        gymppError << "The simulator was not initialized" << std::endl;
+        sError << "The simulator was not initialized" << std::endl;
         return {};
     }
 
@@ -482,7 +481,7 @@ std::shared_ptr<scenario::gazebo::World>
 GazeboSimulator::getWorld(const std::string& worldName) const
 {
     if (!this->initialized()) {
-        gymppError << "The simulator was not initialized" << std::endl;
+        sError << "The simulator was not initialized" << std::endl;
         return nullptr;
     }
 
@@ -499,8 +498,8 @@ GazeboSimulator::getWorld(const std::string& worldName) const
             returnedWorldName = worldNames[0];
         }
         else {
-            gymppError << "Found multiple worlds. "
-                       << "You must specify the world name." << std::endl;
+            sError << "Found multiple worlds. "
+                   << "You must specify the world name." << std::endl;
             return nullptr;
         }
     }
@@ -513,21 +512,21 @@ GazeboSimulator::getWorld(const std::string& worldName) const
 
     if (std::find(worldNames.begin(), worldNames.end(), returnedWorldName)
         == worldNames.end()) {
-        gymppError << "Failed to find world '" << returnedWorldName << "'"
-                   << std::endl;
+        sError << "Failed to find world '" << returnedWorldName << "'"
+               << std::endl;
         return nullptr;
     }
 
     auto& ecmSingleton = scenario::plugins::gazebo::ECMSingleton::Instance();
 
     if (!ecmSingleton.hasWorld(returnedWorldName)) {
-        gymppError << "Failed to find world in the singleton" << std::endl;
+        sError << "Failed to find world in the singleton" << std::endl;
         return nullptr;
     }
 
     if (!ecmSingleton.valid(returnedWorldName)) {
-        gymppError << "Resources of world " << worldName << " not valid"
-                   << std::endl;
+        sError << "Resources of world " << worldName << " not valid"
+               << std::endl;
         return nullptr;
     }
 
@@ -569,8 +568,8 @@ bool GazeboSimulator::Impl::insertWorld(const sdf::World& world)
         }
 
         if (root->WorldNameExists(world.Name())) {
-            gymppError << "Another world with name " << world.Name()
-                       << " already exists" << std::endl;
+            sError << "Another world with name " << world.Name()
+                   << " already exists" << std::endl;
             return false;
         }
 
@@ -587,15 +586,15 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
     if (!gazebo.server) {
 
         if (gazebo.numOfIterations == 0) {
-            gymppError << "Non-deterministic mode (iterations=0) is not "
-                       << "currently supported" << std::endl;
+            sError << "Non-deterministic mode (iterations=0) is not "
+                   << "currently supported" << std::endl;
             return nullptr;
         }
 
         sdf::Root root;
 
         if (!sdfElement) {
-            gymppMessage << "Using default empty world" << std::endl;
+            sMessage << "Using default empty world" << std::endl;
             auto errors = root.LoadSdfString(utils::getEmptyWorld());
             assert(errors.empty()); // TODO
         }
@@ -605,7 +604,7 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
         }
 
         if (root.WorldCount() == 0) {
-            gymppError << "Failed to find a world in the SDF root" << std::endl;
+            sError << "Failed to find a world in the SDF root" << std::endl;
             return nullptr;
         }
 
@@ -634,19 +633,19 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
                                          gazebo.physics.rtf,
                                          /*realTimeUpdateRate=*/-1,
                                          worldIdx)) {
-                gymppError << "Failed to set physics profile" << std::endl;
+                sError << "Failed to set physics profile" << std::endl;
                 return nullptr;
             }
 
             assert(Impl::getPhysicsData(root, worldIdx) == gazebo.physics);
         }
 
-        gymppDebug << "Physics profile:" << std::endl
-                   << this->gazebo.physics << std::endl;
+        sDebug << "Physics profile:" << std::endl
+               << this->gazebo.physics << std::endl;
 
         if (utils::verboseFromEnvironment()) {
-            gymppDebug << "Loading the following SDF file in the gazebo server:"
-                       << std::endl;
+            sDebug << "Loading the following SDF file in the gazebo server:"
+                   << std::endl;
             std::cout << root.Element()->ToString("") << std::endl;
         }
 
@@ -666,11 +665,11 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
         auto server = std::make_shared<ignition::gazebo::Server>(config);
         assert(server);
 
-        gymppDebug << "Starting the gazebo server" << std::endl;
+        sDebug << "Starting the gazebo server" << std::endl;
         if (!server->Run(
                 /*blocking=*/true, /*iterations=*/1, /*paused=*/true)) {
-            gymppError << "Failed to initialize the first gazebo server run"
-                       << std::endl;
+            sError << "Failed to initialize the first gazebo server run"
+                   << std::endl;
             return nullptr;
         }
 
@@ -680,8 +679,8 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
 
             // Post-process the world
             if (!this->postProcessWorld(worldName)) {
-                gymppError << "Failed to post-process world " << worldName
-                           << std::endl;
+                sError << "Failed to post-process world " << worldName
+                       << std::endl;
                 return nullptr;
             }
         }
@@ -698,7 +697,7 @@ bool GazeboSimulator::Impl::postProcessWorld(const std::string& worldName)
     auto& ecmSingeton = plugins::gazebo::ECMSingleton::Instance();
 
     if (!ecmSingeton.hasWorld(worldName)) {
-        gymppError << "Failed to initialize ECMProvider" << std::endl;
+        sError << "Failed to initialize ECMProvider" << std::endl;
         return false;
     }
 
@@ -711,7 +710,7 @@ bool GazeboSimulator::Impl::postProcessWorld(const std::string& worldName)
                                 ignition::gazebo::components::Name(worldName));
 
     if (worldEntity == ignition::gazebo::kNullEntity) {
-        gymppError << "Couldn't find world entity" << std::endl;
+        sError << "Couldn't find world entity" << std::endl;
         return false;
     }
 
