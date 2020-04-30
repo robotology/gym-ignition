@@ -69,6 +69,7 @@ public:
     // =========
 
     std::string name() const;
+    double mass() const;
     std::array<double, 3> position() const;
     std::array<double, 4> orientation() const;
 

@@ -92,6 +92,7 @@ public:
     size_t nrOfLinks() const;
     size_t nrOfJoints() const;
 
+    double totalMass(const std::vector<std::string>& linkNames) const;
     LinkPtr getLink(const std::string& linkName) const;
     JointPtr getJoint(const std::string& jointName) const;
 

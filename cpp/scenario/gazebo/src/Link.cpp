@@ -169,6 +169,14 @@ std::string Link::name() const
     return pImpl->link.Name(*pImpl->ecm).value();
 }
 
+double Link::mass() const
+{
+    auto inertial = utils::getExistingComponentData< //
+        ignition::gazebo::components::Inertial>(pImpl->ecm, pImpl->linkEntity);
+
+    return inertial.MassMatrix().Mass();
+}
+
 std::array<double, 3> Link::position() const
 {
     ignition::math::Pose3d linkPose;

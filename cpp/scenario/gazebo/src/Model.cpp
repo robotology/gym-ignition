@@ -323,6 +323,20 @@ size_t Model::nrOfJoints() const
     return this->jointNames().size();
 }
 
+double Model::totalMass(const std::vector<std::string>& linkNames) const
+{
+    const std::vector<std::string>& linkSerialization =
+        linkNames.empty() ? this->linkNames() : linkNames;
+
+    double mass = 0.0;
+
+    for (const auto& link : this->links(linkSerialization)) {
+        mass += link->mass();
+    }
+
+    return mass;
+}
+
 scenario::gazebo::LinkPtr Model::getLink(const std::string& linkName) const
 {
     if (pImpl->links.find(linkName) != pImpl->links.end()) {
