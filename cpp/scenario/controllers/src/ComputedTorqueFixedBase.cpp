@@ -136,29 +136,29 @@ ComputedTorqueFixedBase::~ComputedTorqueFixedBase() {}
 
 bool ComputedTorqueFixedBase::initialize()
 {
-    gymppDebug << "Initializing ComputedTorqueFixedBaseCpp" << std::endl;
+    sDebug << "Initializing ComputedTorqueFixedBaseCpp" << std::endl;
 
     if (pImpl->kinDyn) {
-        gymppWarning
+        sWarning
             << "The KinDynComputations object has been already initialized"
             << std::endl;
         return true;
     }
 
     if (!(m_model && m_model->valid())) {
-        gymppError << "Couldn't initialize controller. Model not valid."
+        sError << "Couldn't initialize controller. Model not valid."
                    << std::endl;
         return false;
     }
 
     if (m_controlledJoints.size() != m_model->dofs()
         || m_controlledJoints.empty()) {
-        gymppError << "The list of controlled joints is not valid" << std::endl;
+        sError << "The list of controlled joints is not valid" << std::endl;
         return false;
     }
 
     if (m_controlledJoints.empty()) {
-        gymppDebug << "No list of controlled joints. Controlling all the "
+        sDebug << "No list of controlled joints. Controlling all the "
                       "robots joints."
                    << std::endl;
 
@@ -170,7 +170,7 @@ bool ComputedTorqueFixedBase::initialize()
 
     for (auto& joint : m_model->joints(m_controlledJoints)) {
         if (joint->dofs() != 1) {
-            gymppError << "Joint '" << joint->name()
+            sError << "Joint '" << joint->name()
                        << "' does not have 1 DoF and is not supported"
                        << std::endl;
             return false;
@@ -179,7 +179,7 @@ bool ComputedTorqueFixedBase::initialize()
 
     iDynTree::ModelLoader loader;
     if (!loader.loadReducedModelFromFile(pImpl->urdfFile, m_controlledJoints)) {
-        gymppError << "Failed to load reduced model from the urdf file"
+        sError << "Failed to load reduced model from the urdf file"
                    << std::endl;
         return false;
     }
@@ -189,7 +189,7 @@ bool ComputedTorqueFixedBase::initialize()
         iDynTree::MIXED_REPRESENTATION);
 
     if (!pImpl->kinDyn->loadRobotModel(loader.model())) {
-        gymppError << "Failed to insert model in the KinDynComputations object"
+        sError << "Failed to insert model in the KinDynComputations object"
                    << std::endl;
         return false;
     }
@@ -199,14 +199,14 @@ bool ComputedTorqueFixedBase::initialize()
         pImpl->initialValues.controlMode[joint->name()] = joint->controlMode();
 
         if (!joint->setControlMode(base::JointControlMode::Force)) {
-            gymppError << "Failed to control joint '" << joint->name()
+            sError << "Failed to control joint '" << joint->name()
                        << "' in Force" << std::endl;
             return false;
         }
     }
 
     // Initialize buffers
-    gymppDebug << "Controlling " << m_controlledJoints.size() << " DoFs"
+    sDebug << "Controlling " << m_controlledJoints.size() << " DoFs"
                << std::endl;
     pImpl->buffers = std::make_unique<Impl::Buffers>(m_controlledJoints.size());
 
@@ -283,7 +283,7 @@ bool ComputedTorqueFixedBase::step(const Controller::StepSize& /*dt*/)
 
     if (!m_model->setJointGeneralizedForceTargets(pImpl->buffers->torquesVector,
                                                   m_controlledJoints)) {
-        gymppError << "Failed to set joint forces" << std::endl;
+        sError << "Failed to set joint forces" << std::endl;
         return false;
     }
 
@@ -300,7 +300,7 @@ bool ComputedTorqueFixedBase::terminate()
         auto joint = m_model->getJoint(jointName);
 
         if (!joint->setControlMode(controlMode)) {
-            gymppError << "Failed to restore original control mode of joint '"
+            sError << "Failed to restore original control mode of joint '"
                        << jointName << "'" << std::endl;
             ok = ok && false;
         }
@@ -332,17 +332,17 @@ bool ComputedTorqueFixedBase::updateStateFromModel()
     if (!pImpl->kinDyn->setRobotState(pImpl->buffers->jointPositions,
                                       pImpl->buffers->jointVelocities,
                                       pImpl->buffers->gravity)) {
-        gymppError << "Failed to set the robot state" << std::endl;
+        sError << "Failed to set the robot state" << std::endl;
         return false;
     }
 
     if (!pImpl->kinDyn->getFreeFloatingMassMatrix(pImpl->buffers->massMatrix)) {
-        gymppError << "Failed to get the mass matrix" << std::endl;
+        sError << "Failed to get the mass matrix" << std::endl;
         return false;
     }
 
     if (!pImpl->kinDyn->generalizedBiasForces(pImpl->buffers->biasForces)) {
-        gymppError << "Failed to get the bias forces " << std::endl;
+        sError << "Failed to get the bias forces " << std::endl;
         return false;
     }
 

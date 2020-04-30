@@ -211,10 +211,9 @@ struct scenario::base::JointLimit
         : JointLimit(std::min(_min.size(), _max.size()))
     {
         if (_min.size() != _max.size()) {
-            gymppWarning
-                << "The max and min limits have different size. "
-                << "Ignoring the limits and using the smaller dimension."
-                << std::endl;
+            sWarning << "The max and min limits have different size. "
+                     << "Ignoring the limits and using the smaller dimension."
+                     << std::endl;
             return;
         }
 

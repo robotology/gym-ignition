@@ -57,17 +57,16 @@ void SignalManager::ExecuteCallback(SignalType type)
 {
     std::lock_guard lock(detail::SignalManagerMutex);
 
-    gymppDebug << "Received interrupt signal " << Impl::ToString(type)
-               << std::endl;
+    sDebug << "Received interrupt signal " << Impl::ToString(type) << std::endl;
     auto callback = SignalManager::Instance().getCallback(type);
 
     if (callback) {
-        gymppDebug << "Found signal callback" << std::endl;
+        sDebug << "Found signal callback" << std::endl;
         callback(type);
         return;
     }
 
-    gymppDebug << "No callback found" << std::endl;
+    sDebug << "No callback found" << std::endl;
 }
 
 SignalManager& SignalManager::Instance()
@@ -92,8 +91,8 @@ SignalManager::setCallback(const SignalType type,
 {
     SignalCallback oldCallback = this->getCallback(type);
 
-    gymppDebug << "Setting callback for signal " << Impl::ToString(type)
-               << std::endl;
+    sDebug << "Setting callback for signal " << Impl::ToString(type)
+           << std::endl;
     std::signal(type, SignalManager::ExecuteCallback);
     pImpl->callbacks[type] = callback;
 

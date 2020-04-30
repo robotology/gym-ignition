@@ -28,10 +28,10 @@
 #define SCENARIO_GAZEBO_LOG
 
 #include <ignition/common/Console.hh>
-#define gymppError ::ignition::common::Console::err(__FILE__, __LINE__)
-#define gymppWarning ::ignition::common::Console::warn(__FILE__, __LINE__)
-#define gymppMessage ::ignition::common::Console::msg(__FILE__, __LINE__)
-#define gymppDebug ::ignition::common::Console::dbg(__FILE__, __LINE__)
+#define sError ::ignition::common::Console::err(__FILE__, __LINE__)
+#define sWarning ::ignition::common::Console::warn(__FILE__, __LINE__)
+#define sMessage ::ignition::common::Console::msg(__FILE__, __LINE__)
+#define sDebug ::ignition::common::Console::dbg(__FILE__, __LINE__)
 #define gymppLog ::ignition::common::Console::log(__FILE__, __LINE__)
 
 #endif // SCENARIO_GAZEBO_LOG

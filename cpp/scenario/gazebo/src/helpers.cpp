@@ -53,10 +53,10 @@ utils::getSdfRootFromFile(const std::string& sdfFileName)
     auto errors = root->Load(sdfFileName);
 
     if (!errors.empty()) {
-        gymppError << "Failed to load sdf file " << sdfFileName << std::endl;
+        sError << "Failed to load sdf file " << sdfFileName << std::endl;
 
         for (const auto& error : errors) {
-            gymppError << error << std::endl;
+            sError << error << std::endl;
         }
         return {};
     }
@@ -74,10 +74,10 @@ utils::getSdfRootFromString(const std::string& sdfString)
     auto errors = root->LoadSdfString(sdfString);
 
     if (!errors.empty()) {
-        gymppError << "Failed to load sdf string" << std::endl;
+        sError << "Failed to load sdf string" << std::endl;
 
         for (const auto& error : errors) {
-            gymppError << error << std::endl;
+            sError << error << std::endl;
         }
         return {};
     }
@@ -237,22 +237,21 @@ sdf::World utils::renameSDFWorld(const sdf::World& world,
     auto errors = renamedWorld.Load(renamedWorldElement);
 
     if (!errors.empty()) {
-        gymppError << "Failed to create the World from the element"
-                   << std::endl;
+        sError << "Failed to create the World from the element" << std::endl;
 
         for (const auto& error : errors) {
-            gymppError << error << std::endl;
+            sError << error << std::endl;
         }
         return {};
     }
 
     if (renamedWorld.Name() != newWorldName) {
-        gymppError << "Failed to rename the world" << std::endl;
+        sError << "Failed to rename the world" << std::endl;
         return {};
     }
 
     if (renamedWorld.ModelCount() != initialNrOfModels) {
-        gymppError << "Failed to copy all models to the new world" << std::endl;
+        sError << "Failed to copy all models to the new world" << std::endl;
         return {};
     }
 
@@ -290,12 +289,12 @@ bool utils::renameSDFModel(sdf::Root& sdfRoot,
     sdfRoot.Element()->InsertElement(renamedModel);
 
     if (sdfRoot.ModelCount() != initialNrOfModels) {
-        gymppError << "Failed to rename SDF model" << std::endl;
+        sError << "Failed to rename SDF model" << std::endl;
         return false;
     }
 
     if (!sdfRoot.ModelNameExists(newModelName)) {
-        gymppError << "Failed to insert renamed model in SDF root" << std::endl;
+        sError << "Failed to insert renamed model in SDF root" << std::endl;
         return false;
     }
 
@@ -309,20 +308,20 @@ bool utils::updateSDFPhysics(sdf::Root& sdfRoot,
                              const size_t worldIndex)
 {
     if (rtf <= 0) {
-        gymppError << "Invalid RTF value (" << rtf << ")" << std::endl;
+        sError << "Invalid RTF value (" << rtf << ")" << std::endl;
         return false;
     }
 
     if (maxStepSize <= 0) {
-        gymppError << "Invalid physics max step size (" << maxStepSize << ")"
-                   << std::endl;
+        sError << "Invalid physics max step size (" << maxStepSize << ")"
+               << std::endl;
         return false;
     }
 
     const sdf::World* world = sdfRoot.WorldByIndex(worldIndex);
 
     if (world->PhysicsCount() != 1) {
-        gymppError << "Found more than one physics profile" << std::endl;
+        sError << "Found more than one physics profile" << std::endl;
         return false;
     }
 
@@ -390,7 +389,7 @@ sdf::JointType utils::toSdf(const scenario::base::JointType type)
             sdfType = sdf::JointType::BALL;
             break;
         default:
-            gymppError << "Joint type not recognized" << std::endl;
+            sError << "Joint type not recognized" << std::endl;
             sdfType = sdf::JointType::INVALID;
             break;
     }
@@ -416,7 +415,7 @@ scenario::base::JointType utils::fromSdf(const sdf::JointType sdfType)
             type = base::JointType::Ball;
             break;
         default:
-            gymppError << "Joint type not recognized" << std::endl;
+            sError << "Joint type not recognized" << std::endl;
             type = base::JointType::Invalid;
             break;
     }
@@ -476,7 +475,7 @@ WorldPtr utils::getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
     auto world = std::make_shared<World>();
 
     if (!world->initialize(worldEntity, ecm, eventManager)) {
-        gymppError << "Failed to initialize world" << std::endl;
+        sError << "Failed to initialize world" << std::endl;
         return nullptr;
     }
 
@@ -493,7 +492,7 @@ ModelPtr utils::getParentModel(ignition::gazebo::EntityComponentManager* ecm,
     auto model = std::make_shared<Model>();
 
     if (!model->initialize(modelEntity, ecm, eventManager)) {
-        gymppError << "Failed to initialize model" << std::endl;
+        sError << "Failed to initialize model" << std::endl;
         return nullptr;
     }
 

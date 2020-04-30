@@ -99,7 +99,7 @@ bool Joint::initialize(const ignition::gazebo::Entity jointEntity,
                        ignition::gazebo::EventManager* eventManager)
 {
     if (jointEntity == ignition::gazebo::kNullEntity || !ecm || !eventManager) {
-        gymppError << "Failed to initialize Joint" << std::endl;
+        sError << "Failed to initialize Joint" << std::endl;
         return false;
     }
 
@@ -108,8 +108,8 @@ bool Joint::initialize(const ignition::gazebo::Entity jointEntity,
     pImpl->eventManager = eventManager;
 
     if (this->dofs() > 1) {
-        gymppError << "Joints with DoFs > 1 are not currently supported"
-                   << std::endl;
+        sError << "Joints with DoFs > 1 are not currently supported"
+               << std::endl;
         return false;
     }
 
@@ -118,8 +118,8 @@ bool Joint::initialize(const ignition::gazebo::Entity jointEntity,
 
 bool Joint::createECMResources()
 {
-    gymppMessage << "  [" << pImpl->jointEntity << "] " << this->name()
-                 << std::endl;
+    sMessage << "  [" << pImpl->jointEntity << "] " << this->name()
+             << std::endl;
 
     using namespace ignition::gazebo;
 
@@ -239,7 +239,7 @@ scenario::base::JointControlMode Joint::controlMode() const
 bool Joint::setControlMode(const scenario::base::JointControlMode mode)
 {
     if (mode == base::JointControlMode::PositionInterpolated) {
-        gymppError << "PositionInterpolated not yet supported" << std::endl;
+        sError << "PositionInterpolated not yet supported" << std::endl;
         return false;
     }
 
@@ -248,8 +248,8 @@ bool Joint::setControlMode(const scenario::base::JointControlMode mode)
         pImpl->ecm, pImpl->jointEntity, mode);
 
     // Delete the existing targets if they exist
-    gymppDebug << "Deleting existing position and velocity targets after "
-               << "changing control mode" << std::endl;
+    sDebug << "Deleting existing position and velocity targets after "
+           << "changing control mode" << std::endl;
     pImpl->ecm->RemoveComponent(
         pImpl->jointEntity,
         ignition::gazebo::components::JointPositionTarget().TypeId());
@@ -323,8 +323,8 @@ bool Joint::setPID(const scenario::base::PID& pid)
     };
 
     if (this->dofs() > 1) {
-        gymppError << "Setting PIDs of joints with more than 1 DoF is not "
-                   << "currently supported" << std::endl;
+        sError << "Setting PIDs of joints with more than 1 DoF is not "
+               << "currently supported" << std::endl;
         return false;
     }
 
@@ -333,9 +333,9 @@ bool Joint::setPID(const scenario::base::PID& pid)
     auto maxForce = this->maxGeneralizedForce(0);
 
     if (pidParams.cmdMin < minForce || pidParams.cmdMax > maxForce) {
-        gymppWarning << "The output limits of the PID are less limiting than "
-                     << "the maximum force that can be exerted on the joint. "
-                     << "Ignoring the specified PID limits." << std::endl;
+        sWarning << "The output limits of the PID are less limiting than "
+                 << "the maximum force that can be exerted on the joint. "
+                 << "Ignoring the specified PID limits." << std::endl;
         pidParams.cmdMin = minForce;
         pidParams.cmdMax = maxForce;
     }
@@ -354,8 +354,8 @@ bool Joint::setPID(const scenario::base::PID& pid)
 scenario::base::Limit Joint::positionLimit(const size_t dof) const
 {
     if (dof >= this->dofs()) {
-        gymppError << "Joint '" << this->name() << "' does not have DoF#" << dof
-                   << std::endl;
+        sError << "Joint '" << this->name() << "' does not have DoF#" << dof
+               << std::endl;
         return base::Limit(0, 0);
     }
 
@@ -375,8 +375,8 @@ double Joint::maxGeneralizedForce(const size_t dof) const
 bool Joint::setMaxGeneralizedForce(const double maxForce, const size_t dof)
 {
     if (dof >= this->dofs()) {
-        gymppError << "Joint '" << this->name() << "' does not have DoF#" << dof
-                   << std::endl;
+        sError << "Joint '" << this->name() << "' does not have DoF#" << dof
+               << std::endl;
         return false;
     }
 
@@ -418,15 +418,15 @@ bool Joint::setPositionTarget(const double position, const size_t dof)
                         this->controlMode());
 
     if (it == allowedControlModes.end()) {
-        gymppError
+        sError
             << "The active joint control mode does not accept a position target"
             << std::endl;
         return false;
     }
 
     if (dof >= this->dofs()) {
-        gymppError << "Joint '" << this->name() << "' does not have DoF#" << dof
-                   << std::endl;
+        sError << "Joint '" << this->name() << "' does not have DoF#" << dof
+               << std::endl;
         return false;
     }
 
@@ -448,15 +448,15 @@ bool Joint::setVelocityTarget(const double velocity, const size_t dof)
     if (!(this->controlMode() == base::JointControlMode::Velocity
           || this->controlMode() == base::JointControlMode::Idle
           || this->controlMode() == base::JointControlMode::Force)) {
-        gymppError
+        sError
             << "The active joint control mode does not accept a velocity target"
             << std::endl;
         return false;
     }
 
     if (dof >= this->dofs()) {
-        gymppError << "Joint '" << this->name() << "' does not have DoF#" << dof
-                   << std::endl;
+        sError << "Joint '" << this->name() << "' does not have DoF#" << dof
+               << std::endl;
         return false;
     }
 
@@ -477,15 +477,15 @@ bool Joint::setAccelerationTarget(const double acceleration, const size_t dof)
 {
     if (!(this->controlMode() == base::JointControlMode::Idle
           || this->controlMode() == base::JointControlMode::Force)) {
-        gymppError
+        sError
             << "The active joint control mode does not accept a velocity target"
             << std::endl;
         return false;
     }
 
     if (dof >= this->dofs()) {
-        gymppError << "Joint '" << this->name() << "' does not have DoF#" << dof
-                   << std::endl;
+        sError << "Joint '" << this->name() << "' does not have DoF#" << dof
+               << std::endl;
         return false;
     }
 
@@ -515,15 +515,14 @@ bool Joint::setGeneralizedForceTarget(const double force, const size_t dof)
                         this->controlMode());
 
     if (it == allowedControlModes.end()) {
-        gymppError
-            << "The active joint control mode does not accept a force target"
-            << std::endl;
+        sError << "The active joint control mode does not accept a force target"
+               << std::endl;
         return false;
     }
 
     if (dof >= this->dofs()) {
-        gymppError << "Joint '" << this->name() << "' does not have DoF#" << dof
-                   << std::endl;
+        sError << "Joint '" << this->name() << "' does not have DoF#" << dof
+               << std::endl;
         return false;
     }
 
@@ -573,8 +572,8 @@ double Joint::generalizedForceTarget(const size_t dof) const
 bool Joint::resetPosition(const double position, size_t dof)
 {
     if (dof >= this->dofs()) {
-        gymppError << "Joint '" << this->name() << "' does not have DoF#" << dof
-                   << std::endl;
+        sError << "Joint '" << this->name() << "' does not have DoF#" << dof
+               << std::endl;
         return false;
     }
 
@@ -594,8 +593,8 @@ bool Joint::resetPosition(const double position, size_t dof)
 bool Joint::resetVelocity(const double velocity, const size_t dof)
 {
     if (dof >= this->dofs()) {
-        gymppError << "Joint '" << this->name() << " does not have DoF#" << dof
-                   << std::endl;
+        sError << "Joint '" << this->name() << " does not have DoF#" << dof
+               << std::endl;
         return false;
     }
 
@@ -620,8 +619,8 @@ bool Joint::reset(const double position, const double velocity, size_t dof)
     ok = ok && this->resetVelocity(velocity, dof);
 
     if (!ok) {
-        gymppError << "Failed to reset state of joint '" << this->name() << "'"
-                   << std::endl;
+        sError << "Failed to reset state of joint '" << this->name() << "'"
+               << std::endl;
         return false;
     }
 
@@ -648,14 +647,13 @@ scenario::base::JointLimit Joint::jointPositionLimit() const
             break;
         }
         case base::JointType::Fixed:
-            gymppWarning
-                << "Fixed joints do not have DOFs, limits are not defined"
-                << std::endl;
+            sWarning << "Fixed joints do not have DOFs, limits are not defined"
+                     << std::endl;
             break;
         case base::JointType::Invalid:
         case base::JointType::Ball:
-            gymppWarning << "Type of Joint '" << this->name()
-                         << "' has no limits" << std::endl;
+            sWarning << "Type of Joint '" << this->name() << "' has no limits"
+                     << std::endl;
             break;
     }
 
@@ -674,8 +672,8 @@ std::vector<double> Joint::jointMaxGeneralizedForce() const
 bool Joint::setJointMaxGeneralizedForce(const std::vector<double>& maxForce)
 {
     if (maxForce.size() != this->dofs()) {
-        gymppError << "Wrong number of elements (joint_dofs=" << this->dofs()
-                   << ")" << std::endl;
+        sError << "Wrong number of elements (joint_dofs=" << this->dofs() << ")"
+               << std::endl;
         return false;
     }
 
@@ -718,8 +716,8 @@ std::vector<double> Joint::jointVelocity() const
 bool Joint::setJointPositionTarget(const std::vector<double>& position)
 {
     if (position.size() != this->dofs()) {
-        gymppError << "Wrong number of elements (joint_dofs=" << this->dofs()
-                   << ")" << std::endl;
+        sError << "Wrong number of elements (joint_dofs=" << this->dofs() << ")"
+               << std::endl;
         return false;
     }
 
@@ -734,8 +732,8 @@ bool Joint::setJointPositionTarget(const std::vector<double>& position)
 bool Joint::setJointVelocityTarget(const std::vector<double>& velocity)
 {
     if (velocity.size() != this->dofs()) {
-        gymppError << "Wrong number of elements (joint_dofs=" << this->dofs()
-                   << ")" << std::endl;
+        sError << "Wrong number of elements (joint_dofs=" << this->dofs() << ")"
+               << std::endl;
         return false;
     }
 
@@ -750,8 +748,8 @@ bool Joint::setJointVelocityTarget(const std::vector<double>& velocity)
 bool Joint::setJointAccelerationTarget(const std::vector<double>& acceleration)
 {
     if (acceleration.size() != this->dofs()) {
-        gymppError << "Wrong number of elements (joint_dofs=" << this->dofs()
-                   << ")" << std::endl;
+        sError << "Wrong number of elements (joint_dofs=" << this->dofs() << ")"
+               << std::endl;
         return false;
     }
 
@@ -766,8 +764,8 @@ bool Joint::setJointAccelerationTarget(const std::vector<double>& acceleration)
 bool Joint::setJointGeneralizedForceTarget(const std::vector<double>& force)
 {
     if (force.size() != this->dofs()) {
-        gymppError << "Wrong number of elements (joint_dofs=" << this->dofs()
-                   << ")" << std::endl;
+        sError << "Wrong number of elements (joint_dofs=" << this->dofs() << ")"
+               << std::endl;
         return false;
     }
 
@@ -846,8 +844,8 @@ std::vector<double> Joint::jointGeneralizedForceTarget() const
 bool Joint::resetJointPosition(const std::vector<double>& position)
 {
     if (position.size() != this->dofs()) {
-        gymppError << "Wrong number of elements (joint_dofs=" << this->dofs()
-                   << ")" << std::endl;
+        sError << "Wrong number of elements (joint_dofs=" << this->dofs() << ")"
+               << std::endl;
         return false;
     }
 
@@ -871,8 +869,8 @@ bool Joint::resetJointPosition(const std::vector<double>& position)
 bool Joint::resetJointVelocity(const std::vector<double>& velocity)
 {
     if (velocity.size() != this->dofs()) {
-        gymppError << "Wrong number of elements (joint_dofs=" << this->dofs()
-                   << ")" << std::endl;
+        sError << "Wrong number of elements (joint_dofs=" << this->dofs() << ")"
+               << std::endl;
         return false;
     }
 
@@ -902,8 +900,7 @@ bool Joint::resetJoint(const std::vector<double>& position,
     ok = ok && this->resetJointVelocity(velocity);
 
     if (!ok) {
-        gymppError << "Failed to reset joint '" << this->name() << "'"
-                   << std::endl;
+        sError << "Failed to reset joint '" << this->name() << "'" << std::endl;
         return false;
     }
 

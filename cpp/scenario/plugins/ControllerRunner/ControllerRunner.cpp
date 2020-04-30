@@ -112,19 +112,19 @@ void ControllerRunner::Configure(const ignition::gazebo::Entity& entity,
     pImpl->model = std::make_shared<Model>();
 
     if (!pImpl->model->initialize(entity, &ecm, &eventMgr)) {
-        gymppError << "Failed to initialize model for controller" << std::endl;
+        sError << "Failed to initialize model for controller" << std::endl;
         return;
     }
 
     if (!pImpl->model->valid()) {
-        gymppError << "Failed to create a model from Entity [" << entity << "]"
-                   << std::endl;
+        sError << "Failed to create a model from Entity [" << entity << "]"
+               << std::endl;
         return;
     }
 
     if (sdf->GetName() != "plugin") {
-        gymppError << "Received context does not contain the <plugin> element"
-                   << std::endl;
+        sError << "Received context does not contain the <plugin> element"
+               << std::endl;
         return;
     }
 
@@ -148,12 +148,12 @@ void ControllerRunner::Configure(const ignition::gazebo::Entity& entity,
         ControllersFactory::Instance().get(controllerContext, pImpl->model);
 
     if (!pImpl->controller) {
-        gymppError << "Failed to find controller in the factory" << std::endl;
+        sError << "Failed to find controller in the factory" << std::endl;
         return;
     }
 
     if (!pImpl->controller->initialize()) {
-        gymppError << "Failed to initialize the controller" << std::endl;
+        sError << "Failed to initialize the controller" << std::endl;
         pImpl->controller = nullptr;
         return;
     }
@@ -172,12 +172,12 @@ void ControllerRunner::Configure(const ignition::gazebo::Entity& entity,
     // Here we check if the controller inherits from the supported interfaces.
     if (!(pImpl->controllerInterfaces.base
           || pImpl->controllerInterfaces.joints)) {
-        gymppWarning << "Failed to find any of the supported interfaces to set "
-                     << "controller references" << std::endl;
+        sWarning << "Failed to find any of the supported interfaces to set "
+                 << "controller references" << std::endl;
         return;
     }
 
-    gymppDebug << "Controller successfully initialized" << std::endl;
+    sDebug << "Controller successfully initialized" << std::endl;
 }
 
 void ControllerRunner::PreUpdate(const ignition::gazebo::UpdateInfo& info,
@@ -200,8 +200,8 @@ void ControllerRunner::PreUpdate(const ignition::gazebo::UpdateInfo& info,
     }
 
     if (!pImpl->controller) {
-        gymppError << "The controller was not initialized successfully"
-                   << std::endl;
+        sError << "The controller was not initialized successfully"
+               << std::endl;
         return;
     }
 
@@ -249,26 +249,23 @@ void ControllerRunner::PreUpdate(const ignition::gazebo::UpdateInfo& info,
 
         try {
             if (!pImpl->updateAllSupportedReferences(ecm)) {
-                gymppError << "Failed to update supported references"
-                           << std::endl;
+                sError << "Failed to update supported references" << std::endl;
                 return;
             }
         }
         catch (const exceptions::ComponentNotFound& e) {
-            gymppDebug << "Controller references not yet available"
-                       << std::endl;
-            gymppDebug << e.what();
-            gymppWarning << "[t="
-                         << utils::steadyClockDurationToDouble(info.simTime)
-                         << "] The controller is not stepping" << std::endl;
+            sDebug << "Controller references not yet available" << std::endl;
+            sDebug << e.what();
+            sWarning << "[t="
+                     << utils::steadyClockDurationToDouble(info.simTime)
+                     << "] The controller is not stepping" << std::endl;
             return;
         }
 
         if (pImpl->controllerInterfaces.useModel
             && !pImpl->controllerInterfaces.useModel->updateStateFromModel()) {
-            gymppError
-                << "Failed to update controller state from internal model"
-                << std::endl;
+            sError << "Failed to update controller state from internal model"
+                   << std::endl;
             return;
         }
 
@@ -279,7 +276,7 @@ void ControllerRunner::PreUpdate(const ignition::gazebo::UpdateInfo& info,
 
     // Step the controller
     if (pImpl->referencesHaveBeenSet && !pImpl->controller->step(info.dt)) {
-        gymppError << "Failed to step the controller" << std::endl;
+        sError << "Failed to step the controller" << std::endl;
         return;
     }
 }
@@ -291,12 +288,12 @@ bool ControllerRunner::Impl::updateAllSupportedReferences(
 
     if (controllerInterfaces.base) {
         if (!updateBaseReferencesfromECM(ecm)) {
-            gymppError << "Failed to update base references" << std::endl;
+            sError << "Failed to update base references" << std::endl;
             ok = false;
         }
         else {
             if (!controllerInterfaces.base->setBaseReferences(baseReferences)) {
-                gymppError << "Failed to set base references" << std::endl;
+                sError << "Failed to set base references" << std::endl;
                 ok = false;
             }
         }
@@ -304,13 +301,13 @@ bool ControllerRunner::Impl::updateAllSupportedReferences(
 
     if (controllerInterfaces.joints) {
         if (!updateJointReferencesfromECM(ecm)) {
-            gymppError << "Failed to update joint references" << std::endl;
+            sError << "Failed to update joint references" << std::endl;
             ok = false;
         }
         else {
             if (!controllerInterfaces.joints->setJointReferences(
                     jointReferences)) {
-                gymppError << "Failed to set joint references" << std::endl;
+                sError << "Failed to set joint references" << std::endl;
                 ok = false;
             }
         }
@@ -389,7 +386,7 @@ bool ControllerRunner::Impl::updateJointReferencesfromECM(
 void ControllerRunner::Impl::printControllerContext(
     const std::shared_ptr<const sdf::Element> context) const
 {
-    gymppDebug << "SDF elements received by the controller:" << std::endl;
+    sDebug << "SDF elements received by the controller:" << std::endl;
     std::cout << context->ToString("") << std::endl;
 }
 

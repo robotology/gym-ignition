@@ -76,13 +76,13 @@ ControllersFactory::get(const sdf::ElementPtr context,
                         scenario::gazebo::ModelPtr model)
 {
     if (!Impl::ContextValid(context)) {
-        gymppError << "Controller context not valid" << std::endl;
+        sError << "Controller context not valid" << std::endl;
         return nullptr;
     }
 
     std::string controllerName;
     context->GetAttribute("name")->Get<std::string>(controllerName);
-    gymppDebug << "Found context for " << controllerName << std::endl;
+    sDebug << "Found context for " << controllerName << std::endl;
 
     if (controllerName == "ComputedTorqueFixedBase") {
 
@@ -94,8 +94,7 @@ ControllersFactory::get(const sdf::ElementPtr context,
         ok = ok && context->HasElement("gravity");
 
         if (!ok) {
-            gymppError << "Controller context has missing elements"
-                       << std::endl;
+            sError << "Controller context has missing elements" << std::endl;
             return nullptr;
         }
 
@@ -108,7 +107,7 @@ ControllersFactory::get(const sdf::ElementPtr context,
             "joints", context);
 
         if (gravity.size() != 3) {
-            gymppError << "Parsed gravity does not have three elements";
+            sError << "Parsed gravity does not have three elements";
             return nullptr;
         }
 
@@ -131,23 +130,22 @@ bool ControllersFactory::Impl::ContextValid(const sdf::ElementPtr context)
 {
     // Check that the context is a <controller> element
     if (context->GetName() != "controller") {
-        gymppError << "The first element of the context must be <controller>"
-                   << std::endl;
+        sError << "The first element of the context must be <controller>"
+               << std::endl;
         return false;
     }
 
     // Check that there is only one <controller> element
     if (context->GetNextElement("controller")) {
-        gymppError
-            << "Found multiple <controller> elements in controller context"
-            << std::endl;
+        sError << "Found multiple <controller> elements in controller context"
+               << std::endl;
         return false;
     }
 
     // Check that there is a name attribute: <controller name="controller_name">
     if (!context->HasAttribute("name")) {
-        gymppError << "Failed to find 'name' attribute in <controller> element"
-                   << std::endl;
+        sError << "Failed to find 'name' attribute in <controller> element"
+               << std::endl;
         return false;
     }
 
@@ -160,8 +158,7 @@ T ControllersFactory::Impl::GetElementValueAs(
     const sdf::ElementPtr parentContext)
 {
     if (!parentContext->HasElement(elementName)) {
-        gymppError << "Failed to find element <" << elementName << ">"
-                   << std::endl;
+        sError << "Failed to find element <" << elementName << ">" << std::endl;
         return {};
     }
 
@@ -171,8 +168,8 @@ T ControllersFactory::Impl::GetElementValueAs(
     sdf::ParamPtr value = element->GetValue();
 
     if (!value) {
-        gymppError << "Failed to get value of element <" << elementName << ">"
-                   << std::endl;
+        sError << "Failed to get value of element <" << elementName << ">"
+               << std::endl;
         return {};
     }
 
