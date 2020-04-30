@@ -148,16 +148,15 @@ class GazeboRuntime(runtime.Runtime):
 
     def render(self, mode: str = 'human', **kwargs) -> None:
 
-        if mode == 'human':
+        if mode != 'human':
+            raise ValueError(f"Render mode '{mode}' not supported")
 
-            gui_ok = self.gazebo.gui()
+        gui_ok = self.gazebo.gui()
 
-            if not gui_ok:
-                raise RuntimeError("Failed to render the environment")
+        if not gui_ok:
+            raise RuntimeError("Failed to render the environment")
 
-            return
-
-        raise Exception(f"Render mode '{mode}' not supported")
+        return
 
     def close(self) -> None:
 
