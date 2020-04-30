@@ -5,10 +5,13 @@
 import pytest
 pytestmark = pytest.mark.scenario
 
+import numpy as np
+from typing import Tuple
 from ..common import utils
 import gym_ignition_models
 from ..common.utils import gazebo_fixture as gazebo
 from gym_ignition import scenario_bindings as bindings
+from ..common.utils import default_world_fixture as default_world
 
 # Set the verbosity
 bindings.setVerbosity(4)
@@ -206,3 +209,44 @@ def test_model_references(gazebo: bindings.GazeboSimulator):
 
 # def test_model_contacts():
 #     pass
+
+
+@pytest.mark.parametrize("default_world", [(1.0 / 1_000, 1.0, 1)], indirect=True)
+def test_history_of_joint_forces(
+        default_world: Tuple[bindings.GazeboSimulator, bindings.World]):
+
+    # Get the simulator and the world
+    gazebo, world = default_world
+
+    # Insert a panda model
+    panda_urdf = gym_ignition_models.get_model_file("panda")
+    assert world.insertModel(panda_urdf)
+    assert "panda" in world.modelNames()
+
+    # Get the model
+    panda = world.getModel("panda")
+
+    # Control the robot in Force
+    assert panda.setJointControlMode(bindings.JointControlMode_Force)
+
+    # Enable the history for 3 steps
+    assert panda.enableHistoryOfAppliedJointForces(True, 3)
+
+    # Initialize the torques applied in the first run
+    torques = np.zeros(panda.dofs())
+
+    # History of joint forces
+    history_last_three_runs = np.zeros(panda.dofs() * 3)
+
+    for _ in range(10):
+
+        torques += 0.1
+        assert panda.setJointGeneralizedForceTargets(torques)
+
+        gazebo.run()
+
+        history_last_three_runs = np.concatenate((history_last_three_runs, torques))
+        history_last_three_runs = history_last_three_runs[-panda.dofs() * 3:]
+
+        assert panda.historyOfAppliedJointForces() == \
+            pytest.approx(history_last_three_runs)

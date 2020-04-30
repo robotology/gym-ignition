@@ -212,7 +212,7 @@ bool Model::insertModelPlugin(const std::string& libName,
 bool Model::historyOfAppliedJointForcesEnabled(
     const std::vector<std::string>& jointNames) const
 {
-    std::vector<std::string> jointSerialization =
+    const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? this->jointNames() : jointNames;
 
     bool enabled = true;
@@ -229,7 +229,7 @@ bool Model::enableHistoryOfAppliedJointForces(
     const size_t maxHistorySizePerJoint,
     const std::vector<std::string>& jointNames)
 {
-    const std::vector<std::string> jointSerialization =
+    const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? this->jointNames() : jointNames;
 
     bool ok = true;
@@ -246,18 +246,35 @@ bool Model::enableHistoryOfAppliedJointForces(
 std::vector<double> Model::historyOfAppliedJointForces(
     const std::vector<std::string>& jointNames) const
 {
-    const std::vector<std::string> jointSerialization =
+    const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? this->jointNames() : jointNames;
 
+    std::vector<double> history;
     std::vector<double> allAppliedJointForces;
-    allAppliedJointForces.reserve(this->nrOfJoints() * 3);
 
     for (const auto& joint : this->joints(jointSerialization)) {
-        std::vector<double> history = joint->historyOfAppliedJointForces();
+        history = joint->historyOfAppliedJointForces();
         std::move(history.begin(),
                   history.end(),
                   std::back_inserter(allAppliedJointForces));
+
+        if (joint->name() == jointSerialization.front()) {
+            history.reserve(jointSerialization.size() * history.size());
+        }
     }
+
+    // Given:
+    // * <j_1>: vector 1xH of torques of joint 1
+    // * <tau_t>: vector 1xn of torques of the considered joints at a given t
+    //
+    // We want to convert the allAppliedJointForces:
+    // * From: <j_1><j_2>...<j_n>
+    // * To:   <tau_t-H>...<tau_t-2><tau_t-1><tau_t>
+    //
+    // In other words, we want that the torques applied at the last step are
+    // piled up in the end of the returned vector.
+    utils::rowMajorToColumnMajor(
+        allAppliedJointForces, jointSerialization.size(), history.size());
 
     return allAppliedJointForces;
 }
@@ -268,11 +285,14 @@ bool Model::valid() const
     return pImpl->model.Valid(*pImpl->ecm);
 }
 
-size_t Model::dofs() const
+size_t Model::dofs(const std::vector<std::string>& jointNames) const
 {
+    const std::vector<std::string>& jointSerialization =
+        jointNames.empty() ? this->jointNames() : jointNames;
+
     size_t dofs = 0;
 
-    for (const auto& jointName : jointNames()) {
+    for (const auto& jointName : jointSerialization) {
         dofs += this->getJoint(jointName)->dofs();
     }
 
@@ -490,7 +510,7 @@ std::vector<std::string> Model::linksInContact() const
 std::vector<scenario::base::ContactData>
 Model::contacts(const std::vector<std::string>& linkNames) const
 {
-    std::vector<std::string> linkSerialization =
+    const std::vector<std::string>& linkSerialization =
         linkNames.empty() ? this->linkNames() : linkNames;
 
     std::vector<scenario::base::ContactData> allContacts;
@@ -528,7 +548,7 @@ Model::jointVelocities(const std::vector<std::string>& jointNames) const
 scenario::base::JointLimit
 Model::jointLimits(const std::vector<std::string>& jointNames) const
 {
-    const std::vector<std::string> jointSerialization =
+    const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? this->jointNames() : jointNames;
 
     std::vector<double> low;
@@ -549,7 +569,7 @@ Model::jointLimits(const std::vector<std::string>& jointNames) const
 bool Model::setJointControlMode(const scenario::base::JointControlMode mode,
                                 const std::vector<std::string>& jointNames)
 {
-    std::vector<std::string> jointSerialization =
+    const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? this->jointNames() : jointNames;
 
     bool ok = true;
@@ -564,7 +584,7 @@ bool Model::setJointControlMode(const scenario::base::JointControlMode mode,
 std::vector<LinkPtr>
 Model::links(const std::vector<std::string>& linkNames) const
 {
-    std::vector<std::string> linkSerialization =
+    const std::vector<std::string>& linkSerialization =
         linkNames.empty() ? this->linkNames() : linkNames;
 
     std::vector<LinkPtr> links;
@@ -579,7 +599,7 @@ Model::links(const std::vector<std::string>& linkNames) const
 std::vector<JointPtr>
 Model::joints(const std::vector<std::string>& jointNames) const
 {
-    const std::vector<std::string> jointSerialization =
+    const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? this->jointNames() : jointNames;
 
     std::vector<JointPtr> joints;
@@ -1121,7 +1141,7 @@ std::vector<double> Model::Impl::getJointDataSerialized(
     const std::vector<std::string>& jointNames,
     std::function<double(JointPtr, const size_t)> getJointData)
 {
-    const std::vector<std::string> jointSerialization =
+    const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? model->jointNames() : jointNames;
 
     std::vector<double> data;
