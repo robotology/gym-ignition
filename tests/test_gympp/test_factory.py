@@ -20,7 +20,7 @@ except ImportError:
 
 
 # Set verbosity
-scenario_bindings.setVerbosity(4)
+scenario_bindings.set_verbosity(4)
 
 
 def test_metadata():

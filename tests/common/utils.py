@@ -58,9 +58,9 @@ def default_world_fixture(request):
 
     assert gazebo.initialize()
 
-    world = gazebo.getWorld()
-    assert world.insertModel(gym_ignition_models.get_model_file("ground_plane"))
-    assert world.setPhysicsEngine(bindings.PhysicsEngine_Dart)
+    world = gazebo.get_world()
+    assert world.insert_model(gym_ignition_models.get_model_file("ground_plane"))
+    assert world.set_physics_engine(bindings.PhysicsEngine_dart)
 
     yield gazebo, world
 
@@ -121,7 +121,7 @@ def get_cube_urdf() -> str:
 
 def get_empty_world_sdf() -> str:
 
-    world_sdf_string = bindings.getEmptyWorld()
+    world_sdf_string = bindings.get_empty_world()
 
     world_file = misc.string_to_file(world_sdf_string)
     return world_file

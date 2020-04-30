@@ -10,7 +10,7 @@ from ..common.utils import gazebo_fixture as gazebo
 from gym_ignition import scenario_bindings as bindings
 
 # Set the verbosity
-bindings.setVerbosity(4)
+bindings.set_verbosity(4)
 
 
 @pytest.mark.parametrize("gazebo",
@@ -26,9 +26,9 @@ def test_initialization(gazebo: bindings.GazeboSimulator):
 
     ok = gazebo.initialize()
 
-    rtf = gazebo.realTimeFactor()
-    step_size = gazebo.stepSize()
-    iterations = gazebo.stepsPerRun()
+    rtf = gazebo.real_time_factor()
+    step_size = gazebo.step_size()
+    iterations = gazebo.steps_per_run()
 
     if step_size <= 0:
         assert not ok
@@ -92,19 +92,19 @@ def test_pause(gazebo: bindings.GazeboSimulator):
 def test_load_default_world(gazebo: bindings.GazeboSimulator):
 
     assert gazebo.initialize()
-    assert gazebo.worldNames()
-    assert len(gazebo.worldNames()) == 1
+    assert gazebo.world_names()
+    assert len(gazebo.world_names()) == 1
 
-    world1 = gazebo.getWorld()
+    world1 = gazebo.get_world()
     assert world1
-    assert world1.name() in gazebo.worldNames()
+    assert world1.name() in gazebo.world_names()
 
-    world2 = gazebo.getWorld(gazebo.worldNames()[0])
+    world2 = gazebo.get_world(gazebo.world_names()[0])
     assert world2
 
     assert world1.id() == world2.id()
     assert world1.name() == world2.name()
 
     # TODO: understand how to compare shared ptr returned by swig with nullptr
-    # world3 = gazebo.getWorld("foo")
+    # world3 = gazebo.get_world("foo")
     # assert world3
