@@ -164,8 +164,7 @@ def test_world_physics_plugin(gazebo: bindings.GazeboSimulator):
     assert world.time() == 0
 
     # Insert the Physics system
-    assert world.insertWorldPlugin("libPhysicsSystem.so",
-                                   "scenario::plugins::gazebo::Physics")
+    assert world.setPhysicsEngine(bindings.PhysicsEngine_Dart)
 
     # After the first step, the physics catches up with time
     gazebo.run()
@@ -194,8 +193,7 @@ def test_sim_time_starts_from_zero(gazebo: bindings.GazeboSimulator):
     dt = gazebo.stepSize()
 
     assert world.time() == 0
-    assert world.insertWorldPlugin("libPhysicsSystem.so",
-                                   "scenario::plugins::gazebo::Physics")
+    assert world.setPhysicsEngine(bindings.PhysicsEngine_Dart)
     assert world.time() == 0
 
     gazebo.run(paused=True)
