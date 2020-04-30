@@ -28,6 +28,7 @@
 #define SCENARIO_GAZEBO_UTILS_H
 
 #include <string>
+#include <vector>
 
 #ifdef NDEBUG
 #define DEFAULT_VERBOSITY 2
@@ -180,6 +181,59 @@ namespace scenario {
              *         converted, an empty string otherwise.
              */
             std::string URDFStringToSDFString(const std::string& urdfString);
+
+            /**
+             * Normalize a vector in [-1, 1].
+             *
+             * The normalization applies the following equation, where
+             * \f$ v \f$ is the input, \f$ l \f$ and \f$ h \f$ are respectively
+             * the lower and higher limits:
+             *
+             * \f$ v_{normalized} = 2 \frac{v - l}{h - l} - 1 \f$
+             *
+             * The input, low and high arguments are broadcasted to a common
+             * size. Refer to the following for broadcasting definition:
+             *
+             * https://numpy.org/doc/stable/user/basics.broadcasting.html
+             *
+             * @note If the lower limit matches the higher limit, the
+             * corresponding input value is not normalized.
+             *
+             * @throws std::invalid_argument If the arguments cannot be
+             * broadcasted.
+             * @param input The input vector.
+             * @param low The lower limit.
+             * @param high The higher limit.
+             * @return The normalized input.
+             */
+            std::vector<double> normalize(const std::vector<double>& input,
+                                          const std::vector<double>& low,
+                                          const std::vector<double>& high);
+
+            /**
+             * Denormalize a vector from [-1, 1].
+             *
+             * The denormalization applies the following equation, where
+             * \f$ v \f$ is the input, \f$ l \f$ and \f$ h \f$ are respectively
+             * the lower and higher limits:
+             *
+             * \f$ v_{denormalized} = \frac{1}{2} (v + 1)(h - l) - l \f$
+             *
+             * The input, low and high arguments are broadcasted to a common
+             * size. Refer to the following for broadcasting definition:
+             *
+             * https://numpy.org/doc/stable/user/basics.broadcasting.html
+             *
+             * @throws std::invalid_argument If the arguments cannot be
+             * broadcasted.
+             * @param input The input vector.
+             * @param low The lower limit.
+             * @param high The higher limit.
+             * @return The denormalized input.
+             */
+            std::vector<double> denormalize(const std::vector<double>& input,
+                                            const std::vector<double>& low,
+                                            const std::vector<double>& high);
         } // namespace utils
     } // namespace gazebo
 } // namespace scenario

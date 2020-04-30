@@ -77,6 +77,15 @@ public:
     std::unordered_map<LinkName, scenario::gazebo::LinkPtr> links;
     std::unordered_map<JointName, scenario::gazebo::JointPtr> joints;
 
+    struct
+    {
+        std::vector<std::string> linksInContact;
+        std::optional<std::vector<std::string>> linkNames;
+        std::optional<std::vector<std::string>> scopedLinkNames;
+        std::optional<std::vector<std::string>> jointNames;
+        std::optional<std::vector<std::string>> scopedJointNames;
+    } buffers;
+
     static std::vector<double> getJointDataSerialized(
         const Model* model,
         const std::vector<std::string>& jointNames,
@@ -316,15 +325,15 @@ size_t Model::nrOfJoints() const
 
 scenario::gazebo::LinkPtr Model::getLink(const std::string& linkName) const
 {
+    if (pImpl->links.find(linkName) != pImpl->links.end()) {
+        assert(pImpl->links.at(linkName));
+        return pImpl->links.at(linkName);
+    }
+
     auto linkEntity = pImpl->model.LinkByName(*pImpl->ecm, linkName);
 
     if (linkEntity == ignition::gazebo::kNullEntity) {
         throw exceptions::LinkNotFound(linkName);
-    }
-
-    if (pImpl->links.find(linkName) != pImpl->links.end()) {
-        assert(pImpl->links.at(linkName));
-        return pImpl->links.at(linkName);
     }
 
     // Create the link
@@ -342,15 +351,15 @@ scenario::gazebo::LinkPtr Model::getLink(const std::string& linkName) const
 
 scenario::gazebo::JointPtr Model::getJoint(const std::string& jointName) const
 {
+    if (pImpl->joints.find(jointName) != pImpl->joints.end()) {
+        assert(pImpl->joints.at(jointName));
+        return pImpl->joints.at(jointName);
+    }
+
     auto jointEntity = pImpl->model.JointByName(*pImpl->ecm, jointName);
 
     if (jointEntity == ignition::gazebo::kNullEntity) {
         throw exceptions::JointNotFound(jointName);
-    }
-
-    if (pImpl->joints.find(jointName) != pImpl->joints.end()) {
-        assert(pImpl->joints.at(jointName));
-        return pImpl->joints.at(jointName);
     }
 
     // Create the joint
@@ -368,6 +377,14 @@ scenario::gazebo::JointPtr Model::getJoint(const std::string& jointName) const
 
 std::vector<std::string> Model::linkNames(const bool scoped) const
 {
+    if (!scoped && pImpl->buffers.linkNames.has_value()) {
+        return pImpl->buffers.linkNames.value();
+    }
+
+    if (scoped && pImpl->buffers.scopedLinkNames.has_value()) {
+        return pImpl->buffers.scopedLinkNames.value();
+    }
+
     std::vector<std::string> linkNames;
 
     pImpl->ecm->Each<ignition::gazebo::components::Name,
@@ -396,11 +413,26 @@ std::vector<std::string> Model::linkNames(const bool scoped) const
             return true;
         });
 
-    return linkNames;
+    if (!scoped) {
+        pImpl->buffers.linkNames = std::move(linkNames);
+        return pImpl->buffers.linkNames.value();
+    }
+    else {
+        pImpl->buffers.scopedLinkNames = std::move(linkNames);
+        return pImpl->buffers.scopedLinkNames.value();
+    }
 }
 
 std::vector<std::string> Model::jointNames(const bool scoped) const
 {
+    if (!scoped && pImpl->buffers.jointNames.has_value()) {
+        return pImpl->buffers.jointNames.value();
+    }
+
+    if (scoped && pImpl->buffers.scopedLinkNames.has_value()) {
+        return pImpl->buffers.scopedLinkNames.value();
+    }
+
     std::vector<std::string> jointNames;
 
     pImpl->ecm->Each<ignition::gazebo::components::Name,
@@ -435,7 +467,14 @@ std::vector<std::string> Model::jointNames(const bool scoped) const
             return true;
         });
 
-    return jointNames;
+    if (!scoped) {
+        pImpl->buffers.jointNames = std::move(jointNames);
+        return pImpl->buffers.jointNames.value();
+    }
+    else {
+        pImpl->buffers.scopedJointNames = std::move(jointNames);
+        return pImpl->buffers.scopedJointNames.value();
+    }
 }
 
 double Model::controllerPeriod() const
@@ -498,13 +537,15 @@ bool Model::enableSelfCollisions(const bool /*enable*/)
 
 std::vector<std::string> Model::linksInContact() const
 {
-    std::vector<std::string> linksInContact;
+    pImpl->buffers.linksInContact.clear();
 
-    for (const auto& linkName : this->linkNames()) {
-        linksInContact.push_back(linkName);
+    for (const auto& link : this->links()) {
+        if (link->inContact()) {
+            pImpl->buffers.linksInContact.push_back(link->name());
+        }
     }
 
-    return linksInContact;
+    return pImpl->buffers.linksInContact;
 }
 
 std::vector<scenario::base::ContactData>

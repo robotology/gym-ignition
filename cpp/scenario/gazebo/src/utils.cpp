@@ -28,6 +28,7 @@
 #include "scenario/gazebo/Log.h"
 #include "scenario/gazebo/helpers.h"
 
+#include <Eigen/Dense>
 #include <ignition/common/Console.hh>
 #include <ignition/common/Filesystem.hh>
 #include <ignition/common/SystemPaths.hh>
@@ -43,6 +44,7 @@
 #include <sdf/World.hh>
 
 #include <cassert>
+#include <exception>
 #include <memory>
 
 using namespace scenario::gazebo;
@@ -277,4 +279,109 @@ std::string utils::URDFStringToSDFString(const std::string& urdfString)
     }
 
     return root->Element()->ToString("");
+}
+
+std::vector<double> utils::normalize(const std::vector<double>& input,
+                                     const std::vector<double>& low,
+                                     const std::vector<double>& high)
+{
+    bool okInput = input.size() > 0;
+    bool okLow = low.size() == input.size() || low.size() == 1;
+    bool okHigh = high.size() == input.size() || high.size() == 1;
+
+    if (!okInput || !okLow || !okHigh) {
+        throw std::invalid_argument("Wrong input arguments");
+    }
+
+    std::vector<double> lowBroadcasted = low;
+    std::vector<double> highBroadcasted = high;
+
+    if (low.size() == 1 && input.size() > 1) {
+        lowBroadcasted = std::vector<double>(input.size(), low[0]);
+    }
+
+    if (high.size() == 1 && input.size() > 1) {
+        highBroadcasted = std::vector<double>(input.size(), high[0]);
+    }
+
+    std::vector<double> output;
+    output.resize(input.size());
+
+    auto inputEigen = Eigen::Map<Eigen::ArrayXd>( //
+        const_cast<double*>(input.data()),
+        input.size());
+    auto outputEigen = Eigen::Map<Eigen::ArrayXd>( //
+        output.data(),
+        output.size());
+    auto lowEigen = Eigen::Map<Eigen::ArrayXd>( //
+        lowBroadcasted.data(),
+        lowBroadcasted.size());
+    auto highEigen = Eigen::Map<Eigen::ArrayXd>( //
+        highBroadcasted.data(),
+        highBroadcasted.size());
+
+    if (highEigen.isApprox(lowEigen)) {
+        return input;
+    }
+
+    outputEigen = 2.0 * (inputEigen - lowEigen) / (highEigen - lowEigen) - 1;
+
+    // Replace infinite with the input value
+    std::transform(output.begin(),
+                   output.end(),
+                   input.begin(),
+                   output.begin(),
+                   [](const double& output, const double& input) {
+                       return std::isfinite(output) ? output : input;
+                   });
+
+    return output;
+}
+
+std::vector<double> utils::denormalize(const std::vector<double>& input,
+                                       const std::vector<double>& low,
+                                       const std::vector<double>& high)
+{
+    bool okInput = input.size() > 0;
+    bool okLow = low.size() == input.size() || low.size() == 1;
+    bool okHigh = high.size() == input.size() || high.size() == 1;
+
+    if (!okInput || !okLow || !okHigh) {
+        throw std::invalid_argument("Wrong input arguments");
+    }
+
+    std::vector<double> lowBroadcasted = low;
+    std::vector<double> highBroadcasted = high;
+
+    if (low.size() == 1 && input.size() > 1) {
+        lowBroadcasted = std::vector<double>(input.size(), low[0]);
+    }
+
+    if (high.size() == 1 && input.size() > 1) {
+        highBroadcasted = std::vector<double>(input.size(), high[0]);
+    }
+
+    std::vector<double> output;
+    output.resize(input.size());
+
+    auto inputEigen = Eigen::Map<Eigen::ArrayXd>( //
+        const_cast<double*>(input.data()),
+        input.size());
+    auto outputEigen = Eigen::Map<Eigen::ArrayXd>( //
+        output.data(),
+        output.size());
+    auto lowEigen = Eigen::Map<Eigen::ArrayXd>( //
+        lowBroadcasted.data(),
+        lowBroadcasted.size());
+    auto highEigen = Eigen::Map<Eigen::ArrayXd>( //
+        highBroadcasted.data(),
+        highBroadcasted.size());
+
+    if (highEigen.isApprox(lowEigen)) {
+        return input;
+    }
+
+    outputEigen = (inputEigen + 1) * (highEigen - lowEigen) / 2.0 + lowEigen;
+
+    return output;
 }

@@ -64,6 +64,11 @@ public:
 
     using ModelName = std::string;
     std::unordered_map<ModelName, ModelPtr> models;
+
+    struct
+    {
+        std::vector<std::string> modelNames;
+    } buffers;
 };
 
 World::World()
@@ -190,7 +195,7 @@ std::string World::name() const
 
 std::vector<std::string> World::modelNames() const
 {
-    std::vector<std::string> modelNames;
+    pImpl->buffers.modelNames.clear();
 
     pImpl->ecm->Each<ignition::gazebo::components::Name,
                      ignition::gazebo::components::Model,
@@ -208,15 +213,20 @@ std::vector<std::string> World::modelNames() const
                 return true;
             }
 
-            modelNames.push_back(nameComponent->Data());
+            pImpl->buffers.modelNames.push_back(nameComponent->Data());
             return true;
         });
 
-    return modelNames;
+    return pImpl->buffers.modelNames;
 }
 
 scenario::gazebo::ModelPtr World::getModel(const std::string& modelName) const
 {
+    if (pImpl->models.find(modelName) != pImpl->models.end()) {
+        assert(pImpl->models.at(modelName));
+        return pImpl->models.at(modelName);
+    }
+
     // Find the model entity
     auto modelEntity = pImpl->ecm->EntityByComponents(
         ignition::gazebo::components::Name(modelName),
@@ -225,11 +235,6 @@ scenario::gazebo::ModelPtr World::getModel(const std::string& modelName) const
 
     if (modelEntity == ignition::gazebo::kNullEntity) {
         throw exceptions::ModelNotFound(modelName);
-    }
-
-    if (pImpl->models.find(modelName) != pImpl->models.end()) {
-        assert(pImpl->models.at(modelName));
-        return pImpl->models.at(modelName);
     }
 
     // Create and initialize the model
