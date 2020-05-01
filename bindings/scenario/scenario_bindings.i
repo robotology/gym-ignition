@@ -23,11 +23,11 @@
 %include <std_shared_ptr.i>
 
 // Convert python list to std::vector
-%template(Vector_i) std::vector<int>;
-%template(Vector_u) std::vector<size_t>;
-%template(Vector_f) std::vector<float>;
-%template(Vector_d) std::vector<double>;
-%template(Vector_s) std::vector<std::string>;
+%template(VectorI) std::vector<int>;
+%template(VectorU) std::vector<size_t>;
+%template(VectorF) std::vector<float>;
+%template(VectorD) std::vector<double>;
+%template(VectorS) std::vector<std::string>;
 
 // Convert python list to std::array
 %template(Array3d) std::array<double, 3>;
@@ -38,9 +38,27 @@
 %template(PosePair) std::pair<std::array<double, 3>, std::array<double, 4>>;
 
 // ScenarI/O templates
-%template(Vector_links) std::vector<scenario::gazebo::LinkPtr>;
-%template(Vector_joints) std::vector<scenario::gazebo::JointPtr>;
-%template(Vector_contact) std::vector<scenario::base::ContactData>;
+%template(VectorOfLinks) std::vector<scenario::gazebo::LinkPtr>;
+%template(VectorOfJoints) std::vector<scenario::gazebo::JointPtr>;
+%template(VectorOfContactData) std::vector<scenario::base::ContactData>;
+
+// Rename all methods to undercase with _ separators excluding the classes.
+// Keep all template instantations above.
+%rename("%(undercase)s") "";
+%rename("") PID;
+%rename("") Pose;
+%rename("") Link;
+%rename("") Joint;
+%rename("") Model;
+%rename("") World;
+%rename("") Limit;
+%rename("") JointType;
+%rename("") JointLimit;
+%rename("") ContactData;
+%rename("") ECMSingleton;
+%rename("") PhysicsEngine;
+%rename("") GazeboSimulator;
+%rename("") JointControlMode;
 
 // Public helpers
 %include "scenario/gazebo/utils.h"
