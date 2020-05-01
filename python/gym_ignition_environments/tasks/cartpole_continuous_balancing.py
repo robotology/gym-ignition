@@ -72,8 +72,8 @@ class CartPoleContinuousBalancing(task.Task, abc.ABC):
         force = action.tolist()[0]
 
         # Set the force value
-        model = self.world.getModel(self.model_name)
-        ok_force = model.getJoint("linear").setGeneralizedForceTarget(force)
+        model = self.world.get_model(self.model_name)
+        ok_force = model.get_joint("linear").set_generalized_force_target(force)
 
         if not ok_force:
             raise RuntimeError("Failed to set the force to the cart")
@@ -81,11 +81,11 @@ class CartPoleContinuousBalancing(task.Task, abc.ABC):
     def get_observation(self) -> Observation:
 
         # Get the model
-        model = self.world.getModel(self.model_name)
+        model = self.world.get_model(self.model_name)
 
         # Get the new joint positions and velocities
-        q, x = model.jointPositions(["pivot", "linear"])
-        dq, dx = model.jointVelocities(["pivot", "linear"])
+        q, x = model.joint_positions(["pivot", "linear"])
+        dq, dx = model.joint_velocities(["pivot", "linear"])
 
         # Create the observation
         observation = Observation(np.array([x, dx, q, dq]))
@@ -122,15 +122,15 @@ class CartPoleContinuousBalancing(task.Task, abc.ABC):
 
     def reset_task(self) -> None:
 
-        if self.model_name not in self.world.modelNames():
+        if self.model_name not in self.world.model_names():
             raise RuntimeError("Cartpole model not found in the world")
 
         # Get the model
-        model = self.world.getModel(self.model_name)
+        model = self.world.get_model(self.model_name)
 
         # Control the cart in force mode
-        linear = model.getJoint("linear")
-        ok_control_mode = linear.setControlMode(bindings.JointControlMode_Force)
+        linear = model.get_joint("linear")
+        ok_control_mode = linear.set_control_mode(bindings.JointControlMode_force)
 
         if not ok_control_mode:
             raise RuntimeError("Failed to change the control mode of the cartpole")
@@ -139,8 +139,8 @@ class CartPoleContinuousBalancing(task.Task, abc.ABC):
         x, dx, q, dq = self.np_random.uniform(low=-0.05, high=0.05, size=(4,))
 
         # Reset the cartpole state
-        ok_reset_pos = model.resetJointPositions([x, q], ["linear", "pivot"])
-        ok_reset_vel = model.resetJointVelocities([dx, dq], ["linear", "pivot"])
+        ok_reset_pos = model.reset_joint_positions([x, q], ["linear", "pivot"])
+        ok_reset_vel = model.reset_joint_velocities([dx, dq], ["linear", "pivot"])
 
         if not ok_reset_pos and not ok_reset_vel:
             raise RuntimeError("Failed to reset the cartpole state")

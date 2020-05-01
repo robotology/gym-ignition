@@ -6,7 +6,11 @@ import pytest
 pytestmark = pytest.mark.gym_ignition
 
 import gym
+from gym_ignition.utils.logger import set_level
 from gym_ignition_environments import randomizers
+
+# Set the verbosity
+set_level(gym.logger.DEBUG)
 
 
 def make_env(**kwargs) -> gym.Env:

@@ -39,9 +39,9 @@ class CartpoleEnvNoRandomizations(gazebo_env_randomizer.GazeboEnvRandomizer):
         """
 
         # Remove the model from the simulation
-        if task.model_name is not None and task.model_name in task.world.modelNames():
+        if task.model_name is not None and task.model_name in task.world.model_names():
 
-            ok_removed = task.world.removeModel(task.model_name)
+            ok_removed = task.world.remove_model(task.model_name)
 
             if not ok_removed:
                 raise RuntimeError("Failed to remove the cartpole from the world")

@@ -28,15 +28,15 @@ class Pendulum(scenario.model_wrapper.ModelWrapper,
             model_file = Pendulum.get_model_file()
 
         # Insert the model
-        ok_model = world.insertModel(model_file,
-                                     initial_pose,
-                                     model_name)
+        ok_model = world.insert_model(model_file,
+                                      initial_pose,
+                                      model_name)
 
         if not ok_model:
             raise RuntimeError("Failed to insert model")
 
         # Get the model
-        model = world.getModel(model_name)
+        model = world.get_model(model_name)
 
         # Initialize base class
         super().__init__(model=model)

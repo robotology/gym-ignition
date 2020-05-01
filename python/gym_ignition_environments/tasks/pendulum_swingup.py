@@ -49,8 +49,8 @@ class PendulumSwingUp(task.Task, abc.ABC):
         force = action.tolist()[0]
 
         # Set the force value
-        model = self.world.getModel(self.model_name)
-        ok_force = model.getJoint("pivot").setGeneralizedForceTarget(force)
+        model = self.world.get_model(self.model_name)
+        ok_force = model.get_joint("pivot").set_generalized_force_target(force)
 
         if not ok_force:
             raise RuntimeError("Failed to set the force to the pendulum")
@@ -58,11 +58,11 @@ class PendulumSwingUp(task.Task, abc.ABC):
     def get_observation(self) -> Observation:
 
         # Get the model
-        model = self.world.getModel(self.model_name)
+        model = self.world.get_model(self.model_name)
 
         # Get the new joint position and velocity
-        q = model.getJoint("pivot").position()
-        dq = model.getJoint("pivot").velocity()
+        q = model.get_joint("pivot").position()
+        dq = model.get_joint("pivot").velocity()
 
         # Create the observation
         observation = Observation(np.array([np.cos(q), np.sin(q), dq]))
@@ -77,12 +77,12 @@ class PendulumSwingUp(task.Task, abc.ABC):
         cost = 100.0 if self.is_done() else 0.0
 
         # Get the model
-        model = self.world.getModel(self.model_name)
+        model = self.world.get_model(self.model_name)
 
         # Get the pendulum state
-        q = model.getJoint("pivot").position()
-        dq = model.getJoint("pivot").velocity()
-        tau = model.getJoint("pivot").generalizedForceTarget()
+        q = model.get_joint("pivot").position()
+        dq = model.get_joint("pivot").velocity()
+        tau = model.get_joint("pivot").generalized_force_target()
 
         # Calculate the cost
         cost += (q ** 2) + 0.1 * (dq ** 2) + 0.001 * (tau ** 2)
@@ -101,15 +101,15 @@ class PendulumSwingUp(task.Task, abc.ABC):
 
     def reset_task(self) -> None:
 
-        if self.model_name not in self.world.modelNames():
+        if self.model_name not in self.world.model_names():
             raise RuntimeError("The cartpole model was not inserted in the world")
 
         # Get the model
-        model = self.world.getModel(self.model_name)
+        model = self.world.get_model(self.model_name)
 
         # Control the pendulum in force mode
-        pivot = model.getJoint("pivot")
-        ok_control_mode = pivot.setControlMode(bindings.JointControlMode_Force)
+        pivot = model.get_joint("pivot")
+        ok_control_mode = pivot.set_control_mode(bindings.JointControlMode_force)
 
         if not ok_control_mode:
             raise RuntimeError("Failed to change the control mode of the pendulum")

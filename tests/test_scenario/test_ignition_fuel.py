@@ -10,7 +10,7 @@ from ..common.utils import gazebo_fixture as gazebo
 from gym_ignition import scenario_bindings as bindings
 
 # Set the verbosity
-bindings.setVerbosity(4)
+bindings.set_verbosity(4)
 
 
 @pytest.mark.parametrize("gazebo",
@@ -22,21 +22,21 @@ def test_download_model_from_fuel(gazebo: bindings.GazeboSimulator):
     assert gazebo.initialize()
 
     # Get the default world
-    world = gazebo.getWorld()
+    world = gazebo.get_world()
 
     # Download a model from Fuel (testing a name with spaces)
     model_name = "Electrical Box"
-    model_sdf = bindings.getModelFileFromFuel(
+    model_sdf = bindings.get_model_file_from_fuel(
         f"https://fuel.ignitionrobotics.org/openrobotics/models/{model_name}", False)
     assert model_sdf
 
-    assert world.insertModel(model_sdf, bindings.Pose_Identity())
-    assert model_name in world.modelNames()
+    assert world.insert_model(model_sdf, bindings.Pose_identity())
+    assert model_name in world.model_names()
 
     # Insert another model changing its name
     other_model_name = "my_box"
     other_model_pose = bindings.Pose([3.0, 0.0, 0.0], [1.0, 0, 0, 0])
-    assert world.insertModel(model_sdf, other_model_pose, other_model_name)
-    assert other_model_name in world.modelNames()
+    assert world.insert_model(model_sdf, other_model_pose, other_model_name)
+    assert other_model_name in world.model_names()
 
     assert gazebo.run()

@@ -62,13 +62,13 @@ def set_level(level: int) -> None:
 
     # Set the gympp verbosity
     if logger.MIN_LEVEL <= logger.DEBUG:
-        bindings.setVerbosity(4)
+        bindings.set_verbosity(4)
     elif logger.MIN_LEVEL <= logger.INFO:
-        bindings.setVerbosity(3)
+        bindings.set_verbosity(3)
     elif logger.MIN_LEVEL <= logger.WARN:
-        bindings.setVerbosity(2)
+        bindings.set_verbosity(2)
     elif logger.MIN_LEVEL <= logger.ERROR:
-        bindings.setVerbosity(1)
+        bindings.set_verbosity(1)
     else:
         raise Exception("Verbosity level not recognized")
 

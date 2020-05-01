@@ -89,11 +89,11 @@ class RandomizationDataBuilder:
         self.storage["parameters"] = parameters
 
         if self.storage["distribution"] is Distribution.Gaussian and \
-            not isinstance(parameters, GaussianParams):
+                not isinstance(parameters, GaussianParams):
             raise ValueError("Wrong parameters type")
 
         if self.storage["distribution"] is Distribution.Uniform and \
-            not isinstance(parameters, UniformParams):
+                not isinstance(parameters, UniformParams):
             raise ValueError("Wrong parameters type")
 
         return self
@@ -126,7 +126,6 @@ class RandomizationDataBuilder:
         Returns:
             The randomization builder to allow chaining methods.
         """
-
 
         self.storage["ignore_zeros"] = ignore_zeros
         return self

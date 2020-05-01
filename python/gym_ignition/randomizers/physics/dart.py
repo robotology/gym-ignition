@@ -22,7 +22,7 @@ class DART(physics.PhysicsRandomizer):
     def randomize_physics(self, world: bindings.World) -> None:
 
         # Insert the physics
-        ok_physics = world.setPhysicsEngine(bindings.PhysicsEngine_Dart)
+        ok_physics = world.set_physics_engine(bindings.PhysicsEngine_dart)
 
         if not ok_physics:
             raise RuntimeError("Failed to insert the physics plugin")

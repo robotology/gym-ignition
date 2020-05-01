@@ -62,13 +62,13 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
 
     def randomize_physics(self, world: bindings.World) -> None:
 
-        ok_physics = world.setPhysicsEngine(bindings.PhysicsEngine_Dart)
+        ok_physics = world.set_physics_engine(bindings.PhysicsEngine_dart)
 
         if not ok_physics:
             raise RuntimeError("Failed to insert the physics plugin")
 
         gravity_z = self.np_random_physics.normal(loc=-9.8, scale=0.2)
-        ok_gravity = world.setGravity([0, 0, gravity_z])
+        ok_gravity = world.set_gravity([0, 0, gravity_z])
 
         if not ok_gravity:
             raise RuntimeError("Failed to set the gravity")
@@ -140,7 +140,7 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
         urdf_model_file = cartpole.CartPole.get_model_file()
 
         # Convert the URDF to SDF
-        sdf_model_string = bindings.URDFFileToSDFString(urdf_model_file)
+        sdf_model_string = bindings.urdffile_to_sdfstring(urdf_model_file)
 
         # Write the SDF string to a temp file
         sdf_model = utils.misc.string_to_file(sdf_model_string)
@@ -171,9 +171,9 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
     def _clean_world(task: SupportedTasks):
 
         # Remove the model from the simulation
-        if task.model_name is not None and task.model_name in task.world.modelNames():
+        if task.model_name is not None and task.model_name in task.world.model_names():
 
-            ok_removed = task.world.removeModel(task.model_name)
+            ok_removed = task.world.remove_model(task.model_name)
 
             if not ok_removed:
                 raise RuntimeError("Failed to remove the cartpole from the world")

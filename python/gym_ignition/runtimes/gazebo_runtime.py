@@ -148,16 +148,15 @@ class GazeboRuntime(runtime.Runtime):
 
     def render(self, mode: str = 'human', **kwargs) -> None:
 
-        if mode == 'human':
+        if mode != 'human':
+            raise ValueError(f"Render mode '{mode}' not supported")
 
-            gui_ok = self.gazebo.gui()
+        gui_ok = self.gazebo.gui()
 
-            if not gui_ok:
-                raise RuntimeError("Failed to render the environment")
+        if not gui_ok:
+            raise RuntimeError("Failed to render the environment")
 
-            return
-
-        raise Exception(f"Render mode '{mode}' not supported")
+        return
 
     def close(self) -> None:
 
@@ -228,11 +227,11 @@ class GazeboRuntime(runtime.Runtime):
             self._world_name = scenario.get_unique_world_name("default")
 
         else:
-            sdf_world_name = bindings.getWorldNameFromSdf(self._world_sdf)
+            sdf_world_name = bindings.get_world_name_from_sdf(self._world_sdf)
             self._world_name = scenario.get_unique_world_name(sdf_world_name)
 
         # Load the world
-        ok_world = self._gazebo.insertWorldFromSDF(self._world_sdf, self._world_name)
+        ok_world = self._gazebo.insert_world_from_sdf(self._world_sdf, self._world_name)
 
         if not ok_world:
             raise RuntimeError("Failed to load SDF world")
@@ -247,15 +246,15 @@ class GazeboRuntime(runtime.Runtime):
             raise RuntimeError("Gazebo was not initialized")
 
         # Get the world
-        world = self._gazebo.getWorld(self._world_name)
+        world = self._gazebo.get_world(self._world_name)
 
         assert self._world_sdf is not None
-        assert self._world_name in self._gazebo.worldNames()
+        assert self._world_name in self._gazebo.world_names()
 
         if self._world_sdf == "":
 
             # Insert the ground plane
-            ok_ground = world.insertModel(
+            ok_ground = world.insert_model(
                 gym_ignition_models.get_model_file("ground_plane"))
 
             if not ok_ground:

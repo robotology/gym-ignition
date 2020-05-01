@@ -35,7 +35,7 @@ def get_unique_model_name(world: bindings.World, model_name: str) -> str:
     postfix = 0
     model_name_tentative = f"{model_name}"
 
-    while model_name_tentative in world.modelNames():
+    while model_name_tentative in world.model_names():
 
         postfix += 1
         model_name_tentative = f"{model_name}{postfix}"
@@ -47,9 +47,9 @@ def get_unique_world_name(world_name: str) -> str:
 
     postfix = 0
     world_name_tentative = f"{world_name}"
-    ecm_singleton = bindings.ECMSingleton_Instance()
+    ecm_singleton = bindings.ECMSingleton_instance()
 
-    while world_name_tentative in ecm_singleton.worldNames():
+    while world_name_tentative in ecm_singleton.world_names():
         postfix += 1
         world_name_tentative = f"{world_name}{postfix}"
 
@@ -86,15 +86,15 @@ def init_gazebo_sim(step_size: float = 0.001,
         raise RuntimeError("Failed to initialize Gazebo")
 
     # Get the world
-    world = gazebo.getWorld()
+    world = gazebo.get_world()
 
     # Insert the ground plane
-    ok_ground = world.insertModel(gym_ignition_models.get_model_file("ground_plane"))
+    ok_ground = world.insert_model(gym_ignition_models.get_model_file("ground_plane"))
 
     if not ok_ground:
         raise RuntimeError("Failed to insert the ground plane")
 
-    ok_physics = world.setPhysicsEngine(bindings.PhysicsEngine_Dart)
+    ok_physics = world.set_physics_engine(bindings.PhysicsEngine_dart)
 
     if not ok_physics:
         raise RuntimeError("Failed to insert the physics plugin")
@@ -117,10 +117,10 @@ def get_joint_positions_space(model: bindings.Model,
     """
 
     if considered_joints is None:
-        considered_joints = model.jointNames()
+        considered_joints = model.joint_names()
 
     # Get the joint limits
-    joint_limits = model.jointLimits(considered_joints)
+    joint_limits = model.joint_limits(considered_joints)
 
     # Build the space
     space = gym.spaces.Box(low=np.array(joint_limits.min),
