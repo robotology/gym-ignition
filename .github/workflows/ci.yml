@@ -7,7 +7,7 @@ on:
 jobs:
   developer:
     name: Developer installation
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     strategy:
       matrix:
         python: [3.6]
@@ -15,75 +15,88 @@ jobs:
         compiler:
           #- gcc7
           - gcc8
-          #- clang7
-          #- clang8
-    container:
-      image: diegoferigo/gym-ignition:ci-master
-      env:
-        PYTHON_VERSION: ${{ matrix.python }}
+          #- clang9
 
     steps:
 
       - uses: actions/checkout@master
       - run: git fetch --prune --unshallow
 
-      # The entrypoint is not called because it is overridden by GH Actions.
-      # Even using the 'jobs.<job_id>.container.options' does not work because the
-      # entrypoint of GH Actions overrides the one passed through YAML.
-      - name: Execute entrypoint
-        run: . /entrypoint.sh
-
-      # Workaround to export environment variables that persist in next steps
-      # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
       - name: Setup Environment
         run: |
           case ${{ matrix.compiler }} in
-              gcc7) CC=gcc ; CXX=g++ ;;
-              gcc8) CC=gcc-8 ; CXX=g++-8 ;;
-              clang6) CC=clang; CXX=clang++ ;;
-              clang7) CC=clang-7; CXX=clang++-7 ;;
-              clang8) CC=clang-8; CXX=clang++-8 ;;
-              *) echo "Compiler not supported" && exit 1 ;;
+            gcc7)   CC=gcc ;    CXX=g++ ;;
+            gcc8)   CC=gcc-8 ;  CXX=g++-8 ;;
+            clang6) CC=clang;   CXX=clang++ ;;
+            clang7) CC=clang-7; CXX=clang++-7 ;;
+            clang8) CC=clang-8; CXX=clang++-8 ;;
+            *) echo "Compiler not supported" && exit 1 ;;
           esac
           echo "::set-env name=CC::$CC"
           echo "::set-env name=CXX::$CXX"
           echo "::set-env name=PYTHON_VERSION::${{ matrix.python }}"
           env
 
+      - name: Setup docker image [master]
+        if: |
+          github.ref == 'refs/heads/master' ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'refs/heads/master')
+        run: |
+          docker run -d -i --name ci -v $(pwd):/github -w /github \
+            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
+            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
+            diegoferigo/gym-ignition:ci-master bash
+
+      - name: Setup docker image [other]
+        if: |
+          (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+        run: |
+          docker run -d -i --name ci -v $(pwd):/github -w /github \
+            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
+            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
+            diegoferigo/gym-ignition:ci-devel bash
+
+      - name: Wait entrypoint
+        run: sleep 15
+
       - name: Build and Install C++
+        shell: docker exec -i ci bash -e {0}
         run: |
           env
-          mkdir -p build
-          cd build
-          cmake .. \
-            -GNinja \
-            -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          mkdir build && cd build
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           cmake --build . --target install
 
       - name: Setup Python Package
-        run: pip3 install -e .
+        shell: docker exec -i ci bash -e {0}
+        run: pip install -e .
 
       - name: Python Tests [ScenarI/O]
+        shell: docker exec -i ci bash -e {0}
         run: |
           cd tests
           pytest -m "scenario"
 
       - name: Python Tests with Valgrind [ScenarI/O]
+        shell: docker exec -i ci bash -e {0}
         if: failure()
         run: |
-          pip3 install colour-valgrind
+          pip install colour-valgrind
           cd tests
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
 
       - name: Python Tests [gym_ignition]
+        shell: docker exec -i ci bash -e {0}
         run: |
           cd tests
           pytest -m "gym_ignition"
 
       - name: Python Tests with Valgrind [gym_ignition]
+        shell: docker exec -i ci bash -e {0}
         if: failure()
         run: |
-          pip3 install colour-valgrind
+          pip install colour-valgrind
           cd tests
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
 
@@ -96,38 +109,59 @@ jobs:
           - 3.6
         os:
           - ubuntu-18.04
-    container:
-      image: diegoferigo/gym-ignition:ci-master
-      env:
-        PYTHON_VERSION: ${{ matrix.python }}
-        CC: gcc-8
-        CXX: g++-8
 
     steps:
 
       - uses: actions/checkout@master
       - run: git fetch --prune --unshallow
 
-      # The entrypoint is not called because it is overridden by GH Actions.
-      # Even using the 'jobs.<job_id>.container.options' does not work because the
-      # entrypoint of GH Actions overrides the one passed through YAML.
-      - name: Execute entrypoint
-        run: . /entrypoint.sh
+      - name: Setup docker image [master]
+        if: |
+          github.ref == 'refs/heads/master' ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'refs/heads/master')
+        run: |
+          docker run -d -i --name ci -v $(pwd):/github -w /github \
+            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
+            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
+            diegoferigo/gym-ignition:ci-master bash
+        env:
+          CC: gcc-8
+          CXX: g++-8
+
+      - name: Setup docker image [other]
+        if: |
+          (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+        run: |
+          docker run -d -i --name ci -v $(pwd):/github -w /github \
+            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
+            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
+            diegoferigo/gym-ignition:ci-devel bash
+        env:
+          CC: gcc-8
+          CXX: g++-8
+
+      - name: Wait entrypoint
+        run: sleep 15
 
       - name: Create wheel
+        shell: docker exec -i ci bash -e {0}
         run: python setup.py bdist_wheel
 
       - name: Install local wheel
+        shell: docker exec -i ci bash -e {0}
         run: |
           cd dist
           pip install -v *.whl
 
       - name: Python Tests [ScenarI/O]
+        shell: docker exec -i ci bash -e {0}
         run: |
           cd tests
           pytest -m "scenario"
 
       - name: Python Tests with Valgrind [ScenarI/O]
+        shell: docker exec -i ci bash -e {0}
         if: failure()
         run: |
           pip3 install colour-valgrind
@@ -135,11 +169,13 @@ jobs:
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
 
       - name: Python Tests [gym_ignition]
+        shell: docker exec -i ci bash -e {0}
         run: |
           cd tests
           pytest -m "gym_ignition"
 
       - name: Python Tests with Valgrind [gym_ignition]
+        shell: docker exec -i ci bash -e {0}
         if: failure()
         run: |
           pip3 install colour-valgrind
