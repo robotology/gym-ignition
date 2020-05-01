@@ -23,7 +23,7 @@ scenario_bindings.set_verbosity(4)
 def create_std_vector():
 
     python_list = [1.0, 2.0, 3.0]
-    vector = bindings.Vector_d(python_list)
+    vector = bindings.VectorD(python_list)
 
     return vector
 
@@ -32,10 +32,10 @@ def create_std_vector():
 def create_space_box_md():
 
     md = bindings.SpaceMetadata()
-    md.setType(bindings.SpaceType_Box)
+    md.set_type(bindings.SpaceType_box)
     max_float = float(np.finfo(np.float32).max)
-    md.setLowLimit([-2.5, -max_float, -24, -max_float])
-    md.setHighLimit([2.5, max_float, 24, max_float])
+    md.set_low_limit([-2.5, -max_float, -24, -max_float])
+    md.set_high_limit([2.5, max_float, 24, max_float])
 
     return md
 
@@ -44,8 +44,8 @@ def create_space_box_md():
 def create_space_discrete_md():
 
     md = bindings.SpaceMetadata()
-    md.setType(bindings.SpaceType_Discrete)
-    md.setDimensions([2])
+    md.set_type(bindings.SpaceType_discrete)
+    md.set_dimensions([2])
 
     return md
 
@@ -53,7 +53,7 @@ def create_space_discrete_md():
 def test_vectors():
 
     python_list = [1.0, 2.0, 3.0]
-    vector = bindings.Vector_d(python_list)
+    vector = bindings.VectorD(python_list)
 
     for i in range(0, vector.size()-1):
         assert python_list[i] == vector[i]
@@ -65,11 +65,11 @@ def test_sample(create_std_vector):
     sample = bindings.Sample(vector)
 
     for i in range(0, vector.size()-1):
-        assert sample.getBuffer_d()[i] == vector[i]
+        assert sample.get_buffer_d()[i] == vector[i]
 
-    sample.getBuffer_d()[2] = 42
+    sample.get_buffer_d()[2] = 42
     assert sample.get_d(2).value() == 42
-    assert sample.getBuffer_d()[2] == 42
+    assert sample.get_buffer_d()[2] == 42
 
 
 def test_range():
@@ -92,8 +92,8 @@ def test_discrete_space():
 
     for n in range(50):
         sample = discrete_space.sample()
-        assert sample.getBuffer_i().size() == 1
-        assert isinstance(sample.getBuffer_i()[0], int)
+        assert sample.get_buffer_i().size() == 1
+        assert isinstance(sample.get_buffer_i()[0], int)
         assert discrete_space.contains(sample)
 
 
@@ -103,17 +103,17 @@ def test_box_space():
     box = bindings.Box(-1, 42, [size])
 
     # By default the data precision of python list is float. Force double.
-    assert box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 42])))
-    assert not box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 43])))
-    assert not box.contains(bindings.Sample(bindings.Vector_d([0])))
-    assert not box.contains(bindings.Sample(bindings.Vector_d([0, pi, 12, 43, 0])))
+    assert box.contains(bindings.Sample(bindings.VectorD([0, pi, 12, 42])))
+    assert not box.contains(bindings.Sample(bindings.VectorD([0, pi, 12, 43])))
+    assert not box.contains(bindings.Sample(bindings.VectorD([0])))
+    assert not box.contains(bindings.Sample(bindings.VectorD([0, pi, 12, 43, 0])))
 
     for n in range(50):
 
         sample = box.sample()
 
-        assert sample.getBuffer_d().size() == size
-        assert isinstance(sample.getBuffer_d()[0], float)
+        assert sample.get_buffer_d().size() == size
+        assert isinstance(sample.get_buffer_d()[0], float)
         assert box.contains(sample)
 
 
@@ -121,13 +121,13 @@ def test_space_box_metadata(create_space_box_md):
 
     md = create_space_box_md
 
-    assert md.isValid()
-    assert md.getType() == bindings.SpaceType_Box
+    assert md.is_valid()
+    assert md.get_type() == bindings.SpaceType_box
 
 
 def test_space_discrete_metadata(create_space_discrete_md):
 
     md = create_space_discrete_md
 
-    assert md.isValid()
-    assert md.getType() == bindings.SpaceType_Discrete
+    assert md.is_valid()
+    assert md.get_type() == bindings.SpaceType_discrete
