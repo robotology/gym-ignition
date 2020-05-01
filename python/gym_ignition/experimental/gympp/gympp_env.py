@@ -33,7 +33,6 @@ class GymppEnv(gym.Env):
         self._observation_space = None
         self._act_dt = None
         self._obs_dt = None
-        self._robot = None
         self._np_random = None
 
         # Seed the environment
@@ -56,11 +55,11 @@ class GymppEnv(gym.Env):
 
         # Register the environment
         factory = bindings.GymFactory.Instance()
-        factory.registerPlugin(md)
+        factory.register_plugin(md)
 
         # Load the environment from gympp
-        self._env = factory.make(md.getEnvironmentName())
-        assert self._env, "Failed to create environment " + md.getEnvironmentName()
+        self._env = factory.make(md.get_environment_name())
+        assert self._env, "Failed to create environment " + md.get_environment_name()
 
         # Set the verbosity
         logger.set_level(gym.logger.MIN_LEVEL)
@@ -71,7 +70,7 @@ class GymppEnv(gym.Env):
     @property
     def gazebo(self):
         from gym_ignition import gympp_bindings as bindings
-        return bindings.envToGazeboWrapper(self.gympp_env)
+        return bindings.env_to_gazebo_simulator(self.gympp_env)
 
     @property
     def action_space(self) -> gym.Space:
@@ -80,7 +79,8 @@ class GymppEnv(gym.Env):
 
         # Create the action space from the metadata
         md = self._plugin_metadata
-        self._action_space, self._act_dt = self._create_space(md.getActionSpaceMetadata())
+        self._action_space, self._act_dt = \
+            self._create_space(md.get_action_space_metadata())
 
         return self._action_space
 
@@ -92,30 +92,9 @@ class GymppEnv(gym.Env):
         # Create the action space from the metadata
         md = self._plugin_metadata
         self._observation_space, self._obs_dt = self._create_space(
-            md.getObservationSpaceMetadata())
+            md.get_observation_space_metadata())
 
         return self._observation_space
-
-    @property
-    def robot(self):
-        if self._robot:
-            assert self._robot.valid(), "The Robot object is not valid"
-            return self._robot
-
-        from gym_ignition import gympp_bindings as bindings
-
-        # Get the robot name
-        gazebo_wrapper = bindings.envToGazeboWrapper(self.gympp_env)
-        model_names = gazebo_wrapper.getModelNames()
-        assert len(model_names) == 1, "The environment has more than one model"
-        model_name = model_names[0]
-
-        # Get the pointer to the Robot object
-        self._robot = bindings.RobotSingleton_get().getRobot(model_name)
-        assert self._robot, "Failed to get the Robot object"
-
-        # Return the object
-        return self._robot
 
     def step(self, action: Action) -> State:
         assert self.action_space.contains(action), \
@@ -155,7 +134,8 @@ class GymppEnv(gym.Env):
         state = state_optional.value()
 
         # Get the std::vector buffer of gympp::Observation
-        observation_vector = getattr(state.observation, 'getBuffer' + self._obs_dt)()
+        method = 'get_buffer_' + self._obs_dt.lower()
+        observation_vector = getattr(state.observation, method)()
         assert observation_vector, "Failed to get the observation buffer"
         assert observation_vector.size() > 0, "The observation does not contain elements"
 
@@ -190,7 +170,8 @@ class GymppEnv(gym.Env):
         gympp_observation = obs_optional.value()
 
         # Get the std::vector buffer of gympp::Observation
-        observation_vector = getattr(gympp_observation, 'getBuffer' + self._obs_dt)()
+        method = 'get_buffer_' + self._obs_dt.lower()
+        observation_vector = getattr(gympp_observation, method)()
         assert observation_vector, "Failed to get the observation buffer"
         assert observation_vector.size() > 0, "The observation does not contain elements"
 
@@ -216,7 +197,7 @@ class GymppEnv(gym.Env):
 
         from gym_ignition import gympp_bindings as bindings
 
-        render_mode = {'human': bindings.Environment.RenderMode_HUMAN}
+        render_mode = {'human': bindings.Environment.RenderMode_human}
         ok = self.gympp_env.render(render_mode[mode])
 
         assert ok, "Failed to render environment"
@@ -268,23 +249,23 @@ class GymppEnv(gym.Env):
         from gym_ignition import gympp_bindings as bindings
         assert isinstance(md, bindings.SpaceMetadata), "Wrong type for method argument"
 
-        space_type = md.getType()
-        low = md.getLowLimit()
-        high = md.getHighLimit()
-        dims = md.getDimensions()
+        space_type = md.get_type()
+        low = md.get_low_limit()
+        high = md.get_high_limit()
+        dims = md.get_dimensions()
 
-        if space_type is bindings.SpaceType_Box:
+        if space_type is bindings.SpaceType_box:
             if not dims:
                 assert len(low) == len(high), "Sizes of low and high limits do not match"
-                return spaces.Box(np.array(low), np.array(high)), "_d"
+                return spaces.Box(np.array(low), np.array(high)), "D"
             else:
                 assert len(low) == 1, "The size of the limit is not valid"
                 assert len(high) == 1, "The size of the limit is not valid"
-                return spaces.Box(low[0], high[0], dims), "_d"
+                return spaces.Box(low[0], high[0], dims), "D"
 
-        elif space_type is bindings.SpaceType_Discrete:
+        elif space_type is bindings.SpaceType_discrete:
             assert len(dims) == 1, "The specified space dimension is not valid"
-            return spaces.Discrete(dims[0]), "_i"
+            return spaces.Discrete(dims[0]), "I"
 
         else:
             assert False, "This space type is not supported"
