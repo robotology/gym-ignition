@@ -7,6 +7,7 @@ project(GymIgnition VERSION 0.1)
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include useful features
@@ -82,55 +83,94 @@ if(NOT MSVC)
     mark_as_advanced(ENABLE_RPATH)
 endif()
 
-# Add custom functions / macros
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+# Dependencies
+add_subdirectory(deps)
 
-# Find YCM
-find_package(YCM QUIET)
+# Find virtualenv's before system's interpreters
+set(Python3_FIND_VIRTUALENV "FIRST" CACHE STRING
+    "Configure the detection of virtual environments")
+set(Python3_FIND_VIRTUALENV_TYPES "FIRST" "ONLY" "STANDARD")
+mark_as_advanced(Python3_FIND_VIRTUALENV)
+set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTUALENV_TYPES})
 
-# Bootstrap YCM if not found
-if(NOT ${YCM_FOUND})
-    include(BootstrapYCM)
-endif()
+# Find Python3
+find_package(Python3 3.6 EXACT COMPONENTS Interpreter Development REQUIRED)
 
 # Configure RPATH
 include(AddInstallRPATHSupport)
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    add_install_rpath_support(BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
-                              LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
-                                       "${CMAKE_INSTALL_FULL_LIBDIR}/lib"
-                              INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
-                              DEPENDS ENABLE_RPATH
-                              USE_LINK_PATH)
+    add_install_rpath_support(
+        BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
+        LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
+                 "${Python3_SITELIB}"
+        INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
+        DEPENDS ENABLE_RPATH
+        USE_LINK_PATH)
+else()
+    add_install_rpath_support(
+        BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
+        LIB_DIRS "${Python3_SITELIB}"
+        INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
+        DEPENDS ENABLE_RPATH
+        USE_LINK_PATH)
 endif()
 
-# Dependencies
-add_subdirectory(deps)
-
-# Add the C++ sources subdirectory
-add_subdirectory(gympp)
-
-# ========
-# IGNITION
-# ========
-
-find_package(ignition-gazebo3 COMPONENTS all)
-option(GYMIGNITION_USE_IGNITION
-       "Build C++ code depending on Ignition Robotics" ${ignition-gazebo3_FOUND})
-
-# Add the targets depending on Ignition Robotics
-if(${GYMIGNITION_USE_IGNITION})
-    add_subdirectory(ignition)
-    add_subdirectory(plugins)
-    add_subdirectory(gym_ignition_data)
-    add_subdirectory(examples/cpp)
-
-    option(ENABLE_BINDINGS "Enable swig bindings" ON)
-    if(ENABLE_BINDINGS)
-        add_subdirectory(bindings)
-    endif()
+# Find Ignition Gazebo
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    find_package(ignition-gazebo3)
 else()
-    message(STATUS "Ignition Gazebo not found. Enabled only the gympp interface and classes.")
+    find_package(ignition-gazebo3 REQUIRED)
+endif()
+
+option(GYMIGNITION_USE_IGNITION
+    "Build C++ code depending on Ignition Robotics" ${ignition-gazebo3_FOUND})
+
+# =====
+# GYMPP
+# =====
+
+option(GYMIGNITION_ENABLE_GYMPP "Enable Gympp library" OFF)
+
+if(GYMIGNITION_ENABLE_GYMPP)
+
+    add_subdirectory(cpp/gympp/base)
+
+    if(${GYMIGNITION_USE_IGNITION})
+
+        add_subdirectory(cpp/gympp/gazebo)
+        add_subdirectory(cpp/gympp/plugins)
+        add_subdirectory(examples/cpp)
+
+    endif()
+
+endif()
+
+# ========
+# SCENARIO
+# ========
+
+option(GYMIGNITION_ENABLE_SCENARIO "Enable Scenario library" ON)
+
+if(GYMIGNITION_ENABLE_SCENARIO)
+
+    if(${GYMIGNITION_USE_IGNITION})
+
+        add_subdirectory(cpp/scenario/gazebo)
+        add_subdirectory(cpp/scenario/plugins)
+        add_subdirectory(cpp/scenario/controllers)
+
+    endif()
+
+endif()
+
+# ========
+# BINDINGS
+# ========
+
+option(GYMIGNITION_ENABLE_BINDINGS "Enable SWIG bindings" ON)
+
+if(GYMIGNITION_ENABLE_BINDINGS AND GYMIGNITION_USE_IGNITION)
+    add_subdirectory(bindings)
 endif()
 
 # Add unistall target

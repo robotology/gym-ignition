@@ -6,12 +6,12 @@
  * GNU Lesser General Public License v2.1 or any later version.
  */
 
-#include "gympp/Common.h"
-#include "gympp/Environment.h"
-#include "gympp/GymFactory.h"
-#include "gympp/Log.h"
-#include "gympp/PluginDatabase.h"
-#include "gympp/Space.h"
+#include "gympp/base/Common.h"
+#include "gympp/base/Environment.h"
+#include "gympp/base/Log.h"
+#include "gympp/base/Space.h"
+#include "gympp/gazebo/GymFactory.h"
+#include "gympp/plugins/PluginDatabase.h"
 
 #include "clara.hpp"
 
@@ -28,8 +28,8 @@
 #include <utility>
 #include <vector>
 
-using namespace gympp;
 using namespace clara;
+using namespace gympp::base;
 
 struct Config
 {
@@ -47,13 +47,16 @@ int main(int argc, char* argv[])
     Config config;
 
     // Create the command line parser
-    auto cli = Help(config.help) | Opt(config.gui)["-g"]["--gui"]("render the environment")
-               | Opt([&](unsigned value) { config.seed = value; },
-                     "seed")["-s"]["--seed"]("use a specific seed for randomness");
+    auto cli =
+        Help(config.help)
+        | Opt(config.gui)["-g"]["--gui"]("render the environment")
+        | Opt([&](unsigned value) { config.seed = value; },
+              "seed")["-s"]["--seed"]("use a specific seed for randomness");
 
     // Parse the command line
     if (auto result = cli.parse(Args(argc, argv)); !result) {
-        gymppError << "Error in command line: " << result.errorMessage() << std::endl;
+        gymppError << "Error in command line: " << result.errorMessage()
+                   << std::endl;
         exit(EXIT_FAILURE);
     }
 
@@ -67,7 +70,7 @@ int main(int argc, char* argv[])
     // ==========================
 
     // Create the environment
-    auto env = GymFactory::Instance()->make("CartPole");
+    auto env = gympp::gazebo::GymFactory::Instance()->make("CartPole");
 
     if (!env) {
         gymppError << "Failed to load the CartPole environment" << std::endl;
@@ -126,7 +129,8 @@ int main(int argc, char* argv[])
         auto state = env->step(actionSample);
 
         if (!state) {
-            gymppError << "The environment didn't return the state" << std::endl;
+            gymppError << "The environment didn't return the state"
+                       << std::endl;
             return EXIT_FAILURE;
         }
 
@@ -142,7 +146,8 @@ int main(int argc, char* argv[])
             std::cout << std::endl << std::flush;
         }
         else {
-            gymppError << "The environment didn't return the observation" << std::endl;
+            gymppError << "The environment didn't return the observation"
+                       << std::endl;
             return EXIT_FAILURE;
         }
 
@@ -154,7 +159,8 @@ int main(int argc, char* argv[])
 
         // Handle termination
         if (state->done) {
-            gymppDebug << "The environment reached the terminal state" << std::endl;
+            gymppDebug << "The environment reached the terminal state"
+                       << std::endl;
             std::this_thread::sleep_for(std::chrono::milliseconds(50));
 
             // Reset the environment

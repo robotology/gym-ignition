@@ -13,150 +13,84 @@ on:
     branches: devel
 
 jobs:
-  # ==================
-  # TEST SDIST PACKAGE
-  # ==================
 
-  sdist:
-    name: sdist
+  test_packages:
+    name: Test pre-packaging
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python_version:
           - 3.6
-    container:
-      # The sdist is tested using the :ci image tag that should mostly match the developer
-      # setup with ignition robotics installed from the official ppa
-      image: diegoferigo/gym-ignition:ci-master
-      env:
-        CC: gcc-7
-        CXX: g++-7
-        PYTHON_VERSION: ${{ matrix.python_version }}
+        package:
+          - sdist
+          - bdist_wheel
 
     steps:
-      - name: Update git
-        run: |
-          add-apt-repository ppa:git-core/ppa
-          apt update
-          apt install -y git
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@master
       - run: git fetch --prune --unshallow
 
-      # The entrypoint is not called because it is overridden by GH Actions.
-      # Even using the 'jobs.<job_id>.container.options' does not work because the
-      # entrypoint of GH Actions overrides the one passed through YAML.
-      - name: Execute entrypoint
-        run: . /entrypoint.sh
-
-      - name: Create sdist
-        run: python setup.py sdist
-
-      - name: Install sdist
-        run: |
-          cd dist
-          pip install *.tar.gz
-
-      - name: Python tests
-        run: |
-          cd tests/python
-          pytest -v
-
-  # ========================
-  # TEST BDIST_WHEEL PACKAGE
-  # ========================
-
-  # The bdist is created using the :pypi image and tested in the ubuntu:bionic
-  # host that should mostly match the user setup
-  bdist:
-    name: bdist_wheel
-    strategy:
-      matrix:
-        os:
-          - ubuntu-18.04
-        python_version:
-          - 3.6
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Update git
-        run: |
-          sudo add-apt-repository ppa:git-core/ppa
-          sudo apt update
-          sudo apt install -y git
-
-      - uses: actions/checkout@v2
-      - run: git fetch --prune --unshallow
-
-      # Workaround to export environment variables that persist in next steps
-      # https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
       - name: Setup Environment
         run: |
-          echo "::set-env name=CC::gcc-7"
-          echo "::set-env name=CXX::g++-7"
+          echo "::set-env name=CC::gcc-8"
+          echo "::set-env name=CXX::g++-8"
           echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
           env
 
-      - name: Download diegoferigo/gym-ignition:pypi-master
-        run: 'docker pull diegoferigo/gym-ignition:pypi-master'
-
-      - name: Create container
+      - name: Setup docker image [master]
+        if: |
+          github.ref == 'refs/heads/master' ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'refs/heads/master')
         run: |
-          docker run \
-            -d -i --rm --name pypi -v $(pwd):/github -w /github \
-            -e PYTHON_VERSION=$PYTHON_VERSION -e CC=$CC -e CXX=$CXX \
+          docker run -d -i --name pypi -v $(pwd):/github -w /github \
+            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
+            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
             diegoferigo/gym-ignition:pypi-master bash
-          sleep 15
 
-      - name: Create bdist_wheel
-        run: docker exec -i pypi sh -c 'python setup.py bdist_wheel'
+      - name: Setup docker image [other]
+        if: |
+          (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+        run: |
+          docker run -d -i --name pypi -v $(pwd):/github -w /github \
+            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
+            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
+            diegoferigo/gym-ignition:pypi-devel bash
 
-      - name: Download and start clean system
-        run : |
-          docker pull diegoferigo/gym-ignition:ci-master
-          docker run \
-            -d -i --name test -e PYTHON_VERSION=$PYTHON_VERSION \
-            -v $(pwd)/dist:/dist \
-            -v $(pwd)/tests:/tests \
-            diegoferigo/gym-ignition:ci-master bash
-          sleep 15
+      - name: Wait entrypoint
+        run: sleep 15
 
-      - name: Install bdist
-        run: docker exec -i -w /dist test sh -c 'pip install *.whl'
+      - name: Create ${{ matrix.package }}
+        shell: docker exec -i pypi bash -e {0}
+        run: python setup.py ${{ matrix.package }}
 
-      - name: Python tests
-        run: docker exec -i -w /tests/python test sh -c 'pytest -v'
+      - name: Install ${{ matrix.package }}
+        shell: docker exec -i pypi bash -e {0}
+        run: |
+          cd dist
+          ls
+          pip -v install *
 
-  # =============
-  # PUSH PACKAGES
-  # =============
+      - name: Python Tests
+        shell: docker exec -i pypi bash -e {0}
+        run: |
+          cd tests
+          pytest
 
   push:
     name: PyPI Release
     if: github.repository == 'robotology/gym-ignition'
     needs:
-      - sdist
-      - bdist
+      - test_packages
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python_version:
           - 3.6
-    container:
-      image: diegoferigo/gym-ignition:ci-master
-      env:
-        CC: gcc-7
-        CXX: g++-7
-        PYTHON_VERSION: ${{ matrix.python_version }}
 
     steps:
-      - name: Update git
-        run: |
-          add-apt-repository ppa:git-core/ppa
-          apt update
-          apt install -y git
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@master
       - run: git fetch --prune --unshallow
 
       # Validate the last tag accordingly to PEP440
@@ -174,13 +108,38 @@ jobs:
           match=$(check-regexp ${rel_regexp} ${last_tag} | grep matches | cut -d ' ' -f 5)
           test $match -eq 1 && true
 
-      # The entrypoint is not called because it is overridden by GH Actions.
-      # Even using the 'jobs.<job_id>.container.options' does not work because the
-      # entrypoint of GH Actions overrides the one passed through YAML.
-      - name: Execute entrypoint
-        run: . /entrypoint.sh
+      - name: Setup Environment
+        run: |
+          echo "::set-env name=CC::gcc-8"
+          echo "::set-env name=CXX::g++-8"
+          echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
+          env
+
+      - name: Setup docker image [master]
+        if: |
+          github.ref == 'refs/heads/master' ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'refs/heads/master')
+        run: |
+          docker run -d -i --name pypi -v $(pwd):/github -w /github \
+            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
+            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
+            diegoferigo/gym-ignition:pypi-master bash
+
+      - name: Setup docker image [other]
+        if: |
+          (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+        run: |
+          docker run -d -i --name pypi -v $(pwd):/github -w /github \
+            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
+            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
+            diegoferigo/gym-ignition:pypi-devel bash
+
+      - name: Wait entrypoint
+        run: sleep 15
 
       - name: Setup package name
+        shell: docker exec -i pypi bash -e {0}
         if: github.event_name == 'push'
         run: |
           sed -i "s/name='gym-ignition'/name='gym-ignition-nightly'/g" setup.py
@@ -189,15 +148,15 @@ jobs:
           git commit -a -m "Renamed for nightly release"
 
       - name: Create packages
+        shell: docker exec -i pypi bash -e {0}
         run: python setup.py sdist bdist_wheel
 
       - name: Rename wheel
+        shell: docker exec -i pypi bash -e {0}
         run: |
           ls dist/
-          find -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +
-
-      - name: Inspect dist folder
-        run: ls -alh dist/
+          find dist/ -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +
+          ls dist/
 
       - name: Publish package to PyPI
         uses: pypa/gh-action-pypi-publish@master

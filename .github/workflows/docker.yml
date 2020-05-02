@@ -27,15 +27,14 @@ jobs:
           - pypi-devel
           - latest
           - nightly
-        include:
-          - tag: nightly
-            extra_docker_options: |
-              --build-arg pypi_package='gym-ignition-nightly' --build-arg branch='devel' \
 
     steps:
+
+      # Use the branch that triggered the workflow for push and pull_request events
       - uses: actions/checkout@master
         if: github.event_name != 'schedule'
 
+      # Use devel branch for scheduled builds
       - uses: actions/checkout@master
         with:
           ref: 'refs/heads/devel'
@@ -45,12 +44,8 @@ jobs:
         env:
           TAG: ${{ matrix.tag }}
         run: |
-          cd .docker/
-          docker build . \
-            --pull --build-arg from=${{ matrix.baseimage }} \
-            --rm -t diegoferigo/gym-ignition:${TAG} \
-            ${{ matrix.extra_docker_options }} \
-            -f Dockerfile.${TAG%-*}
+          cd .docker
+          docker-compose build ${TAG}
 
       - name: Login
         if: |

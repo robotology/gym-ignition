@@ -64,13 +64,9 @@ class BuildExtension(build_ext):
         # Get Python version
         python_ver = sys.version_info
 
-        # Shared CMake arguments.
-        # - PYTHON_EXECUTABLE is read by find(PythonInter)
-        # - Python_ADDITIONAL_VERSIONS is read by find(PythonLibs)
+        # Shared CMake arguments
         cmake_args = [
             f"-DCMAKE_INSTALL_PREFIX:PATH={ext_dir}",
-            f"-DPython_ADDITIONAL_VERSIONS={python_ver.major}.{python_ver.minor}",
-            f"-DPYTHON_EXECUTABLE={sys.executable}",
         ]
 
         # Apply the selected CMake build type
@@ -150,21 +146,14 @@ setup(
     install_requires=[
         'gym >= 0.13.1',
         'numpy',
-        'pybullet',
         'gym_ignition_models',
+        'lxml',
     ],
-    packages=find_packages(),
+    packages=find_packages("python"),
+    package_dir={'': "python"},
     ext_modules=[CMakeExtension(name='InstallAllTargets', cmake_configuration='PyPI')],
     cmdclass={
         'build_ext': BuildExtension,
     },
     zip_safe=False,
-    package_data={
-        'gym_ignition_data': [
-            './**/*.sdf',
-            './**/*.urdf',
-            './**/*.world',
-            './**/*.config',
-        ],
-    },
 )
