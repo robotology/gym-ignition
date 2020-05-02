@@ -14,16 +14,11 @@
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
 
-
 # -- Project information -----------------------------------------------------
-
+from datetime import datetime
 project = 'Gym-Ignition'
-copyright = '2020, Istituto Italiano di Tecnologia'
+copyright = f'{datetime.now().year}, Istituto Italiano di Tecnologia'
 author = 'Diego Ferigo'
-
-# The full version, including alpha/beta/rc tags
-release = '1.0'
-
 
 # -- General configuration ---------------------------------------------------
 
@@ -31,10 +26,14 @@ release = '1.0'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
+    'breathe',
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
+    'sphinx.ext.napoleon',
+    'sphinx_autodoc_typehints',
+    "sphinx_multiversion",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -58,7 +57,7 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -72,3 +71,26 @@ html_static_path = ['_static']
 
 # If true, `todo` and `todoList` produce output, else they produce nothing.
 todo_include_todos = True
+
+# -- Options for breathe extension ----------------------------------------------
+
+breathe_default_project = "GymIgnition"
+
+# -- Options for sphinx_multiversion extension ----------------------------------
+
+# From: https://holzhaus.github.io/sphinx-multiversion
+smv_prefer_remote_refs = False
+smv_remote_whitelist = None
+smv_tag_whitelist = r'^v.*$'
+smv_branch_whitelist = r'^(master|devel)$'
+smv_released_pattern = r'^tags/.*$'
+smv_outputdir_format = '{ref.name}'
+
+html_sidebars = {
+    "**": [
+        "about.html",
+        "navigation.html",
+        "versions.html",
+        "searchbox.html",
+    ],
+}
