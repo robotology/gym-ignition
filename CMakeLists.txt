@@ -116,7 +116,12 @@ else()
 endif()
 
 # Find Ignition Gazebo
-find_package(ignition-gazebo3 COMPONENTS all)
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    find_package(ignition-gazebo3)
+else()
+    find_package(ignition-gazebo3 REQUIRED)
+endif()
+
 option(GYMIGNITION_USE_IGNITION
     "Build C++ code depending on Ignition Robotics" ${ignition-gazebo3_FOUND})
 
