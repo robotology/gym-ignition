@@ -124,7 +124,10 @@ class GazeboRuntime(runtime.Runtime):
         # Check termination
         done = self.task.is_done()
 
-        return State((Observation(observation), Reward(reward), Done(done), Info({})))
+        # Get info
+        info = self.task.get_info()
+
+        return State((Observation(observation), Reward(reward), Done(done), Info(info)))
 
     def reset(self) -> Observation:
 
