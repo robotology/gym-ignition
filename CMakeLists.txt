@@ -5,6 +5,13 @@
 cmake_minimum_required(VERSION 3.12)
 project(GymIgnition VERSION 0.1)
 
+# Add custom functions / macros
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+if(BUILD_DOCS)
+    add_subdirectory(docs)
+endif()
+
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -25,7 +32,7 @@ endif()
 
 # This new build mode configures the CMake project to be compatible with the pipeline to
 # create the PyPI linux wheel
-include(cmake/AddNewBuildMode.cmake)
+include(AddNewBuildMode)
 add_new_build_mode(NAME "PyPI" TEMPLATE "Release")
 
 # Expose shared or static compilation
