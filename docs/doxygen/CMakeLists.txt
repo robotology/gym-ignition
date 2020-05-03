@@ -18,3 +18,6 @@ doxygen_add_docs(
     ${PROJECT_SOURCE_DIR}
     COMMENT "Generate man pages"
 )
+
+# This is required by Sphinx to find Doxygen XMLs
+set(DOXYGEN_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR} PARENT_SCOPE)
