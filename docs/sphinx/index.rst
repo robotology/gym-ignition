@@ -1,4 +1,4 @@
-Gym-Ignition
+gym-ignition
 ============
 
 .. toctree::
