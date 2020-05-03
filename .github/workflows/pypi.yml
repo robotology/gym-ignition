@@ -61,18 +61,18 @@ jobs:
         run: sleep 30
 
       - name: Create ${{ matrix.package }}
-        shell: docker exec -i pypi bash -e {0}
+        shell: docker exec -i pypi bash -i -e {0}
         run: python setup.py ${{ matrix.package }}
 
       - name: Install ${{ matrix.package }}
-        shell: docker exec -i pypi bash -e {0}
+        shell: docker exec -i pypi bash -i -e {0}
         run: |
           cd dist
           ls
           pip -v install *
 
       - name: Python Tests
-        shell: docker exec -i pypi bash -e {0}
+        shell: docker exec -i pypi bash -i -e {0}
         run: |
           cd tests
           pytest
@@ -139,7 +139,7 @@ jobs:
         run: sleep 30
 
       - name: Setup package name
-        shell: docker exec -i pypi bash -e {0}
+        shell: docker exec -i pypi bash -i -e {0}
         if: github.event_name == 'push'
         run: |
           sed -i "s/name='gym-ignition'/name='gym-ignition-nightly'/g" setup.py
@@ -148,11 +148,11 @@ jobs:
           git commit -a -m "Renamed for nightly release"
 
       - name: Create packages
-        shell: docker exec -i pypi bash -e {0}
+        shell: docker exec -i pypi bash -i -e {0}
         run: python setup.py sdist bdist_wheel
 
       - name: Rename wheel
-        shell: docker exec -i pypi bash -e {0}
+        shell: docker exec -i pypi bash -i -e {0}
         run: |
           ls dist/
           find dist/ -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +

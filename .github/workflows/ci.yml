@@ -61,7 +61,7 @@ jobs:
         run: sleep 30
 
       - name: Build and Install C++
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         run: |
           env
           mkdir build && cd build
@@ -69,17 +69,17 @@ jobs:
           cmake --build . --target install
 
       - name: Setup Python Package
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         run: pip install -e .
 
       - name: Python Tests [ScenarI/O]
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         run: |
           cd tests
           pytest -m "scenario"
 
       - name: Python Tests with Valgrind [ScenarI/O]
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         if: failure()
         run: |
           pip install colour-valgrind
@@ -87,13 +87,13 @@ jobs:
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
 
       - name: Python Tests [gym_ignition]
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         run: |
           cd tests
           pytest -m "gym_ignition"
 
       - name: Python Tests with Valgrind [gym_ignition]
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         if: failure()
         run: |
           pip install colour-valgrind
@@ -145,23 +145,23 @@ jobs:
         run: sleep 30
 
       - name: Create wheel
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         run: python setup.py bdist_wheel
 
       - name: Install local wheel
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         run: |
           cd dist
           pip install -v *.whl
 
       - name: Python Tests [ScenarI/O]
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         run: |
           cd tests
           pytest -m "scenario"
 
       - name: Python Tests with Valgrind [ScenarI/O]
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         if: failure()
         run: |
           pip3 install colour-valgrind
@@ -169,13 +169,13 @@ jobs:
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
 
       - name: Python Tests [gym_ignition]
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         run: |
           cd tests
           pytest -m "gym_ignition"
 
       - name: Python Tests with Valgrind [gym_ignition]
-        shell: docker exec -i ci bash -e {0}
+        shell: docker exec -i ci bash -i -e {0}
         if: failure()
         run: |
           pip3 install colour-valgrind
