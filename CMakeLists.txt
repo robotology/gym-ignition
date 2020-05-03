@@ -5,6 +5,10 @@
 cmake_minimum_required(VERSION 3.12)
 project(GymIgnition VERSION 0.1)
 
+if(BUILD_DOCS)
+    add_subdirectory(docs)
+endif()
+
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
