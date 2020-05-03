@@ -5,8 +5,8 @@
 import abc
 import gym
 import numpy as np
-from typing import Tuple
 from gym.utils import seeding
+from typing import Dict, Tuple
 from gym_ignition import scenario_bindings as bindings
 from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 from gym_ignition.utils.typing import Action, Observation, Reward, SeedList
@@ -187,7 +187,7 @@ class Task(abc.ABC):
     @abc.abstractmethod
     def is_done(self) -> bool:
         """
-        Returns the task termination flag.
+        Return the task termination flag.
 
         This method contains the logic for defining when the environment has terminated.
         Subsequent calls to :py:meth:`Task.set_action` should be preceded by a task
@@ -201,6 +201,15 @@ class Task(abc.ABC):
         Returns:
             True if the environment terminated, False otherwise.
         """
+
+    def get_info(self) -> Dict:
+        """
+        Return the info dictionary.
+
+        Returns:
+            A ``dict`` with extra information of the task.
+        """
+        return {}
 
     def seed_task(self, seed: int = None) -> SeedList:
         """
