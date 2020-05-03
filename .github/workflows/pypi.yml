@@ -58,7 +58,7 @@ jobs:
             diegoferigo/gym-ignition:pypi-devel bash
 
       - name: Wait entrypoint
-        run: sleep 15
+        run: sleep 30
 
       - name: Create ${{ matrix.package }}
         shell: docker exec -i pypi bash -e {0}
@@ -136,7 +136,7 @@ jobs:
             diegoferigo/gym-ignition:pypi-devel bash
 
       - name: Wait entrypoint
-        run: sleep 15
+        run: sleep 30
 
       - name: Setup package name
         shell: docker exec -i pypi bash -e {0}

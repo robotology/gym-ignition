@@ -58,7 +58,7 @@ jobs:
             diegoferigo/gym-ignition:ci-devel bash
 
       - name: Wait entrypoint
-        run: sleep 15
+        run: sleep 30
 
       - name: Build and Install C++
         shell: docker exec -i ci bash -e {0}
@@ -142,7 +142,7 @@ jobs:
           CXX: g++-8
 
       - name: Wait entrypoint
-        run: sleep 15
+        run: sleep 30
 
       - name: Create wheel
         shell: docker exec -i ci bash -e {0}
