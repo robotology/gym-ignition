@@ -1,1 +1,67 @@
-Dockerfile.latest
+ARG from=ubuntu:bionic
+FROM ${from}
+
+# Install dependencies
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends \
+        wget \
+        software-properties-common \
+        apt-transport-https \
+        apt-utils \
+        gnupg2 \
+        nano \
+        git \
+        gcc \
+        g++ \
+        gcc-8 \
+        g++-8 \
+        ninja-build \
+        virtualenv \
+        python3-pip \
+        python3.6 \
+        libpython3.6-dev \
+        virtualenv \
+        &&\
+    rm -rf /var/lib/apt/lists/*
+
+# Install ignition gazebo
+ARG ignition_codename="citadel"
+RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
+        > /etc/apt/sources.list.d/gazebo-stable.list &&\
+    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
+    apt-get update &&\
+    apt-get install -y --no-install-recommends ignition-${ignition_codename} &&\
+    rm -rf /var/lib/apt/lists/*
+
+# Apply minor patches to ign-gazebo
+RUN dpkg -r --force-depends \
+        libignition-gazebo3 \
+        libignition-gazebo3-plugins \
+        libignition-gazebo3-dev &&\
+    cd /tmp &&\
+    git clone -b ign-gazebo3 https://github.com/ignitionrobotics/ign-gazebo &&\
+    cd ign-gazebo &&\
+    wget -q -O - https://gist.github.com/diegoferigo/ef860a73e5fc58d6236369ed684bf52e/raw/43cb64624b7c02a06dd120cb781bbbdd8e6b2173/SimulationRunner.patch | patch -p0 &&\
+    wget -q -O - https://gist.github.com/diegoferigo/ef860a73e5fc58d6236369ed684bf52e/raw/43cb64624b7c02a06dd120cb781bbbdd8e6b2173/RenderUtil.patch | patch -p0 &&\
+    mkdir build && cd build &&\
+    CC=gcc-8 CXX=g++-8 \
+    cmake \
+        -GNinja \
+        -DCMAKE_INSTALL_PREFIX=/usr \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DBUILD_TESTING:BOOL=OFF \
+        .. &&\
+    ninja install &&\
+    rm -r /tmp/ign-gazebo
+
+# Install gym-ignition bdist in a virtualenv
+# Download also gym-ignition for the examples
+ARG branch="devel"
+ARG pypi_package="gym-ignition-nightly"
+ENV VIRTUAL_ENV=/venv
+ENV PATH=/venv/bin:$PATH
+RUN virtualenv -p python3.6 ${VIRTUAL_ENV} &&\
+    pip install --pre ${pypi_package} &&\
+    git clone -b ${branch} https://github.com/robotology/gym-ignition /github
+
+CMD ["bash"]

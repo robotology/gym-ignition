@@ -1,0 +1,165 @@
+ARG from=ubuntu:bionic
+FROM ${from}
+
+# CI preset: CMAKE_BUILD_TYPE=Debug   BUILD_SHARED_LIBS=ON
+# CD preset: CMAKE_BUILD_TYPE=Release BUILD_SHARED_LIBS=OFF
+ARG CMAKE_BUILD_TYPE=Release
+ARG BUILD_SHARED_LIBS=OFF
+
+# Install tools and toolchain
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends \
+        wget \
+        software-properties-common \
+        apt-transport-https \
+        apt-utils \
+        gnupg2 \
+        nano \
+        rename \
+        source-highlight \
+        &&\
+    wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | apt-key add - && \
+    apt-add-repository "deb https://apt.kitware.com/ubuntu/ `lsb_release -cs` main" &&\
+    add-apt-repository ppa:deadsnakes/ppa &&\
+    wget -nv -O - http://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add - &&\
+    apt-add-repository -y "deb http://apt.llvm.org/`lsb_release -cs`/ llvm-toolchain-`lsb_release -cs`-10 main" &&\
+    apt-get update &&\
+    apt-get install -y --no-install-recommends \
+        git \
+        g++ \
+        g++-8 \
+        clang \
+        clang-9 \
+        clang-10 \
+        make \
+        cmake \
+        cmake-curses-gui \
+        ninja-build \
+        valgrind \
+        libgflags-dev \
+        python3-pip \
+        python3-wheel \
+        python3.6 \
+        python3.8 \
+        python3.6-dev \
+        python3.8-dev \
+        libpython3.6-dev \
+        libpython3.8-dev \
+        virtualenv \
+        &&\
+    rm -rf /var/lib/apt/lists/*
+
+# Update git (required by actions/checkout)
+RUN add-apt-repository ppa:git-core/ppa &&\
+    apt-get update &&\
+    apt-get install -y --no-install-recommends git &&\
+    rm -rf /var/lib/apt/lists/*
+
+# Install SWIG from sources
+ARG SWIG_REL="rel-4.0.1"
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends \
+        autotools-dev \
+        automake \
+        bison \
+        libpcre3-dev &&\
+    rm -rf /var/lib/apt/lists/* &&\
+    cd /tmp/ &&\
+    git clone --depth 1 -b ${SWIG_REL} https://github.com/swig/swig.git &&\
+    cd swig &&\
+    sh autogen.sh &&\
+    ./configure &&\
+    make -j2 &&\
+    make install &&\
+    rm -r /tmp/swig
+
+# Install ignition robotics
+#ARG ignition_codename="citadel"
+#RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
+#        > /etc/apt/sources.list.d/gazebo-stable.list &&\
+#    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
+#    apt-get update &&\
+#    apt-get install -y --no-install-recommends ignition-${ignition_codename} &&\
+#    rm -rf /var/lib/apt/lists/*
+
+ARG IGNITION_DEFAULT_CHANNEL="prerelease"
+RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-${IGNITION_DEFAULT_CHANNEL} `lsb_release -cs` main" > \
+        /etc/apt/sources.list.d/gazebo-${IGNITION_DEFAULT_CHANNEL}.list &&\
+    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
+    apt-get update &&\
+    apt-get install -y --no-install-recommends \
+        cmake freeglut3-dev libavcodec-dev libavdevice-dev libavformat-dev libavutil-dev \
+        libdart6-collision-ode-dev libdart6-dev libdart6-utils-urdf-dev \
+        libfreeimage-dev libgflags-dev libglew-dev libgts-dev libogre-1.9-dev libogre-2.1-dev \
+        libprotobuf-dev libprotobuf-dev libprotoc-dev \
+        libqt5core5a libswscale-dev libtinyxml2-dev libtinyxml-dev pkg-config \
+        protobuf-compiler python qml-module-qt-labs-folderlistmodel \
+        qml-module-qt-labs-settings qml-module-qtquick2 qml-module-qtquick-controls \
+        qml-module-qtquick-controls2 qml-module-qtquick-dialogs qml-module-qtquick-layouts \
+        qml-module-qtqml-models2 qtbase5-dev qtdeclarative5-dev qtquickcontrols2-5-dev \
+        ruby ruby-ronn uuid-dev libzip-dev libjsoncpp-dev libcurl4-openssl-dev libyaml-dev \
+        libzmq3-dev libsqlite3-dev libwebsockets-dev \
+        #swig \#
+        ruby-dev \
+        &&\
+    rm -rf /var/lib/apt/lpython3-wheelists/*
+
+RUN pip3 install setuptools &&\
+    pip3 install vcstool colcon-common-extensions &&\
+    rm -r $HOME/.cache/pip
+
+ADD tags.yaml /tags.yaml
+RUN mkdir -p /workspace/src &&\
+    cd /workspace/src &&\
+    vcs import < /tags.yaml &&\
+    cd /workspace &&\
+    colcon graph &&\
+    CC=gcc-8 CXX=g++-8 \
+    colcon build \
+        --packages-end ignition-sensors3 \
+        --cmake-args -GNinja \
+            -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release \
+        --merge-install \
+        &&\
+    CC=clang-9 CXX=clang++-9 \
+    colcon build \
+        --packages-start ignition-gazebo3 \
+        --cmake-args -GNinja \
+            -DBUILD_TESTING=OFF -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS} \
+        --merge-install \
+        &&\
+    rm -r /workspace/build &&\
+    rm -r /workspace/src/* &&\
+    echo "source /workspace/install/setup.bash" >> /etc/bash.bashrc
+
+# Install idyntree
+RUN apt-get update &&\
+    apt-get install -y --no-install-recommends python3-numpy libxml2-dev coinor-libipopt-dev libeigen3-dev &&\
+    rm -rf /var/lib/apt/lists/* &&\
+    git clone --depth 1 -b feature/numpy-and-ik https://github.com/diegoferigo/idyntree /tmp/idyntree &&\
+    mkdir -p /tmp/idyntree/build && cd /tmp/idyntree/build &&\
+    cmake .. \
+        -GNinja \
+        -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
+        -DIDYNTREE_SHARED_LIBRARY:BOOL=${BUILD_SHARED_LIBS} \
+        -DIDYNTREE_USES_PYTHON=True \
+        -DPython_ADDITIONAL_VERSIONS=3.6 \
+        -DIDYNTREE_USES_PYTHON_VERSION=3.6 \
+        -DPYTHON_NUMPY_INCLUDE_DIR:PATH=/usr/lib/python3/dist-packages/numpy/core/include \
+        -DIDYNTREE_USES_IPOPT:BOOL=ON \
+        &&\
+    cmake --build . --target install &&\
+    rm -r /tmp/idyntree
+ENV LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/lib
+ENV PYTHONPATH=${PYTHONPATH}:/usr/local/lib/python3/dist-packages
+
+# Prepare virtualenv variables
+ENV VIRTUAL_ENV=/venv
+ENV PATH=${VIRTUAL_ENV}/bin:${PATH}
+
+COPY entrypoint.sh /entrypoint.sh
+COPY setup_virtualenv.sh /setup_virtualenv.sh
+RUN chmod 755 /entrypoint.sh
+RUN chmod 755 /setup_virtualenv.sh
+ENTRYPOINT ["/entrypoint.sh"]
+CMD ["bash"]
