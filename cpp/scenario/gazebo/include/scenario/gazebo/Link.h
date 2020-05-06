@@ -68,8 +68,15 @@ public:
     // Link Core
     // =========
 
-    std::string name() const;
+    /**
+     * Get the name of the link.
+     *
+     * @param scoped If true, the scoped name of the link is returned.
+     * @return The name of the link.
+     */
+    std::string name(const bool scoped = false) const;
     double mass() const;
+
     std::array<double, 3> position() const;
     std::array<double, 4> orientation() const;
 

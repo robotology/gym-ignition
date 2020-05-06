@@ -206,12 +206,18 @@ size_t Joint::dofs() const
     return 0;
 }
 
-std::string Joint::name() const
+std::string Joint::name(const bool scoped) const
 {
-    std::string name = utils::getExistingComponentData< //
+    std::string jointName = utils::getExistingComponentData< //
         ignition::gazebo::components::Name>(pImpl->ecm, pImpl->jointEntity);
 
-    return name;
+    if (scoped) {
+        auto parentModel = utils::getParentModel(
+            pImpl->ecm, pImpl->eventManager, pImpl->jointEntity);
+        jointName = parentModel->name() + "::" + jointName;
+    }
+
+    return jointName;
 }
 
 scenario::base::JointType Joint::type() const

@@ -487,7 +487,7 @@ ModelPtr utils::getParentModel(ignition::gazebo::EntityComponentManager* ecm,
                                const ignition::gazebo::Entity entity)
 {
     auto modelEntity = getFirstParentEntityWithComponent< //
-        ignition::gazebo::components::World>(ecm, entity);
+        ignition::gazebo::components::Model>(ecm, entity);
 
     auto model = std::make_shared<Model>();
 

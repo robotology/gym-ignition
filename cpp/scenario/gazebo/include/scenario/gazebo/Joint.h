@@ -94,7 +94,15 @@ public:
     // ==========
 
     size_t dofs() const;
-    std::string name() const;
+
+    /**
+     * Get the name of the joint.
+     *
+     * @param scoped If true, the scoped name of the joint is returned.
+     * @return The name of the joint.
+     */
+    std::string name(const bool scoped = false) const;
+
     base::JointType type() const;
 
     base::JointControlMode controlMode() const;
