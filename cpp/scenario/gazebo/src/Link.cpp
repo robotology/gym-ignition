@@ -157,15 +157,23 @@ bool Link::createECMResources()
     return true;
 }
 
-std::string Link::name() const
+std::string Link::name(const bool scoped) const
 {
-    auto linkName = pImpl->link.Name(*pImpl->ecm);
+    auto linkNameOptional = pImpl->link.Name(*pImpl->ecm);
 
-    if (!linkName) {
+    if (!linkNameOptional) {
         throw exceptions::LinkError("Failed to get link name");
     }
 
-    return pImpl->link.Name(*pImpl->ecm).value();
+    std::string linkName = linkNameOptional.value();
+
+    if (scoped) {
+        auto parentModel = utils::getParentModel(
+            pImpl->ecm, pImpl->eventManager, pImpl->linkEntity);
+        linkName = parentModel->name() + "::" + linkName;
+    }
+
+    return linkName;
 }
 
 double Link::mass() const
