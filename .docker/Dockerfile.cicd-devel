@@ -74,14 +74,6 @@ RUN apt-get update &&\
     rm -r /tmp/swig
 
 # Install ignition robotics
-#ARG ignition_codename="citadel"
-#RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
-#        > /etc/apt/sources.list.d/gazebo-stable.list &&\
-#    wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
-#    apt-get update &&\
-#    apt-get install -y --no-install-recommends ignition-${ignition_codename} &&\
-#    rm -rf /var/lib/apt/lists/*
-
 ARG IGNITION_DEFAULT_CHANNEL="prerelease"
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-${IGNITION_DEFAULT_CHANNEL} `lsb_release -cs` main" > \
         /etc/apt/sources.list.d/gazebo-${IGNITION_DEFAULT_CHANNEL}.list &&\
@@ -102,7 +94,7 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-${IGNITION_DEFAULT
         #swig \#
         ruby-dev \
         &&\
-    rm -rf /var/lib/apt/lpython3-wheelists/*
+    rm -rf /var/lib/apt/lists/*
 
 RUN pip3 install setuptools &&\
     pip3 install vcstool colcon-common-extensions &&\

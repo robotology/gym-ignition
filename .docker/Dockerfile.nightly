@@ -42,7 +42,6 @@ RUN dpkg -r --force-depends \
     git clone -b ign-gazebo3 https://github.com/ignitionrobotics/ign-gazebo &&\
     cd ign-gazebo &&\
     wget -q -O - https://gist.github.com/diegoferigo/ef860a73e5fc58d6236369ed684bf52e/raw/43cb64624b7c02a06dd120cb781bbbdd8e6b2173/SimulationRunner.patch | patch -p0 &&\
-    wget -q -O - https://gist.github.com/diegoferigo/ef860a73e5fc58d6236369ed684bf52e/raw/43cb64624b7c02a06dd120cb781bbbdd8e6b2173/RenderUtil.patch | patch -p0 &&\
     mkdir build && cd build &&\
     CC=gcc-8 CXX=g++-8 \
     cmake \
