@@ -32,8 +32,10 @@ extensions = [
     'sphinx.ext.mathjax',
     'sphinx.ext.githubpages',
     'sphinx.ext.napoleon',
+    "sphinx.ext.extlinks",
     'sphinx_autodoc_typehints',
     "sphinx_multiversion",
+    "sphinx_fontawesome",
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -82,7 +84,7 @@ breathe_default_project = "GymIgnition"
 smv_prefer_remote_refs = False
 smv_remote_whitelist = None
 smv_tag_whitelist = r'^v.*$'
-smv_branch_whitelist = r'^(master|devel)$'
+smv_branch_whitelist = r'^(master|devel|docs/.*)$'
 smv_released_pattern = r'^tags/.*$'
 smv_outputdir_format = '{ref.name}'
 
@@ -93,4 +95,10 @@ html_sidebars = {
         "versions.html",
         "searchbox.html",
     ],
+}
+
+# -- Options for extlinks extension ----------------------------------
+extlinks = {
+    'issue': ('https://github.com/robotology/gym-ignition/issues/%s', '#'),
+    'pr': ('https://github.com/robotology/gym-ignition/pull/%s', '#'),
 }
