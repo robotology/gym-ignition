@@ -109,6 +109,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
     add_install_rpath_support(
         BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
         LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
+                 "${CMAKE_INSTALL_FULL_LIBDIR}/scenario/plugins"
                  "${Python3_SITELIB}"
         INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
         DEPENDS ENABLE_RPATH
