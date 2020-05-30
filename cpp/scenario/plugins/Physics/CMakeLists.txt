@@ -39,9 +39,6 @@ target_link_libraries(PhysicsSystem
 target_include_directories(PhysicsSystem PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
-target_compile_definitions(PhysicsSystem PRIVATE
-    ""dartsim_plugin_LIB=\"$<TARGET_SONAME_FILE:ignition-physics2::ignition-physics2-dartsim-plugin>\""")
-
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
     install(
         TARGETS PhysicsSystem
