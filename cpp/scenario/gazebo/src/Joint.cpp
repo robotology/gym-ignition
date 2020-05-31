@@ -34,9 +34,7 @@
 #include "scenario/gazebo/components/JointControlMode.h"
 #include "scenario/gazebo/components/JointControllerPeriod.h"
 #include "scenario/gazebo/components/JointPID.h"
-#include "scenario/gazebo/components/JointPositionReset.h"
 #include "scenario/gazebo/components/JointPositionTarget.h"
-#include "scenario/gazebo/components/JointVelocityReset.h"
 #include "scenario/gazebo/components/JointVelocityTarget.h"
 #include "scenario/gazebo/components/MaxJointForce.h"
 #include "scenario/gazebo/exceptions.h"
@@ -46,8 +44,10 @@
 #include <ignition/gazebo/components/JointForce.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
+#include <ignition/gazebo/components/JointPositionReset.hh>
 #include <ignition/gazebo/components/JointType.hh>
 #include <ignition/gazebo/components/JointVelocity.hh>
+#include <ignition/gazebo/components/JointVelocityReset.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/math/PID.hh>
 #include <sdf/Joint.hh>

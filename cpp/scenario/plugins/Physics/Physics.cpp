@@ -18,22 +18,23 @@
 #include "Physics.h"
 #include "scenario/gazebo/components/ExternalWorldWrenchCmdWithDuration.h"
 #include "scenario/gazebo/components/HistoryOfAppliedJointForces.h"
-#include "scenario/gazebo/components/JointPositionReset.h"
-#include "scenario/gazebo/components/JointVelocityReset.h"
 #include "scenario/gazebo/components/SimulatedTime.h"
 #include "scenario/gazebo/components/WorldVelocityCmd.h"
 #include "scenario/gazebo/helpers.h"
 
 #include <ignition/common/MeshManager.hh>
+#include <ignition/common/SystemPaths.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
 #include <ignition/gazebo/Util.hh>
 #include <ignition/gazebo/components/AngularAcceleration.hh>
 #include <ignition/gazebo/components/AngularVelocity.hh>
+#include <ignition/gazebo/components/AxisAlignedBox.hh>
 #include <ignition/gazebo/components/BatterySoC.hh>
 #include <ignition/gazebo/components/CanonicalLink.hh>
 #include <ignition/gazebo/components/ChildLinkName.hh>
 #include <ignition/gazebo/components/Collision.hh>
 #include <ignition/gazebo/components/ContactSensorData.hh>
+#include <ignition/gazebo/components/DetachableJoint.hh>
 #include <ignition/gazebo/components/ExternalWorldWrenchCmd.hh>
 #include <ignition/gazebo/components/Geometry.hh>
 #include <ignition/gazebo/components/Gravity.hh>
@@ -43,9 +44,11 @@
 #include <ignition/gazebo/components/JointForce.hh>
 #include <ignition/gazebo/components/JointForceCmd.hh>
 #include <ignition/gazebo/components/JointPosition.hh>
+#include <ignition/gazebo/components/JointPositionReset.hh>
 #include <ignition/gazebo/components/JointType.hh>
 #include <ignition/gazebo/components/JointVelocity.hh>
 #include <ignition/gazebo/components/JointVelocityCmd.hh>
+#include <ignition/gazebo/components/JointVelocityReset.hh>
 #include <ignition/gazebo/components/LinearAcceleration.hh>
 #include <ignition/gazebo/components/LinearVelocity.hh>
 #include <ignition/gazebo/components/Link.hh>
@@ -53,11 +56,14 @@
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/gazebo/components/ParentLinkName.hh>
+#include <ignition/gazebo/components/PhysicsEnginePlugin.hh>
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/gazebo/components/PoseCmd.hh>
+#include <ignition/gazebo/components/SelfCollide.hh>
 #include <ignition/gazebo/components/Static.hh>
 #include <ignition/gazebo/components/ThreadPitch.hh>
 #include <ignition/gazebo/components/World.hh>
+#include <ignition/math/AxisAlignedBox.hh>
 #include <ignition/math/eigen3/Conversions.hh>
 #include <ignition/msgs/Utility.hh>
 #include <ignition/msgs/contact.pb.h>
@@ -67,11 +73,13 @@
 #include <ignition/physics/CylinderShape.hh>
 #include <ignition/physics/FeatureList.hh>
 #include <ignition/physics/FeaturePolicy.hh>
+#include <ignition/physics/FindFeatures.hh>
+#include <ignition/physics/FixedJoint.hh>
 #include <ignition/physics/ForwardStep.hh>
 #include <ignition/physics/FrameSemantics.hh>
 #include <ignition/physics/FreeGroup.hh>
+#include <ignition/physics/GetBoundingBox.hh>
 #include <ignition/physics/GetContacts.hh>
-#include <ignition/physics/GetEntities.hh>
 #include <ignition/physics/Joint.hh>
 #include <ignition/physics/Link.hh>
 #include <ignition/physics/RelativeQuantity.hh>
@@ -79,6 +87,7 @@
 #include <ignition/physics/RequestEngine.hh>
 #include <ignition/physics/Shape.hh>
 #include <ignition/physics/SphereShape.hh>
+#include <ignition/physics/config.hh>
 #include <ignition/physics/mesh/MeshShape.hh>
 #include <ignition/physics/sdf/ConstructCollision.hh>
 #include <ignition/physics/sdf/ConstructJoint.hh>
@@ -108,6 +117,11 @@ using namespace ignition::gazebo::components;
 class Physics::Impl
 {
 public:
+    /// \brief This is the minimum set of features that any physics engine must
+    /// implement to be supported by this system.
+    /// New features can't be added to this list in minor / patch releases, in
+    /// order to maintain backwards compatibility with downstream physics
+    /// plugins.
     struct MinimumFeatureList
         : ignition::physics::FeatureList< //
               ignition::physics::FindFreeGroupFeature,
@@ -115,54 +129,37 @@ public:
               ignition::physics::FreeGroupFrameSemantics,
               ignition::physics::LinkFrameSemantics,
               ignition::physics::SetFreeGroupWorldVelocity,
-              ignition::physics::AddLinkExternalForceTorque,
               ignition::physics::ForwardStep,
-              ignition::physics::GetEntities,
-              ignition::physics::GetContactsFromLastStepFeature,
               ignition::physics::RemoveEntities,
-              ignition::physics::mesh::AttachMeshShapeFeature,
-              ignition::physics::GetBasicJointProperties,
-              ignition::physics::GetBasicJointState,
-              ignition::physics::SetBasicJointState,
-              ignition::physics::SetJointVelocityCommandFeature,
-              ignition::physics::sdf::ConstructSdfCollision,
-              ignition::physics::sdf::ConstructSdfJoint,
               ignition::physics::sdf::ConstructSdfLink,
               ignition::physics::sdf::ConstructSdfModel,
               ignition::physics::sdf::ConstructSdfWorld>
     {};
 
-    using EnginePtrType =
-        ignition::physics::EnginePtr<ignition::physics::FeaturePolicy3d,
-                                     MinimumFeatureList>;
+    /// \brief Engine type with just the minimum features.
+    using EnginePtrType = ignition::physics::EnginePtr< //
+        ignition::physics::FeaturePolicy3d,
+        MinimumFeatureList>;
 
-    using WorldType =
-        ignition::physics::World<ignition::physics::FeaturePolicy3d,
-                                 MinimumFeatureList>;
+    /// \brief World type with just the minimum features.
+    using WorldPtrType = ignition::physics::WorldPtr< //
+        ignition::physics::FeaturePolicy3d,
+        MinimumFeatureList>;
 
-    using WorldPtrType =
-        ignition::physics::WorldPtr<ignition::physics::FeaturePolicy3d,
-                                    MinimumFeatureList>;
+    /// \brief Model type with just the minimum features.
+    using ModelPtrType = ignition::physics::ModelPtr< //
+        ignition::physics::FeaturePolicy3d,
+        MinimumFeatureList>;
 
-    using ModelPtrType =
-        ignition::physics::ModelPtr<ignition::physics::FeaturePolicy3d,
-                                    MinimumFeatureList>;
+    /// \brief Link type with just the minimum features.
+    using LinkPtrType = ignition::physics::LinkPtr< //
+        ignition::physics::FeaturePolicy3d,
+        MinimumFeatureList>;
 
-    using LinkPtrType =
-        ignition::physics::LinkPtr<ignition::physics::FeaturePolicy3d,
-                                   MinimumFeatureList>;
-
-    using ShapePtrType =
-        ignition::physics::ShapePtr<ignition::physics::FeaturePolicy3d,
-                                    MinimumFeatureList>;
-
-    using JointPtrType =
-        ignition::physics::JointPtr<ignition::physics::FeaturePolicy3d,
-                                    MinimumFeatureList>;
-
-    using FreeGroupPtrType =
-        ignition::physics::FreeGroupPtr<ignition::physics::FeaturePolicy3d,
-                                        MinimumFeatureList>;
+    /// \brief Free group type with just the minimum features.
+    using FreeGroupPtrType = ignition::physics::FreeGroupPtr< //
+        ignition::physics::FeaturePolicy3d,
+        MinimumFeatureList>;
 
     /// \brief Create physics entities
     /// \param[in] _ecm Constant reference to ECM.
@@ -184,18 +181,19 @@ public:
     /// \brief Update components from physics simulation
     /// \param[in] _ecm Mutable reference to ECM.
     void UpdateSim(const ignition::gazebo::UpdateInfo& _info,
-                   EntityComponentManager& _ecm) const;
+                   EntityComponentManager& _ecm);
 
     /// \brief Update collision components from physics simulation
     /// \param[in] _ecm Mutable reference to ECM.
-    void UpdateCollisions(EntityComponentManager& _ecm) const;
+    void UpdateCollisions(EntityComponentManager& _ecm);
 
     /// \brief FrameData relative to world at a given offset pose
     /// \param[in] _link ign-physics link
     /// \param[in] _pose Offset pose in which to compute the frame data
     /// \returns FrameData at the given offset pose
-    physics::FrameData3d LinkFrameDataAtOffset(const LinkPtrType& _link,
-                                               const math::Pose3d& _pose) const;
+    ignition::physics::FrameData3d
+    LinkFrameDataAtOffset(const LinkPtrType& _link,
+                          const math::Pose3d& _pose) const;
 
     /// \brief A map between world entity ids in the ECM to World Entities in
     /// ign-physics.
@@ -212,18 +210,6 @@ public:
     /// \brief Reverse of entityLinkMap. This is used for finding the Entity
     /// associated with a physics Link
     std::unordered_map<LinkPtrType, Entity> linkEntityMap;
-
-    /// \brief A map between collision entity ids in the ECM to Shape Entities
-    /// in ign-physics.
-    std::unordered_map<Entity, ShapePtrType> entityCollisionMap;
-
-    /// \brief A map between shape entities in ign-physics to collision entities
-    /// in the ECM. This is the reverse map of entityCollisionMap.
-    std::unordered_map<ShapePtrType, Entity> collisionEntityMap;
-
-    /// \brief A map between joint entity ids in the ECM to Joint Entities in
-    /// ign-physics
-    std::unordered_map<Entity, JointPtrType> entityJointMap;
 
     /// \brief A map between model entity ids in the ECM to whether its battery
     /// has drained.
@@ -251,6 +237,209 @@ public:
                    && math::equal(_a.Rot().W(), _b.Rot().W(), 1e-6);
         }};
 
+    /// \brief AxisAlignedBox equality comparison function.
+    std::function<bool(const math::AxisAlignedBox&,
+                       const math::AxisAlignedBox&)>
+        axisAlignedBoxEql{
+            [](const math::AxisAlignedBox& _a, const math::AxisAlignedBox& _b) {
+                return _a == _b;
+            }};
+
+    /// \brief Environment variable which holds paths to look for engine plugins
+    std::string pluginPathEnv = "IGN_GAZEBO_PHYSICS_ENGINE_PATH";
+
+    //////////////////////////////////////////////////
+    // Joints
+
+    /// \brief Feature list to handle joints.
+    using JointFeatureList = ignition::physics::FeatureList<
+        MinimumFeatureList,
+        ignition::physics::GetBasicJointProperties,
+        ignition::physics::GetBasicJointState,
+        ignition::physics::SetBasicJointState,
+        ignition::physics::sdf::ConstructSdfJoint>;
+
+    /// \brief Joint type with joint features.
+    using JointPtrType = ignition::physics::JointPtr< //
+        ignition::physics::FeaturePolicy3d,
+        JointFeatureList>;
+
+    /// \brief Model type with joint features (models to attach to).
+    using ModelJointPtrType = ignition::physics::ModelPtr< //
+        ignition::physics::FeaturePolicy3d,
+        JointFeatureList>;
+
+    /// \brief A map between joint entity ids in the ECM to Joint Entities in
+    /// ign-physics
+    std::unordered_map<Entity, JointPtrType> entityJointMap;
+
+    /// \brief A map between model entity ids in the ECM to Model Entities in
+    /// ign-physics, with attach feature.
+    /// All models on this map are also in `entityModelMap`. The difference is
+    /// that here they've been casted for `JointFeatureList`.
+    std::unordered_map<Entity, ModelJointPtrType> entityModelJointMap;
+
+    //////////////////////////////////////////////////
+    // Detachable joints
+
+    /// \brief Feature list to process `DetachableJoint` components.
+    using DetachableJointFeatureList = ignition::physics::FeatureList< //
+        JointFeatureList,
+        ignition::physics::AttachFixedJointFeature,
+        ignition::physics::DetachJointFeature,
+        ignition::physics::SetJointTransformFromParentFeature>;
+
+    /// \brief Joint type with detachable joint features.
+    using JointDetachableJointPtrType = ignition::physics::JointPtr< //
+        ignition::physics::FeaturePolicy3d,
+        DetachableJointFeatureList>;
+
+    /// \brief Link type with detachable joint features (links to attach to).
+    using LinkDetachableJointPtrType = ignition::physics::LinkPtr< //
+        ignition::physics::FeaturePolicy3d,
+        DetachableJointFeatureList>;
+
+    /// \brief A map between joint entity ids in the ECM to Joint Entities in
+    /// ign-physics, with detach feature.
+    /// All joints on this map are also in `entityJointMap`. The difference is
+    /// that here they've been casted for `physics::DetachJointFeature`.
+    std::unordered_map<Entity, JointDetachableJointPtrType>
+        entityJointDetachableJointMap;
+
+    /// \brief A map between link entity ids in the ECM to Link Entities in
+    /// ign-physics, with attach feature.
+    /// All links on this map are also in `entityLinkMap`. The difference is
+    /// that here they've been casted for `DetachableJointFeatureList`.
+    std::unordered_map<Entity, LinkDetachableJointPtrType>
+        entityLinkDetachableJointMap;
+
+    //////////////////////////////////////////////////
+    // Collisions
+
+    /// \brief Feature list to handle collisions.
+    using CollisionFeatureList = ignition::physics::FeatureList< //
+        MinimumFeatureList,
+        ignition::physics::GetContactsFromLastStepFeature,
+        ignition::physics::sdf::ConstructSdfCollision>;
+
+    /// \brief Collision type with collision features.
+    using ShapePtrType = ignition::physics::ShapePtr< //
+        ignition::physics::FeaturePolicy3d,
+        CollisionFeatureList>;
+
+    /// \brief Link type with collision features.
+    using LinkShapePtrType = ignition::physics::LinkPtr< //
+        ignition::physics::FeaturePolicy3d,
+        CollisionFeatureList>;
+
+    /// \brief World type with collision features.
+    using WorldShapePtrType = ignition::physics::WorldPtr< //
+        ignition::physics::FeaturePolicy3d,
+        CollisionFeatureList>;
+
+    /// \brief World type with just the minimum features. Non-pointer.
+    using WorldShapeType = ignition::physics::World< //
+        ignition::physics::FeaturePolicy3d,
+        CollisionFeatureList>;
+
+    /// \brief A map between collision entity ids in the ECM to Shape Entities
+    /// in ign-physics.
+    std::unordered_map<Entity, ShapePtrType> entityCollisionMap;
+
+    /// \brief A map between shape entities in ign-physics to collision entities
+    /// in the ECM. This is the reverse map of entityCollisionMap.
+    std::unordered_map<ShapePtrType, Entity> collisionEntityMap;
+
+    /// \brief A map between link entity ids in the ECM to Link Entities in
+    /// ign-physics, with attach feature.
+    /// All links on this map are also in `entityLinkMap`. The difference is
+    /// that here they've been casted for `CollisionFeatureList`.
+    std::unordered_map<Entity, LinkShapePtrType> entityLinkCollisionMap;
+
+    /// \brief A map between world entity ids in the ECM to World Entities in
+    /// ign-physics, with attach feature.
+    /// All worlds on this map are also in `entityWorldMap`. The difference is
+    /// that here they've been casted for `CollisionFeatureList`.
+    std::unordered_map<Entity, WorldShapePtrType> entityWorldCollisionMap;
+
+    //////////////////////////////////////////////////
+    // Link force
+
+    /// \brief Feature list for applying forces to links.
+    using LinkForceFeatureList = ignition::physics::FeatureList< //
+        ignition::physics::AddLinkExternalForceTorque>;
+
+    /// \brief Link type with bounding box feature.
+    using LinkForcePtrType = ignition::physics::LinkPtr< //
+        ignition::physics::FeaturePolicy3d,
+        LinkForceFeatureList>;
+
+    /// \brief A map between link entity ids in the ECM to Link Entities in
+    /// ign-physics, with force feature.
+    /// All links on this map are also in `entityLinkMap`. The difference is
+    /// that here they've been casted for `LinkForceFeatureList`.
+    std::unordered_map<Entity, LinkForcePtrType> entityLinkForceMap;
+
+    //////////////////////////////////////////////////
+    // Bounding box
+
+    /// \brief Feature list for model bounding box.
+    using BoundingBoxFeatureList = ignition::physics::FeatureList< //
+        MinimumFeatureList,
+        ignition::physics::GetModelBoundingBox>;
+
+    /// \brief Model type with bounding box feature.
+    using ModelBoundingBoxPtrType = ignition::physics::ModelPtr< //
+        ignition::physics::FeaturePolicy3d,
+        BoundingBoxFeatureList>;
+
+    /// \brief A map between model entity ids in the ECM to Model Entities in
+    /// ign-physics, with bounding box feature.
+    /// All models on this map are also in `entityModelMap`. The difference is
+    /// that here they've been casted for `BoundingBoxFeatureList`.
+    std::unordered_map<Entity, ModelBoundingBoxPtrType>
+        entityModelBoundingBoxMap;
+
+    //////////////////////////////////////////////////
+    // Joint velocity command
+
+    /// \brief Feature list for set joint velocity command.
+    using JointVelocityCommandFeatureList = ignition::physics::FeatureList< //
+        physics::SetJointVelocityCommandFeature>;
+
+    /// \brief Joint type with set joint velocity command.
+    using JointVelocityCommandPtrType = ignition::physics::JointPtr< //
+        ignition::physics::FeaturePolicy3d,
+        JointVelocityCommandFeatureList>;
+
+    /// \brief A map between joint entity ids in the ECM to Joint Entities in
+    /// ign-physics, with velocity command feature.
+    /// All joints on this map are also in `entityJointMap`. The difference is
+    /// that here they've been casted for `JointVelocityCommandFeatureList`.
+    std::unordered_map<Entity, JointVelocityCommandPtrType>
+        entityJointVelocityCommandMap;
+
+    //////////////////////////////////////////////////
+    // Meshes
+
+    /// \brief Feature list for meshes.
+    /// Include MinimumFeatureList so created collision can be automatically
+    /// up-cast.
+    using MeshFeatureList = ignition::physics::FeatureList< //
+        CollisionFeatureList,
+        ignition::physics::mesh::AttachMeshShapeFeature>;
+
+    /// \brief Link type with meshes.
+    using LinkMeshPtrType = physics::LinkPtr< //
+        ignition::physics::FeaturePolicy3d,
+        MeshFeatureList>;
+
+    /// \brief A map between link entity ids in the ECM to Link Entities in
+    /// ign-physics, with mesh feature.
+    /// All links on this map are also in `entityLinkMap`. The difference is
+    /// that here they've been casted for `MeshFeatureList`.
+    std::unordered_map<Entity, LinkMeshPtrType> entityLinkMeshMap;
+
     /// \brief Boolean value that is true only the first call of Configure and
     /// PreUpdate.
     bool firstRun = true;
@@ -259,26 +448,110 @@ public:
 Physics::Physics()
     : System()
     , pImpl(std::make_unique<Impl>())
-{
-    ignition::plugin::Loader pl;
-    // dartsim_plugin_LIB is defined by cmake
-    std::unordered_set<std::string> plugins = pl.LoadLib(dartsim_plugin_LIB);
-    if (!plugins.empty()) {
-        const std::string className = "ignition::physics::dartsim::Plugin";
-        ignition::plugin::PluginPtr plugin = pl.Instantiate(className);
+{}
 
-        if (plugin) {
-            this->pImpl->engine = ignition::physics::RequestEngine<
-                ignition::physics::FeaturePolicy3d,
-                Impl::MinimumFeatureList>::From(plugin);
-        }
-        else {
-            ignerr << "Unable to instantiate " << className << ".\n";
-        }
+void Physics::Configure(const Entity& _entity,
+                        const std::shared_ptr<const sdf::Element>& _sdf,
+                        EntityComponentManager& _ecm,
+                        EventManager& /*_eventMgr*/)
+{
+    std::string pluginLib;
+
+    // 1. Engine from component (from command line / ServerConfig)
+    auto engineComp =
+        _ecm.Component<ignition::gazebo::components::PhysicsEnginePlugin>(
+            _entity);
+    if (engineComp && !engineComp->Data().empty()) {
+        pluginLib = engineComp->Data();
+    }
+    // 2. Engine from SDF
+    else if (_sdf->HasElement("engine")) {
+        auto sdfClone = _sdf->Clone();
+        auto engineElem = sdfClone->GetElement("engine");
+        pluginLib = engineElem->Get<std::string>("filename", pluginLib).first;
+    }
+
+    // 3. Use DART by default
+    if (pluginLib.empty()) {
+        pluginLib = "libignition-physics-dartsim-plugin.so";
+    }
+
+    // Update component
+    if (!engineComp) {
+        _ecm.CreateComponent(_entity,
+                             components::PhysicsEnginePlugin(pluginLib));
     }
     else {
-        ignerr << "Unable to load the " << dartsim_plugin_LIB << " library.\n";
+        engineComp->SetData(pluginLib,
+                            [](const std::string& _a, const std::string& _b) {
+                                return _a == _b;
+                            });
+    }
+
+    // Find engine shared library
+    // Look in:
+    // * Paths from environment variable
+    // * Engines installed with ign-physics
+    common::SystemPaths systemPaths;
+    systemPaths.SetPluginPathEnv(pImpl->pluginPathEnv);
+    systemPaths.AddPluginPaths({IGNITION_PHYSICS_ENGINE_INSTALL_DIR});
+
+    auto pathToLib = systemPaths.FindSharedLibrary(pluginLib);
+    if (pathToLib.empty()) {
+        ignerr << "Failed to find plugin [" << pluginLib
+               << "]. Have you checked the " << pImpl->pluginPathEnv
+               << " environment variable?" << std::endl;
         return;
+    }
+
+    // Load engine plugin
+    ignition::plugin::Loader pluginLoader;
+    auto plugins = pluginLoader.LoadLib(pathToLib);
+    if (plugins.empty()) {
+        ignerr << "Unable to load the [" << pathToLib << "] library.\n";
+        return;
+    }
+
+    auto classNames = pluginLoader.AllPlugins();
+    if (classNames.empty()) {
+        ignerr << "No plugins found in library [" << pathToLib << "]."
+               << std::endl;
+        return;
+    }
+
+    // Get the first plugin that works
+    for (auto className : classNames) {
+        auto plugin = pluginLoader.Instantiate(className);
+
+        if (!plugin)
+            continue;
+
+        pImpl->engine = ignition::physics::RequestEngine<
+            ignition::physics::FeaturePolicy3d,
+            Impl::MinimumFeatureList>::From(plugin);
+
+        if (nullptr != pImpl->engine) {
+            igndbg << "Loaded [" << className << "] from library [" << pathToLib
+                   << "]" << std::endl;
+            break;
+        }
+
+        auto missingFeatures = ignition::physics::RequestEngine<
+            ignition::physics::FeaturePolicy3d,
+            Impl::MinimumFeatureList>::MissingFeatureNames(plugin);
+
+        std::stringstream msg;
+        msg << "Plugin [" << className
+            << "] misses required features:" << std::endl;
+        for (auto feature : missingFeatures) {
+            msg << "- " << feature << std::endl;
+        }
+        ignwarn << msg.str();
+    }
+
+    if (nullptr == pImpl->engine) {
+        ignerr << "Failed to load a valid physics engine from [" << pathToLib
+               << "]." << std::endl;
     }
 }
 
@@ -294,8 +567,8 @@ void Physics::Update(const UpdateInfo& _info, EntityComponentManager& _ecm)
                 << "s]. System may not work properly." << std::endl;
     }
 
-    // Update the component with the time in seconds that  the simulation will
-    // have after the step
+    // Update the component with the time in seconds that  the simulation
+    // will have after the step
     _ecm.Each<components::World, components::SimulatedTime>(
         [&](const Entity& worldEntity,
             const components::World*,
@@ -317,10 +590,10 @@ void Physics::Update(const UpdateInfo& _info, EntityComponentManager& _ecm)
 
         this->pImpl->UpdateSim(_info, _ecm);
 
-        // Entities scheduled to be removed should be removed from physics after
-        // the simulation step. Otherwise, since the to-be-removed entity still
-        // shows up in the ECM::Each the UpdatePhysics and UpdateSim calls will
-        // have an error
+        // Entities scheduled to be removed should be removed from physics
+        // after the simulation step. Otherwise, since the to-be-removed
+        // entity still shows up in the ECM::Each the UpdatePhysics and
+        // UpdateSim calls will have an error
         this->pImpl->RemovePhysicsEntities(_ecm);
     }
 }
@@ -365,7 +638,7 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
 
         // Check if parent world exists
         // TODO(louise): Support nested models, see
-        // https://bitbucket.org/ignitionrobotics/ign-physics/issues/10
+        // https://github.com/ignitionrobotics/ign-physics/issues/10
         if (this->entityWorldMap.find(_parent->Data())
             == this->entityWorldMap.end()) {
             ignwarn << "Model's parent entity [" << _parent->Data()
@@ -381,6 +654,11 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
         auto staticComp = _ecm.Component<components::Static>(_entity);
         if (staticComp && staticComp->Data()) {
             model.SetStatic(staticComp->Data());
+        }
+
+        auto selfCollideComp = _ecm.Component<components::SelfCollide>(_entity);
+        if (selfCollideComp && selfCollideComp->Data()) {
+            model.SetSelfCollide(selfCollideComp->Data());
         }
 
         auto modelPtrPhys = worldPtrPhys->ConstructModel(model);
@@ -480,14 +758,45 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
                 return true;
             }
 
-            collisionPtrPhys = linkPtrPhys->AttachMeshShape(
+            auto linkMeshFeature = entityCast(
+                _parent->Data(), linkPtrPhys, this->entityLinkMeshMap);
+            if (!linkMeshFeature) {
+                static bool informed{false};
+                if (!informed) {
+                    igndbg
+                        << "Attempting to process mesh geometries, but the "
+                        << "physics engine doesn't support feature "
+                        << "[AttachMeshShapeFeature]. Meshes will be ignored."
+                        << std::endl;
+                    informed = true;
+                }
+                return true;
+            }
+
+            collisionPtrPhys = linkMeshFeature->AttachMeshShape(
                 _name->Data(),
                 *mesh,
-                ignition::math::eigen3::convert(_pose->Data()),
-                ignition::math::eigen3::convert(meshSdf->Scale()));
+                math::eigen3::convert(_pose->Data()),
+                math::eigen3::convert(meshSdf->Scale()));
         }
         else {
-            collisionPtrPhys = linkPtrPhys->ConstructCollision(collision);
+            auto linkCollisionFeature = entityCast(
+                _parent->Data(), linkPtrPhys, this->entityLinkCollisionMap);
+            if (!linkCollisionFeature) {
+                static bool informed{false};
+                if (!informed) {
+                    igndbg
+                        << "Attempting to process collisions, but the physics "
+                        << "engine doesn't support feature "
+                        << "[ConstructSdfCollision]. Collisions will be "
+                        << "ignored." << std::endl;
+                    informed = true;
+                }
+                return true;
+            }
+
+            collisionPtrPhys =
+                linkCollisionFeature->ConstructCollision(collision);
         }
 
         this->entityCollisionMap.insert(
@@ -524,6 +833,21 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
         }
         auto modelPtrPhys = this->entityModelMap.at(_parentModel->Data());
 
+        auto modelJointFeature = entityCast(
+            _parentModel->Data(), modelPtrPhys, this->entityModelJointMap);
+        if (!modelJointFeature) {
+            static bool informed{false};
+            if (!informed) {
+                igndbg << "Attempting to process joints, but the physics "
+                       << "engine doesn't support joint features. "
+                       << "Joints will be ignored." << std::endl;
+                informed = true;
+            }
+
+            // Break Each call since no joints can be processed
+            return false;
+        }
+
         sdf::Joint joint;
         joint.SetName(_name->Data());
         joint.SetType(_jointType->Data());
@@ -536,21 +860,100 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
         auto jointAxis = _ecm.Component<components::JointAxis>(_entity);
         auto jointAxis2 = _ecm.Component<components::JointAxis2>(_entity);
 
-        // Since we're making copies of the joint axes that were created using
-        // `Model::Load`, frame semantics should work for resolving their xyz
-        // axis
+        // Since we're making copies of the joint axes that were created
+        // using `Model::Load`, frame semantics should work for resolving
+        // their xyz axis
         if (jointAxis)
             joint.SetAxis(0, jointAxis->Data());
         if (jointAxis2)
             joint.SetAxis(1, jointAxis2->Data());
 
         // Use the parent link's parent model as the model of this joint
-        auto jointPtrPhys = modelPtrPhys->ConstructJoint(joint);
+        auto jointPtrPhys = modelJointFeature->ConstructJoint(joint);
 
         if (jointPtrPhys.Valid()) {
-            // Some joints may not be supported, so only add them to the map if
-            // the physics entity is valid
+            // Some joints may not be supported, so only add them to the map
+            // if the physics entity is valid
             this->entityJointMap.insert(std::make_pair(_entity, jointPtrPhys));
+        }
+        return true;
+    };
+
+    auto processDetachableJoint =
+        [&](const Entity& _entity,
+            const components::DetachableJoint* _jointInfo) -> bool {
+        if (_jointInfo->Data().jointType != "fixed") {
+            ignerr << "Detachable joint type [" << _jointInfo->Data().jointType
+                   << "] is currently not supported" << std::endl;
+            return true;
+        }
+        // Check if joint already exists
+        if (this->entityJointMap.find(_entity) != this->entityJointMap.end()) {
+            ignwarn << "Joint entity [" << _entity
+                    << "] marked as new, but it's already on the map."
+                    << std::endl;
+            return true;
+        }
+
+        // Check if the link entities exist in the physics engine
+        auto parentLinkPhysIt =
+            this->entityLinkMap.find(_jointInfo->Data().parentLink);
+        if (parentLinkPhysIt == this->entityLinkMap.end()) {
+            ignwarn << "DetachableJoint's parent link entity ["
+                    << _jointInfo->Data().parentLink
+                    << "] not found in link map." << std::endl;
+            return true;
+        }
+
+        auto childLinkEntity = _jointInfo->Data().childLink;
+
+        // Get child link
+        auto childLinkIt = this->entityLinkMap.find(childLinkEntity);
+        if (childLinkIt == this->entityLinkMap.end()) {
+            ignwarn << "Failed to find joint's child link [" << childLinkEntity
+                    << "]." << std::endl;
+            return true;
+        }
+
+        auto childLinkDetachableJointFeature =
+            entityCast(childLinkEntity,
+                       childLinkIt->second,
+                       this->entityLinkDetachableJointMap);
+        if (!childLinkDetachableJointFeature) {
+            static bool informed{false};
+            if (!informed) {
+                igndbg
+                    << "Attempting to create a detachable joint, but the "
+                       "physics"
+                    << " engine doesn't support feature "
+                    << "[AttachFixedJointFeature]. Detachable joints will be "
+                    << "ignored." << std::endl;
+                informed = true;
+            }
+
+            // Break Each call since no DetachableJoints can be processed
+            return false;
+        }
+
+        const auto poseParent =
+            parentLinkPhysIt->second->FrameDataRelativeToWorld().pose;
+        const auto poseChild =
+            childLinkDetachableJointFeature->FrameDataRelativeToWorld().pose;
+
+        // Pose of child relative to parent
+        auto poseParentChild = poseParent.inverse() * poseChild;
+        auto jointPtrPhys = childLinkDetachableJointFeature->AttachFixedJoint(
+            parentLinkPhysIt->second);
+        if (jointPtrPhys.Valid()) {
+            // We let the joint be at the origin of the child link.
+            jointPtrPhys->SetTransformFromParent(poseParentChild);
+
+            igndbg << "Creating detachable joint [" << _entity << "]"
+                   << std::endl;
+            this->entityJointMap.insert(std::make_pair(_entity, jointPtrPhys));
+        }
+        else {
+            ignwarn << "DetachableJoint could not be created." << std::endl;
         }
         return true;
     };
@@ -596,6 +999,8 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
                     std::make_pair(_ecm.ParentEntity(_entity), false));
                 return true;
             });
+
+        _ecm.Each<components::DetachableJoint>(processDetachableJoint);
     }
     else {
         _ecm.EachNew<components::World, components::Name, components::Gravity>(
@@ -636,6 +1041,8 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
                     std::make_pair(_ecm.ParentEntity(_entity), false));
                 return true;
             });
+
+        _ecm.EachNew<components::DetachableJoint>(processDetachableJoint);
     }
 }
 
@@ -643,11 +1050,11 @@ void Physics::Impl::RemovePhysicsEntities(const EntityComponentManager& _ecm)
 {
     // Assume the world will not be erased
     // Only removing models is supported by ign-physics right now so we only
-    // remove links, joints and collisions if they are children of the removed
-    // model.
-    // We assume the links, joints and collisions will be removed from the
-    // physics engine when the containing model gets removed so, here, we only
-    // remove the entities from the gazebo entity->physics entity map.
+    // remove links, joints and collisions if they are children of the
+    // removed model. We assume the links, joints and collisions will be
+    // removed from the physics engine when the containing model gets
+    // removed so, here, we only remove the entities from the gazebo
+    // entity->physics entity map.
     _ecm.EachRemoved<components::Model>([&](const Entity& _entity,
                                             const components::Model *
                                             /* _model */) -> bool {
@@ -685,6 +1092,36 @@ void Physics::Impl::RemovePhysicsEntities(const EntityComponentManager& _ecm)
         }
         return true;
     });
+
+    _ecm.EachRemoved<components::DetachableJoint>(
+        [&](const Entity& _entity, const components::DetachableJoint*) -> bool {
+            auto jointIt = this->entityJointMap.find(_entity);
+            if (jointIt == this->entityJointMap.end()) {
+                ignwarn << "Failed to find joint [" << _entity << "]."
+                        << std::endl;
+                return true;
+            }
+
+            auto castEntity = entityCast(
+                _entity, jointIt->second, this->entityJointDetachableJointMap);
+            if (!castEntity) {
+                static bool informed{false};
+                if (!informed) {
+                    igndbg << "Attempting to detach a joint, but the physics "
+                           << "engine doesn't support feature "
+                           << "[DetachJointFeature]. Joint won't be detached."
+                           << std::endl;
+                    informed = true;
+                }
+
+                // Break Each call since no DetachableJoints can be processed
+                return false;
+            }
+
+            igndbg << "Detaching joint [" << _entity << "]" << std::endl;
+            castEntity->Detach();
+            return true;
+        });
 }
 
 void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
@@ -714,9 +1151,6 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
             std::size_t nDofs = jointIt->second->GetDegreesOfFreedom();
             for (std::size_t i = 0; i < nDofs; ++i) {
                 jointIt->second->SetForce(i, 0);
-                // TODO(anyone): Only for diff drive, which does not use
-                //   JointForceCmd. Remove when it does.
-                jointIt->second->SetVelocityCommand(i, 0);
             }
             return true;
         }
@@ -730,12 +1164,13 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
 
             if (jointVelocity.size()
                 != jointIt->second->GetDegreesOfFreedom()) {
-                ignwarn
-                    << "There is a mismatch in the degrees of freedom between "
-                    << "Joint [" << _name->Data() << "(Entity=" << _entity
-                    << ")] and its JointForceCmd component. The joint has "
-                    << jointIt->second->GetDegreesOfFreedom() << " while the "
-                    << " component has " << jointVelocity.size() << ".\n";
+                ignwarn << "There is a mismatch in the degrees of freedom "
+                           "between "
+                        << "Joint [" << _name->Data() << "(Entity=" << _entity
+                        << ")] and its JointForceCmd component. The joint has "
+                        << jointIt->second->GetDegreesOfFreedom()
+                        << " while the "
+                        << " component has " << jointVelocity.size() << ".\n";
             }
 
             std::size_t nDofs = std::min(
@@ -752,12 +1187,13 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
 
             if (jointPosition.size()
                 != jointIt->second->GetDegreesOfFreedom()) {
-                ignwarn
-                    << "There is a mismatch in the degrees of freedom between "
-                    << "Joint [" << _name->Data() << "(Entity=" << _entity
-                    << ")] and its JointForceCmd component. The joint has "
-                    << jointIt->second->GetDegreesOfFreedom() << " while the "
-                    << " component has " << jointPosition.size() << ".\n";
+                ignwarn << "There is a mismatch in the degrees of freedom "
+                           "between "
+                        << "Joint [" << _name->Data() << "(Entity=" << _entity
+                        << ")] and its JointForceCmd component. The joint has "
+                        << jointIt->second->GetDegreesOfFreedom()
+                        << " while the "
+                        << " component has " << jointPosition.size() << ".\n";
             }
             std::size_t nDofs = std::min(
                 jointPosition.size(), jointIt->second->GetDegreesOfFreedom());
@@ -772,12 +1208,13 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
         if (force) {
             if (force->Data().size()
                 != jointIt->second->GetDegreesOfFreedom()) {
-                ignwarn
-                    << "There is a mismatch in the degrees of freedom between "
-                    << "Joint [" << _name->Data() << "(Entity=" << _entity
-                    << ")] and its JointForceCmd component. The joint has "
-                    << jointIt->second->GetDegreesOfFreedom() << " while the "
-                    << " component has " << force->Data().size() << ".\n";
+                ignwarn << "There is a mismatch in the degrees of freedom "
+                           "between "
+                        << "Joint [" << _name->Data() << "(Entity=" << _entity
+                        << ")] and its JointForceCmd component. The joint has "
+                        << jointIt->second->GetDegreesOfFreedom()
+                        << " while the "
+                        << " component has " << force->Data().size() << ".\n";
             }
             std::size_t nDofs = std::min(
                 force->Data().size(), jointIt->second->GetDegreesOfFreedom());
@@ -787,7 +1224,8 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
         }
         else {
             // Only set joint velocity if joint force is not set.
-            // If both the cmd and reset components are found, cmd is ignored.
+            // If both the cmd and reset components are found, cmd is
+            // ignored.
             if (velCmd) {
                 auto velocityCmd = velCmd->Data();
 
@@ -798,33 +1236,37 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
                             << "(Entity=" << _entity
                             << "]). Ignoring JointVelocityReset component."
                             << std::endl;
+                    return true;
                 }
-                else {
-                    if (velocityCmd.size()
-                        != jointIt->second->GetDegreesOfFreedom()) {
-                        ignwarn << "There is a mismatch in the degrees of "
-                                   "freedom between"
-                                << " Joint [" << _name->Data()
-                                << "(Entity=" << _entity
-                                << ")] and its JointVelocityCmd component. The "
-                                   "joint has "
-                                << jointIt->second->GetDegreesOfFreedom()
-                                << " while the "
-                                << " component has " << velCmd->Data().size()
-                                << ".\n";
-                    }
 
-                    std::size_t nDofs =
-                        std::min(velocityCmd.size(),
-                                 jointIt->second->GetDegreesOfFreedom());
+                if (velocityCmd.size()
+                    != jointIt->second->GetDegreesOfFreedom()) {
+                    ignwarn << "There is a mismatch in the degrees of freedom "
+                            << "between Joint [" << _name->Data()
+                            << "(Entity=" << _entity
+                            << ")] and its JointVelocityCmd component. The "
+                            << "joint has "
+                            << jointIt->second->GetDegreesOfFreedom()
+                            << " while the component has " << velocityCmd.size()
+                            << ".\n";
+                }
 
-                    for (std::size_t i = 0; i < nDofs; ++i) {
-                        jointIt->second->SetVelocityCommand(i, velocityCmd[i]);
-                    }
+                auto jointVelFeature =
+                    entityCast(_entity,
+                               jointIt->second,
+                               this->entityJointVelocityCommandMap);
+                if (!jointVelFeature) {
+                    return true;
+                }
+
+                std::size_t nDofs = std::min(
+                    velocityCmd.size(), jointIt->second->GetDegreesOfFreedom());
+
+                for (std::size_t i = 0; i < nDofs; ++i) {
+                    jointVelFeature->SetVelocityCommand(i, velocityCmd[i]);
                 }
             }
         }
-
         return true;
     });
 
@@ -833,13 +1275,34 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
         [&](const Entity& _entity,
             const components::ExternalWorldWrenchCmd* _wrenchComp) {
             auto linkIt = this->entityLinkMap.find(_entity);
-            if (linkIt == this->entityLinkMap.end())
+            if (linkIt == this->entityLinkMap.end()) {
+                ignwarn << "Failed to find link [" << _entity << "]."
+                        << std::endl;
                 return true;
+            }
+
+            auto linkForceFeature =
+                entityCast(_entity, linkIt->second, this->entityLinkForceMap);
+            if (!linkForceFeature) {
+                static bool informed{false};
+                if (!informed) {
+                    igndbg << "Attempting to apply a wrench, but the physics "
+                           << "engine doesn't support feature "
+                           << "[AddLinkExternalForceTorque]. Wrench will be "
+                              "ignored."
+                           << std::endl;
+                    informed = true;
+                }
+
+                // Break Each call since no ExternalWorldWrenchCmd's can be
+                // processed
+                return false;
+            }
 
             math::Vector3 force = msgs::Convert(_wrenchComp->Data().force());
             math::Vector3 torque = msgs::Convert(_wrenchComp->Data().torque());
-            linkIt->second->AddExternalForce(math::eigen3::convert(force));
-            linkIt->second->AddExternalTorque(math::eigen3::convert(torque));
+            linkForceFeature->AddExternalForce(math::eigen3::convert(force));
+            linkForceFeature->AddExternalTorque(math::eigen3::convert(torque));
 
             return true;
         });
@@ -851,15 +1314,38 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
                 components::ExternalWorldWrenchCmdWithDuration*
                     _wrenchWithDurComp) {
                 auto linkIt = this->entityLinkMap.find(_entity);
-                if (linkIt == this->entityLinkMap.end())
+                if (linkIt == this->entityLinkMap.end()) {
+                    ignwarn << "Failed to find link [" << _entity << "]."
+                            << std::endl;
                     return true;
+                }
+
+                auto linkForceFeature = entityCast(
+                    _entity, linkIt->second, this->entityLinkForceMap);
+                if (!linkForceFeature) {
+                    static bool informed{false};
+                    if (!informed) {
+                        igndbg
+                            << "Attempting to apply a wrench, but the physics "
+                            << "engine doesn't support feature "
+                            << "[AddLinkExternalForceTorque]. Wrench will be "
+                               "ignored."
+                            << std::endl;
+                        informed = true;
+                    }
+
+                    // Break Each call since no ExternalWorldWrenchCmd's can be
+                    // processed
+                    return false;
+                }
 
                 auto totalWrench = _wrenchWithDurComp->Data().totalWrench();
                 math::Vector3 force = msgs::Convert(totalWrench.force());
                 math::Vector3 torque = msgs::Convert(totalWrench.torque());
 
-                linkIt->second->AddExternalForce(math::eigen3::convert(force));
-                linkIt->second->AddExternalTorque(
+                linkForceFeature->AddExternalForce(
+                    math::eigen3::convert(force));
+                linkForceFeature->AddExternalTorque(
                     math::eigen3::convert(torque));
 
                 // NOTE: Cleaning could be moved to UpdateSim, but let's
@@ -879,11 +1365,11 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
             if (modelIt == this->entityModelMap.end())
                 return true;
 
-            // The canonical link as specified by sdformat is different from the
-            // canonical link of the FreeGroup object
+            // The canonical link as specified by sdformat is different from
+            // the canonical link of the FreeGroup object
 
-            // TODO(addisu) Store the free group instead of searching for it at
-            // every iteration
+            // TODO(addisu) Store the free group instead of searching for it
+            // at every iteration
             auto freeGroup = modelIt->second->FindFreeGroup();
             if (!freeGroup)
                 return true;
@@ -900,16 +1386,15 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
             freeGroup->SetWorldPose(math::eigen3::convert(
                 _poseCmd->Data() * canonicalPoseComp->Data()));
 
-            // Process pose commands for static models here, as one-time changes
+            // Process pose commands for static models here, as one-time
+            // changes
             const components::Static* staticComp =
                 _ecm.Component<components::Static>(_entity);
             if (staticComp && staticComp->Data()) {
                 auto worldPoseComp = _ecm.Component<components::Pose>(_entity);
                 if (worldPoseComp) {
                     auto state =
-                        worldPoseComp->SetData(_poseCmd->Data()
-                                                   * canonicalPoseComp->Data(),
-                                               this->pose3Eql)
+                        worldPoseComp->SetData(_poseCmd->Data(), this->pose3Eql)
                             ? ComponentState::OneTimeChange
                             : ComponentState::NoChange;
                     _ecm.SetChanged(_entity, components::Pose::typeId, state);
@@ -928,14 +1413,15 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
             if (modelIt == this->entityModelMap.end())
                 return true;
 
-            // The canonical link as specified by sdformat is different from the
-            // canonical link of the FreeGroup object
+            // The canonical link as specified by sdformat is different from
+            // the canonical link of the FreeGroup object
 
-            // TODO(addisu) Store the free group instead of searching for it at
-            // every iteration
+            // TODO(addisu) Store the free group instead of searching for it
+            // at every iteration
 
-            // The FreeGroup is created only for floating-base object that do
-            // not have any defined joint between the world and their base
+            // The FreeGroup is created only for floating-base object that
+            // do not have any defined joint between the world and their
+            // base
             auto freeGroup = modelIt->second->FindFreeGroup();
             if (!freeGroup) {
                 ignwarn << "Failed to find FreeGroup. Linear and angular "
@@ -960,8 +1446,8 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
 
     // Clear pending commands
     // Note: Removing components from inside an Each call can be dangerous.
-    // Instead, we collect all the entities that have the desired components and
-    // remove the component from them afterward.
+    // Instead, we collect all the entities that have the desired components
+    // and remove the component from them afterward.
     std::vector<Entity> entitiesWorldCmd;
     _ecm.Each<components::WorldPoseCmd>(
         [&](const Entity& _entity, components::WorldPoseCmd*) -> bool {
@@ -972,6 +1458,47 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
     for (const Entity& entity : entitiesWorldCmd) {
         _ecm.RemoveComponent<components::WorldPoseCmd>(entity);
     }
+
+    // Populate bounding box info
+    // Only compute bounding box if component exists to avoid unnecessary
+    // computations
+    _ecm.Each<components::Model,
+              components::AxisAlignedBox>([&](const Entity& _entity,
+                                              const components::Model*,
+                                              components::AxisAlignedBox*
+                                                  _bbox) {
+        auto modelIt = this->entityModelMap.find(_entity);
+        if (modelIt == this->entityModelMap.end()) {
+            ignwarn << "Failed to find model [" << _entity << "]." << std::endl;
+            return true;
+        }
+
+        auto bbModel = entityCast(
+            _entity, modelIt->second, this->entityModelBoundingBoxMap);
+        if (!bbModel) {
+            static bool informed{false};
+            if (!informed) {
+                igndbg
+                    << "Attempting to get a bounding box, but the physics "
+                    << "engine doesn't support feature "
+                    << "[GetModelBoundingBox]. Bounding box won't be populated."
+                    << std::endl;
+                informed = true;
+            }
+
+            // Break Each call since no AxisAlignedBox'es can be processed
+            return false;
+        }
+
+        math::AxisAlignedBox bbox =
+            math::eigen3::convert(bbModel->GetAxisAlignedBoundingBox());
+        auto state = _bbox->SetData(bbox, this->axisAlignedBoxEql)
+                         ? ComponentState::OneTimeChange
+                         : ComponentState::NoChange;
+        _ecm.SetChanged(_entity, components::AxisAlignedBox::typeId, state);
+
+        return true;
+    });
 
     // Clear WorldVelocityCmd
     entitiesWorldCmd.clear();
@@ -1000,7 +1527,7 @@ void Physics::Impl::Step(const std::chrono::steady_clock::duration& _dt)
 }
 
 void Physics::Impl::UpdateSim(const ignition::gazebo::UpdateInfo& _info,
-                              EntityComponentManager& _ecm) const
+                              EntityComponentManager& _ecm)
 {
     // local pose
     _ecm.Each<components::Link,
@@ -1039,12 +1566,12 @@ void Physics::Impl::UpdateSim(const ignition::gazebo::UpdateInfo& _info,
             if (canonicalLink) {
                 // This is the canonical link, update the model
                 // The Pose component, _pose, of this link is the initial
-                // transform of the link w.r.t its model. This component never
-                // changes because it's "fixed" to the model. Instead, we change
-                // the model's pose here. The physics engine gives us the pose
-                // of this link relative to world so to set the model's pose, we
-                // have to post-multiply it by the inverse of the initial
-                // transform of the link w.r.t to its model.
+                // transform of the link w.r.t its model. This component
+                // never changes because it's "fixed" to the model. Instead,
+                // we change the model's pose here. The physics engine gives
+                // us the pose of this link relative to world so to set the
+                // model's pose, we have to post-multiply it by the inverse
+                // of the initial transform of the link w.r.t to its model.
                 auto mutableParentPose =
                     _ecm.Component<components::Pose>(_parent->Data());
                 *(mutableParentPose) = components::Pose(
@@ -1062,9 +1589,9 @@ void Physics::Impl::UpdateSim(const ignition::gazebo::UpdateInfo& _info,
                                 ComponentState::PeriodicChange);
             }
 
-            // Populate world poses, velocities and accelerations of the link.
-            // For now these components are updated only if another system has
-            // created the corresponding component on the entity.
+            // Populate world poses, velocities and accelerations of the
+            // link. For now these components are updated only if another
+            // system has created the corresponding component on the entity.
             auto worldPoseComp = _ecm.Component<components::WorldPose>(_entity);
             if (worldPoseComp) {
                 auto state =
@@ -1357,17 +1884,27 @@ void Physics::Impl::UpdateSim(const ignition::gazebo::UpdateInfo& _info,
         });
 
     // Clear reset components
+    std::vector<Entity> entitiesPositionReset;
     _ecm.Each<components::JointPositionReset>(
         [&](const Entity& _entity, components::JointPositionReset*) -> bool {
-            _ecm.RemoveComponent<components::JointPositionReset>(_entity);
+            entitiesPositionReset.push_back(_entity);
             return true;
         });
 
+    for (const auto entity : entitiesPositionReset) {
+        _ecm.RemoveComponent<components::JointPositionReset>(entity);
+    }
+
+    std::vector<Entity> entitiesVelocityReset;
     _ecm.Each<components::JointVelocityReset>(
         [&](const Entity& _entity, components::JointVelocityReset*) -> bool {
-            _ecm.RemoveComponent<components::JointVelocityReset>(_entity);
+            entitiesVelocityReset.push_back(_entity);
             return true;
         });
+
+    for (const auto entity : entitiesVelocityReset) {
+        _ecm.RemoveComponent<components::JointVelocityReset>(entity);
+    }
 
     // Clear pending commands
     _ecm.Each<components::JointForceCmd>(
@@ -1424,13 +1961,15 @@ void Physics::Impl::UpdateSim(const ignition::gazebo::UpdateInfo& _info,
             }
             return true;
         });
+
+    // TODO(louise) Skip this if there are no collision features
     this->UpdateCollisions(_ecm);
 }
 
-void Physics::Impl::UpdateCollisions(EntityComponentManager& _ecm) const
+void Physics::Impl::UpdateCollisions(EntityComponentManager& _ecm)
 {
-    // Quit early if the ContactData component hasn't been created. This means
-    // there are no systems that need contact information
+    // Quit early if the ContactData component hasn't been created. This
+    // means there are no systems that need contact information
     if (!_ecm.HasComponentType(components::ContactSensorData::typeId))
         return;
 
@@ -1443,28 +1982,45 @@ void Physics::Impl::UpdateCollisions(EntityComponentManager& _ecm) const
         return;
     }
 
-    // Safe to assume this won't throw because the world entity should always be
-    // available
-    auto worldPhys = this->entityWorldMap.at(worldEntity);
+    auto worldIt = this->entityWorldMap.find(worldEntity);
+    if (worldIt == this->entityWorldMap.end()) {
+        ignwarn << "Failed to find world [" << worldEntity << "]." << std::endl;
+        return;
+    }
 
-    // Each contact object we get from ign-physics contains the EntityPtrs of
-    // the two colliding entities and other data about the contact such as the
-    // position. This map groups contacts so that it is easy to query all the
-    // contacts of one entity.
+    auto worldCollisionFeature =
+        entityCast(worldEntity, worldIt->second, this->entityWorldCollisionMap);
+    if (!worldCollisionFeature) {
+        static bool informed{false};
+        if (!informed) {
+            igndbg << "Attempting process contacts, but the physics "
+                   << "engine doesn't support collision features. "
+                   << "Contacts won't be computed." << std::endl;
+            informed = true;
+        }
+        return;
+    }
+
+    // Each contact object we get from ign-physics contains the EntityPtrs
+    // of the two colliding entities and other data about the contact such
+    // as the position. This map groups contacts so that it is easy to query
+    // all the contacts of one entity.
     using EntityContactMap =
-        std::unordered_map<Entity, std::deque<const WorldType::ContactPoint*>>;
+        std::unordered_map<Entity,
+                           std::deque<const WorldShapeType::ContactPoint*>>;
 
-    // This data structure is essentially a mapping between a pair of entities
-    // and a list of pointers to their contact object. We use a map inside a map
-    // to create msgs::Contact objects conveniently later on.
+    // This data structure is essentially a mapping between a pair of
+    // entities and a list of pointers to their contact object. We use a map
+    // inside a map to create msgs::Contact objects conveniently later on.
     std::unordered_map<Entity, EntityContactMap> entityContactMap;
 
     // Note that we are temporarily storing pointers to elements in this
     // ("allContacts") container. Thus, we must make sure it doesn't get
     // destroyed until the end of this function.
-    auto allContacts = worldPhys->GetContactsFromLastStep();
+    auto allContacts = worldCollisionFeature->GetContactsFromLastStep();
     for (const auto& contactComposite : allContacts) {
-        const auto& contact = contactComposite.Get<WorldType::ContactPoint>();
+        const auto& contact =
+            contactComposite.Get<WorldShapeType::ContactPoint>();
         auto coll1It = this->collisionEntityMap.find(contact.collision1);
         auto coll2It = this->collisionEntityMap.find(contact.collision2);
 
@@ -1521,5 +2077,8 @@ Physics::Impl::LinkFrameDataAtOffset(const LinkPtrType& _link,
     return this->engine->Resolve(relFrameData, physics::FrameID::World());
 }
 
-IGNITION_ADD_PLUGIN(Physics, ignition::gazebo::System, Physics::ISystemUpdate)
+IGNITION_ADD_PLUGIN(Physics,
+                    ignition::gazebo::System,
+                    Physics::ISystemConfigure,
+                    Physics::ISystemUpdate)
 IGNITION_ADD_PLUGIN_ALIAS(Physics, "ignition::gazebo::systems::Physics")
