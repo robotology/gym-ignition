@@ -48,6 +48,7 @@
 #include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/gazebo/components/PoseCmd.hh>
+#include <ignition/gazebo/components/SelfCollide.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
 #include <sdf/Element.hh>
@@ -163,6 +164,11 @@ bool Model::createECMResources()
             sError << "Failed to initialize ECM joint resources" << std::endl;
             return false;
         }
+    }
+
+    if (!this->enableSelfCollisions()) {
+        sError << "Failed to enable self collisions" << std::endl;
+        return false;
     }
 
     // Initialize the Joint Controller period as maximum duration.
@@ -537,14 +543,27 @@ bool Model::enableContacts(const bool enable)
     return ok;
 }
 
-bool Model::selfCollisions() const
+bool Model::selfCollisionsEnabled() const
 {
-    throw exceptions::NotImplementedError(__FUNCTION__);
+    const bool selfCollisionsEnabled = utils::getExistingComponentData<
+        ignition::gazebo::components::SelfCollide>(pImpl->ecm,
+                                                   pImpl->modelEntity);
+
+    return selfCollisionsEnabled;
 }
 
-bool Model::enableSelfCollisions(const bool /*enable*/)
+bool Model::enableSelfCollisions(const bool enable)
 {
-    throw exceptions::NotImplementedError(__FUNCTION__);
+    // Enable contact detection first
+    if (enable && !this->enableContacts()) {
+        sError << "Failed to enable contact detection" << std::endl;
+        return false;
+    }
+
+    utils::setExistingComponentData<ignition::gazebo::components::SelfCollide>(
+        pImpl->ecm, pImpl->modelEntity, enable);
+
+    return true;
 }
 
 std::vector<std::string> Model::linksInContact() const

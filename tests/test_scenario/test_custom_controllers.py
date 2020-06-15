@@ -45,6 +45,9 @@ def test_computed_torque_fixed_base(gazebo: bindings.GazeboSimulator):
     # Get the model
     panda: bindings.Model = world.get_model(model_name)
 
+    # Disable self-collisions
+    panda.enable_self_collisions(False)
+
     # Set the controller period
     panda.set_controller_period(step_size)
 
