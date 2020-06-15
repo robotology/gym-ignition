@@ -110,7 +110,7 @@ public:
     bool contactsEnabled() const;
     bool enableContacts(const bool enable = true);
 
-    bool selfCollisions() const;
+    bool selfCollisionsEnabled() const;
     bool enableSelfCollisions(const bool enable = true);
 
     std::vector<std::string> linksInContact() const;
