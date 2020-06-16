@@ -4,6 +4,7 @@
 
 import os
 import gym.logger
+from pathlib import Path
 from gym_ignition.utils import logger
 
 
@@ -12,6 +13,11 @@ def setup_environment() -> None:
     Configure the environment depending on the detected installation method
     (User or Developer).
     """
+
+    # Make sure that the dot folder in the user's home exists
+    Path("~/.ignition/gazebo").expanduser().mkdir(mode=0o755,
+                                                  parents=True,
+                                                  exist_ok=True)
 
     # Configure the environment
     ign_gazebo_system_plugin_path = ""
