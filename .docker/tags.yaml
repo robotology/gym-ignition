@@ -33,8 +33,8 @@ repositories:
     version: ign-msgs5
   ign-physics:
     type: git
-    url: https://github.com/diegoferigo/ign-physics
-    version: feature/extra_contact_data
+    url: https://github.com/ignitionrobotics/ign-physics
+    version: ign-physics2
   ign-plugin:
     type: git
     url: https://github.com/ignitionrobotics/ign-plugin
