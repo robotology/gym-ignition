@@ -40,7 +40,8 @@
 // ScenarI/O templates
 %template(VectorOfLinks) std::vector<scenario::gazebo::LinkPtr>;
 %template(VectorOfJoints) std::vector<scenario::gazebo::JointPtr>;
-%template(VectorOfContactData) std::vector<scenario::base::ContactData>;
+%template(Vector_contact) std::vector<scenario::base::Contact>;
+%template(Vector_contact_point) std::vector<scenario::base::ContactPoint>;
 
 // Rename all methods to undercase with _ separators excluding the classes.
 // Keep all template instantations above.
@@ -52,9 +53,10 @@
 %rename("") Model;
 %rename("") World;
 %rename("") Limit;
+%rename("") Contact;
 %rename("") JointType;
 %rename("") JointLimit;
-%rename("") ContactData;
+%rename("") ContactPoint;
 %rename("") ECMSingleton;
 %rename("") PhysicsEngine;
 %rename("") GazeboSimulator;
