@@ -31,3 +31,6 @@ world.set_physics_engine(engine=scenario.PhysicsEngine_dart)
 
 # Print the models of the world (just the flat ground plane)
 print(world.model_names())
+
+# This common initialization can be done with the following helper function:
+# gym_ignition.utils.scenario.init_gazebo_sim
