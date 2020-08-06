@@ -8,8 +8,26 @@ from gym_ignition.utils.scenario import init_gazebo_sim
 import tempfile
 import time
 
-# Configuration
-GUI = True
+###############################
+# Experiment Configuration
+###############################
+
+GUI = True      # Render scene
+scenario.set_verbosity(level=2)     # Set the verbosity
+
+num_cubes = 7   # Number of cubes
+cubes_colors = ((1., 0., 0., 1.),   # Cubes color codes
+                (0., 1., 0., 1.),
+                (0., 0., 1., 1.),
+                (1., 1., 0., 1.),
+                (1., 0., 1., 1.),
+                (0., 1., 1., 1.),
+                (1., 1., 1., 1.))
+
+cubes_coulomb_frictions = (0., 0.5, 1., 3., 100., 0.5, 0.5)     # Cubes Coulomb friction coefficients
+slip_coefficients = (0., 0., 0., 0., 0., 0., 1.)                # Cubes slip coefficients
+applied_force_magnitudes = (20., 20., 20., 20., 20., 20., 20.)  # Magnitudes of applied forces
+force_duration = 0.2                                            # Duration of applied forces
 
 
 # Function returning the URDF of a cube
@@ -17,7 +35,8 @@ GUI = True
 def get_cube_urdf(mass: float = 5.0,
                   edge: float = 0.2,
                   color: tuple = (1, 1, 1, 1),
-                  coulomb_friction: float = 50.0) -> str:
+                  coulomb_friction: float = 50.0,
+                  slip: float = 0.0) -> str:
 
     i = 1 / 12 * mass * (edge ** 2 + edge ** 2)
     cube_urdf = f"""
@@ -38,7 +57,10 @@ def get_cube_urdf(mass: float = 5.0,
                 <surface>
                   <friction>
                     <ode>
-                      <mu>{coulomb_friction}</mu>
+                        <mu>{coulomb_friction}</mu>
+                        <mu2>{coulomb_friction}</mu2>
+                        <slip1>{slip}</slip1>
+                        <slip2>{slip}</slip2>
                     </ode>
                   </friction>
                 </surface>
@@ -72,6 +94,8 @@ def get_cube_urdf(mass: float = 5.0,
                     <ode>
                         <mu>{coulomb_friction}</mu>
                         <mu2>{coulomb_friction}</mu2>
+                        <slip1>{slip}</slip1>
+                        <slip2>{slip}</slip2>
                     </ode>
                 </friction>
               </surface>
@@ -81,30 +105,13 @@ def get_cube_urdf(mass: float = 5.0,
     return cube_urdf
 
 
-# Set the verbosity
-scenario.set_verbosity(level=2)
-
 # Get the default simulator and the default empty world
 gazebo, world = init_gazebo_sim()
 
-num_cubes = 5
-cubes_colors = ((1., 0., 0., 1.),
-                (0., 1., 0., 1.),
-                (0., 0., 1., 1.),
-                (1., 1., 0., 1.),
-                (1., 0., 1., 1.))
-cubes_coulomb_frictions = (0., 0.5, 1., 3., 100.)
-# cubes_coulomb_frictions = (0., 1., 2., 3., 4.)
-# cubes_coulomb_frictions = (0., 25., 50., 75., 100.)
-# cubes_coulomb_frictions = (0., 250., 500., 750., 1000.)
-# applied_force_magnitudes = (10., 10., 10., 10., 10.)
-applied_force_magnitudes = (20., 20., 20., 20., 20.)
-force_duration = 0.2
-
 # Insert cube models specifying the pose and the model name
-for i in range(5):
+for i in range(num_cubes):
     model_name = "cube_" + str(i)
-    model_pose = scenario.Pose([0., -2.0 + i, 0.25], [1., 0, 0, 0])
+    model_pose = scenario.Pose([0., 3.0 - i, 0.25], [1., 0, 0, 0])
 
     # Write the cube URDF to a temporary file
     handle, model_file = tempfile.mkstemp()
@@ -112,7 +119,8 @@ for i in range(5):
         f.write(get_cube_urdf(mass=0.5,
                               edge=0.5,
                               color=cubes_colors[i],
-                              coulomb_friction=cubes_coulomb_frictions[i]))
+                              coulomb_friction=cubes_coulomb_frictions[i],
+                              slip=slip_coefficients[i]))
 
     world.insert_model(model_file,
                        model_pose,
@@ -132,7 +140,7 @@ ground_link: scenario.Link = ground_model.get_link("link")
 # Get the cubes models and links
 cube_models: List[scenario.Model] = []
 cube_links: List[scenario.Link] = []
-for i in range(5):
+for i in range(num_cubes):
     cube_models.append(world.get_model(model_name="cube_" + str(i)))
     cube_links.append(cube_models[i].get_link("cube"))
 
@@ -140,8 +148,8 @@ if GUI:
     gazebo.run()
     time.sleep(5)
 
-# Apply initial forces
-for i in range(5):
+# Apply forces
+for i in range(num_cubes):
     force = [applied_force_magnitudes[i], 0., 0.]
     cube_links[i].apply_world_force(force, force_duration)
 
@@ -151,13 +159,13 @@ for i in range(10000):
 
 # Print traveled distances along X
 print("Traveled distance (x):")
-for i in range(5):
+for i in range(num_cubes):
     print("Cube #" + str(i) + ": " + '%.2f' % cube_links[i].position()[0])
 print()
 
 # Print linear velocities along X
 print("Linear velocity(x):")
-for i in range(5):
+for i in range(num_cubes):
     print("Cube #" + str(i) + ": " + '%.2f' % cube_links[i].body_linear_velocity()[0])
 
 if GUI:
