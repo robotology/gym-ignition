@@ -2,6 +2,7 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+from typing import List
 from gym_ignition import scenario_bindings as scenario
 from gym_ignition.utils.scenario import init_gazebo_sim
 import tempfile
@@ -129,11 +130,11 @@ ground_model: scenario.Model = world.get_model("ground_plane")
 ground_link: scenario.Link = ground_model.get_link("link")
 
 # Get the cubes models and links
-cube_model = []
-cube_links = []
+cube_models: List[scenario.Model] = []
+cube_links: List[scenario.Link] = []
 for i in range(5):
-    cube_model.append(world.get_model(model_name="cube_"+str(i)))
-    cube_links.append(cube_model[i].get_link("cube"))
+    cube_models.append(world.get_model(model_name="cube_" + str(i)))
+    cube_links.append(cube_models[i].get_link("cube"))
 
 if GUI:
     gazebo.run()
@@ -145,8 +146,19 @@ for i in range(5):
     cube_links[i].apply_world_force(force, force_duration)
 
 # Execute simulation
-for i in range(20000):
+for i in range(10000):
     gazebo.run()
+
+# Print traveled distances along X
+print("Traveled distance (x):")
+for i in range(5):
+    print("Cube #" + str(i) + ": " + '%.2f' % cube_links[i].position()[0])
+print()
+
+# Print linear velocities along X
+print("Linear velocity(x):")
+for i in range(5):
+    print("Cube #" + str(i) + ": " + '%.2f' % cube_links[i].body_linear_velocity()[0])
 
 if GUI:
     time.sleep(5)
