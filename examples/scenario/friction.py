@@ -30,7 +30,7 @@ applied_force_magnitudes = (20., 20., 20., 20., 20., 20., 20.)  # Magnitudes of 
 force_duration = 0.2                                            # Duration of applied forces
 
 
-# Function returning the URDF of a cube
+# Helper function returning the URDF of a cube
 # TODO: Use @dataclass approach with urdf() method
 def get_cube_urdf(mass: float = 5.0,
                   edge: float = 0.2,
