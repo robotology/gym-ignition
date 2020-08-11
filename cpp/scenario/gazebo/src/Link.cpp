@@ -25,7 +25,6 @@
  */
 
 #include "scenario/gazebo/Link.h"
-
 #include "scenario/gazebo/Log.h"
 #include "scenario/gazebo/Model.h"
 #include "scenario/gazebo/World.h"
@@ -80,12 +79,12 @@ Link::Link()
 uint64_t Link::id() const
 {
     // Get the parent world
-    WorldPtr parentWorld = utils::getParentWorld(
+    core::WorldPtr parentWorld = utils::getParentWorld(
         pImpl->ecm, pImpl->eventManager, pImpl->linkEntity);
     assert(parentWorld);
 
     // Get the parent model
-    ModelPtr parentModel = utils::getParentModel(
+    core::ModelPtr parentModel = utils::getParentModel(
         pImpl->ecm, pImpl->eventManager, pImpl->linkEntity);
     assert(parentModel);
 
@@ -398,7 +397,7 @@ bool Link::inContact() const
     return this->contacts().empty() ? false : true;
 }
 
-std::vector<scenario::base::Contact> Link::contacts() const
+std::vector<scenario::core::Contact> Link::contacts() const
 {
     std::vector<ignition::gazebo::Entity> collisionEntities;
 
@@ -427,7 +426,7 @@ std::vector<scenario::base::Contact> Link::contacts() const
     using BodyNameA = std::string;
     using BodyNameB = std::string;
     using CollisionsInContact = std::pair<BodyNameA, BodyNameB>;
-    auto contactsMap = std::map<CollisionsInContact, base::Contact>();
+    auto contactsMap = std::map<CollisionsInContact, core::Contact>();
 
     for (const auto collisionEntity : collisionEntities) {
 
@@ -438,7 +437,7 @@ std::vector<scenario::base::Contact> Link::contacts() const
                 pImpl->ecm, collisionEntity);
 
         // Convert the ignition msg
-        std::vector<base::Contact> collisionContacts =
+        std::vector<core::Contact> collisionContacts =
             utils::fromIgnitionContactsMsgs(pImpl->ecm, contactSensorData);
         //        assert(collisionContacts.size() <= 1);
 
@@ -462,7 +461,7 @@ std::vector<scenario::base::Contact> Link::contacts() const
     }
 
     // Move data from the map to the output vector
-    std::vector<base::Contact> allContacts;
+    std::vector<core::Contact> allContacts;
     allContacts.reserve(contactsMap.size());
 
     for (auto& [_, contact] : contactsMap) {
