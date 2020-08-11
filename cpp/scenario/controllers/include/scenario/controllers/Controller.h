@@ -34,20 +34,19 @@
 #include <string>
 #include <vector>
 
-namespace scenario {
-    namespace controllers {
-        class Controller;
-        class UseScenarioModel;
-        class SetBaseReferences;
-        class SetJointReferences;
-        using ControllerPtr = std::shared_ptr<Controller>;
-        constexpr std::array<double, 3> g = {0, 0, -9.80665};
-    } // namespace controllers
-    namespace gazebo {
-        class Model;
-        using ModelPtr = std::shared_ptr<Model>;
-    } // namespace gazebo
-} // namespace scenario
+namespace scenario::controllers {
+    class Controller;
+    class UseScenarioModel;
+    class SetBaseReferences;
+    class SetJointReferences;
+    using ControllerPtr = std::shared_ptr<Controller>;
+    constexpr std::array<double, 3> g = {0, 0, -9.80665};
+} // namespace scenario::controllers
+
+namespace scenario::core {
+    class Model;
+    using ModelPtr = std::shared_ptr<Model>;
+} // namespace scenario::core
 
 class scenario::controllers::Controller
     : public std::enable_shared_from_this<scenario::controllers::Controller>
@@ -72,7 +71,7 @@ public:
     virtual bool updateStateFromModel() = 0;
 
 protected:
-    gazebo::ModelPtr m_model;
+    core::ModelPtr m_model;
 };
 
 class scenario::controllers::SetBaseReferences

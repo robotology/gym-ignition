@@ -35,15 +35,14 @@
 #include <string>
 #include <vector>
 
-namespace scenario {
-    namespace gazebo {
-        class Model;
-    } // namespace gazebo
-    namespace controllers {
-        class ControllersFactory;
-        class ComputedTorqueFixedBase;
-    } // namespace controllers
-} // namespace scenario
+namespace scenario::core {
+    class Model;
+} // namespace scenario::core
+
+namespace scenario::controllers {
+    class ControllersFactory;
+    class ComputedTorqueFixedBase;
+} // namespace scenario::controllers
 
 class scenario::controllers::ComputedTorqueFixedBase final
     : public scenario::controllers::Controller
@@ -53,7 +52,7 @@ class scenario::controllers::ComputedTorqueFixedBase final
 public:
     ComputedTorqueFixedBase() = delete;
     ComputedTorqueFixedBase(const std::string& urdfFile,
-                            std::shared_ptr<gazebo::Model> model,
+                            std::shared_ptr<core::Model> model,
                             const std::vector<double>& kp,
                             const std::vector<double>& kd,
                             const std::vector<std::string>& controlledJoints,

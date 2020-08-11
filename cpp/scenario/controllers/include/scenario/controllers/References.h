@@ -30,12 +30,10 @@
 #include <array>
 #include <vector>
 
-namespace scenario {
-    namespace controllers {
-        struct BaseReferences;
-        struct JointReferences;
-    } // namespace controllers
-} // namespace scenario
+namespace scenario::controllers {
+    struct BaseReferences;
+    struct JointReferences;
+} // namespace scenario::controllers
 
 struct scenario::controllers::BaseReferences
 {
