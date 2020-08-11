@@ -72,8 +72,7 @@ scenario::plugins::gazebo::ControllersFactory& ControllersFactory::Instance()
 }
 
 scenario::controllers::ControllerPtr
-ControllersFactory::get(const sdf::ElementPtr context,
-                        scenario::gazebo::ModelPtr model)
+ControllersFactory::get(const sdf::ElementPtr context, core::ModelPtr model)
 {
     if (!Impl::ContextValid(context)) {
         sError << "Controller context not valid" << std::endl;
@@ -101,10 +100,10 @@ ControllersFactory::get(const sdf::ElementPtr context,
         auto urdf = Impl::GetElementValueAs<std::string>("urdf", context);
         auto kp = Impl::GetElementValueAs<std::vector<double>>("kp", context);
         auto kd = Impl::GetElementValueAs<std::vector<double>>("kd", context);
-        auto gravity =
-            Impl::GetElementValueAs<std::vector<double>>("gravity", context);
-        auto joints = Impl::GetElementValueAs<std::vector<std::string>>(
-            "joints", context);
+        auto gravity = Impl::GetElementValueAs< //
+            std::vector<double>>("gravity", context);
+        auto joints = Impl::GetElementValueAs< //
+            std::vector<std::string>>("joints", context);
 
         if (gravity.size() != 3) {
             sError << "Parsed gravity does not have three elements";
@@ -120,7 +119,7 @@ ControllersFactory::get(const sdf::ElementPtr context,
                 joints,
                 std::array<double, 3>{gravity[0], gravity[1], gravity[2]});
 
-        return std::move(controller);
+        return controller;
     }
 
     return nullptr;
