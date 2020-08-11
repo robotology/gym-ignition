@@ -26,29 +26,24 @@
 #include <unordered_map>
 #include <utility>
 
-namespace scenario {
-    namespace plugins {
-        namespace gazebo {
-            class Physics;
-            template <typename PolicyT,
-                      typename ToFeatureList,
-                      typename MinimumFeatureList,
-                      template <typename, typename>
-                      class ToEntity,
-                      template <typename, typename>
-                      class MinimumEntity>
-            ignition::physics::EntityPtr<ToEntity<PolicyT, ToFeatureList>>
-            entityCast(
-                ignition::gazebo::Entity _entity,
-                const ignition::physics::EntityPtr<
-                    MinimumEntity<PolicyT, MinimumFeatureList>>& _minimumEntity,
-                std::unordered_map<ignition::gazebo::Entity,
-                                   ignition::physics::EntityPtr<
-                                       ToEntity<PolicyT, ToFeatureList>>>&
-                    _castMap);
-        } // namespace gazebo
-    } // namespace plugins
-} // namespace scenario
+namespace scenario::plugins::gazebo {
+    class Physics;
+    template <typename PolicyT,
+              typename ToFeatureList,
+              typename MinimumFeatureList,
+              template <typename, typename>
+              class ToEntity,
+              template <typename, typename>
+              class MinimumEntity>
+    ignition::physics::EntityPtr<ToEntity<PolicyT, ToFeatureList>> entityCast(
+        ignition::gazebo::Entity _entity,
+        const ignition::physics::EntityPtr<
+            MinimumEntity<PolicyT, MinimumFeatureList>>& _minimumEntity,
+        std::unordered_map<
+            ignition::gazebo::Entity,
+            ignition::physics::EntityPtr<ToEntity<PolicyT, ToFeatureList>>>&
+            _castMap);
+} // namespace scenario::plugins::gazebo
 
 class scenario::plugins::gazebo::Physics final
     : public ignition::gazebo::System
