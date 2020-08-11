@@ -25,7 +25,6 @@
  */
 
 #include "scenario/gazebo/Model.h"
-
 #include "scenario/gazebo/Joint.h"
 #include "scenario/gazebo/Link.h"
 #include "scenario/gazebo/Log.h"
@@ -75,8 +74,8 @@ public:
     using LinkName = std::string;
     using JointName = std::string;
 
-    std::unordered_map<LinkName, scenario::gazebo::LinkPtr> links;
-    std::unordered_map<JointName, scenario::gazebo::JointPtr> joints;
+    std::unordered_map<LinkName, core::LinkPtr> links;
+    std::unordered_map<JointName, core::JointPtr> joints;
 
     struct
     {
@@ -90,13 +89,14 @@ public:
     static std::vector<double> getJointDataSerialized(
         const Model* model,
         const std::vector<std::string>& jointNames,
-        std::function<double(JointPtr, const size_t)> getJointData);
+        std::function<double(core::JointPtr, const size_t)> getJointData);
 
     static bool setJointDataSerialized(
         Model* model,
         const std::vector<double>& data,
         const std::vector<std::string>& jointNames,
-        std::function<bool(JointPtr, const double, const size_t)> setDataToDOF);
+        std::function<bool(core::JointPtr, const double, const size_t)>
+            setDataToDOF);
 };
 
 Model::Model()
@@ -106,7 +106,7 @@ Model::Model()
 uint64_t Model::id() const
 {
     // Get the parent world
-    WorldPtr parentWorld = utils::getParentWorld(
+    core::WorldPtr parentWorld = utils::getParentWorld(
         pImpl->ecm, pImpl->eventManager, pImpl->modelEntity);
     assert(parentWorld);
 
@@ -150,8 +150,8 @@ bool Model::createECMResources()
 
     // Create required link resources
     sMessage << "Links:" << std::endl;
-    for (const auto& linkName : this->linkNames()) {
-        if (!this->getLink(linkName)->createECMResources()) {
+    for (const auto& link : this->links()) {
+        if (!std::static_pointer_cast<Link>(link)->createECMResources()) {
             sError << "Failed to initialize ECM link resources" << std::endl;
             return false;
         }
@@ -159,8 +159,8 @@ bool Model::createECMResources()
 
     // Create required model resources
     sMessage << "Joints:" << std::endl;
-    for (const auto& jointName : this->jointNames()) {
-        if (!this->getJoint(jointName)->createECMResources()) {
+    for (const auto& joint : this->joints()) {
+        if (!std::static_pointer_cast<Joint>(joint)->createECMResources()) {
             sError << "Failed to initialize ECM joint resources" << std::endl;
             return false;
         }
@@ -222,76 +222,6 @@ bool Model::insertModelPlugin(const std::string& libName,
     return true;
 }
 
-bool Model::historyOfAppliedJointForcesEnabled(
-    const std::vector<std::string>& jointNames) const
-{
-    const std::vector<std::string>& jointSerialization =
-        jointNames.empty() ? this->jointNames() : jointNames;
-
-    bool enabled = true;
-
-    for (const auto& joint : this->joints(jointSerialization)) {
-        enabled = enabled && joint->historyOfAppliedJointForcesEnabled();
-    }
-
-    return enabled;
-}
-
-bool Model::enableHistoryOfAppliedJointForces(
-    const bool enable,
-    const size_t maxHistorySizePerJoint,
-    const std::vector<std::string>& jointNames)
-{
-    const std::vector<std::string>& jointSerialization =
-        jointNames.empty() ? this->jointNames() : jointNames;
-
-    bool ok = true;
-
-    for (const auto& joint : this->joints(jointSerialization)) {
-        ok = ok
-             && joint->enableHistoryOfAppliedJointForces(
-                 enable, maxHistorySizePerJoint);
-    }
-
-    return ok;
-}
-
-std::vector<double> Model::historyOfAppliedJointForces(
-    const std::vector<std::string>& jointNames) const
-{
-    const std::vector<std::string>& jointSerialization =
-        jointNames.empty() ? this->jointNames() : jointNames;
-
-    std::vector<double> history;
-    std::vector<double> allAppliedJointForces;
-
-    for (const auto& joint : this->joints(jointSerialization)) {
-        history = joint->historyOfAppliedJointForces();
-        std::move(history.begin(),
-                  history.end(),
-                  std::back_inserter(allAppliedJointForces));
-
-        if (joint->name() == jointSerialization.front()) {
-            history.reserve(jointSerialization.size() * history.size());
-        }
-    }
-
-    // Given:
-    // * <j_1>: vector 1xH of torques of joint 1
-    // * <tau_t>: vector 1xn of torques of the considered joints at a given t
-    //
-    // We want to convert the allAppliedJointForces:
-    // * From: <j_1><j_2>...<j_n>
-    // * To:   <tau_t-H>...<tau_t-2><tau_t-1><tau_t>
-    //
-    // In other words, we want that the torques applied at the last step are
-    // piled up in the end of the returned vector.
-    utils::rowMajorToColumnMajor(
-        allAppliedJointForces, jointSerialization.size(), history.size());
-
-    return allAppliedJointForces;
-}
-
 bool Model::valid() const
 {
     // TODO: extend the checks
@@ -341,7 +271,7 @@ double Model::totalMass(const std::vector<std::string>& linkNames) const
     return mass;
 }
 
-scenario::gazebo::LinkPtr Model::getLink(const std::string& linkName) const
+scenario::core::LinkPtr Model::getLink(const std::string& linkName) const
 {
     if (pImpl->links.find(linkName) != pImpl->links.end()) {
         assert(pImpl->links.at(linkName));
@@ -367,7 +297,7 @@ scenario::gazebo::LinkPtr Model::getLink(const std::string& linkName) const
     return link;
 }
 
-scenario::gazebo::JointPtr Model::getJoint(const std::string& jointName) const
+scenario::core::JointPtr Model::getJoint(const std::string& jointName) const
 {
     if (pImpl->joints.find(jointName) != pImpl->joints.end()) {
         assert(pImpl->joints.at(jointName));
@@ -521,6 +451,76 @@ bool Model::setControllerPeriod(const double period)
     return true;
 }
 
+bool Model::enableHistoryOfAppliedJointForces(
+    const bool enable,
+    const size_t maxHistorySizePerJoint,
+    const std::vector<std::string>& jointNames)
+{
+    const std::vector<std::string>& jointSerialization =
+        jointNames.empty() ? this->jointNames() : jointNames;
+
+    bool ok = true;
+
+    for (const auto& joint : this->joints(jointSerialization)) {
+        ok = ok
+             && joint->enableHistoryOfAppliedJointForces(
+                 enable, maxHistorySizePerJoint);
+    }
+
+    return ok;
+}
+
+bool Model::historyOfAppliedJointForcesEnabled(
+    const std::vector<std::string>& jointNames) const
+{
+    const std::vector<std::string>& jointSerialization =
+        jointNames.empty() ? this->jointNames() : jointNames;
+
+    bool enabled = true;
+
+    for (const auto& joint : this->joints(jointSerialization)) {
+        enabled = enabled && joint->historyOfAppliedJointForcesEnabled();
+    }
+
+    return enabled;
+}
+
+std::vector<double> Model::historyOfAppliedJointForces(
+    const std::vector<std::string>& jointNames) const
+{
+    const std::vector<std::string>& jointSerialization =
+        jointNames.empty() ? this->jointNames() : jointNames;
+
+    std::vector<double> history;
+    std::vector<double> allAppliedJointForces;
+
+    for (const auto& joint : this->joints(jointSerialization)) {
+        history = joint->historyOfAppliedJointForces();
+        std::move(history.begin(),
+                  history.end(),
+                  std::back_inserter(allAppliedJointForces));
+
+        if (joint->name() == jointSerialization.front()) {
+            history.reserve(jointSerialization.size() * history.size());
+        }
+    }
+
+    // Given:
+    // * <j_1>: vector 1xH of torques of joint 1
+    // * <tau_t>: vector 1xn of torques of the considered joints at a given t
+    //
+    // We want to convert the allAppliedJointForces:
+    // * From: <j_1><j_2>...<j_n>
+    // * To:   <tau_t-H>...<tau_t-2><tau_t-1><tau_t>
+    //
+    // In other words, we want that the torques applied at the last step are
+    // piled up in the end of the returned vector.
+    utils::rowMajorToColumnMajor(
+        allAppliedJointForces, jointSerialization.size(), history.size());
+
+    return allAppliedJointForces;
+}
+
 bool Model::contactsEnabled() const
 {
     bool enabled = true;
@@ -579,13 +579,13 @@ std::vector<std::string> Model::linksInContact() const
     return pImpl->buffers.linksInContact;
 }
 
-std::vector<scenario::base::Contact>
+std::vector<scenario::core::Contact>
 Model::contacts(const std::vector<std::string>& linkNames) const
 {
     const std::vector<std::string>& linkSerialization =
         linkNames.empty() ? this->linkNames() : linkNames;
 
-    std::vector<scenario::base::Contact> allContacts;
+    std::vector<scenario::core::Contact> allContacts;
 
     for (const auto& linkName : linkSerialization) {
         auto contacts = this->getLink(linkName)->contacts();
@@ -600,7 +600,7 @@ Model::contacts(const std::vector<std::string>& linkNames) const
 std::vector<double>
 Model::jointPositions(const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->position(dof);
     };
 
@@ -610,14 +610,14 @@ Model::jointPositions(const std::vector<std::string>& jointNames) const
 std::vector<double>
 Model::jointVelocities(const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->velocity(dof);
     };
 
     return Impl::getJointDataSerialized(this, jointNames, lambda);
 }
 
-scenario::base::JointLimit
+scenario::core::JointLimit
 Model::jointLimits(const std::vector<std::string>& jointNames) const
 {
     const std::vector<std::string>& jointSerialization =
@@ -635,10 +635,10 @@ Model::jointLimits(const std::vector<std::string>& jointNames) const
         std::move(limit.max.begin(), limit.max.end(), std::back_inserter(high));
     }
 
-    return base::JointLimit(low, high);
+    return core::JointLimit(low, high);
 }
 
-bool Model::setJointControlMode(const scenario::base::JointControlMode mode,
+bool Model::setJointControlMode(const scenario::core::JointControlMode mode,
                                 const std::vector<std::string>& jointNames)
 {
     const std::vector<std::string>& jointSerialization =
@@ -653,13 +653,13 @@ bool Model::setJointControlMode(const scenario::base::JointControlMode mode,
     return ok;
 }
 
-std::vector<LinkPtr>
+std::vector<scenario::core::LinkPtr>
 Model::links(const std::vector<std::string>& linkNames) const
 {
     const std::vector<std::string>& linkSerialization =
         linkNames.empty() ? this->linkNames() : linkNames;
 
-    std::vector<LinkPtr> links;
+    std::vector<core::LinkPtr> links;
 
     for (const auto& linkName : linkSerialization) {
         links.push_back(this->getLink(linkName));
@@ -668,13 +668,13 @@ Model::links(const std::vector<std::string>& linkNames) const
     return links;
 }
 
-std::vector<JointPtr>
+std::vector<scenario::core::JointPtr>
 Model::joints(const std::vector<std::string>& jointNames) const
 {
     const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? this->jointNames() : jointNames;
 
-    std::vector<JointPtr> joints;
+    std::vector<core::JointPtr> joints;
 
     for (const auto& jointName : jointSerialization) {
         joints.push_back(this->getJoint(jointName));
@@ -686,8 +686,9 @@ Model::joints(const std::vector<std::string>& jointNames) const
 bool Model::setJointPositionTargets(const std::vector<double>& positions,
                                     const std::vector<std::string>& jointNames)
 {
-    auto lambda =
-        [](JointPtr joint, const double position, const size_t dof) -> bool {
+    auto lambda = [](core::JointPtr joint,
+                     const double position,
+                     const size_t dof) -> bool {
         return joint->setPositionTarget(position, dof);
     };
 
@@ -697,8 +698,9 @@ bool Model::setJointPositionTargets(const std::vector<double>& positions,
 bool Model::setJointVelocityTargets(const std::vector<double>& velocities,
                                     const std::vector<std::string>& jointNames)
 {
-    auto lambda =
-        [](JointPtr joint, const double velocity, const size_t dof) -> bool {
+    auto lambda = [](core::JointPtr joint,
+                     const double velocity,
+                     const size_t dof) -> bool {
         return joint->setVelocityTarget(velocity, dof);
     };
 
@@ -706,15 +708,17 @@ bool Model::setJointVelocityTargets(const std::vector<double>& velocities,
 }
 
 bool Model::setJointAccelerationTargets(
-    const std::vector<double>& velocities,
+    const std::vector<double>& accelerations,
     const std::vector<std::string>& jointNames)
 {
-    auto lambda =
-        [](JointPtr joint, const double velocity, const size_t dof) -> bool {
-        return joint->setAccelerationTarget(velocity, dof);
+    auto lambda = [](core::JointPtr joint,
+                     const double acceleration,
+                     const size_t dof) -> bool {
+        return joint->setAccelerationTarget(acceleration, dof);
     };
 
-    return Impl::setJointDataSerialized(this, velocities, jointNames, lambda);
+    return Impl::setJointDataSerialized(
+        this, accelerations, jointNames, lambda);
 }
 
 bool Model::setJointGeneralizedForceTargets(
@@ -722,7 +726,7 @@ bool Model::setJointGeneralizedForceTargets(
     const std::vector<std::string>& jointNames)
 {
     auto lambda =
-        [](JointPtr joint, const double force, const size_t dof) -> bool {
+        [](core::JointPtr joint, const double force, const size_t dof) -> bool {
         return joint->setGeneralizedForceTarget(force, dof);
     };
 
@@ -732,8 +736,9 @@ bool Model::setJointGeneralizedForceTargets(
 bool Model::resetJointPositions(const std::vector<double>& positions,
                                 const std::vector<std::string>& jointNames)
 {
-    auto lambda =
-        [](JointPtr joint, const double position, const size_t dof) -> bool {
+    auto lambda = [](core::JointPtr joint,
+                     const double position,
+                     const size_t dof) -> bool {
         return joint->resetPosition(position, dof);
     };
 
@@ -743,8 +748,9 @@ bool Model::resetJointPositions(const std::vector<double>& positions,
 bool Model::resetJointVelocities(const std::vector<double>& velocities,
                                  const std::vector<std::string>& jointNames)
 {
-    auto lambda =
-        [](JointPtr joint, const double velocity, const size_t dof) -> bool {
+    auto lambda = [](core::JointPtr joint,
+                     const double velocity,
+                     const size_t dof) -> bool {
         return joint->resetVelocity(velocity, dof);
     };
 
@@ -754,7 +760,7 @@ bool Model::resetJointVelocities(const std::vector<double>& velocities,
 std::vector<double>
 Model::jointPositionTargets(const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->positionTarget(dof);
     };
 
@@ -764,7 +770,7 @@ Model::jointPositionTargets(const std::vector<std::string>& jointNames) const
 std::vector<double>
 Model::jointVelocityTargets(const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->velocityTarget(dof);
     };
 
@@ -774,7 +780,7 @@ Model::jointVelocityTargets(const std::vector<std::string>& jointNames) const
 std::vector<double> Model::jointAccelerationTargets(
     const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->accelerationTarget(dof);
     };
 
@@ -784,7 +790,7 @@ std::vector<double> Model::jointAccelerationTargets(
 std::vector<double> Model::jointGeneralizedForceTargets(
     const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->generalizedForceTarget(dof);
     };
 
@@ -814,38 +820,6 @@ std::string Model::baseFrame() const
                                             candidateBaseLinks.front());
 
     return baseLinkName;
-}
-
-bool Model::setBaseFrame(const std::string& frameName)
-{
-    const auto linkNames = this->linkNames();
-
-    if (std::find(linkNames.begin(), linkNames.end(), frameName)
-        == linkNames.end()) {
-        sError
-            << "Failed to set the model base on the frame of nonexistent link '"
-            << frameName << "'" << std::endl;
-        return false;
-    }
-
-    if (frameName == this->baseFrame()) {
-        sDebug << "Frame '" << baseFrame()
-               << "' is already the current model base" << std::endl;
-        return true;
-    }
-
-    sError << "Changing the base link is not yet supported" << std::endl;
-    throw exceptions::NotImplementedError(__FUNCTION__);
-}
-
-bool Model::fixedBase() const
-{
-    throw exceptions::NotImplementedError(__FUNCTION__);
-}
-
-bool Model::setAsFixedBase(const bool fixedBase)
-{
-    throw exceptions::NotImplementedError(__FUNCTION__);
 }
 
 std::array<double, 3> Model::basePosition() const
@@ -927,7 +901,7 @@ std::array<double, 3> Model::baseWorldLinearVelocity() const
         M_H_B,
         W_R_B);
 
-    // Return the linear partmodel6DVelocity.first
+    // Return the linear part
     return utils::fromIgnitionVector(modelLinearVelocity);
 }
 
@@ -949,7 +923,7 @@ bool Model::resetBasePose(const std::array<double, 3>& position,
                           const std::array<double, 4>& orientation)
 {
     // Construct the desired transform between world and base
-    base::Pose pose;
+    core::Pose pose;
     pose.position = position;
     pose.orientation = orientation;
     ignition::math::Pose3d world_H_base = utils::toIgnitionPose(pose);
@@ -1044,7 +1018,7 @@ bool Model::setBasePoseTarget(const std::array<double, 3>& position,
                               const std::array<double, 4>& orientation)
 {
     ignition::math::Pose3d basePoseTarget =
-        utils::toIgnitionPose(base::Pose{position, orientation});
+        utils::toIgnitionPose(core::Pose{position, orientation});
 
     utils::setComponentData<ignition::gazebo::components::BasePoseTarget>(
         pImpl->ecm, pImpl->modelEntity, basePoseTarget);
@@ -1211,7 +1185,7 @@ std::array<double, 3> Model::baseWorldAngularAccelerationTarget() const
 std::vector<double> Model::Impl::getJointDataSerialized(
     const Model* model,
     const std::vector<std::string>& jointNames,
-    std::function<double(JointPtr, const size_t)> getJointData)
+    std::function<double(core::JointPtr, const size_t)> getJointData)
 {
     const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? model->jointNames() : jointNames;
@@ -1232,7 +1206,8 @@ bool Model::Impl::setJointDataSerialized(
     Model* model,
     const std::vector<double>& data,
     const std::vector<std::string>& jointNames,
-    std::function<bool(JointPtr, const double, const size_t)> setJointData)
+    std::function<bool(core::JointPtr, const double, const size_t)>
+        setJointData)
 {
     std::vector<std::string> jointSerialization;
 
