@@ -23,12 +23,31 @@ target_include_directories(ScenarioCore INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
+# =================
+# ScenarioCoreUtils
+# =================
+
+add_library(ScenarioCoreUtils
+    include/scenario/core/utils/signals.h
+    include/scenario/core/utils/utils.h
+    src/signals.cpp
+    src/utils.cpp)
+
+target_include_directories(ScenarioCoreUtils PUBLIC
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    target_compile_options(ScenarioCoreUtils PRIVATE
+        -DSCENARIO_CMAKE_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
+endif()
+
 # ===================
 # Install the targets
 # ===================
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
     install(
-        TARGETS ScenarioCore
+        TARGETS ScenarioCore ScenarioCoreUtils
         EXPORT scenario)
 endif()

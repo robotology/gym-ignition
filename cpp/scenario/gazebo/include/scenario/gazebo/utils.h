@@ -154,17 +154,6 @@ namespace scenario {
             std::string getRandomString(const size_t length);
 
             /**
-             * Get the install prefix used by the CMake project.
-             *
-             * @note It is defined only if the project is installed in
-             * Developer mode.
-             *
-             * @return A string with the install prefix if the project is
-             *         installed in Developer mode, an empty string otherwise.
-             */
-            std::string getInstallPrefix();
-
-            /**
              * Convert a URDF file to a SDF string.
              *
              * @param urdfFile The absolute path to the URDF file.

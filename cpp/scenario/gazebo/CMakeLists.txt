@@ -66,7 +66,6 @@ set(SCENARIO_PUBLIC_HDRS
     include/scenario/gazebo/Link.h
     include/scenario/gazebo/Log.h
     include/scenario/gazebo/utils.h
-    include/scenario/gazebo/signals.h
     include/scenario/gazebo/exceptions.h)
 
 add_library(ScenarioGazebo
@@ -77,7 +76,6 @@ add_library(ScenarioGazebo
     src/Joint.cpp
     src/Link.cpp
     src/utils.cpp
-    src/signals.cpp
     src/helpers.cpp)
 
 target_include_directories(ScenarioGazebo PUBLIC
@@ -91,11 +89,6 @@ target_link_libraries(ScenarioGazebo
 
 set_target_properties(ScenarioGazebo PROPERTIES
     PUBLIC_HEADER "${SCENARIO_PUBLIC_HDRS}")
-
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    target_compile_options(ScenarioGazebo PRIVATE
-        -DGYMIGNITION_CMAKE_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
-endif()
 
 # ===============
 # GazeboSimulator
