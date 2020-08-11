@@ -35,13 +35,9 @@
 
 #include <memory>
 
-namespace scenario {
-    namespace plugins {
-        namespace gazebo {
-            class JointController;
-        } // namespace gazebo
-    } // namespace plugins
-} // namespace scenario
+namespace scenario::plugins::gazebo {
+    class JointController;
+} // namespace scenario::plugins::gazebo
 
 class scenario::plugins::gazebo::JointController final
     : public ignition::gazebo::System
