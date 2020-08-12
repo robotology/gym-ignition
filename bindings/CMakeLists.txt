@@ -19,17 +19,28 @@ set(CMAKE_SWIG_OUTDIR ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 
-# This is needed to generate the install path of the plugins
-# during the packaging of the PyPI archives
-set(PYTHON_PACKAGE_IMPORT_NAME "gym_ignition" CACHE STRING
-    "Name of the installed package matching the desired 'import <package_name>'")
-
 if(GYMIGNITION_ENABLE_SCENARIO)
-    add_subdirectory(scenario)
+
+    add_subdirectory(core)
+    add_subdirectory(gazebo)
+#    add_subdirectory(yarp)
 
     if(GYMIGNITION_ENABLE_GYMPP)
         add_subdirectory(gympp)
     endif()
+
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+        install(
+            FILES
+            ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
+            DESTINATION ${Python3_SITELIB}/scenario)
+    else()
+        install(
+            FILES
+            ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/scenario)
+    endif()
+
 endif()
 
 
