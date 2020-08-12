@@ -5,7 +5,6 @@
 from typing import Union
 from gym_ignition_environments import tasks
 from gym_ignition_environments.models import cartpole
-from gym_ignition import scenario_bindings as bindings
 from gym_ignition.randomizers import gazebo_env_randomizer
 from gym_ignition.randomizers.gazebo_env_randomizer import MakeEnvCallable
 
@@ -29,7 +28,6 @@ class CartpoleEnvNoRandomizations(gazebo_env_randomizer.GazeboEnvRandomizer):
 
     def randomize_task(self,
                        task: SupportedTasks,
-                       gazebo: bindings.GazeboSimulator,
                        **kwargs) -> None:
         """
         Prepare the scene for cartpole tasks. It simply removes the cartpole of the
@@ -38,10 +36,15 @@ class CartpoleEnvNoRandomizations(gazebo_env_randomizer.GazeboEnvRandomizer):
         decision-making logic.
         """
 
+        if "gazebo" not in kwargs:
+            raise ValueError("gazebo kwarg not passed to the task randomizer")
+
+        gazebo = kwargs["gazebo"]
+
         # Remove the model from the simulation
         if task.model_name is not None and task.model_name in task.world.model_names():
 
-            ok_removed = task.world.remove_model(task.model_name)
+            ok_removed = task.world.to_gazebo().remove_model(task.model_name)
 
             if not ok_removed:
                 raise RuntimeError("Failed to remove the cartpole from the world")
