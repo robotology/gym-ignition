@@ -149,7 +149,7 @@ class RandomizationDataBuilder:
 
     def add(self) -> None:
         """
-        Close the chaining of methods are return to the SDF randomizer the configuration.
+        Close the chaining of methods and return to the SDF randomizer the configuration.
 
         Raises:
             RuntimeError: If the XPath pattern does not find any match in the SDF.
