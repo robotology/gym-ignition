@@ -59,6 +59,8 @@ set_target_properties(ExtraComponents PROPERTIES
 # ScenarioGazebo
 # ==============
 
+find_package(ignition-common3 REQUIRED)
+
 set(SCENARIO_GAZEBO_PUBLIC_HDRS
     include/scenario/gazebo/GazeboEntity.h
     include/scenario/gazebo/World.h
@@ -86,6 +88,7 @@ target_include_directories(ScenarioGazebo PUBLIC
 target_link_libraries(ScenarioGazebo
     PUBLIC
     ScenarioCore
+    ignition-common3::ignition-common3
     PRIVATE
     ExtraComponents
     ScenarioCoreUtils
