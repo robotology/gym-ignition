@@ -222,6 +222,127 @@ bool Model::insertModelPlugin(const std::string& libName,
     return true;
 }
 
+bool Model::resetJointPositions(const std::vector<double>& positions,
+                                const std::vector<std::string>& jointNames)
+{
+    auto lambda = [](core::JointPtr joint,
+                     const double position,
+                     const size_t dof) -> bool {
+        return std::static_pointer_cast<Joint>(joint)->resetPosition(position,
+                                                                     dof);
+    };
+
+    return Impl::setJointDataSerialized(this, positions, jointNames, lambda);
+}
+
+bool Model::resetJointVelocities(const std::vector<double>& velocities,
+                                 const std::vector<std::string>& jointNames)
+{
+    auto lambda = [](core::JointPtr joint,
+                     const double velocity,
+                     const size_t dof) -> bool {
+        return std::static_pointer_cast<Joint>(joint)->resetVelocity(velocity,
+                                                                     dof);
+    };
+
+    return Impl::setJointDataSerialized(this, velocities, jointNames, lambda);
+}
+
+bool Model::resetBasePose(const std::array<double, 3>& position,
+                          const std::array<double, 4>& orientation)
+{
+    // Construct the desired transform between world and base
+    core::Pose pose;
+    pose.position = position;
+    pose.orientation = orientation;
+    ignition::math::Pose3d world_H_base = utils::toIgnitionPose(pose);
+
+    // Get the entity of the canonical link
+    auto canonicalLinkEntity = pImpl->ecm->EntityByComponents(
+        ignition::gazebo::components::Link(),
+        ignition::gazebo::components::CanonicalLink(),
+        ignition::gazebo::components::Name(this->baseFrame()),
+        ignition::gazebo::components::ParentEntity(pImpl->modelEntity));
+
+    if (canonicalLinkEntity == ignition::gazebo::kNullEntity) {
+        sError << "Failed to get entity of canonical link" << std::endl;
+        return false;
+    }
+
+    // Get the Pose component of the canonical link.
+    // This is the fixed transformation between the model and the base.
+    auto& model_H_base = utils::getExistingComponentData< //
+        ignition::gazebo::components::Pose>(pImpl->ecm, canonicalLinkEntity);
+
+    // Compute the robot pose that corresponds to the desired base pose
+    const ignition::math::Pose3d& world_H_model =
+        world_H_base * model_H_base.Inverse();
+
+    // Store the new pose
+    utils::setComponentData<ignition::gazebo::components::WorldPoseCmd>(
+        pImpl->ecm, pImpl->modelEntity, world_H_model);
+
+    return true;
+}
+
+bool Model::resetBasePosition(const std::array<double, 3>& position)
+{
+    return this->resetBasePose(position, this->baseOrientation());
+}
+
+bool Model::resetBaseOrientation(const std::array<double, 4>& orientation)
+{
+    return this->resetBasePose(this->basePosition(), orientation);
+}
+
+bool Model::resetBaseWorldLinearVelocity(const std::array<double, 3>& linear)
+{
+    return this->resetBaseWorldVelocity(linear,
+                                        this->baseWorldAngularVelocity());
+}
+
+bool Model::resetBaseWorldAngularVelocity(const std::array<double, 3>& angular)
+{
+    return this->resetBaseWorldVelocity(this->baseWorldLinearVelocity(),
+                                        angular);
+}
+
+bool Model::resetBaseWorldVelocity(const std::array<double, 3>& linear,
+                                   const std::array<double, 3>& angular)
+{
+    // Get the entity of the canonical (base) link
+    auto canonicalLinkEntity = pImpl->ecm->EntityByComponents(
+        ignition::gazebo::components::Link(),
+        ignition::gazebo::components::CanonicalLink(),
+        ignition::gazebo::components::Name(this->baseFrame()),
+        ignition::gazebo::components::ParentEntity(pImpl->modelEntity));
+
+    // Get the Pose component of the canonical link.
+    // This is the fixed transformation between the model and the base.
+    auto& M_H_B = utils::getExistingComponentData< //
+        ignition::gazebo::components::Pose>(pImpl->ecm, canonicalLinkEntity);
+
+    // Get the rotation between base link and world
+    auto W_R_B = utils::toIgnitionQuaternion(
+        this->getLink(this->baseFrame())->orientation());
+
+    // Create the new model velocity
+    ignition::gazebo::WorldVelocity baseWorldVelocity;
+
+    // Compute the mixed velocity of the base link
+    std::tie(baseWorldVelocity.linear, baseWorldVelocity.angular) =
+        utils::fromModelToBaseVelocity(utils::toIgnitionVector3(linear),
+                                       utils::toIgnitionVector3(angular),
+                                       M_H_B,
+                                       W_R_B);
+
+    // Store the new velocity
+    utils::setComponentData<ignition::gazebo::components::WorldVelocityCmd>(
+        pImpl->ecm, pImpl->modelEntity, baseWorldVelocity);
+
+    return true;
+}
+
 bool Model::valid() const
 {
     // TODO: extend the checks
@@ -733,30 +854,6 @@ bool Model::setJointGeneralizedForceTargets(
     return Impl::setJointDataSerialized(this, forces, jointNames, lambda);
 }
 
-bool Model::resetJointPositions(const std::vector<double>& positions,
-                                const std::vector<std::string>& jointNames)
-{
-    auto lambda = [](core::JointPtr joint,
-                     const double position,
-                     const size_t dof) -> bool {
-        return joint->resetPosition(position, dof);
-    };
-
-    return Impl::setJointDataSerialized(this, positions, jointNames, lambda);
-}
-
-bool Model::resetJointVelocities(const std::vector<double>& velocities,
-                                 const std::vector<std::string>& jointNames)
-{
-    auto lambda = [](core::JointPtr joint,
-                     const double velocity,
-                     const size_t dof) -> bool {
-        return joint->resetVelocity(velocity, dof);
-    };
-
-    return Impl::setJointDataSerialized(this, velocities, jointNames, lambda);
-}
-
 std::vector<double>
 Model::jointPositionTargets(const std::vector<std::string>& jointNames) const
 {
@@ -917,101 +1014,6 @@ std::array<double, 3> Model::baseWorldAngularVelocity() const
 
     // Return the angular velocity of the base link
     return this->getLink(baseLink)->worldAngularVelocity();
-}
-
-bool Model::resetBasePose(const std::array<double, 3>& position,
-                          const std::array<double, 4>& orientation)
-{
-    // Construct the desired transform between world and base
-    core::Pose pose;
-    pose.position = position;
-    pose.orientation = orientation;
-    ignition::math::Pose3d world_H_base = utils::toIgnitionPose(pose);
-
-    // Get the entity of the canonical link
-    auto canonicalLinkEntity = pImpl->ecm->EntityByComponents(
-        ignition::gazebo::components::Link(),
-        ignition::gazebo::components::CanonicalLink(),
-        ignition::gazebo::components::Name(this->baseFrame()),
-        ignition::gazebo::components::ParentEntity(pImpl->modelEntity));
-
-    if (canonicalLinkEntity == ignition::gazebo::kNullEntity) {
-        sError << "Failed to get entity of canonical link" << std::endl;
-        return false;
-    }
-
-    // Get the Pose component of the canonical link.
-    // This is the fixed transformation between the model and the base.
-    auto& model_H_base = utils::getExistingComponentData< //
-        ignition::gazebo::components::Pose>(pImpl->ecm, canonicalLinkEntity);
-
-    // Compute the robot pose that corresponds to the desired base pose
-    const ignition::math::Pose3d& world_H_model =
-        world_H_base * model_H_base.Inverse();
-
-    // Store the new pose
-    utils::setComponentData<ignition::gazebo::components::WorldPoseCmd>(
-        pImpl->ecm, pImpl->modelEntity, world_H_model);
-
-    return true;
-}
-
-bool Model::resetBasePosition(const std::array<double, 3>& position)
-{
-    return this->resetBasePose(position, this->baseOrientation());
-}
-
-bool Model::resetBaseOrientation(const std::array<double, 4>& orientation)
-{
-    return this->resetBasePose(this->basePosition(), orientation);
-}
-
-bool Model::resetBaseWorldLinearVelocity(const std::array<double, 3>& linear)
-{
-    return this->resetBaseWorldVelocity(linear,
-                                        this->baseWorldAngularVelocity());
-}
-
-bool Model::resetBaseWorldAngularVelocity(const std::array<double, 3>& angular)
-{
-    return this->resetBaseWorldVelocity(this->baseWorldLinearVelocity(),
-                                        angular);
-}
-
-bool Model::resetBaseWorldVelocity(const std::array<double, 3>& linear,
-                                   const std::array<double, 3>& angular)
-{
-    // Get the entity of the canonical (base) link
-    auto canonicalLinkEntity = pImpl->ecm->EntityByComponents(
-        ignition::gazebo::components::Link(),
-        ignition::gazebo::components::CanonicalLink(),
-        ignition::gazebo::components::Name(this->baseFrame()),
-        ignition::gazebo::components::ParentEntity(pImpl->modelEntity));
-
-    // Get the Pose component of the canonical link.
-    // This is the fixed transformation between the model and the base.
-    auto& M_H_B = utils::getExistingComponentData< //
-        ignition::gazebo::components::Pose>(pImpl->ecm, canonicalLinkEntity);
-
-    // Get the rotation between base link and world
-    auto W_R_B = utils::toIgnitionQuaternion(
-        this->getLink(this->baseFrame())->orientation());
-
-    // Create the new model velocity
-    ignition::gazebo::WorldVelocity baseWorldVelocity;
-
-    // Compute the mixed velocity of the base link
-    std::tie(baseWorldVelocity.linear, baseWorldVelocity.angular) =
-        utils::fromModelToBaseVelocity(utils::toIgnitionVector3(linear),
-                                       utils::toIgnitionVector3(angular),
-                                       M_H_B,
-                                       W_R_B);
-
-    // Store the new velocity
-    utils::setComponentData<ignition::gazebo::components::WorldVelocityCmd>(
-        pImpl->ecm, pImpl->modelEntity, baseWorldVelocity);
-
-    return true;
 }
 
 bool Model::setBasePoseTarget(const std::array<double, 3>& position,

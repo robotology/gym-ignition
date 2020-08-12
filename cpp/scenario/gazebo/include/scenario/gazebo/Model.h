@@ -79,6 +79,90 @@ public:
                            const std::string& className,
                            const std::string& context = {});
 
+    /**
+     * Reset the positions of the joints.
+     *
+     * @param positions The desired new joint positions.
+     * @param jointNames Optional vector of considered joints. By default,
+     * ``Model::jointNames`` is used.
+     * @return True for success, false otherwise.
+     */
+    bool resetJointPositions( //
+        const std::vector<double>& positions,
+        const std::vector<std::string>& jointNames = {});
+
+    /**
+     * Reset the velocities of the joints.
+     *
+     * @param velocities The desired new velocities positions.
+     * @param jointNames Optional vector of considered joints. By default,
+     * ``Model::jointNames`` is used.
+     * @return True for success, false otherwise.
+     */
+    bool resetJointVelocities( //
+        const std::vector<double>& velocities,
+        const std::vector<std::string>& jointNames = {});
+
+    /**
+     * Reset the pose of the base link.
+     *
+     * @param position The desired position of the base link in world
+     * coordinates.
+     * @param orientation The wxyz quaternion defining the desired orientation
+     * of the base link wrt the world frame.
+     * @return True for success, false otherwise.
+     */
+    bool resetBasePose(const std::array<double, 3>& position = {0, 0, 0},
+                       const std::array<double, 4>& orientation = {0, 0, 0, 0});
+
+    /**
+     * Reset the position of the base link.
+     *
+     * @param position The desired position of the base link in world
+     * coordinates.
+     * @return True for success, false otherwise.
+     */
+    bool resetBasePosition(const std::array<double, 3>& position = {0, 0, 0});
+
+    /**
+     * Reset the orientation of the base link.
+     *
+     * @param orientation The wxyz quaternion defining the desired orientation
+     * of the base link wrt the world frame.
+     * @return True for success, false otherwise.
+     */
+    bool resetBaseOrientation(
+        const std::array<double, 4>& orientation = {0, 0, 0, 0});
+
+    /**
+     * Reset the linear mixed velocity of the base link.
+     *
+     * @param linear The desired linear mixed velocity of the base link.
+     * @return True for success, false otherwise.
+     */
+    bool resetBaseWorldLinearVelocity(
+        const std::array<double, 3>& linear = {0, 0, 0});
+
+    /**
+     * Reset the angular mixed velocity of the base link.
+     *
+     * @param angular The desired angular mixed velocity of the base link.
+     * @return True for success, false otherwise.
+     */
+    bool resetBaseWorldAngularVelocity(
+        const std::array<double, 3>& angular = {0, 0, 0});
+
+    /**
+     * Reset the mixed velocity of the base link.
+     *
+     * @param linear The desired linear mixed velocity of the base link.
+     * @param angular The desired angular mixed velocity of the base link.
+     * @return True for success, false otherwise.
+     */
+    bool resetBaseWorldVelocity( //
+        const std::array<double, 3>& linear = {0, 0, 0},
+        const std::array<double, 3>& angular = {0, 0, 0});
+
     // ==========
     // Model Core
     // ==========
@@ -181,14 +265,6 @@ public:
         const std::vector<double>& forces,
         const std::vector<std::string>& jointNames = {}) override;
 
-    bool resetJointPositions( //
-        const std::vector<double>& positions,
-        const std::vector<std::string>& jointNames = {}) override;
-
-    bool resetJointVelocities( //
-        const std::vector<double>& velocities,
-        const std::vector<std::string>& jointNames = {}) override;
-
     std::vector<double> jointPositionTargets( //
         const std::vector<std::string>& jointNames = {}) const override;
 
@@ -218,26 +294,6 @@ public:
     std::array<double, 3> baseWorldLinearVelocity() const override;
 
     std::array<double, 3> baseWorldAngularVelocity() const override;
-
-    bool resetBaseWorldLinearVelocity(
-        const std::array<double, 3>& linear = {0, 0, 0}) override;
-
-    bool resetBaseWorldAngularVelocity(
-        const std::array<double, 3>& angular = {0, 0, 0}) override;
-
-    bool resetBaseWorldVelocity(
-        const std::array<double, 3>& linear = {0, 0, 0},
-        const std::array<double, 3>& angular = {0, 0, 0}) override;
-
-    bool resetBasePose(
-        const std::array<double, 3>& position = {0, 0, 0},
-        const std::array<double, 4>& orientation = {0, 0, 0, 0}) override;
-
-    bool resetBasePosition(
-        const std::array<double, 3>& position = {0, 0, 0}) override;
-
-    bool resetBaseOrientation(
-        const std::array<double, 4>& orientation = {0, 0, 0, 0}) override;
 
     // =================
     // Base Link Targets
