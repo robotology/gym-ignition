@@ -6,18 +6,18 @@ import pytest
 pytestmark = pytest.mark.scenario
 
 from ..common import utils
+from scenario import gazebo as scenario
 from ..common.utils import gazebo_fixture as gazebo
-from gym_ignition import scenario_bindings as bindings
 
 # Set the verbosity
-bindings.set_verbosity(4)
+scenario.set_verbosity(scenario.Verbosity_debug)
 
 
 @pytest.mark.parametrize("gazebo",
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_insert_multiple_worlds(gazebo: bindings.GazeboSimulator):
+def test_insert_multiple_worlds(gazebo: scenario.GazeboSimulator):
 
     empty_world_sdf = utils.get_empty_world_sdf()
     assert gazebo.insert_world_from_sdf(empty_world_sdf, "myWorld1")
@@ -41,7 +41,7 @@ def test_insert_multiple_worlds(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_insert_multiple_world(gazebo: bindings.GazeboSimulator):
+def test_insert_multiple_world(gazebo: scenario.GazeboSimulator):
 
     multi_world_sdf = utils.get_multi_world_sdf_file()
 
@@ -64,7 +64,7 @@ def test_insert_multiple_world(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_insert_multiple_world_rename(gazebo: bindings.GazeboSimulator):
+def test_insert_multiple_world_rename(gazebo: scenario.GazeboSimulator):
 
     multi_world_sdf = utils.get_multi_world_sdf_file()
 
@@ -88,7 +88,7 @@ def test_insert_multiple_world_rename(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_insert_world_multiple_calls(gazebo: bindings.GazeboSimulator):
+def test_insert_world_multiple_calls(gazebo: scenario.GazeboSimulator):
 
     single_world_sdf = utils.get_empty_world_sdf()
 

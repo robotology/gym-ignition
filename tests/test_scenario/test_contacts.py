@@ -6,12 +6,16 @@ import pytest
 pytestmark = pytest.mark.scenario
 
 import numpy as np
+from scenario import core
 from ..common import utils
 import gym_ignition_models
 from typing import Callable
 from gym_ignition.utils import misc
+from scenario import gazebo as scenario
 from ..common.utils import gazebo_fixture as gazebo
-from gym_ignition import scenario_bindings as bindings
+
+# Set the verbosity
+scenario.set_verbosity(scenario.Verbosity_debug)
 
 
 def get_cube_urdf_string_double_collision() -> str:
@@ -56,14 +60,14 @@ def get_cube_urdf_string_double_collision() -> str:
                           ((0.001, 1.0, 1), get_cube_urdf_string_double_collision)],
                          indirect=["gazebo"],
                          ids=utils.id_gazebo_fn)
-def test_cube_contact(gazebo: bindings.GazeboSimulator,
+def test_cube_contact(gazebo: scenario.GazeboSimulator,
                       get_model_str: Callable):
 
     assert gazebo.initialize()
-    world = gazebo.get_world()
+    world = gazebo.get_world().to_gazebo()
 
     # Insert the Physics system
-    assert world.set_physics_engine(bindings.PhysicsEngine_dart)
+    assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
     # Insert the ground plane
     assert world.insert_model(gym_ignition_models.get_model_file("ground_plane"))
@@ -72,8 +76,8 @@ def test_cube_contact(gazebo: bindings.GazeboSimulator,
     # Insert the cube
     cube_urdf = misc.string_to_file(get_model_str())
     assert world.insert_model(cube_urdf,
-                             bindings.Pose([0, 0, 0.15], [1., 0, 0, 0]),
-                             "cube")
+                              core.Pose([0, 0, 0.15], [1., 0, 0, 0]),
+                              "cube")
     assert len(world.model_names()) == 2
 
     # Get the cube
@@ -113,7 +117,7 @@ def test_cube_contact(gazebo: bindings.GazeboSimulator,
 
     # Forces of all contact points are combined by the following method
     assert cube.get_link("cube").contact_wrench() == \
-           pytest.approx([0, 0, np.sum(z_forces), 0, 0, 0])
+        pytest.approx([0, 0, np.sum(z_forces), 0, 0, 0])
 
 
 @pytest.mark.parametrize("gazebo, get_model_str",
@@ -121,14 +125,14 @@ def test_cube_contact(gazebo: bindings.GazeboSimulator,
                           ((0.001, 1.0, 1), get_cube_urdf_string_double_collision)],
                          indirect=["gazebo"],
                          ids=utils.id_gazebo_fn)
-def test_cube_multiple_contacts(gazebo: bindings.GazeboSimulator,
+def test_cube_multiple_contacts(gazebo: scenario.GazeboSimulator,
                                 get_model_str: Callable):
 
     assert gazebo.initialize()
-    world = gazebo.get_world()
+    world = gazebo.get_world().to_gazebo()
 
     # Insert the Physics system
-    assert world.set_physics_engine(bindings.PhysicsEngine_dart)
+    assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
     # Insert the ground plane
     assert world.insert_model(gym_ignition_models.get_model_file("ground_plane"))
@@ -137,10 +141,10 @@ def test_cube_multiple_contacts(gazebo: bindings.GazeboSimulator,
     # Insert two cubes side to side with a 10cm gap
     cube_urdf = misc.string_to_file(get_model_str())
     assert world.insert_model(cube_urdf,
-                              bindings.Pose([0, -0.15, 0.101], [1., 0, 0, 0]),
+                              core.Pose([0, -0.15, 0.101], [1., 0, 0, 0]),
                               "cube1")
     assert world.insert_model(cube_urdf,
-                              bindings.Pose([0, 0.15, 0.101], [1., 0, 0, 0]),
+                              core.Pose([0, 0.15, 0.101], [1., 0, 0, 0]),
                               "cube2")
     assert len(world.model_names()) == 3
 
@@ -171,7 +175,7 @@ def test_cube_multiple_contacts(gazebo: bindings.GazeboSimulator,
 
     # Now we make another cube fall above the gap. It will touch both cubes.
     assert world.insert_model(cube_urdf,
-                              bindings.Pose([0, 0, 0.301], [1., 0, 0, 0]),
+                              core.Pose([0, 0, 0.301], [1., 0, 0, 0]),
                               "cube3")
     assert len(world.model_names()) == 4
 
