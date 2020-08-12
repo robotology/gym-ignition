@@ -5,7 +5,7 @@
 import numpy as np
 from numbers import Number
 from typing import Union, List
-from gym_ignition import scenario_bindings as bindings
+from scenario import gazebo as scenario
 
 
 def normalize(input: Union[Number, List[Number], np.ndarray],
@@ -24,7 +24,7 @@ def normalize(input: Union[Number, List[Number], np.ndarray],
     if isinstance(high, Number):
         high = [high]
 
-    output = bindings.normalize(list(input), list(low), list(high))
+    output = scenario.normalize(list(input), list(low), list(high))
 
     if len(output) == 1:
         return output[0]
@@ -49,7 +49,7 @@ def denormalize(input: Union[Number, List[Number], np.ndarray],
     if isinstance(high, Number):
         high = [high]
 
-    output = bindings.denormalize(list(input), list(low), list(high))
+    output = scenario.denormalize(list(input), list(low), list(high))
 
     if len(output) == 1:
         return output[0]
