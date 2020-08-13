@@ -26,27 +26,28 @@ set(BINDINGS_MODULES_DIR "${PROJECT_BINARY_DIR}/bindings")
 # - docs/sphinx/gym_ignition_environments
 
 find_package(SphinxApidoc REQUIRED)
-add_custom_target(apidoc ALL DEPENDS scenario_bindings)
+add_custom_target(apidoc ALL DEPENDS
+    doxygen Scenario::SwigScenarioCore Scenario::SwigScenarioGazebo)
 
 add_custom_command(
     TARGET apidoc POST_BUILD
     COMMAND
     ${SPHINX_APIDOC_EXECUTABLE} -f -o ${CMAKE_CURRENT_SOURCE_DIR}/gym-ignition
     ${PYTHON_PACKAGES_DIR}/gym_ignition
-    COMMENT "Building gym-ignition apidoc")
+    COMMENT "Building <gym-ignition> apidoc")
 
 add_custom_command(
     TARGET apidoc POST_BUILD
     COMMAND
     ${SPHINX_APIDOC_EXECUTABLE} -f -o ${CMAKE_CURRENT_SOURCE_DIR}/gym-ignition-environments
     ${PYTHON_PACKAGES_DIR}/gym_ignition_environments
-    COMMENT "Building gym-ignition apidoc")
+    COMMENT "Building <gym-ignition-environments> apidoc")
 
 add_custom_command(
     TARGET apidoc POST_BUILD
     COMMAND
     ${SPHINX_APIDOC_EXECUTABLE} -f -o ${CMAKE_CURRENT_SOURCE_DIR}/scenario ${BINDINGS_MODULES_DIR}
-    COMMENT "Building scenario apidoc")
+    COMMENT "Building <scenario> apidoc")
 
 # =============
 # SPHINX TARGET
