@@ -5,10 +5,16 @@
 set(scenario_swig_name "core")
 set_source_files_properties(${scenario_swig_name}.i PROPERTIES CPLUSPLUS ON)
 
+# The bindings shared library is stored in the Python package of the build tree
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../scenario/bindings)
+
 swig_add_library(${scenario_swig_name}
     TYPE SHARED
     LANGUAGE python
+    OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/../scenario/bindings
+    OUTFILE_DIR ${CMAKE_CURRENT_BINARY_DIR}/..
     SOURCES ${scenario_swig_name}.i)
+add_library(Scenario::SwigScenarioCore ALIAS core)
 
 target_link_libraries(${scenario_swig_name} PUBLIC
     ScenarioCore
@@ -30,29 +36,16 @@ if(GYMIGNITION_USE_IGNITION)
     target_link_libraries(${scenario_swig_name} PUBLIC ScenarioGazebo)
 endif()
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+# Get the core.py wrapper file
+get_property(WRAPPER_PY_FILE TARGET ${scenario_swig_name} PROPERTY SWIG_SUPPORT_FILES)
 
-    install(
-        TARGETS ${scenario_swig_name}
-        EXPORT bindings
-        LIBRARY DESTINATION ${Python3_SITELIB}/scenario/bindings
-        ARCHIVE DESTINATION ${Python3_SITELIB}/scenario/bindings
-        RUNTIME DESTINATION ${Python3_SITELIB}/scenario/bindings)
+install(
+    TARGETS ${scenario_swig_name}
+    EXPORT bindings
+    LIBRARY DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings
+    ARCHIVE DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings
+    RUNTIME DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings)
 
-    install(
-        FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/../${scenario_swig_name}.py
-        DESTINATION ${Python3_SITELIB}/scenario/bindings)
-
-else()
-
-    install(
-        TARGETS ${scenario_swig_name}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/scenario/bindings)
-
-    install(
-        FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/../${scenario_swig_name}.py
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/scenario/bindings)
-
-endif()
+install(
+    FILES ${WRAPPER_PY_FILE}
+    DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings)
