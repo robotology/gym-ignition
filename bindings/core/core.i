@@ -11,6 +11,16 @@
 
 %naturalvar;
 
+// Convert all exceptions to RuntimeError
+%include "exception.i"
+%exception {
+  try {
+    $action
+  } catch (const std::exception& e) {
+    SWIG_exception(SWIG_RuntimeError, e.what());
+  }
+}
+
 // STL classes
 %include <stdint.i>
 %include <std_pair.i>
