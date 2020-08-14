@@ -2,7 +2,7 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-set(scenario_swig_name "scenario_bindings")
+set(scenario_swig_name "gazebo")
 set_source_files_properties(${scenario_swig_name}.i PROPERTIES CPLUSPLUS ON)
 
 swig_add_library(${scenario_swig_name}
@@ -12,6 +12,7 @@ swig_add_library(${scenario_swig_name}
 
 target_link_libraries(${scenario_swig_name} PUBLIC
     ECMSingleton
+    ScenarioCore
     ScenarioGazebo
     GazeboSimulator
     Python3::Python)
@@ -19,46 +20,52 @@ target_link_libraries(${scenario_swig_name} PUBLIC
 set_property(TARGET ${scenario_swig_name} PROPERTY
     SWIG_USE_TARGET_INCLUDE_DIRECTORIES TRUE)
 
-#set_property(TARGET ${scenario_swig_name} PROPERTY SWIG_COMPILE_OPTIONS -builtin)
+# https://github.com/swig/swig/issues/672#issuecomment-400577864
+set_property(TARGET ${scenario_swig_name} PROPERTY
+    SWIG_COMPILE_OPTIONS -doxygen -Dfinal=)
 
-set_property(TARGET ${scenario_swig_name} PROPERTY SWIG_COMPILE_OPTIONS -py3)
-set_property(TARGET ${scenario_swig_name} PROPERTY SWIG_COMPILE_OPTIONS -doxygen)
+# Disable SWIG debug code due to the following error:
+#   int SWIG_Python_ConvertPtrAndOwn(PyObject *, void **, swig_type_info *, int, int *):
+#   Assertion `own' failed.
+# https://github.com/swig/swig/issues/731
+# https://github.com/swig/swig/issues/773
+target_compile_definitions(${scenario_swig_name} PRIVATE NDEBUG)
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
 
     install(
         TARGETS ${scenario_swig_name}
-        EXPORT scenario
-        LIBRARY DESTINATION ${Python3_SITELIB}
-        ARCHIVE DESTINATION ${Python3_SITELIB}
-        RUNTIME DESTINATION ${Python3_SITELIB})
+        EXPORT bindings
+        LIBRARY DESTINATION ${Python3_SITELIB}/scenario/bindings
+        ARCHIVE DESTINATION ${Python3_SITELIB}/scenario/bindings
+        RUNTIME DESTINATION ${Python3_SITELIB}/scenario/bindings)
 
     install(
         FILES
         ${CMAKE_CURRENT_BINARY_DIR}/../${scenario_swig_name}.py
-        DESTINATION ${Python3_SITELIB})
+        DESTINATION ${Python3_SITELIB}/scenario/bindings)
 
 else()
 
     install(
         TARGETS ${scenario_swig_name}
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX})
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/scenario/bindings)
 
     install(
         FILES
         ${CMAKE_CURRENT_BINARY_DIR}/../${scenario_swig_name}.py
-        DESTINATION ${CMAKE_INSTALL_PREFIX})
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/scenario/bindings)
 
     # Install the plugins
     install(
         TARGETS ECMProvider PhysicsSystem ControllerRunner JointController
-        LIBRARY DESTINATION ${PYTHON_PACKAGE_IMPORT_NAME}/plugins)
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/scenario/plugins)
 
     # Install other shared libraries.
     # Required for libs that contain singletons otherwise when the
     # project is statically compiled they do not work properly.
     install(
         TARGETS ECMSingleton
-        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX})
+        LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}/scenario/lib)
 
 endif()
