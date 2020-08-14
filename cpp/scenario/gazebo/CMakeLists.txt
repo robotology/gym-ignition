@@ -59,7 +59,8 @@ set_target_properties(ExtraComponents PROPERTIES
 # ScenarioGazebo
 # ==============
 
-set(SCENARIO_PUBLIC_HDRS
+set(SCENARIO_GAZEBO_PUBLIC_HDRS
+    include/scenario/gazebo/GazeboEntity.h
     include/scenario/gazebo/World.h
     include/scenario/gazebo/Model.h
     include/scenario/gazebo/Joint.h
@@ -69,7 +70,7 @@ set(SCENARIO_PUBLIC_HDRS
     include/scenario/gazebo/exceptions.h)
 
 add_library(ScenarioGazebo
-    ${SCENARIO_PUBLIC_HDRS}
+    ${SCENARIO_GAZEBO_PUBLIC_HDRS}
     include/scenario/gazebo/helpers.h
     src/World.cpp
     src/Model.cpp
@@ -83,12 +84,15 @@ target_include_directories(ScenarioGazebo PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(ScenarioGazebo
+    PUBLIC
+    ScenarioCore
     PRIVATE
     ExtraComponents
+    ScenarioCoreUtils
     ignition-gazebo3::core)
 
 set_target_properties(ScenarioGazebo PROPERTIES
-    PUBLIC_HEADER "${SCENARIO_PUBLIC_HDRS}")
+    PUBLIC_HEADER "${SCENARIO_GAZEBO_PUBLIC_HDRS}")
 
 # ===============
 # GazeboSimulator
@@ -103,6 +107,7 @@ target_link_libraries(GazeboSimulator
     ECMSingleton
     ScenarioGazebo
     ExtraComponents
+    ScenarioCoreUtils
     ignition-gazebo3::core
     tiny-process-library)
 
