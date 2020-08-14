@@ -63,7 +63,7 @@ public:
     std::shared_ptr<ignition::gazebo::SdfEntityCreator> sdfEntityCreator;
 
     using ModelName = std::string;
-    std::unordered_map<ModelName, ModelPtr> models;
+    std::unordered_map<ModelName, core::ModelPtr> models;
 
     struct
     {
@@ -240,7 +240,7 @@ std::vector<std::string> World::modelNames() const
     return pImpl->buffers.modelNames;
 }
 
-scenario::gazebo::ModelPtr World::getModel(const std::string& modelName) const
+scenario::core::ModelPtr World::getModel(const std::string& modelName) const
 {
     if (pImpl->models.find(modelName) != pImpl->models.end()) {
         assert(pImpl->models.at(modelName));
@@ -258,15 +258,15 @@ scenario::gazebo::ModelPtr World::getModel(const std::string& modelName) const
     }
 
     // Create and initialize the model
-    pImpl->models[modelName] = std::make_shared<scenario::gazebo::Model>();
-    pImpl->models[modelName]->initialize(
-        modelEntity, pImpl->ecm, pImpl->eventManager);
+    auto model = std::make_shared<scenario::gazebo::Model>();
+    model->initialize(modelEntity, pImpl->ecm, pImpl->eventManager);
 
+    pImpl->models[modelName] = model;
     return pImpl->models[modelName];
 }
 
 bool World::insertModel(const std::string& modelFile,
-                        const base::Pose& pose,
+                        const core::Pose& pose,
                         const std::string& overrideModelName)
 {
     std::shared_ptr<sdf::Root> modelSdfRoot =
@@ -345,7 +345,7 @@ bool World::insertModel(const std::string& modelFile,
     }
 
     // Set the initial model pose
-    if (pose != base::Pose::Identity()) {
+    if (pose != core::Pose::Identity()) {
         utils::setComponentData<ignition::gazebo::components::Pose>(
             pImpl->ecm, modelEntity, utils::toIgnitionPose(pose));
     }
