@@ -248,17 +248,6 @@ std::string utils::getRandomString(const size_t length)
     return str;
 }
 
-std::string utils::getInstallPrefix()
-{
-#ifdef GYMIGNITION_CMAKE_INSTALL_PREFIX
-    return GYMIGNITION_CMAKE_INSTALL_PREFIX;
-#else
-    sDebug << "User installation detected. The install prefix "
-           << "could be detected from the Python module path." << std::endl;
-    return "";
-#endif
-}
-
 std::string utils::URDFFileToSDFString(const std::string& urdfFile)
 {
     auto root = getSdfRootFromFile(urdfFile);

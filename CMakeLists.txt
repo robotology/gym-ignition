@@ -163,6 +163,7 @@ if(GYMIGNITION_ENABLE_SCENARIO)
 
     if(${GYMIGNITION_USE_IGNITION})
 
+        add_subdirectory(cpp/scenario/core)
         add_subdirectory(cpp/scenario/gazebo)
         add_subdirectory(cpp/scenario/plugins)
         add_subdirectory(cpp/scenario/controllers)
