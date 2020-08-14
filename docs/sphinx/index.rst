@@ -11,3 +11,18 @@ gym-ignition
    installation/stable
    installation/nightly
    installation/optional_dependencies
+
+.. toctree::
+   :maxdepth: 2
+   :caption: ScenarI/O C++ API:
+
+   breathe/core
+   breathe/gazebo
+
+.. toctree::
+   :maxdepth: 4
+   :caption: Python Packages
+
+   apidoc/scenario/scenario.bindings
+   apidoc/gym-ignition/gym_ignition
+   apidoc/gym-ignition-environments/gym_ignition_environments
