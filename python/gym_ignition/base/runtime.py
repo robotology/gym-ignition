@@ -9,11 +9,10 @@ from gym_ignition import base
 
 class Runtime(gym.Env, abc.ABC):
     """
-    Base class for defining executors of :py:class:`~gym_ignition.base.task.Task`
-    objects.
+    Base class for defining executors of :py:class:`~gym_ignition.base.task.Task` objects.
 
     :py:class:`~gym_ignition.base.task.Task` classes are supposed to be generic and are
-     not tied to any specific runtime. Implementations of a runtime class contain all the
+    not tied to any specific runtime. Implementations of a runtime class contain all the
     logic to define how to execute the task, allowing to run the same
     :py:class:`~gym_ignition.base.task.Task` class on different simulators or in a
     real-time setting.
@@ -27,7 +26,6 @@ class Runtime(gym.Env, abc.ABC):
             to know this information.
 
     Example:
-
         Here is minimal example of how the :py:class:`Runtime`, :py:class:`gym.Env` and
         :py:class:`~gym_ignition.base.task.Task` could be integrated:
 
@@ -58,7 +56,7 @@ class Runtime(gym.Env, abc.ABC):
                 pass
 
     Note:
-        Runtimes can handle only one :py:class:`~gym_ignition.base.runtime.Task` object.
+        Runtimes can handle only one :py:class:`~gym_ignition.base.task.Task` object.
     """
 
     def __init__(self, task: base.task.Task, agent_rate: float):
