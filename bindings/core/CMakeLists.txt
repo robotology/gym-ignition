@@ -21,6 +21,15 @@ set_property(TARGET ${scenario_swig_name} PROPERTY
 set_property(TARGET ${scenario_swig_name}
     PROPERTY SWIG_COMPILE_OPTIONS -doxygen)
 
+# Add the to_gazebo() helpers
+if(GYMIGNITION_USE_IGNITION)
+    set_property(TARGET ${scenario_swig_name} PROPERTY
+        SWIG_COMPILE_DEFINITIONS SCENARIO_HAS_GAZEBO)
+    set_property(TARGET ${scenario_swig_name} PROPERTY
+        SWIG_DEPENDS "../gazebo/to_gazebo.i")
+    target_link_libraries(${scenario_swig_name} PUBLIC ScenarioGazebo)
+endif()
+
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
 
     install(
