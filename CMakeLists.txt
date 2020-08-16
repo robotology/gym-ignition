@@ -102,6 +102,7 @@ set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTU
 
 # Find Python3
 find_package(Python3 3.6 EXACT COMPONENTS Interpreter Development REQUIRED)
+message(STATUS "Using Python: ${Python3_EXECUTABLE}")
 
 # Configure RPATH
 include(AddInstallRPATHSupport)
@@ -111,6 +112,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
         LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
                  "${CMAKE_INSTALL_FULL_LIBDIR}/scenario/plugins"
                  "${Python3_SITELIB}"
+                 "${Python3_SITELIB}/scenario/bindings"
         INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
         DEPENDS ENABLE_RPATH
         USE_LINK_PATH)
@@ -118,6 +120,9 @@ else()
     add_install_rpath_support(
         BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
         LIB_DIRS "${Python3_SITELIB}"
+        LIB_DIRS "${Python3_SITELIB}/scenario/lib"
+        LIB_DIRS "${Python3_SITELIB}/scenario/plugins"
+        LIB_DIRS "${Python3_SITELIB}/scenario/bindings"
         INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
         DEPENDS ENABLE_RPATH
         USE_LINK_PATH)

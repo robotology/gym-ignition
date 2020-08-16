@@ -1,7 +1,8 @@
-%module(moduleimport="import $module") scenario_bindings
+%module(package="scenario.bindings") gazebo
 
 %{
 #define SWIG_FILE_WITH_INIT
+#include "scenario/gazebo/GazeboEntity.h"
 #include "scenario/gazebo/GazeboSimulator.h"
 #include "scenario/gazebo/Joint.h"
 #include "scenario/gazebo/Link.h"
@@ -14,6 +15,22 @@
 
 %naturalvar;
 
+// Keep templated functions above the %rename directive
+%inline %{
+namespace scenario::gazebo::utils {
+    template <typename Base, typename Derived>
+    std::shared_ptr<Derived> ToGazebo(const std::shared_ptr<Base>& base)
+    {
+        return std::dynamic_pointer_cast<Derived>(base);
+    }
+}
+%}
+
+// Helpers for downcasting to Gazebo classes
+%template(ToGazeboWorld) scenario::gazebo::utils::ToGazebo<scenario::core::World, scenario::gazebo::World>;
+%template(ToGazeboModel) scenario::gazebo::utils::ToGazebo<scenario::core::Model, scenario::gazebo::Model>;
+%template(ToGazeboJoint) scenario::gazebo::utils::ToGazebo<scenario::core::Joint, scenario::gazebo::Joint>;
+
 // STL classes
 %include <stdint.i>
 %include <std_pair.i>
@@ -22,29 +39,12 @@
 %include <std_vector.i>
 %include <std_shared_ptr.i>
 
-// Convert python list to std::vector
-%template(VectorI) std::vector<int>;
-%template(VectorU) std::vector<size_t>;
-%template(VectorF) std::vector<float>;
-%template(VectorD) std::vector<double>;
-%template(VectorS) std::vector<std::string>;
+// Import the module with core classes
+// From http://www.swig.org/Doc4.0/Modules.html
+%import "../core/core.i"
 
-// Convert python list to std::array
-%template(Array3d) std::array<double, 3>;
-%template(Array4d) std::array<double, 4>;
-%template(Array6d) std::array<double, 6>;
-
-// Pair instantiation
-%template(PosePair) std::pair<std::array<double, 3>, std::array<double, 4>>;
-
-// ScenarI/O templates
-%template(VectorOfLinks) std::vector<scenario::gazebo::LinkPtr>;
-%template(VectorOfJoints) std::vector<scenario::gazebo::JointPtr>;
-%template(Vector_contact) std::vector<scenario::base::Contact>;
-%template(Vector_contact_point) std::vector<scenario::base::ContactPoint>;
-
+// NOTE: Keep all template instantiations above.
 // Rename all methods to undercase with _ separators excluding the classes.
-// Keep all template instantations above.
 %rename("%(undercase)s") "";
 %rename("") PID;
 %rename("") Pose;
@@ -55,9 +55,11 @@
 %rename("") Limit;
 %rename("") Contact;
 %rename("") JointType;
+%rename("") Verbosity;
 %rename("") JointLimit;
 %rename("") ContactPoint;
 %rename("") ECMSingleton;
+%rename("") GazeboEntity;
 %rename("") PhysicsEngine;
 %rename("") GazeboSimulator;
 %rename("") JointControlMode;
@@ -70,16 +72,26 @@
 %shared_ptr(scenario::gazebo::Link)
 %shared_ptr(scenario::gazebo::Model)
 %shared_ptr(scenario::gazebo::World)
+%shared_ptr(scenario::gazebo::GazeboEntity)
 
 // Ignored methods
-%ignore scenario::gazebo::Joint::initialize;
-%ignore scenario::gazebo::Link::initialize;
-%ignore scenario::gazebo::Model::initialize;
-%ignore scenario::gazebo::World::initialize;
-%ignore scenario::gazebo::Joint::createECMResources;
-%ignore scenario::gazebo::Link::createECMResources;
-%ignore scenario::gazebo::Model::createECMResources;
-%ignore scenario::gazebo::World::createECMResources;
+%ignore scenario::gazebo::GazeboEntity::initialize;
+%ignore scenario::gazebo::GazeboEntity::createECMResources;
+
+// Workaround for https://github.com/swig/swig/issues/1830
+%feature("pythonprepend") scenario::gazebo::World::getModel %{
+    r"""
+    Get a model part of the world.
+
+    :type modelName: string
+    :param modelName: The name of the model to get.
+    :rtype: :py:class:`scenario.core.Model`
+    :return: The model if it is part of the world, None otherwise.
+    """
+%}
+
+// Interface of Gazebo entities
+%include "scenario/gazebo/GazeboEntity.h"
 
 // ScenarI/O headers
 %include "scenario/gazebo/Joint.h"
@@ -88,7 +100,6 @@
 %include "scenario/gazebo/World.h"
 
 // GazeboSimulator
-%shared_ptr(scenario::gazebo::GazeboSimulator)
 %include "scenario/gazebo/GazeboSimulator.h"
 
 // ECMSingleton
