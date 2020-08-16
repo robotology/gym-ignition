@@ -5,9 +5,9 @@
 import abc
 import gym
 import numpy as np
+from scenario import core
 from gym.utils import seeding
 from typing import Dict, Tuple
-from gym_ignition import scenario_bindings as bindings
 from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 from gym_ignition.utils.typing import Action, Observation, Reward, SeedList
 
@@ -26,19 +26,19 @@ class Task(abc.ABC):
     The :py:class:`~gym_ignition.base.runtime.Runtime` is a relay class that calls the
     logic of the :py:class:`Task` from its interface methods and implements the real
     :py:meth:`gym.Env.step`.
-    In simulated runtimes, this method will step the physics engine, instead in real-time
-    runtimes, it will enforce real-time execution.
+    Simulated runtimes step the physics engine, instead, real-time
+    runtimes, enforce real-time execution.
 
     A :py:class:`Task` object is meant to be:
 
     - Independent from the selected :py:class:`~gym_ignition.base.runtime.Runtime`.
       In fact, it defines only the decision making logic;
-    - Independent from the :py:class:`~scenario_bindings.Model` objects it operates on.
+    - Independent from the :py:class:`~scenario.core.Model` objects it operates on.
       This is achieved thanks to the model abstraction provided by
-      :cpp:class:`scenario::gazebo::Model`.
+      :cpp:class:`scenario::core::Model`.
 
     The population of the world where the task operates is demanded to a
-    :py:class:`gym.Wrapper` object.
+    :py:class:`gym.Wrapper` object, that acts as an environment randomizer.
     """
 
     action_space: gym.spaces.Space = None
@@ -68,7 +68,7 @@ class Task(abc.ABC):
     # ==========
 
     @property
-    def world(self) -> bindings.World:
+    def world(self) -> core.World:
         """
         Get the world where the task is operating.
 
@@ -76,17 +76,16 @@ class Task(abc.ABC):
             The world object.
         """
 
-        if self._world:
-            assert self._world.id() != 0, "The world is not valid"
+        if self._world is not None:
             return self._world
 
         raise Exception("The world was never stored")
 
     @world.setter
-    def world(self, world: bindings.World) -> None:
+    def world(self, world: core.World) -> None:
 
-        if world.id() == 0:
-            raise Exception("World not valid")
+        if world is None or world.name == "":
+            raise ValueError("World not valid")
 
         # Store the world
         self._world = world
@@ -99,7 +98,7 @@ class Task(abc.ABC):
             True if the task has a valid world, False otherwise.
         """
 
-        return self._world is not None and self._world.id() != 0
+        return self._world is not None and self._world.name != ""
 
     # ==============
     # Task Interface

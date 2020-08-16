@@ -27,14 +27,13 @@ class GazeboEnvRandomizer(gym.Wrapper,
 
     In its simplest form, a randomizer populates the world with all the models that need
     to be part of the simulation. The task could then operate on them from a
-    :py:class:`~scenario_bindings.Model` object.
+    :py:class:`~scenario.core.Model` object.
 
     More complex environments may require to randomize one or more simulated entities.
     Concrete classes that implement a randomizer could use
     :py:class:`~gym_ignition.randomizers.model.sdf.SDFRandomizer` to randomize the model
-    and objects inheriting from
-    :py:class:`~gym_ignition.randomizers.base.physics.PhysicsRandomizer` to randomize the
-    physics.
+    and :py:class:`~gym_ignition.randomizers.base.physics.PhysicsRandomizer` to randomize
+    the physics.
 
     Args:
         env: Defines the environment to handle. This argument could be either the string
@@ -45,7 +44,7 @@ class GazeboEnvRandomizer(gym.Wrapper,
 
     Note:
         In order to randomize physics, the handled
-        :py:class:`scenario_bindings.GazeboSimulator` is destroyed and created again.
+        :py:class:`scenario.gazebo.GazeboSimulator` is destroyed and created again.
         This operation is demanding, consider randomizing physics at a low rate.
 
     Todo:
@@ -94,7 +93,7 @@ class GazeboEnvRandomizer(gym.Wrapper,
         self.env.physics_randomizer.increase_rollout_counter()
 
         # Reset the task through the TaskRandomizer
-        self.randomize_task(self.env.task, self.env.gazebo, **kwargs)
+        self.randomize_task(task=self.env.task, gazebo=self.env.gazebo, **kwargs)
 
         ok_paused_run = self.env.gazebo.run(paused=True)
 

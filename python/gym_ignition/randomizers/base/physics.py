@@ -3,7 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
-from gym_ignition import scenario_bindings as bindings
+from scenario import gazebo as scenario
 
 
 class PhysicsRandomizer(abc.ABC):
@@ -22,7 +22,7 @@ class PhysicsRandomizer(abc.ABC):
         self.randomize_after_rollouts_num = randomize_after_rollouts_num
 
     @abc.abstractmethod
-    def randomize_physics(self, world: bindings.World) -> None:
+    def randomize_physics(self, world: scenario.World) -> None:
         """
         Method that insert and configures the physics of a world.
 

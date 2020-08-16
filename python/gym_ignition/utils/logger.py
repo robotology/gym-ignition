@@ -56,21 +56,21 @@ def set_level(level: int) -> None:
     logger.set_level(level)
 
     try:
-        from gym_ignition import scenario_bindings as bindings
+        from scenario import gazebo as scenario
     except ImportError:
         return
 
-    # Set the gympp verbosity
+    # Set the ScenarI/O verbosity
     if logger.MIN_LEVEL <= logger.DEBUG:
-        bindings.set_verbosity(4)
+        scenario.set_verbosity(scenario.Verbosity_debug)
     elif logger.MIN_LEVEL <= logger.INFO:
-        bindings.set_verbosity(3)
+        scenario.set_verbosity(scenario.Verbosity_info)
     elif logger.MIN_LEVEL <= logger.WARN:
-        bindings.set_verbosity(2)
+        scenario.set_verbosity(scenario.Verbosity_warning)
     elif logger.MIN_LEVEL <= logger.ERROR:
-        bindings.set_verbosity(1)
+        scenario.set_verbosity(scenario.Verbosity_error)
     else:
-        raise Exception("Verbosity level not recognized")
+        scenario.set_verbosity(scenario.Verbosity_suppress_all)
 
 
 @contextlib.contextmanager

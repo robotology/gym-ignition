@@ -3,16 +3,16 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from typing import List
-from gym_ignition import scenario
-from gym_ignition import scenario_bindings as bindings
+from scenario import core as scenario
 from gym_ignition.utils.scenario import get_unique_model_name
+from gym_ignition.scenario import model_wrapper, model_with_file
 
 
-class Pendulum(scenario.model_wrapper.ModelWrapper,
-               scenario.model_with_file.ModelWithFile):
+class Pendulum(model_wrapper.ModelWrapper,
+               model_with_file.ModelWithFile):
 
     def __init__(self,
-                 world: bindings.World,
+                 world: scenario.World,
                  position: List[float] = (0.0, 0.0, 0.0),
                  orientation: List[float] = (1.0, 0, 0, 0),
                  model_file: str = None):
@@ -21,16 +21,16 @@ class Pendulum(scenario.model_wrapper.ModelWrapper,
         model_name = get_unique_model_name(world, "pendulum")
 
         # Initial pose
-        initial_pose = bindings.Pose(position, orientation)
+        initial_pose = scenario.Pose(position, orientation)
 
         # Get the model file (URDF or SDF) and allow to override it
         if model_file is None:
             model_file = Pendulum.get_model_file()
 
         # Insert the model
-        ok_model = world.insert_model(model_file,
-                                      initial_pose,
-                                      model_name)
+        ok_model = world.to_gazebo().insert_model(model_file,
+                                                  initial_pose,
+                                                  model_name)
 
         if not ok_model:
             raise RuntimeError("Failed to insert model")
