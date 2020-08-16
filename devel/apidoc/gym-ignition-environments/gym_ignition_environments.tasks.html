@@ -1,0 +1,775 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gym_ignition_environments.tasks &mdash; gym-ignition  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="prev" title="gym_ignition_environments.randomizers" href="gym_ignition_environments.randomizers.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> gym-ignition
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/stable.html">Stable Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/nightly.html">Nightly Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/optional_dependencies.html">Optional Dependencies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/gazebo.html">Gazebo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python Packages</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../scenario/scenario.bindings.html">scenario.bindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gym-ignition/gym_ignition.html">gym_ignition</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="gym_ignition_environments.html">gym_ignition_environments</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition_environments.models.html">gym_ignition_environments.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition_environments.randomizers.html">gym_ignition_environments.randomizers</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">gym_ignition_environments.tasks</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition_environments.tasks.cartpole_continuous_balancing">gym_ignition_environments.tasks.cartpole_continuous_balancing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition_environments.tasks.cartpole_continuous_swingup">gym_ignition_environments.tasks.cartpole_continuous_swingup</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition_environments.tasks.cartpole_discrete_balancing">gym_ignition_environments.tasks.cartpole_discrete_balancing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition_environments.tasks.pendulum_swingup">gym_ignition_environments.tasks.pendulum_swingup</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">gym-ignition</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="gym_ignition_environments.html">gym_ignition_environments</a> &raquo;</li>
+        
+      <li>gym_ignition_environments.tasks</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apidoc/gym-ignition-environments/gym_ignition_environments.tasks.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gym_ignition_environments.tasks">
+<span id="gym-ignition-environments-tasks"></span><h1>gym_ignition_environments.tasks<a class="headerlink" href="#module-gym_ignition_environments.tasks" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-gym_ignition_environments.tasks.cartpole_continuous_balancing">
+<span id="gym-ignition-environments-tasks-cartpole-continuous-balancing"></span><h2>gym_ignition_environments.tasks.cartpole_continuous_balancing<a class="headerlink" href="#module-gym_ignition_environments.tasks.cartpole_continuous_balancing" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition_environments.tasks.cartpole_continuous_balancing.</code><code class="sig-name descname">CartPoleContinuousBalancing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agent_rate</span></em>, <em class="sig-param"><span class="n">reward_cart_at_center</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.base.task.Task</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.create_spaces">
+<code class="sig-name descname">create_spaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.create_spaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the action and observations spaces.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method does not currently have access to the Models part of the
+environment. If the Task is meant to work on different models, we recommend
+using their URDF / SDF model to extract the information you need
+(e.g. number of DoFs, joint position limits, etc). Since actions and
+observations are often normalized, in many cases there’s no need to extract
+a lot of information from the model file.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">ActionSpace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code>), <code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">ObservationSpace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code>)]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple containing the action and observation spaces.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.get_observation">
+<code class="sig-name descname">get_observation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.get_observation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task observation.</p>
+<p>This method contains the logic for constructing the environment observation.
+It is called in the end of both <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> and
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Observation</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>)</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The task observation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.get_reward">
+<code class="sig-name descname">get_reward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.get_reward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task reward.</p>
+<p>This method contains the logic for computing the environment reward.
+It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Reward</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>)</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The scalar reward.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.is_done">
+<code class="sig-name descname">is_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.is_done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task termination flag.</p>
+<p>This method contains the logic for defining when the environment has terminated.
+Subsequent calls to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.set_action()</span></code> should be preceded by a task
+reset through <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.reset_task()</span></code>.</p>
+<p>It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the environment terminated, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.reset_task">
+<code class="sig-name descname">reset_task</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.reset_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.</p>
+<p>This method contains the logic for resetting the task.
+It is called in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> method of the corresponding
+environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.set_action">
+<code class="sig-name descname">set_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.set_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the task action.</p>
+<p>This method contains the logic for setting the environment action.
+It is called in the beginning of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action</strong> (<code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Action</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">number</span></code>])) – The action to set.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition_environments.tasks.cartpole_continuous_swingup">
+<span id="gym-ignition-environments-tasks-cartpole-continuous-swingup"></span><h2>gym_ignition_environments.tasks.cartpole_continuous_swingup<a class="headerlink" href="#module-gym_ignition_environments.tasks.cartpole_continuous_swingup" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition_environments.tasks.cartpole_continuous_swingup.</code><code class="sig-name descname">CartPoleContinuousSwingup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agent_rate</span></em>, <em class="sig-param"><span class="n">reward_cart_at_center</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.base.task.Task</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.create_spaces">
+<code class="sig-name descname">create_spaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.create_spaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the action and observations spaces.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method does not currently have access to the Models part of the
+environment. If the Task is meant to work on different models, we recommend
+using their URDF / SDF model to extract the information you need
+(e.g. number of DoFs, joint position limits, etc). Since actions and
+observations are often normalized, in many cases there’s no need to extract
+a lot of information from the model file.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">ActionSpace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code>), <code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">ObservationSpace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code>)]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple containing the action and observation spaces.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.get_observation">
+<code class="sig-name descname">get_observation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.get_observation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task observation.</p>
+<p>This method contains the logic for constructing the environment observation.
+It is called in the end of both <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> and
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Observation</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>)</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The task observation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.get_reward">
+<code class="sig-name descname">get_reward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.get_reward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task reward.</p>
+<p>This method contains the logic for computing the environment reward.
+It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Reward</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>)</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The scalar reward.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.is_done">
+<code class="sig-name descname">is_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.is_done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task termination flag.</p>
+<p>This method contains the logic for defining when the environment has terminated.
+Subsequent calls to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.set_action()</span></code> should be preceded by a task
+reset through <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.reset_task()</span></code>.</p>
+<p>It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the environment terminated, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.reset_task">
+<code class="sig-name descname">reset_task</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.reset_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.</p>
+<p>This method contains the logic for resetting the task.
+It is called in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> method of the corresponding
+environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.set_action">
+<code class="sig-name descname">set_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.set_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the task action.</p>
+<p>This method contains the logic for setting the environment action.
+It is called in the beginning of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action</strong> (<code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Action</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">number</span></code>])) – The action to set.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition_environments.tasks.cartpole_discrete_balancing">
+<span id="gym-ignition-environments-tasks-cartpole-discrete-balancing"></span><h2>gym_ignition_environments.tasks.cartpole_discrete_balancing<a class="headerlink" href="#module-gym_ignition_environments.tasks.cartpole_discrete_balancing" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition_environments.tasks.cartpole_discrete_balancing.</code><code class="sig-name descname">CartPoleDiscreteBalancing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agent_rate</span></em>, <em class="sig-param"><span class="n">reward_cart_at_center</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.base.task.Task</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.create_spaces">
+<code class="sig-name descname">create_spaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.create_spaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the action and observations spaces.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method does not currently have access to the Models part of the
+environment. If the Task is meant to work on different models, we recommend
+using their URDF / SDF model to extract the information you need
+(e.g. number of DoFs, joint position limits, etc). Since actions and
+observations are often normalized, in many cases there’s no need to extract
+a lot of information from the model file.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">ActionSpace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code>), <code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">ObservationSpace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code>)]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple containing the action and observation spaces.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.get_observation">
+<code class="sig-name descname">get_observation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.get_observation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task observation.</p>
+<p>This method contains the logic for constructing the environment observation.
+It is called in the end of both <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> and
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Observation</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>)</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The task observation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.get_reward">
+<code class="sig-name descname">get_reward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.get_reward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task reward.</p>
+<p>This method contains the logic for computing the environment reward.
+It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Reward</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>)</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The scalar reward.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.is_done">
+<code class="sig-name descname">is_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.is_done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task termination flag.</p>
+<p>This method contains the logic for defining when the environment has terminated.
+Subsequent calls to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.set_action()</span></code> should be preceded by a task
+reset through <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.reset_task()</span></code>.</p>
+<p>It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the environment terminated, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.reset_task">
+<code class="sig-name descname">reset_task</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.reset_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.</p>
+<p>This method contains the logic for resetting the task.
+It is called in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> method of the corresponding
+environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.set_action">
+<code class="sig-name descname">set_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.set_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the task action.</p>
+<p>This method contains the logic for setting the environment action.
+It is called in the beginning of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action</strong> (<code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Action</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">number</span></code>])) – The action to set.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition_environments.tasks.pendulum_swingup">
+<span id="gym-ignition-environments-tasks-pendulum-swingup"></span><h2>gym_ignition_environments.tasks.pendulum_swingup<a class="headerlink" href="#module-gym_ignition_environments.tasks.pendulum_swingup" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition_environments.tasks.pendulum_swingup.</code><code class="sig-name descname">PendulumSwingUp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agent_rate</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.base.task.Task</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.create_spaces">
+<code class="sig-name descname">create_spaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.create_spaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the action and observations spaces.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method does not currently have access to the Models part of the
+environment. If the Task is meant to work on different models, we recommend
+using their URDF / SDF model to extract the information you need
+(e.g. number of DoFs, joint position limits, etc). Since actions and
+observations are often normalized, in many cases there’s no need to extract
+a lot of information from the model file.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">ActionSpace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code>), <code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">ObservationSpace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code>)]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple containing the action and observation spaces.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.get_observation">
+<code class="sig-name descname">get_observation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.get_observation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task observation.</p>
+<p>This method contains the logic for constructing the environment observation.
+It is called in the end of both <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> and
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Observation</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>)</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The task observation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.get_reward">
+<code class="sig-name descname">get_reward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.get_reward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task reward.</p>
+<p>This method contains the logic for computing the environment reward.
+It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Reward</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>)</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The scalar reward.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.is_done">
+<code class="sig-name descname">is_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.is_done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task termination flag.</p>
+<p>This method contains the logic for defining when the environment has terminated.
+Subsequent calls to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.set_action()</span></code> should be preceded by a task
+reset through <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.reset_task()</span></code>.</p>
+<p>It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the environment terminated, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.reset_task">
+<code class="sig-name descname">reset_task</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.reset_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.</p>
+<p>This method contains the logic for resetting the task.
+It is called in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> method of the corresponding
+environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.set_action">
+<code class="sig-name descname">set_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.set_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the task action.</p>
+<p>This method contains the logic for setting the environment action.
+It is called in the beginning of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action</strong> (<code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Action</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">number</span></code>])) – The action to set.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="gym_ignition_environments.randomizers.html" class="btn btn-neutral float-left" title="gym_ignition_environments.randomizers" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Istituto Italiano di Tecnologia
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: devel
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="gym_ignition_environments.tasks.html">devel</a></dd>
+    </dl>
+  </div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

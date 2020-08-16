@@ -1,0 +1,650 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gym_ignition.randomizers.model &mdash; gym-ignition  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="gym_ignition.randomizers.physics" href="gym_ignition.randomizers.physics.html" />
+    <link rel="prev" title="gym_ignition.randomizers.base" href="gym_ignition.randomizers.base.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> gym-ignition
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/stable.html">Stable Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/nightly.html">Nightly Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/optional_dependencies.html">Optional Dependencies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/gazebo.html">Gazebo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python Packages</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../scenario/scenario.bindings.html">scenario.bindings</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="gym_ignition.html">gym_ignition</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.base.html">gym_ignition.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.controllers.html">gym_ignition.controllers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.experimental.html">gym_ignition.experimental</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gym_ignition.randomizers.html">gym_ignition.randomizers</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.randomizers.base.html">gym_ignition.randomizers.base</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">gym_ignition.randomizers.model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-gym_ignition.randomizers.model.sdf">gym_ignition.randomizers.model.sdf</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.randomizers.physics.html">gym_ignition.randomizers.physics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.randomizers.html#module-gym_ignition.randomizers.gazebo_env_randomizer">gym_ignition.randomizers.gazebo_env_randomizer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.runtimes.html">gym_ignition.runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.scenario.html">gym_ignition.scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html">gym_ignition.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gym-ignition-environments/gym_ignition_environments.html">gym_ignition_environments</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">gym-ignition</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="gym_ignition.html">gym_ignition</a> &raquo;</li>
+        
+          <li><a href="gym_ignition.randomizers.html">gym_ignition.randomizers</a> &raquo;</li>
+        
+      <li>gym_ignition.randomizers.model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apidoc/gym-ignition/gym_ignition.randomizers.model.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gym_ignition.randomizers.model">
+<span id="gym-ignition-randomizers-model"></span><h1>gym_ignition.randomizers.model<a class="headerlink" href="#module-gym_ignition.randomizers.model" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-gym_ignition.randomizers.model.sdf">
+<span id="gym-ignition-randomizers-model-sdf"></span><h2>gym_ignition.randomizers.model.sdf<a class="headerlink" href="#module-gym_ignition.randomizers.model.sdf" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition.randomizers.model.sdf.Distribution">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.randomizers.model.sdf.</code><code class="sig-name descname">Distribution</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.Distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="gym_ignition.randomizers.model.sdf.Distribution.Gaussian">
+<code class="sig-name descname">Gaussian</code><em class="property"> = 2</em><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.Distribution.Gaussian" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.randomizers.model.sdf.Distribution.Uniform">
+<code class="sig-name descname">Uniform</code><em class="property"> = 1</em><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.Distribution.Uniform" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.randomizers.model.sdf.GaussianParams">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.randomizers.model.sdf.</code><code class="sig-name descname">GaussianParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">variance</span></em>, <em class="sig-param"><span class="n">mean</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.GaussianParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.GaussianParams.mean">
+<em class="property">property </em><code class="sig-name descname">mean</code><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.GaussianParams.mean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.GaussianParams.variance">
+<em class="property">property </em><code class="sig-name descname">variance</code><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.GaussianParams.variance" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.randomizers.model.sdf.Method">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.randomizers.model.sdf.</code><code class="sig-name descname">Method</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.Method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="gym_ignition.randomizers.model.sdf.Method.Absolute">
+<code class="sig-name descname">Absolute</code><em class="property"> = 1</em><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.Method.Absolute" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.randomizers.model.sdf.Method.Additive">
+<code class="sig-name descname">Additive</code><em class="property"> = 2</em><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.Method.Additive" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.randomizers.model.sdf.Method.Coefficient">
+<code class="sig-name descname">Coefficient</code><em class="property"> = 3</em><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.Method.Coefficient" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationData">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.randomizers.model.sdf.</code><code class="sig-name descname">RandomizationData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xpath</span></em>, <em class="sig-param"><span class="n">distribution</span></em>, <em class="sig-param"><span class="n">parameters</span></em>, <em class="sig-param"><span class="n">method</span></em>, <em class="sig-param"><span class="n">ignore_zeros</span></em>, <em class="sig-param"><span class="n">force_positive</span></em>, <em class="sig-param"><span class="n">element</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationData.distribution">
+<em class="property">property </em><code class="sig-name descname">distribution</code><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationData.distribution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationData.element">
+<em class="property">property </em><code class="sig-name descname">element</code><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationData.element" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 6</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationData.force_positive">
+<em class="property">property </em><code class="sig-name descname">force_positive</code><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationData.force_positive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 5</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationData.ignore_zeros">
+<em class="property">property </em><code class="sig-name descname">ignore_zeros</code><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationData.ignore_zeros" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 4</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationData.method">
+<em class="property">property </em><code class="sig-name descname">method</code><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationData.method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 3</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationData.parameters">
+<em class="property">property </em><code class="sig-name descname">parameters</code><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationData.parameters" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationData.xpath">
+<em class="property">property </em><code class="sig-name descname">xpath</code><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationData.xpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.randomizers.model.sdf.</code><code class="sig-name descname">RandomizationDataBuilder</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">randomizer</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Builder class of a <a class="reference internal" href="#gym_ignition.randomizers.model.sdf.RandomizationData" title="gym_ignition.randomizers.model.sdf.RandomizationData"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomizationData</span></code></a>
+object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>randomizer</strong> (<a class="reference internal" href="#gym_ignition.randomizers.model.sdf.SDFRandomizer" title="gym_ignition.randomizers.model.sdf.SDFRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFRandomizer</span></code></a>) – The <a class="reference internal" href="#gym_ignition.randomizers.model.sdf.SDFRandomizer" title="gym_ignition.randomizers.model.sdf.SDFRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFRandomizer</span></code></a>
+object to which the created randomization will be inserted.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.add">
+<code class="sig-name descname">add</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.add" title="Permalink to this definition">¶</a></dt>
+<dd><p>Close the chaining of methods and return to the SDF randomizer the configuration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If the XPath pattern does not find any match in the SDF.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.at_xpath">
+<code class="sig-name descname">at_xpath</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xpath</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.at_xpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the XPath pattern associated to the randomization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>xpath</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The XPath pattern.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder" title="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomizationDataBuilder</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The randomization builder to allow chaining methods.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.force_positive">
+<code class="sig-name descname">force_positive</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force_positive</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.force_positive" title="Permalink to this definition">¶</a></dt>
+<dd><p>Force the randomized value to be greater than zero.</p>
+<p>This option is helpful to enforce that values e.g. the mass will stay positive
+regardless of the applied distribution parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>force_positive</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – True to force positive parameters, false otherwise.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder" title="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomizationDataBuilder</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The randomization builder to allow chaining methods.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.ignore_zeros">
+<code class="sig-name descname">ignore_zeros</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ignore_zeros</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.ignore_zeros" title="Permalink to this definition">¶</a></dt>
+<dd><p>Ignore the randomization of values that are zero.</p>
+<p>If the value to randomize has a default value of 0 in the SDF, when this method
+is chained the randomization is skipped. In the case of a multi-match XPath
+pattern, the values that are not zero are not skipped.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>ignore_zeros</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code>) – True if zeros should be ignored, false otherwise.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder" title="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomizationDataBuilder</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The randomization builder to allow chaining methods.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.method">
+<code class="sig-name descname">method</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">method</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.method" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the randomization method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>method</strong> (<a class="reference internal" href="#gym_ignition.randomizers.model.sdf.Method" title="gym_ignition.randomizers.model.sdf.Method"><code class="xref py py-class docutils literal notranslate"><span class="pre">Method</span></code></a>) – The desired randomization method.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder" title="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomizationDataBuilder</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The randomization builder to allow chaining methods.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.sampled_from">
+<code class="sig-name descname">sampled_from</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">distribution</span></em>, <em class="sig-param"><span class="n">parameters</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.sampled_from" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the distribution associated to the randomization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>distribution</strong> (<a class="reference internal" href="#gym_ignition.randomizers.model.sdf.Distribution" title="gym_ignition.randomizers.model.sdf.Distribution"><code class="xref py py-class docutils literal notranslate"><span class="pre">Distribution</span></code></a>) – The desired distribution.</p></li>
+<li><p><strong>parameters</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#gym_ignition.randomizers.model.sdf.UniformParams" title="gym_ignition.randomizers.model.sdf.UniformParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">UniformParams</span></code></a>, <a class="reference internal" href="#gym_ignition.randomizers.model.sdf.GaussianParams" title="gym_ignition.randomizers.model.sdf.GaussianParams"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianParams</span></code></a>]) – The namedtuple with the parameters of the distribution.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><a class="reference internal" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder" title="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomizationDataBuilder</span></code></a></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The randomization builder to allow chaining methods.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.randomizers.model.sdf.SDFRandomizer">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.randomizers.model.sdf.</code><code class="sig-name descname">SDFRandomizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">sdf_model</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.SDFRandomizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Randomized SDF files generator.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>sdf_model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The absolute path to the SDF file.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the SDF file does not exist.</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.SDFRandomizer.clean">
+<code class="sig-name descname">clean</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.SDFRandomizer.clean" title="Permalink to this definition">¶</a></dt>
+<dd><p>Clean the SDF randomizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.SDFRandomizer.find_xpath">
+<code class="sig-name descname">find_xpath</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xpath</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.SDFRandomizer.find_xpath" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find the elements that match an XPath pattern.</p>
+<p>This method could be helpful to test the matches of a XPath pattern before using
+it in <a class="reference internal" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.at_xpath" title="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder.at_xpath"><code class="xref py py-meth docutils literal notranslate"><span class="pre">at_xpath()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>xpath</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The XPath pattern.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Element</span></code>]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A list of elements matching the XPath pattern.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.SDFRandomizer.get_active_randomizations">
+<code class="sig-name descname">get_active_randomizations</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.SDFRandomizer.get_active_randomizations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the active randomizations.</p>
+<p>This method could be helpful also in the case of multi-match XPath patterns to
+validate that the inserted randomizations have been processed correctly.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<a class="reference internal" href="#gym_ignition.randomizers.model.sdf.RandomizationData" title="gym_ignition.randomizers.model.sdf.RandomizationData"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomizationData</span></code></a>]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The list of the active randomizations.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.SDFRandomizer.insert">
+<code class="sig-name descname">insert</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">randomization_data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.SDFRandomizer.insert" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a randomization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>randomization_data</strong> – A new randomization.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.SDFRandomizer.new_randomization">
+<code class="sig-name descname">new_randomization</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.SDFRandomizer.new_randomization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start the chaining to build a new randomization.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gym_ignition.randomizers.model.sdf.RandomizationDataBuilder" title="gym_ignition.randomizers.model.sdf.RandomizationDataBuilder"><code class="xref py py-class docutils literal notranslate"><span class="pre">RandomizationDataBuilder</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A randomization builder.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.SDFRandomizer.process_data">
+<code class="sig-name descname">process_data</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.SDFRandomizer.process_data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Process all the inserted randomizations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – If the XPath of a randomization has no matches.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.SDFRandomizer.sample">
+<code class="sig-name descname">sample</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">pretty_print</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.SDFRandomizer.sample" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sample a randomized SDF string.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>pretty_print</strong> – True to pretty print the output.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>ValueError</strong> – If the distribution of a randomization is not recognized.</p></li>
+<li><p><strong>ValueError</strong> – If the method of a randomization is not recognized.</p></li>
+</ul>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The randomized model as SDF string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.SDFRandomizer.seed">
+<code class="sig-name descname">seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.SDFRandomizer.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seed the SDF randomizer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The seed number.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.randomizers.model.sdf.UniformParams">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.randomizers.model.sdf.</code><code class="sig-name descname">UniformParams</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">low</span></em>, <em class="sig-param"><span class="n">high</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.UniformParams" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.UniformParams.high">
+<em class="property">property </em><code class="sig-name descname">high</code><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.UniformParams.high" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.randomizers.model.sdf.UniformParams.low">
+<em class="property">property </em><code class="sig-name descname">low</code><a class="headerlink" href="#gym_ignition.randomizers.model.sdf.UniformParams.low" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gym_ignition.randomizers.physics.html" class="btn btn-neutral float-right" title="gym_ignition.randomizers.physics" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gym_ignition.randomizers.base.html" class="btn btn-neutral float-left" title="gym_ignition.randomizers.base" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Istituto Italiano di Tecnologia
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: devel
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="gym_ignition.randomizers.model.html">devel</a></dd>
+    </dl>
+  </div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

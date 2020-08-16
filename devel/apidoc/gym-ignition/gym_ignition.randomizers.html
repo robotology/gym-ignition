@@ -1,0 +1,332 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gym_ignition.randomizers &mdash; gym-ignition  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="gym_ignition.randomizers.base" href="gym_ignition.randomizers.base.html" />
+    <link rel="prev" title="gym_ignition.experimental.gympp" href="gym_ignition.experimental.gympp.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> gym-ignition
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/stable.html">Stable Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/nightly.html">Nightly Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/optional_dependencies.html">Optional Dependencies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/gazebo.html">Gazebo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python Packages</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../scenario/scenario.bindings.html">scenario.bindings</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="gym_ignition.html">gym_ignition</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.base.html">gym_ignition.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.controllers.html">gym_ignition.controllers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.experimental.html">gym_ignition.experimental</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">gym_ignition.randomizers</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.randomizers.base.html">gym_ignition.randomizers.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.randomizers.model.html">gym_ignition.randomizers.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.randomizers.physics.html">gym_ignition.randomizers.physics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition.randomizers.gazebo_env_randomizer">gym_ignition.randomizers.gazebo_env_randomizer</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.runtimes.html">gym_ignition.runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.scenario.html">gym_ignition.scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html">gym_ignition.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gym-ignition-environments/gym_ignition_environments.html">gym_ignition_environments</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">gym-ignition</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="gym_ignition.html">gym_ignition</a> &raquo;</li>
+        
+      <li>gym_ignition.randomizers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apidoc/gym-ignition/gym_ignition.randomizers.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gym_ignition.randomizers">
+<span id="gym-ignition-randomizers"></span><h1>gym_ignition.randomizers<a class="headerlink" href="#module-gym_ignition.randomizers" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gym_ignition.randomizers.base.html">gym_ignition.randomizers.base</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.base.html#module-gym_ignition.randomizers.base.model">gym_ignition.randomizers.base.model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.base.html#module-gym_ignition.randomizers.base.physics">gym_ignition.randomizers.base.physics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.base.html#module-gym_ignition.randomizers.base.task">gym_ignition.randomizers.base.task</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gym_ignition.randomizers.model.html">gym_ignition.randomizers.model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.model.html#module-gym_ignition.randomizers.model.sdf">gym_ignition.randomizers.model.sdf</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gym_ignition.randomizers.physics.html">gym_ignition.randomizers.physics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.physics.html#module-gym_ignition.randomizers.physics.dart">gym_ignition.randomizers.physics.dart</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="module-gym_ignition.randomizers.gazebo_env_randomizer">
+<span id="gym-ignition-randomizers-gazebo-env-randomizer"></span><h2>gym_ignition.randomizers.gazebo_env_randomizer<a class="headerlink" href="#module-gym_ignition.randomizers.gazebo_env_randomizer" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition.randomizers.gazebo_env_randomizer.GazeboEnvRandomizer">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.randomizers.gazebo_env_randomizer.</code><code class="sig-name descname">GazeboEnvRandomizer</code><span class="sig-paren">(</span><em class="sig-param">env</em>, <em class="sig-param">physics_randomizer=&lt;gym_ignition.randomizers.physics.dart.DART object&gt;</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.gazebo_env_randomizer.GazeboEnvRandomizer" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.core.Wrapper</span></code>, <a class="reference internal" href="gym_ignition.randomizers.base.html#gym_ignition.randomizers.base.task.TaskRandomizer" title="gym_ignition.randomizers.base.task.TaskRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.randomizers.base.task.TaskRandomizer</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class to implement an environment randomizer for Ignition Gazebo.</p>
+<p>The randomizer is a <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.Wrapper</span></code> that extends the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> method. Objects that inherit from this class are used to
+setup the environment for the handled <a class="reference internal" href="gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>.</p>
+<p>In its simplest form, a randomizer populates the world with all the models that need
+to be part of the simulation. The task could then operate on them from a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code> object.</p>
+<p>More complex environments may require to randomize one or more simulated entities.
+Concrete classes that implement a randomizer could use
+<a class="reference internal" href="gym_ignition.randomizers.model.html#gym_ignition.randomizers.model.sdf.SDFRandomizer" title="gym_ignition.randomizers.model.sdf.SDFRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">SDFRandomizer</span></code></a> to randomize the model
+and <a class="reference internal" href="gym_ignition.randomizers.base.html#gym_ignition.randomizers.base.physics.PhysicsRandomizer" title="gym_ignition.randomizers.base.physics.PhysicsRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhysicsRandomizer</span></code></a> to randomize
+the physics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>env</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Callable</span></code>[[<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code>]], <code class="xref py py-class docutils literal notranslate"><span class="pre">Env</span></code>]]) – Defines the environment to handle. This argument could be either the string
+id if the environment does not need to be registered or a function that
+returns an environment object.</p></li>
+<li><p><strong>physics_randomizer</strong> (<a class="reference internal" href="gym_ignition.randomizers.base.html#gym_ignition.randomizers.base.physics.PhysicsRandomizer" title="gym_ignition.randomizers.base.physics.PhysicsRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhysicsRandomizer</span></code></a>) – Object that randomizes physics. The default physics engine is
+DART with no randomizations.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In order to randomize physics, the handled
+<code class="xref py py-class docutils literal notranslate"><span class="pre">scenario.gazebo.GazeboSimulator</span></code> is destroyed and created again.
+This operation is demanding, consider randomizing physics at a low rate.</p>
+</div>
+<div class="admonition-todo admonition" id="id1">
+<p class="admonition-title">Todo</p>
+<p>Allow resetting the physics by removing and inserting the world.</p>
+</div>
+<dl class="py method">
+<dt id="gym_ignition.randomizers.gazebo_env_randomizer.GazeboEnvRandomizer.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.gazebo_env_randomizer.GazeboEnvRandomizer.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the state of the environment and returns an initial observation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the initial observation.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>observation (object)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gym_ignition.randomizers.base.html" class="btn btn-neutral float-right" title="gym_ignition.randomizers.base" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gym_ignition.experimental.gympp.html" class="btn btn-neutral float-left" title="gym_ignition.experimental.gympp" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Istituto Italiano di Tecnologia
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: devel
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="gym_ignition.randomizers.html">devel</a></dd>
+    </dl>
+  </div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

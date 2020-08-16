@@ -1,0 +1,290 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gym_ignition_environments.models &mdash; gym-ignition  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="gym_ignition_environments.randomizers" href="gym_ignition_environments.randomizers.html" />
+    <link rel="prev" title="gym_ignition_environments" href="gym_ignition_environments.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> gym-ignition
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/stable.html">Stable Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/nightly.html">Nightly Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/optional_dependencies.html">Optional Dependencies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/gazebo.html">Gazebo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python Packages</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../scenario/scenario.bindings.html">scenario.bindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../gym-ignition/gym_ignition.html">gym_ignition</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="gym_ignition_environments.html">gym_ignition_environments</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">gym_ignition_environments.models</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition_environments.models.cartpole">gym_ignition_environments.models.cartpole</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition_environments.models.pendulum">gym_ignition_environments.models.pendulum</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition_environments.randomizers.html">gym_ignition_environments.randomizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition_environments.tasks.html">gym_ignition_environments.tasks</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">gym-ignition</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="gym_ignition_environments.html">gym_ignition_environments</a> &raquo;</li>
+        
+      <li>gym_ignition_environments.models</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apidoc/gym-ignition-environments/gym_ignition_environments.models.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gym_ignition_environments.models">
+<span id="gym-ignition-environments-models"></span><h1>gym_ignition_environments.models<a class="headerlink" href="#module-gym_ignition_environments.models" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-gym_ignition_environments.models.cartpole">
+<span id="gym-ignition-environments-models-cartpole"></span><h2>gym_ignition_environments.models.cartpole<a class="headerlink" href="#module-gym_ignition_environments.models.cartpole" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition_environments.models.cartpole.CartPole">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition_environments.models.cartpole.</code><code class="sig-name descname">CartPole</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">world</span></em>, <em class="sig-param"><span class="n">position</span><span class="o">=</span><span class="default_value">0.0, 0.0, 0.0</span></em>, <em class="sig-param"><span class="n">orientation</span><span class="o">=</span><span class="default_value">1.0, 0, 0, 0</span></em>, <em class="sig-param"><span class="n">model_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.cartpole.CartPole" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_wrapper.ModelWrapper" title="gym_ignition.scenario.model_wrapper.ModelWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_wrapper.ModelWrapper</span></code></a>, <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_with_file.ModelWithFile" title="gym_ignition.scenario.model_with_file.ModelWithFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_with_file.ModelWithFile</span></code></a></p>
+<dl class="py method">
+<dt id="gym_ignition_environments.models.cartpole.CartPole.get_model_file">
+<em class="property">classmethod </em><code class="sig-name descname">get_model_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.cartpole.CartPole.get_model_file" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition_environments.models.pendulum">
+<span id="gym-ignition-environments-models-pendulum"></span><h2>gym_ignition_environments.models.pendulum<a class="headerlink" href="#module-gym_ignition_environments.models.pendulum" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition_environments.models.pendulum.Pendulum">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition_environments.models.pendulum.</code><code class="sig-name descname">Pendulum</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">world</span></em>, <em class="sig-param"><span class="n">position</span><span class="o">=</span><span class="default_value">0.0, 0.0, 0.0</span></em>, <em class="sig-param"><span class="n">orientation</span><span class="o">=</span><span class="default_value">1.0, 0, 0, 0</span></em>, <em class="sig-param"><span class="n">model_file</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.pendulum.Pendulum" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_wrapper.ModelWrapper" title="gym_ignition.scenario.model_wrapper.ModelWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_wrapper.ModelWrapper</span></code></a>, <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_with_file.ModelWithFile" title="gym_ignition.scenario.model_with_file.ModelWithFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_with_file.ModelWithFile</span></code></a></p>
+<dl class="py method">
+<dt id="gym_ignition_environments.models.pendulum.Pendulum.get_model_file">
+<em class="property">classmethod </em><code class="sig-name descname">get_model_file</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.pendulum.Pendulum.get_model_file" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gym_ignition_environments.randomizers.html" class="btn btn-neutral float-right" title="gym_ignition_environments.randomizers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gym_ignition_environments.html" class="btn btn-neutral float-left" title="gym_ignition_environments" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Istituto Italiano di Tecnologia
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: devel
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="gym_ignition_environments.models.html">devel</a></dd>
+    </dl>
+  </div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

@@ -1,0 +1,789 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gym_ignition.utils &mdash; gym-ignition  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="gym_ignition_environments" href="../gym-ignition-environments/gym_ignition_environments.html" />
+    <link rel="prev" title="gym_ignition.scenario" href="gym_ignition.scenario.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> gym-ignition
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/stable.html">Stable Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/nightly.html">Nightly Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/optional_dependencies.html">Optional Dependencies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/gazebo.html">Gazebo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python Packages</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../scenario/scenario.bindings.html">scenario.bindings</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="gym_ignition.html">gym_ignition</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.base.html">gym_ignition.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.controllers.html">gym_ignition.controllers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.experimental.html">gym_ignition.experimental</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.html">gym_ignition.randomizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.runtimes.html">gym_ignition.runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.scenario.html">gym_ignition.scenario</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">gym_ignition.utils</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition.utils.inverse_kinematics_nlp">gym_ignition.utils.inverse_kinematics_nlp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition.utils.logger">gym_ignition.utils.logger</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition.utils.math">gym_ignition.utils.math</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition.utils.misc">gym_ignition.utils.misc</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition.utils.resource_finder">gym_ignition.utils.resource_finder</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition.utils.scenario">gym_ignition.utils.scenario</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-gym_ignition.utils.typing">gym_ignition.utils.typing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gym-ignition-environments/gym_ignition_environments.html">gym_ignition_environments</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">gym-ignition</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="gym_ignition.html">gym_ignition</a> &raquo;</li>
+        
+      <li>gym_ignition.utils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apidoc/gym-ignition/gym_ignition.utils.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gym_ignition.utils">
+<span id="gym-ignition-utils"></span><h1>gym_ignition.utils<a class="headerlink" href="#module-gym_ignition.utils" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-gym_ignition.utils.inverse_kinematics_nlp">
+<span id="gym-ignition-utils-inverse-kinematics-nlp"></span><h2>gym_ignition.utils.inverse_kinematics_nlp<a class="headerlink" href="#module-gym_ignition.utils.inverse_kinematics_nlp" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.IKSolution">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.utils.inverse_kinematics_nlp.</code><code class="sig-name descname">IKSolution</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">joint_configuration</span></em>, <em class="sig-param"><span class="n">base_position</span></em>, <em class="sig-param"><span class="n">base_quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.IKSolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.IKSolution.base_position">
+<em class="property">property </em><code class="sig-name descname">base_position</code><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.IKSolution.base_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.IKSolution.base_quaternion">
+<em class="property">property </em><code class="sig-name descname">base_quaternion</code><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.IKSolution.base_quaternion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.IKSolution.joint_configuration">
+<em class="property">property </em><code class="sig-name descname">joint_configuration</code><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.IKSolution.joint_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.utils.inverse_kinematics_nlp.</code><code class="sig-name descname">InverseKinematicsNLP</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">urdf_filename</span></em>, <em class="sig-param"><span class="n">considered_joints</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_position_constraint">
+<code class="sig-name descname">add_frame_position_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em>, <em class="sig-param"><span class="n">position</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_position_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_rotation_constraint">
+<code class="sig-name descname">add_frame_rotation_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em>, <em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_rotation_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_transform_constraint">
+<code class="sig-name descname">add_frame_transform_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em>, <em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_transform_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.add_target">
+<code class="sig-name descname">add_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em>, <em class="sig-param"><span class="n">target_type</span></em>, <em class="sig-param"><span class="n">weight</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">as_constraint</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.add_target" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.deactivate_frame_constraint">
+<code class="sig-name descname">deactivate_frame_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.deactivate_frame_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.get_active_target_names">
+<code class="sig-name descname">get_active_target_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.get_active_target_names" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.get_available_target_names">
+<code class="sig-name descname">get_available_target_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.get_available_target_names" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.get_base_frame">
+<code class="sig-name descname">get_base_frame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.get_base_frame" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.get_solution">
+<code class="sig-name descname">get_solution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.get_solution" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gym_ignition.utils.inverse_kinematics_nlp.IKSolution" title="gym_ignition.utils.inverse_kinematics_nlp.IKSolution"><code class="xref py py-class docutils literal notranslate"><span class="pre">IKSolution</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.get_target_data">
+<code class="sig-name descname">get_target_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.get_target_data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetData" title="gym_ignition.utils.inverse_kinematics_nlp.TargetData"><code class="xref py py-class docutils literal notranslate"><span class="pre">TargetData</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.initialize">
+<code class="sig-name descname">initialize</code><span class="sig-paren">(</span><em class="sig-param">rotation_parametrization=&lt;RotationParametrization.ROLL_PITCH_YAW: 2&gt;</em>, <em class="sig-param">target_mode=&lt;TargetResolutionMode.TARGET_AS_CONSTRAINT_NONE: 2&gt;</em>, <em class="sig-param">cost_tolerance=1e-08</em>, <em class="sig-param">max_iterations=1000</em>, <em class="sig-param">base_frame=None</em>, <em class="sig-param">floating_base=False</em>, <em class="sig-param">verbosity=1</em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.solve">
+<code class="sig-name descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.solve" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.update_position_target">
+<code class="sig-name descname">update_position_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_name</span></em>, <em class="sig-param"><span class="n">position</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.update_position_target" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.update_rotation_target">
+<code class="sig-name descname">update_rotation_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_name</span></em>, <em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.update_rotation_target" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.update_transform_target">
+<code class="sig-name descname">update_transform_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_name</span></em>, <em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.update_transform_target" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.warm_start_from">
+<code class="sig-name descname">warm_start_from</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">warm_start_solution</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.InverseKinematicsNLP.warm_start_from" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.RotationParametrization">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.utils.inverse_kinematics_nlp.</code><code class="sig-name descname">RotationParametrization</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.RotationParametrization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.RotationParametrization.QUATERNION">
+<code class="sig-name descname">QUATERNION</code><em class="property"> = 1</em><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.RotationParametrization.QUATERNION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.RotationParametrization.ROLL_PITCH_YAW">
+<code class="sig-name descname">ROLL_PITCH_YAW</code><em class="property"> = 2</em><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.RotationParametrization.ROLL_PITCH_YAW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.RotationParametrization.to_idyntree">
+<code class="sig-name descname">to_idyntree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.RotationParametrization.to_idyntree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetData">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.utils.inverse_kinematics_nlp.</code><code class="sig-name descname">TargetData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span></em>, <em class="sig-param"><span class="n">weight</span></em>, <em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetData.data">
+<em class="property">property </em><code class="sig-name descname">data</code><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetData.data" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 2</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetData.type">
+<em class="property">property </em><code class="sig-name descname">type</code><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetData.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetData.weight">
+<em class="property">property </em><code class="sig-name descname">weight</code><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetData.weight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.utils.inverse_kinematics_nlp.</code><code class="sig-name descname">TargetResolutionMode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_FULL">
+<code class="sig-name descname">TARGET_AS_CONSTRAINT_FULL</code><em class="property"> = 1</em><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_FULL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_NONE">
+<code class="sig-name descname">TARGET_AS_CONSTRAINT_NONE</code><em class="property"> = 2</em><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_NONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_POSITION">
+<code class="sig-name descname">TARGET_AS_CONSTRAINT_POSITION</code><em class="property"> = 3</em><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_POSITION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_ROTATION">
+<code class="sig-name descname">TARGET_AS_CONSTRAINT_ROTATION</code><em class="property"> = 4</em><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_ROTATION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode.to_idyntree">
+<code class="sig-name descname">to_idyntree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetResolutionMode.to_idyntree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetType">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.utils.inverse_kinematics_nlp.</code><code class="sig-name descname">TargetType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetType.POSE">
+<code class="sig-name descname">POSE</code><em class="property"> = 3</em><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetType.POSE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetType.POSITION">
+<code class="sig-name descname">POSITION</code><em class="property"> = 1</em><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetType.POSITION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TargetType.ROTATION">
+<code class="sig-name descname">ROTATION</code><em class="property"> = 2</em><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TargetType.ROTATION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TransformTargetData">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.utils.inverse_kinematics_nlp.</code><code class="sig-name descname">TransformTargetData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TransformTargetData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TransformTargetData.position">
+<em class="property">property </em><code class="sig-name descname">position</code><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TransformTargetData.position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 0</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.utils.inverse_kinematics_nlp.TransformTargetData.quaternion">
+<em class="property">property </em><code class="sig-name descname">quaternion</code><a class="headerlink" href="#gym_ignition.utils.inverse_kinematics_nlp.TransformTargetData.quaternion" title="Permalink to this definition">¶</a></dt>
+<dd><p>Alias for field number 1</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.utils.logger">
+<span id="gym-ignition-utils-logger"></span><h2>gym_ignition.utils.logger<a class="headerlink" href="#module-gym_ignition.utils.logger" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="gym_ignition.utils.logger.custom_formatwarning">
+<code class="sig-prename descclassname">gym_ignition.utils.logger.</code><code class="sig-name descname">custom_formatwarning</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.custom_formatwarning" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom format that overrides <code class="xref py py-func docutils literal notranslate"><span class="pre">warnings.formatwarning()</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.utils.logger.gym_verbosity">
+<code class="sig-prename descclassname">gym_ignition.utils.logger.</code><code class="sig-name descname">gym_verbosity</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.gym_verbosity" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.utils.logger.set_level">
+<code class="sig-prename descclassname">gym_ignition.utils.logger.</code><code class="sig-name descname">set_level</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">level</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.set_level" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the verbosity level of both <code class="xref py py-mod docutils literal notranslate"><span class="pre">gym</span></code> and <a class="reference internal" href="gym_ignition.html#module-gym_ignition" title="gym_ignition"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gym_ignition</span></code></a>.</p>
+<p>Accepted values:</p>
+<ul class="simple">
+<li><p><code class="xref py py-const docutils literal notranslate"><span class="pre">gym.logger.DEBUG</span></code> (10)</p></li>
+<li><p><code class="xref py py-const docutils literal notranslate"><span class="pre">gym.logger.INFO</span></code> (20)</p></li>
+<li><p><code class="xref py py-const docutils literal notranslate"><span class="pre">gym.logger.WARN</span></code> (30)</p></li>
+<li><p><code class="xref py py-const docutils literal notranslate"><span class="pre">gym.logger.ERROR</span></code> (40)</p></li>
+<li><p><code class="xref py py-const docutils literal notranslate"><span class="pre">gym.logger.DISABLED</span></code> (50)</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>level</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The desired verbosity level.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.utils.logger.warn">
+<code class="sig-prename descclassname">gym_ignition.utils.logger.</code><code class="sig-name descname">warn</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">msg</span></em>, <em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.warn" title="Permalink to this definition">¶</a></dt>
+<dd><p>Custom definition of <code class="xref py py-func docutils literal notranslate"><span class="pre">gym.logger.warn()</span></code> function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.utils.math">
+<span id="gym-ignition-utils-math"></span><h2>gym_ignition.utils.math<a class="headerlink" href="#module-gym_ignition.utils.math" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="gym_ignition.utils.math.denormalize">
+<code class="sig-prename descclassname">gym_ignition.utils.math.</code><code class="sig-name descname">denormalize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span></em>, <em class="sig-param"><span class="n">low</span></em>, <em class="sig-param"><span class="n">high</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.math.denormalize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.utils.math.normalize">
+<code class="sig-prename descclassname">gym_ignition.utils.math.</code><code class="sig-name descname">normalize</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">input</span></em>, <em class="sig-param"><span class="n">low</span></em>, <em class="sig-param"><span class="n">high</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.math.normalize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.utils.misc">
+<span id="gym-ignition-utils-misc"></span><h2>gym_ignition.utils.misc<a class="headerlink" href="#module-gym_ignition.utils.misc" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="gym_ignition.utils.misc.string_to_file">
+<code class="sig-prename descclassname">gym_ignition.utils.misc.</code><code class="sig-name descname">string_to_file</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">string</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.misc.string_to_file" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.utils.resource_finder">
+<span id="gym-ignition-utils-resource-finder"></span><h2>gym_ignition.utils.resource_finder<a class="headerlink" href="#module-gym_ignition.utils.resource_finder" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="gym_ignition.utils.resource_finder.add_path">
+<code class="sig-prename descclassname">gym_ignition.utils.resource_finder.</code><code class="sig-name descname">add_path</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">data_path</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.add_path" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.utils.resource_finder.add_path_from_env_var">
+<code class="sig-prename descclassname">gym_ignition.utils.resource_finder.</code><code class="sig-name descname">add_path_from_env_var</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">env_variable</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.add_path_from_env_var" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.utils.resource_finder.find_resource">
+<code class="sig-prename descclassname">gym_ignition.utils.resource_finder.</code><code class="sig-name descname">find_resource</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">file_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.find_resource" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.utils.resource_finder.get_search_paths">
+<code class="sig-prename descclassname">gym_ignition.utils.resource_finder.</code><code class="sig-name descname">get_search_paths</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.get_search_paths" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.utils.scenario">
+<span id="gym-ignition-utils-scenario"></span><h2>gym_ignition.utils.scenario<a class="headerlink" href="#module-gym_ignition.utils.scenario" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="gym_ignition.utils.scenario.get_joint_positions_space">
+<code class="sig-prename descclassname">gym_ignition.utils.scenario.</code><code class="sig-name descname">get_joint_positions_space</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">considered_joints</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.scenario.get_joint_positions_space" title="Permalink to this definition">¶</a></dt>
+<dd><p>Build a Box space from the joint position limits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="../scenario/scenario.bindings.html#scenario.bindings.gazebo.Model" title="scenario.bindings.gazebo.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>) – The model from which generating the joint space.</p></li>
+<li><p><strong>considered_joints</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]]) – List of considered joints. It is helpful to restrict the set
+of joints and to enforce a custom joint serialization.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Box</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A box space created from the model’s joint position limits.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.utils.scenario.get_unique_model_name">
+<code class="sig-prename descclassname">gym_ignition.utils.scenario.</code><code class="sig-name descname">get_unique_model_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">world</span></em>, <em class="sig-param"><span class="n">model_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.scenario.get_unique_model_name" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a unique model name given a world configuration.</p>
+<p>This function find the first available model name starting from the argument and
+appending a integer postfix until the resulting name is unique in the world.</p>
+<p>Tentatives example: <cite>cartpole</cite>, <cite>cartpole1</cite>, <cite>cartpole2</cite>, …</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>world</strong> (<a class="reference internal" href="../scenario/scenario.bindings.html#scenario.bindings.gazebo.World" title="scenario.bindings.gazebo.World"><code class="xref py py-class docutils literal notranslate"><span class="pre">World</span></code></a>) – An initialized world.</p></li>
+<li><p><strong>model_name</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>) – The first model name attempt.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>ValueError</strong> – If the world is not valid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The unique model name calculated from the original name.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.utils.scenario.get_unique_world_name">
+<code class="sig-prename descclassname">gym_ignition.utils.scenario.</code><code class="sig-name descname">get_unique_world_name</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">world_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.scenario.get_unique_world_name" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.utils.scenario.init_gazebo_sim">
+<code class="sig-prename descclassname">gym_ignition.utils.scenario.</code><code class="sig-name descname">init_gazebo_sim</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">step_size</span><span class="o">=</span><span class="default_value">0.001</span></em>, <em class="sig-param"><span class="n">real_time_factor</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">steps_per_run</span><span class="o">=</span><span class="default_value">1</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.scenario.init_gazebo_sim" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize a Gazebo simulation with an empty world and default physics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>step_size</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – Gazebo step size.</p></li>
+<li><p><strong>real_time_factor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The desired real time factor of the simulation.</p></li>
+<li><p><strong>steps_per_run</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – How many steps should be executed at each Gazebo run.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – If the initialization of either the simulator or the world fails.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<a class="reference internal" href="../scenario/scenario.bindings.html#scenario.bindings.gazebo.GazeboSimulator" title="scenario.bindings.gazebo.GazeboSimulator"><code class="xref py py-class docutils literal notranslate"><span class="pre">GazeboSimulator</span></code></a>, <a class="reference internal" href="../scenario/scenario.bindings.html#scenario.bindings.core.World" title="scenario.bindings.core.World"><code class="xref py py-class docutils literal notranslate"><span class="pre">World</span></code></a>]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>gazebo</strong> – The Gazebo simulator.</p></li>
+<li><p><strong>world</strong> – The default world.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.utils.typing">
+<span id="gym-ignition-utils-typing"></span><h2>gym_ignition.utils.typing<a class="headerlink" href="#module-gym_ignition.utils.typing" title="Permalink to this headline">¶</a></h2>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../gym-ignition-environments/gym_ignition_environments.html" class="btn btn-neutral float-right" title="gym_ignition_environments" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gym_ignition.scenario.html" class="btn btn-neutral float-left" title="gym_ignition.scenario" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Istituto Italiano di Tecnologia
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: devel
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="gym_ignition.utils.html">devel</a></dd>
+    </dl>
+  </div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

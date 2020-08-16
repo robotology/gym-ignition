@@ -1,0 +1,461 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gym_ignition.experimental.gympp &mdash; gym-ignition  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="gym_ignition.randomizers" href="gym_ignition.randomizers.html" />
+    <link rel="prev" title="gym_ignition.experimental" href="gym_ignition.experimental.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> gym-ignition
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/stable.html">Stable Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/nightly.html">Nightly Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/optional_dependencies.html">Optional Dependencies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/gazebo.html">Gazebo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python Packages</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../scenario/scenario.bindings.html">scenario.bindings</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="gym_ignition.html">gym_ignition</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.base.html">gym_ignition.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.controllers.html">gym_ignition.controllers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gym_ignition.experimental.html">gym_ignition.experimental</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">gym_ignition.experimental.gympp</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-gym_ignition.experimental.gympp.cartpole">gym_ignition.experimental.gympp.cartpole</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-gym_ignition.experimental.gympp.gympp_env">gym_ignition.experimental.gympp.gympp_env</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.html">gym_ignition.randomizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.runtimes.html">gym_ignition.runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.scenario.html">gym_ignition.scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html">gym_ignition.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gym-ignition-environments/gym_ignition_environments.html">gym_ignition_environments</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">gym-ignition</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="gym_ignition.html">gym_ignition</a> &raquo;</li>
+        
+          <li><a href="gym_ignition.experimental.html">gym_ignition.experimental</a> &raquo;</li>
+        
+      <li>gym_ignition.experimental.gympp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apidoc/gym-ignition/gym_ignition.experimental.gympp.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gym_ignition.experimental.gympp">
+<span id="gym-ignition-experimental-gympp"></span><h1>gym_ignition.experimental.gympp<a class="headerlink" href="#module-gym_ignition.experimental.gympp" title="Permalink to this headline">¶</a></h1>
+<dl class="py function">
+<dt id="gym_ignition.experimental.gympp.get_empty_world">
+<code class="sig-prename descclassname">gym_ignition.experimental.gympp.</code><code class="sig-name descname">get_empty_world</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.experimental.gympp.get_empty_world" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<div class="section" id="module-gym_ignition.experimental.gympp.cartpole">
+<span id="gym-ignition-experimental-gympp-cartpole"></span><h2>gym_ignition.experimental.gympp.cartpole<a class="headerlink" href="#module-gym_ignition.experimental.gympp.cartpole" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition.experimental.gympp.cartpole.CartPoleDiscrete">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.experimental.gympp.cartpole.</code><code class="sig-name descname">CartPoleDiscrete</code><a class="headerlink" href="#gym_ignition.experimental.gympp.cartpole.CartPoleDiscrete" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv" title="gym_ignition.experimental.gympp.gympp_env.GymppEnv"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.experimental.gympp.gympp_env.GymppEnv</span></code></a></p>
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.experimental.gympp.gympp_env">
+<span id="gym-ignition-experimental-gympp-gympp-env"></span><h2>gym_ignition.experimental.gympp.gympp_env<a class="headerlink" href="#module-gym_ignition.experimental.gympp.gympp_env" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition.experimental.gympp.gympp_env.GymppEnv">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.experimental.gympp.gympp_env.</code><code class="sig-name descname">GymppEnv</code><a class="headerlink" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.core.Env</span></code></p>
+<p>Class that exposes C++ Gazebo environments</p>
+<p>This class encapsulates environments created as C++ plugins. Plugins that implement
+the provided gympp and gazebo interfaces are inherently compatible with this
+class if they support the C++ factory.</p>
+<p>The users of this class need to implement the following method:</p>
+<p>_plugin_metadata</p>
+<p>The methods inherited from gym.Env are already implemented.</p>
+<dl class="py method">
+<dt id="gym_ignition.experimental.gympp.gympp_env.GymppEnv.action_space">
+<em class="property">property </em><code class="sig-name descname">action_space</code><a class="headerlink" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv.action_space" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.experimental.gympp.gympp_env.GymppEnv.close">
+<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv.close" title="Permalink to this definition">¶</a></dt>
+<dd><p>Override close in your subclass to perform any necessary cleanup.</p>
+<p>Environments will automatically close() themselves when
+garbage collected or when the program exits.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.experimental.gympp.gympp_env.GymppEnv.gazebo">
+<em class="property">property </em><code class="sig-name descname">gazebo</code><a class="headerlink" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv.gazebo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.experimental.gympp.gympp_env.GymppEnv.gympp_env">
+<em class="property">property </em><code class="sig-name descname">gympp_env</code><a class="headerlink" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv.gympp_env" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.experimental.gympp.gympp_env.GymppEnv.metadata">
+<code class="sig-name descname">metadata</code><em class="property"> = {'render.modes': ['human']}</em><a class="headerlink" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv.metadata" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.experimental.gympp.gympp_env.GymppEnv.observation_space">
+<em class="property">property </em><code class="sig-name descname">observation_space</code><a class="headerlink" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv.observation_space" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.experimental.gympp.gympp_env.GymppEnv.render">
+<code class="sig-name descname">render</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'human'</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv.render" title="Permalink to this definition">¶</a></dt>
+<dd><p>Renders the environment.</p>
+<p>The set of supported modes varies per environment. (And some
+environments do not support rendering at all.) By convention,
+if mode is:</p>
+<ul class="simple">
+<li><p>human: render to the current display or terminal and
+return nothing. Usually for human consumption.</p></li>
+<li><p>rgb_array: Return an numpy.ndarray with shape (x, y, 3),
+representing RGB values for an x-by-y pixel image, suitable
+for turning into a video.</p></li>
+<li><p>ansi: Return a string (str) or StringIO.StringIO containing a
+terminal-style text representation. The text can include newlines
+and ANSI escape sequences (e.g. for colors).</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<dl class="simple">
+<dt>Make sure that your class’s metadata ‘render.modes’ key includes</dt><dd><p>the list of supported modes. It’s recommended to call super()
+in implementations to use the functionality of this method.</p>
+</dd>
+</dl>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>mode</strong> (<em>str</em>) – the mode to render with</p>
+</dd>
+</dl>
+<p>Example:</p>
+<dl>
+<dt>class MyEnv(Env):</dt><dd><p>metadata = {‘render.modes’: [‘human’, ‘rgb_array’]}</p>
+<dl class="simple">
+<dt>def render(self, mode=’human’):</dt><dd><dl class="simple">
+<dt>if mode == ‘rgb_array’:</dt><dd><p>return np.array(…) # return RGB frame suitable for video</p>
+</dd>
+<dt>elif mode == ‘human’:</dt><dd><p>… # pop up a window and render</p>
+</dd>
+<dt>else:</dt><dd><p>super(MyEnv, self).render(mode=mode) # just raise an exception</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.experimental.gympp.gympp_env.GymppEnv.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resets the state of the environment and returns an initial observation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>the initial observation.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>observation (object)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.experimental.gympp.gympp_env.GymppEnv.seed">
+<code class="sig-name descname">seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets the seed for this env’s random number generator(s).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some environments use multiple pseudorandom number generators.
+We want to capture all such seeds used in order to ensure that
+there aren’t accidental correlations between multiple generators.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Returns the list of seeds used in this env’s random</dt><dd><p>number generators. The first value in the list should be the
+“main” seed, or the value which a reproducer should pass to
+‘seed’. Often, the main seed equals the provided ‘seed’, but
+this won’t be true if seed=None, for example.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>list&lt;bigint&gt;</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.experimental.gympp.gympp_env.GymppEnv.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.experimental.gympp.gympp_env.GymppEnv.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Run one timestep of the environment’s dynamics. When end of
+episode is reached, you are responsible for calling <cite>reset()</cite>
+to reset this environment’s state.</p>
+<p>Accepts an action and returns a tuple (observation, reward, done, info).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action</strong> (<em>object</em>) – an action provided by the agent</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>agent’s observation of the current environment
+reward (float) : amount of reward returned after previous action
+done (bool): whether the episode has ended, in which case further step() calls will return undefined results
+info (dict): contains auxiliary diagnostic information (helpful for debugging, and sometimes learning)</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>observation (object)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gym_ignition.randomizers.html" class="btn btn-neutral float-right" title="gym_ignition.randomizers" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gym_ignition.experimental.html" class="btn btn-neutral float-left" title="gym_ignition.experimental" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Istituto Italiano di Tecnologia
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: devel
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="gym_ignition.experimental.gympp.html">devel</a></dd>
+    </dl>
+  </div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

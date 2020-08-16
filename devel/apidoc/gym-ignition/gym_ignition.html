@@ -1,0 +1,312 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gym_ignition &mdash; gym-ignition  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="gym_ignition.base" href="gym_ignition.base.html" />
+    <link rel="prev" title="scenario.bindings" href="../scenario/scenario.bindings.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> gym-ignition
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/stable.html">Stable Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/nightly.html">Nightly Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/optional_dependencies.html">Optional Dependencies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/gazebo.html">Gazebo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python Packages</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../scenario/scenario.bindings.html">scenario.bindings</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">gym_ignition</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.base.html">gym_ignition.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.controllers.html">gym_ignition.controllers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.experimental.html">gym_ignition.experimental</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.html">gym_ignition.randomizers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.runtimes.html">gym_ignition.runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.scenario.html">gym_ignition.scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html">gym_ignition.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gym-ignition-environments/gym_ignition_environments.html">gym_ignition_environments</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">gym-ignition</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>gym_ignition</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apidoc/gym-ignition/gym_ignition.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gym_ignition">
+<span id="gym-ignition"></span><h1>gym_ignition<a class="headerlink" href="#module-gym_ignition" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="gym_ignition.base.html">gym_ignition.base</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.base.html#module-gym_ignition.base.runtime">gym_ignition.base.runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.base.html#module-gym_ignition.base.task">gym_ignition.base.task</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gym_ignition.controllers.html">gym_ignition.controllers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.controllers.gazebo.html">gym_ignition.controllers.gazebo</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.controllers.gazebo.html#module-gym_ignition.controllers.gazebo.computed_torque_fixed_base">gym_ignition.controllers.gazebo.computed_torque_fixed_base</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gym_ignition.experimental.html">gym_ignition.experimental</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.experimental.gympp.html">gym_ignition.experimental.gympp</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.experimental.gympp.html#module-gym_ignition.experimental.gympp.cartpole">gym_ignition.experimental.gympp.cartpole</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.experimental.gympp.html#module-gym_ignition.experimental.gympp.gympp_env">gym_ignition.experimental.gympp.gympp_env</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gym_ignition.randomizers.html">gym_ignition.randomizers</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.base.html">gym_ignition.randomizers.base</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.randomizers.base.html#module-gym_ignition.randomizers.base.model">gym_ignition.randomizers.base.model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.randomizers.base.html#module-gym_ignition.randomizers.base.physics">gym_ignition.randomizers.base.physics</a></li>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.randomizers.base.html#module-gym_ignition.randomizers.base.task">gym_ignition.randomizers.base.task</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.model.html">gym_ignition.randomizers.model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.randomizers.model.html#module-gym_ignition.randomizers.model.sdf">gym_ignition.randomizers.model.sdf</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.physics.html">gym_ignition.randomizers.physics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.randomizers.physics.html#module-gym_ignition.randomizers.physics.dart">gym_ignition.randomizers.physics.dart</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.html#module-gym_ignition.randomizers.gazebo_env_randomizer">gym_ignition.randomizers.gazebo_env_randomizer</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gym_ignition.runtimes.html">gym_ignition.runtimes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.runtimes.html#module-gym_ignition.runtimes.gazebo_runtime">gym_ignition.runtimes.gazebo_runtime</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.runtimes.html#module-gym_ignition.runtimes.realtime_runtime">gym_ignition.runtimes.realtime_runtime</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gym_ignition.scenario.html">gym_ignition.scenario</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.scenario.html#module-gym_ignition.scenario.model_with_file">gym_ignition.scenario.model_with_file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.scenario.html#module-gym_ignition.scenario.model_wrapper">gym_ignition.scenario.model_wrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gym_ignition.utils.html">gym_ignition.utils</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html#module-gym_ignition.utils.inverse_kinematics_nlp">gym_ignition.utils.inverse_kinematics_nlp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html#module-gym_ignition.utils.logger">gym_ignition.utils.logger</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html#module-gym_ignition.utils.math">gym_ignition.utils.math</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html#module-gym_ignition.utils.misc">gym_ignition.utils.misc</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html#module-gym_ignition.utils.resource_finder">gym_ignition.utils.resource_finder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html#module-gym_ignition.utils.scenario">gym_ignition.utils.scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html#module-gym_ignition.utils.typing">gym_ignition.utils.typing</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gym_ignition.base.html" class="btn btn-neutral float-right" title="gym_ignition.base" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../scenario/scenario.bindings.html" class="btn btn-neutral float-left" title="scenario.bindings" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Istituto Italiano di Tecnologia
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: devel
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="gym_ignition.html">devel</a></dd>
+    </dl>
+  </div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
