@@ -35,6 +35,7 @@ target_link_libraries(ECMProvider
     ignition-gazebo3::core
     PRIVATE
     ECMSingleton
+    ScenarioGazebo
     ExtraComponents)
 
 target_include_directories(ECMProvider PRIVATE

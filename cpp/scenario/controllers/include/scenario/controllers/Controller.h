@@ -2,26 +2,8 @@
  * Copyright (C) 2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
- * This project is dual licensed under LGPL v2.1+ or Apache License.
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
  * This software may be modified and distributed under the terms of the
  * GNU Lesser General Public License v2.1 or any later version.
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 #ifndef SCENARIO_CONTROLLERS_CONTROLLER_H
@@ -34,20 +16,19 @@
 #include <string>
 #include <vector>
 
-namespace scenario {
-    namespace controllers {
-        class Controller;
-        class UseScenarioModel;
-        class SetBaseReferences;
-        class SetJointReferences;
-        using ControllerPtr = std::shared_ptr<Controller>;
-        constexpr std::array<double, 3> g = {0, 0, -9.80665};
-    } // namespace controllers
-    namespace gazebo {
-        class Model;
-        using ModelPtr = std::shared_ptr<Model>;
-    } // namespace gazebo
-} // namespace scenario
+namespace scenario::controllers {
+    class Controller;
+    class UseScenarioModel;
+    class SetBaseReferences;
+    class SetJointReferences;
+    using ControllerPtr = std::shared_ptr<Controller>;
+    constexpr std::array<double, 3> g = {0, 0, -9.80665};
+} // namespace scenario::controllers
+
+namespace scenario::core {
+    class Model;
+    using ModelPtr = std::shared_ptr<Model>;
+} // namespace scenario::core
 
 class scenario::controllers::Controller
     : public std::enable_shared_from_this<scenario::controllers::Controller>
@@ -72,7 +53,7 @@ public:
     virtual bool updateStateFromModel() = 0;
 
 protected:
-    gazebo::ModelPtr m_model;
+    core::ModelPtr m_model;
 };
 
 class scenario::controllers::SetBaseReferences

@@ -35,13 +35,9 @@
 
 #include <memory>
 
-namespace scenario {
-    namespace plugins {
-        namespace gazebo {
-            class ControllerRunner;
-        } // namespace gazebo
-    } // namespace plugins
-} // namespace scenario
+namespace scenario::plugins::gazebo {
+    class ControllerRunner;
+} // namespace scenario::plugins::gazebo
 
 class scenario::plugins::gazebo::ControllerRunner final
     : public ignition::gazebo::System

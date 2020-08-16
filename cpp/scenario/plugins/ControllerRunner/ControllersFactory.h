@@ -28,30 +28,25 @@
 #define SCENARIO_PLUGINS_CONTROLLERSFACTORY_H
 
 #include "scenario/controllers/Controller.h"
-#include "scenario/gazebo/Model.h"
+#include "scenario/core/Model.h"
 
 #include <sdf/Element.hh>
 
 #include <memory>
 
-namespace scenario {
-    namespace plugins {
-        namespace gazebo {
-            class ControllersFactory;
-        } // namespace gazebo
-    } // namespace plugins
-} // namespace scenario
+namespace scenario::plugins::gazebo {
+    class ControllersFactory;
+} // namespace scenario::plugins::gazebo
 
 class scenario::plugins::gazebo::ControllersFactory
 {
-
 public:
     ControllersFactory();
     ~ControllersFactory();
 
     static ControllersFactory& Instance();
     controllers::ControllerPtr get(const sdf::ElementPtr context,
-                                   scenario::gazebo::ModelPtr model);
+                                   scenario::core::ModelPtr model);
 
 private:
     class Impl;
