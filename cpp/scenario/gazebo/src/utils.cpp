@@ -49,9 +49,9 @@
 
 using namespace scenario::gazebo;
 
-void utils::setVerbosity(const int level)
+void utils::setVerbosity(const Verbosity level)
 {
-    ignition::common::Console::SetVerbosity(level);
+    ignition::common::Console::SetVerbosity(static_cast<int>(level));
 }
 
 std::string utils::findSdfFile(const std::string& fileName)

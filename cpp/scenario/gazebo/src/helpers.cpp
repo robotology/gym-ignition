@@ -126,10 +126,10 @@ void utils::rowMajorToColumnMajor(std::vector<double>& input,
     colMajorView = rowMajorView.eval();
 }
 
-scenario::base::Pose
+scenario::core::Pose
 utils::fromIgnitionPose(const ignition::math::Pose3d& ignitionPose)
 {
-    base::Pose pose;
+    core::Pose pose;
 
     pose.position[0] = ignitionPose.Pos().X();
     pose.position[1] = ignitionPose.Pos().Y();
@@ -143,7 +143,7 @@ utils::fromIgnitionPose(const ignition::math::Pose3d& ignitionPose)
     return pose;
 }
 
-ignition::math::Pose3d utils::toIgnitionPose(const scenario::base::Pose& pose)
+ignition::math::Pose3d utils::toIgnitionPose(const scenario::core::Pose& pose)
 {
     ignition::math::Pose3d ignitionPose;
 
@@ -158,7 +158,7 @@ ignition::math::Pose3d utils::toIgnitionPose(const scenario::base::Pose& pose)
     return ignitionPose;
 }
 
-scenario::base::Contact
+scenario::core::Contact
 utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
                                const ignition::msgs::Contact& contactMsg)
 {
@@ -190,7 +190,7 @@ utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
     std::string scopedBodyB = modelNameB + "::" + linkNameB;
 
     // Returned data structure
-    scenario::base::Contact contact;
+    scenario::core::Contact contact;
     contact.bodyA = scopedBodyA;
     contact.bodyB = scopedBodyB;
 
@@ -213,7 +213,7 @@ utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
     // Get all the contact points data
     for (int pointIdx = 0; pointIdx < numOfPoints; ++pointIdx) {
         // Create a contact point
-        scenario::base::ContactPoint contactPoint;
+        scenario::core::ContactPoint contactPoint;
         contactPoint.depth = contactMsg.depth(pointIdx);
         contactPoint.normal = fromIgnMsg(contactMsg.normal(pointIdx));
         contactPoint.position = fromIgnMsg(contactMsg.position(pointIdx));
@@ -231,11 +231,11 @@ utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
     return contact;
 }
 
-std::vector<scenario::base::Contact>
+std::vector<scenario::core::Contact>
 utils::fromIgnitionContactsMsgs(ignition::gazebo::EntityComponentManager* ecm,
                                 const ignition::msgs::Contacts& contactsMsg)
 {
-    std::vector<base::Contact> contacts;
+    std::vector<core::Contact> contacts;
 
     for (int contactIdx = 0; contactIdx < contactsMsg.contact_size();
          ++contactIdx) {
@@ -405,21 +405,21 @@ sdf::ElementPtr utils::getPluginSDFElement(const std::string& libName,
     return pluginElement;
 }
 
-sdf::JointType utils::toSdf(const scenario::base::JointType type)
+sdf::JointType utils::toSdf(const scenario::core::JointType type)
 {
     sdf::JointType sdfType;
 
     switch (type) {
-        case base::JointType::Fixed:
+        case core::JointType::Fixed:
             sdfType = sdf::JointType::FIXED;
             break;
-        case base::JointType::Revolute:
+        case core::JointType::Revolute:
             sdfType = sdf::JointType::REVOLUTE;
             break;
-        case base::JointType::Prismatic:
+        case core::JointType::Prismatic:
             sdfType = sdf::JointType::PRISMATIC;
             break;
-        case base::JointType::Ball:
+        case core::JointType::Ball:
             sdfType = sdf::JointType::BALL;
             break;
         default:
@@ -431,26 +431,26 @@ sdf::JointType utils::toSdf(const scenario::base::JointType type)
     return sdfType;
 }
 
-scenario::base::JointType utils::fromSdf(const sdf::JointType sdfType)
+scenario::core::JointType utils::fromSdf(const sdf::JointType sdfType)
 {
-    base::JointType type;
+    core::JointType type;
 
     switch (sdfType) {
         case sdf::JointType::FIXED:
-            type = base::JointType::Fixed;
+            type = core::JointType::Fixed;
             break;
         case sdf::JointType::REVOLUTE:
-            type = base::JointType::Revolute;
+            type = core::JointType::Revolute;
             break;
         case sdf::JointType::PRISMATIC:
-            type = base::JointType::Prismatic;
+            type = core::JointType::Prismatic;
             break;
         case sdf::JointType::BALL:
-            type = base::JointType::Ball;
+            type = core::JointType::Ball;
             break;
         default:
             sError << "Joint type not recognized" << std::endl;
-            type = base::JointType::Invalid;
+            type = core::JointType::Invalid;
             break;
     }
 
@@ -499,9 +499,10 @@ utils::fromBaseToModelVelocity(const ignition::math::Vector3d& linBaseVelocity,
     return {linModelVelocity, angModelVelocity};
 }
 
-WorldPtr utils::getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
-                               ignition::gazebo::EventManager* eventManager,
-                               const ignition::gazebo::Entity entity)
+scenario::core::WorldPtr
+utils::getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
+                      ignition::gazebo::EventManager* eventManager,
+                      const ignition::gazebo::Entity entity)
 {
     auto worldEntity = getFirstParentEntityWithComponent< //
         ignition::gazebo::components::World>(ecm, entity);
@@ -516,9 +517,10 @@ WorldPtr utils::getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
     return world;
 }
 
-ModelPtr utils::getParentModel(ignition::gazebo::EntityComponentManager* ecm,
-                               ignition::gazebo::EventManager* eventManager,
-                               const ignition::gazebo::Entity entity)
+scenario::core::ModelPtr
+utils::getParentModel(ignition::gazebo::EntityComponentManager* ecm,
+                      ignition::gazebo::EventManager* eventManager,
+                      const ignition::gazebo::Entity entity)
 {
     auto modelEntity = getFirstParentEntityWithComponent< //
         ignition::gazebo::components::Model>(ecm, entity);
