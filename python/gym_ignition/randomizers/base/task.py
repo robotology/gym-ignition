@@ -4,7 +4,6 @@
 
 import abc
 from gym_ignition import base
-from gym_ignition import scenario_bindings as bindings
 
 
 class TaskRandomizer(abc.ABC):
@@ -12,19 +11,17 @@ class TaskRandomizer(abc.ABC):
     @abc.abstractmethod
     def randomize_task(self,
                        task: base.task.Task,
-                       gazebo: bindings.GazeboSimulator,
                        **kwargs) -> None:
         """
         Randomize a :py:class:`~gym_ignition.base.task.Task` instance.
 
         Args:
             task: the task to randomize.
-            gazebo: a :py:class:`~scenario_bindings.GazeboSimulator` instance.
 
         Note:
             Note that each task has a :py:attr:`~gym_ignition.base.task.Task.world`
             property that provides access to the simulated
-            :py:class:`scenario_bindings.World`.
+            :py:class:`scenario.core.World`.
         """
         pass
 

@@ -32,13 +32,9 @@
 
 #include <memory>
 
-namespace scenario {
-    namespace plugins {
-        namespace gazebo {
-            class ECMSingleton;
-        } // namespace gazebo
-    } // namespace plugins
-} // namespace scenario
+namespace scenario::plugins::gazebo {
+    class ECMSingleton;
+} // namespace scenario::plugins::gazebo
 
 class scenario::plugins::gazebo::ECMSingleton
 {

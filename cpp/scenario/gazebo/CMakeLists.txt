@@ -59,25 +59,26 @@ set_target_properties(ExtraComponents PROPERTIES
 # ScenarioGazebo
 # ==============
 
-set(SCENARIO_PUBLIC_HDRS
+find_package(ignition-common3 REQUIRED)
+
+set(SCENARIO_GAZEBO_PUBLIC_HDRS
+    include/scenario/gazebo/GazeboEntity.h
     include/scenario/gazebo/World.h
     include/scenario/gazebo/Model.h
     include/scenario/gazebo/Joint.h
     include/scenario/gazebo/Link.h
     include/scenario/gazebo/Log.h
     include/scenario/gazebo/utils.h
-    include/scenario/gazebo/signals.h
     include/scenario/gazebo/exceptions.h)
 
 add_library(ScenarioGazebo
-    ${SCENARIO_PUBLIC_HDRS}
+    ${SCENARIO_GAZEBO_PUBLIC_HDRS}
     include/scenario/gazebo/helpers.h
     src/World.cpp
     src/Model.cpp
     src/Joint.cpp
     src/Link.cpp
     src/utils.cpp
-    src/signals.cpp
     src/helpers.cpp)
 
 target_include_directories(ScenarioGazebo PUBLIC
@@ -85,17 +86,16 @@ target_include_directories(ScenarioGazebo PUBLIC
     $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(ScenarioGazebo
+    PUBLIC
+    ScenarioCore
+    ignition-common3::ignition-common3
     PRIVATE
     ExtraComponents
+    ScenarioCoreUtils
     ignition-gazebo3::core)
 
 set_target_properties(ScenarioGazebo PROPERTIES
-    PUBLIC_HEADER "${SCENARIO_PUBLIC_HDRS}")
-
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    target_compile_options(ScenarioGazebo PRIVATE
-        -DGYMIGNITION_CMAKE_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
-endif()
+    PUBLIC_HEADER "${SCENARIO_GAZEBO_PUBLIC_HDRS}")
 
 # ===============
 # GazeboSimulator
@@ -110,6 +110,7 @@ target_link_libraries(GazeboSimulator
     ECMSingleton
     ScenarioGazebo
     ExtraComponents
+    ScenarioCoreUtils
     ignition-gazebo3::core
     tiny-process-library)
 

@@ -2,33 +2,15 @@
  * Copyright (C) 2020 Istituto Italiano di Tecnologia (IIT)
  * All rights reserved.
  *
- * This project is dual licensed under LGPL v2.1+ or Apache License.
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
  * This software may be modified and distributed under the terms of the
  * GNU Lesser General Public License v2.1 or any later version.
- *
- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 #include "scenario/controllers/ComputedTorqueFixedBase.h"
 #include "scenario/controllers/References.h"
-#include "scenario/gazebo/Joint.h"
-#include "scenario/gazebo/Log.h"
-#include "scenario/gazebo/Model.h"
+#include "scenario/core/Joint.h"
+#include "scenario/core/Model.h"
+#include "scenario/core/utils/Log.h"
 
 #include <Eigen/Dense>
 #include <iDynTree/Core/EigenHelpers.h>
@@ -56,7 +38,7 @@ public:
         std::vector<double> kp;
         std::vector<double> kd;
         std::array<double, 3> gravity;
-        std::unordered_map<std::string, base::JointControlMode> controlMode;
+        std::unordered_map<std::string, core::JointControlMode> controlMode;
     } initialValues;
 
     JointReferences jointReferences;
@@ -108,7 +90,7 @@ public:
 
 ComputedTorqueFixedBase::ComputedTorqueFixedBase(
     const std::string& urdfFile,
-    std::shared_ptr<gazebo::Model> model,
+    std::shared_ptr<core::Model> model,
     const std::vector<double>& kp,
     const std::vector<double>& kd,
     const std::vector<std::string>& controlledJoints,
@@ -139,15 +121,14 @@ bool ComputedTorqueFixedBase::initialize()
     sDebug << "Initializing ComputedTorqueFixedBaseCpp" << std::endl;
 
     if (pImpl->kinDyn) {
-        sWarning
-            << "The KinDynComputations object has been already initialized"
-            << std::endl;
+        sWarning << "The KinDynComputations object has been already initialized"
+                 << std::endl;
         return true;
     }
 
     if (!(m_model && m_model->valid())) {
         sError << "Couldn't initialize controller. Model not valid."
-                   << std::endl;
+               << std::endl;
         return false;
     }
 
@@ -159,8 +140,8 @@ bool ComputedTorqueFixedBase::initialize()
 
     if (m_controlledJoints.empty()) {
         sDebug << "No list of controlled joints. Controlling all the "
-                      "robots joints."
-                   << std::endl;
+                  "robots joints."
+               << std::endl;
 
         // Read the joint names from the robot object.
         // This is useful to use the same joint serialization in the vectorized
@@ -171,8 +152,7 @@ bool ComputedTorqueFixedBase::initialize()
     for (auto& joint : m_model->joints(m_controlledJoints)) {
         if (joint->dofs() != 1) {
             sError << "Joint '" << joint->name()
-                       << "' does not have 1 DoF and is not supported"
-                       << std::endl;
+                   << "' does not have 1 DoF and is not supported" << std::endl;
             return false;
         }
     }
@@ -180,7 +160,7 @@ bool ComputedTorqueFixedBase::initialize()
     iDynTree::ModelLoader loader;
     if (!loader.loadReducedModelFromFile(pImpl->urdfFile, m_controlledJoints)) {
         sError << "Failed to load reduced model from the urdf file"
-                   << std::endl;
+               << std::endl;
         return false;
     }
 
@@ -190,7 +170,7 @@ bool ComputedTorqueFixedBase::initialize()
 
     if (!pImpl->kinDyn->loadRobotModel(loader.model())) {
         sError << "Failed to insert model in the KinDynComputations object"
-                   << std::endl;
+               << std::endl;
         return false;
     }
 
@@ -198,16 +178,16 @@ bool ComputedTorqueFixedBase::initialize()
     for (auto& joint : m_model->joints(m_controlledJoints)) {
         pImpl->initialValues.controlMode[joint->name()] = joint->controlMode();
 
-        if (!joint->setControlMode(base::JointControlMode::Force)) {
+        if (!joint->setControlMode(core::JointControlMode::Force)) {
             sError << "Failed to control joint '" << joint->name()
-                       << "' in Force" << std::endl;
+                   << "' in Force" << std::endl;
             return false;
         }
     }
 
     // Initialize buffers
     sDebug << "Controlling " << m_controlledJoints.size() << " DoFs"
-               << std::endl;
+           << std::endl;
     pImpl->buffers = std::make_unique<Impl::Buffers>(m_controlledJoints.size());
 
     pImpl->buffers->kp = Impl::toEigen(pImpl->initialValues.kp);
@@ -301,7 +281,7 @@ bool ComputedTorqueFixedBase::terminate()
 
         if (!joint->setControlMode(controlMode)) {
             sError << "Failed to restore original control mode of joint '"
-                       << jointName << "'" << std::endl;
+                   << jointName << "'" << std::endl;
             ok = ok && false;
         }
     }

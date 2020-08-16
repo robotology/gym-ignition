@@ -59,7 +59,7 @@ class ControllerRunner::Impl
 public:
     bool referencesHaveBeenSet = false;
 
-    scenario::gazebo::ModelPtr model;
+    std::shared_ptr<Model> model;
     ignition::gazebo::Entity modelEntity;
     std::chrono::steady_clock::duration prevUpdateTime{0};
 
@@ -330,7 +330,7 @@ bool ControllerRunner::Impl::updateBaseReferencesfromECM(
     Pose3d& basePoseTarget = utils::getExistingComponentData< //
         components::BasePoseTarget>(&ecm, modelEntity);
 
-    base::Pose basePose = utils::fromIgnitionPose(basePoseTarget);
+    core::Pose basePose = utils::fromIgnitionPose(basePoseTarget);
     baseReferences.position = basePose.position;
     baseReferences.orientation = basePose.orientation;
 

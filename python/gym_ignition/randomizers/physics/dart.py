@@ -2,8 +2,8 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+from scenario import gazebo as scenario
 from gym_ignition.randomizers.base import physics
-from gym_ignition import scenario_bindings as bindings
 
 
 class DART(physics.PhysicsRandomizer):
@@ -19,10 +19,10 @@ class DART(physics.PhysicsRandomizer):
         if seed is not None:
             self.seed_physics_randomizer(seed=seed)
 
-    def randomize_physics(self, world: bindings.World) -> None:
+    def randomize_physics(self, world: scenario.World) -> None:
 
         # Insert the physics
-        ok_physics = world.set_physics_engine(bindings.PhysicsEngine_dart)
+        ok_physics = world.set_physics_engine(scenario.PhysicsEngine_dart)
 
         if not ok_physics:
             raise RuntimeError("Failed to insert the physics plugin")

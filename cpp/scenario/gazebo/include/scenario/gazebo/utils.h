@@ -27,215 +27,217 @@
 #ifndef SCENARIO_GAZEBO_UTILS_H
 #define SCENARIO_GAZEBO_UTILS_H
 
+#include <memory>
 #include <string>
 #include <vector>
 
 #ifdef NDEBUG
-#define DEFAULT_VERBOSITY 2
+#define DEFAULT_VERBOSITY Verbosity::Warning
 #else
-#define DEFAULT_VERBOSITY 4
+#define DEFAULT_VERBOSITY Verbosity::Debug
 #endif
 
-namespace scenario {
-    namespace gazebo {
-        namespace utils {
-            /**
-             * Set the verbosity process-wise.
-             *
-             * Accepted levels are the following:
-             *
-             * - ``<= 0``: No messages.
-             * - ``1``: Error messages.
-             * - ``2``: Error and warning messages.
-             * - ``3``: Error, warning, and info messages.
-             * - ``>= 4``: Error, warning, info, and debug messages.
-             *
-             * If called without specifying the level, it will use
-             * level 2 or level 4 depending if the project was compiled
-             * respectively with Release or Debug flags.
-             *
-             * @param level The verbosity level.
-             */
-            void setVerbosity(const int level = DEFAULT_VERBOSITY);
+namespace scenario::base {
+    class Model;
+}
 
-            /**
-             * Find a SDF file in the filesystem.
-             *
-             * The search path is defined with the ``IGN_GAZEBO_RESOURCE_PATH``
-             * environment variable.
-             *
-             * @param fileName The SDF file name.
-             * @return The absolute path to the file if found, an empty string
-             *         otherwise.
-             */
-            std::string findSdfFile(const std::string& fileName);
+namespace scenario::gazebo {
+    class Model;
+}
 
-            /**
-             * Check if a SDF string is valid.
-             *
-             * An SDF string could contain for instance an SDF model or
-             * an SDF world, and it is valid if it can be parsed successfully
-             * by the SDFormat library.
-             *
-             * @param sdfString The SDF string to check.
-             * @return True if the SDF string is valid, false otherwise.
-             */
-            bool sdfStringValid(const std::string& sdfString);
+namespace scenario::gazebo::utils {
+    enum class Verbosity
+    {
+        SuppressAll = 0,
+        Error = 1,
+        Warning = 2,
+        Info = 3,
+        Debug = 4,
+    };
 
-            /**
-             * Get an SDF string from a SDF file.
-             *
-             * @param fileName An SDF file. It could be either an absolute path
-             *        to the file or the file name if the parent folder is part
-             *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
-             * @return The SDF string if the file was found and is valid, an
-             *         empty string otherwise.
-             */
-            std::string getSdfString(const std::string& fileName);
+    /**
+     * Set the verbosity process-wise.
+     *
+     * Accepted levels are the following:
+     *
+     * - ``Verbosity::SuppressAll``: No messages.
+     * - ``Verbosity::Error``: Error messages.
+     * - ``Verbosity::Warning``: Error and warning messages.
+     * - ``Verbosity::Info``: Error, warning, and info messages.
+     * - ``Verbosity::Debug``: Error, warning, info, and debug messages.
+     *
+     * If called without specifying the level, it will use
+     * ``Verbosity::Warning`` or ``Verbosity::Debug`` depending if the project
+     * was compiled respectively with Release or Debug flags.
+     *
+     * @param level The verbosity level.
+     */
+    void setVerbosity(const Verbosity level = DEFAULT_VERBOSITY);
 
-            /**
-             * Get the name of a model from a SDF file.
-             *
-             * @param fileName An SDF file. It could be either an absolute path
-             *        to the file or the file name if the parent folder is part
-             *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
-             * @param modelIndex The index of the model in the SDF file. By
-             *        default it finds the first model.
-             * @return The name of the model.
-             */
-            std::string getModelNameFromSdf(const std::string& fileName,
-                                            const size_t modelIndex = 0);
+    /**
+     * Find a SDF file in the filesystem.
+     *
+     * The search path is defined with the ``IGN_GAZEBO_RESOURCE_PATH``
+     * environment variable.
+     *
+     * @param fileName The SDF file name.
+     * @return The absolute path to the file if found, an empty string
+     *         otherwise.
+     */
+    std::string findSdfFile(const std::string& fileName);
 
-            /**
-             * Get the name of a world from a SDF file.
-             *
-             * @param fileName An SDF file. It could be either an absolute path
-             *        to the file or the file name if the parent folder is part
-             *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
-             * @param worldIndex The index of the world in the SDF file. By
-             *        default it finds the first world.
-             * @return The name of the world.
-             */
-            std::string getWorldNameFromSdf(const std::string& fileName,
-                                            const size_t worldIndex = 0);
+    /**
+     * Check if a SDF string is valid.
+     *
+     * An SDF string could contain for instance an SDF model or
+     * an SDF world, and it is valid if it can be parsed successfully
+     * by the SDFormat library.
+     *
+     * @param sdfString The SDF string to check.
+     * @return True if the SDF string is valid, false otherwise.
+     */
+    bool sdfStringValid(const std::string& sdfString);
 
-            /**
-             * Return a SDF string with an empty world.
-             *
-             * An empty world only has a sun and the default DART
-             * physics profile enabled.
-             *
-             * @note The empty world does not have any ground plane.
-             *
-             * @return A SDF string with the empty world.
-             */
-            std::string getEmptyWorld();
+    /**
+     * Get an SDF string from a SDF file.
+     *
+     * @param fileName An SDF file. It could be either an absolute path
+     *        to the file or the file name if the parent folder is part
+     *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
+     * @return The SDF string if the file was found and is valid, an
+     *         empty string otherwise.
+     */
+    std::string getSdfString(const std::string& fileName);
 
-            /**
-             * Get a SDF model file from a Fuel URI.
-             *
-             * A valid URI has the following form:
-             *
-             * ``https://fuel.ignitionrobotics.org/openrobotics/models/model_name``
-             *
-             * @param URI A valid Fuel URI.
-             * @param useCache Load the model from the local cache.
-             * @return The absolute path to the SDF model.
-             */
-            std::string getModelFileFromFuel(const std::string& URI,
-                                             const bool useCache = false);
+    /**
+     * Get the name of a model from a SDF file.
+     *
+     * @param fileName An SDF file. It could be either an absolute path
+     *        to the file or the file name if the parent folder is part
+     *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
+     * @param modelIndex The index of the model in the SDF file. By
+     *        default it finds the first model.
+     * @return The name of the model.
+     */
+    std::string getModelNameFromSdf(const std::string& fileName,
+                                    const size_t modelIndex = 0);
 
-            /**
-             * Generate a random alpha numeric string.
-             *
-             * @param length The length of the string.
-             * @return The random string.
-             */
-            std::string getRandomString(const size_t length);
+    /**
+     * Get the name of a world from a SDF file.
+     *
+     * @param fileName An SDF file. It could be either an absolute path
+     *        to the file or the file name if the parent folder is part
+     *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
+     * @param worldIndex The index of the world in the SDF file. By
+     *        default it finds the first world.
+     * @return The name of the world.
+     */
+    std::string getWorldNameFromSdf(const std::string& fileName,
+                                    const size_t worldIndex = 0);
 
-            /**
-             * Get the install prefix used by the CMake project.
-             *
-             * @note It is defined only if the project is installed in
-             * Developer mode.
-             *
-             * @return A string with the install prefix if the project is
-             *         installed in Developer mode, an empty string otherwise.
-             */
-            std::string getInstallPrefix();
+    /**
+     * Return a SDF string with an empty world.
+     *
+     * An empty world only has a sun and the default DART
+     * physics profile enabled.
+     *
+     * @note The empty world does not have any ground plane.
+     *
+     * @return A SDF string with the empty world.
+     */
+    std::string getEmptyWorld();
 
-            /**
-             * Convert a URDF file to a SDF string.
-             *
-             * @param urdfFile The absolute path to the URDF file.
-             * @return The SDF string if the file exists and it was successfully
-             *         converted, an empty string otherwise.
-             */
-            std::string URDFFileToSDFString(const std::string& urdfFile);
+    /**
+     * Get a SDF model file from a Fuel URI.
+     *
+     * @note A valid URI has the following form:
+     * https://fuel.ignitionrobotics.org/openrobotics/models/model_name
+     *
+     * @param URI A valid Fuel URI.
+     * @param useCache Load the model from the local cache.
+     * @return The absolute path to the SDF model.
+     */
+    std::string getModelFileFromFuel(const std::string& URI,
+                                     const bool useCache = false);
 
-            /**
-             * Convert a URDF string to a SDF string.
-             *
-             * @param urdfFile A URDF string.
-             * @return The SDF string if the URDF string was successfully
-             *         converted, an empty string otherwise.
-             */
-            std::string URDFStringToSDFString(const std::string& urdfString);
+    /**
+     * Generate a random alpha numeric string.
+     *
+     * @param length The length of the string.
+     * @return The random string.
+     */
+    std::string getRandomString(const size_t length);
 
-            /**
-             * Normalize a vector in [-1, 1].
-             *
-             * The normalization applies the following equation, where
-             * \f$ v \f$ is the input, \f$ l \f$ and \f$ h \f$ are respectively
-             * the lower and higher limits:
-             *
-             * \f$ v_{normalized} = 2 \frac{v - l}{h - l} - 1 \f$
-             *
-             * The input, low and high arguments are broadcasted to a common
-             * size. Refer to the following for broadcasting definition:
-             *
-             * https://numpy.org/doc/stable/user/basics.broadcasting.html
-             *
-             * @note If the lower limit matches the higher limit, the
-             * corresponding input value is not normalized.
-             *
-             * @throws std::invalid_argument If the arguments cannot be
-             * broadcasted.
-             * @param input The input vector.
-             * @param low The lower limit.
-             * @param high The higher limit.
-             * @return The normalized input.
-             */
-            std::vector<double> normalize(const std::vector<double>& input,
-                                          const std::vector<double>& low,
-                                          const std::vector<double>& high);
+    /**
+     * Convert a URDF file to a SDF string.
+     *
+     * @param urdfFile The absolute path to the URDF file.
+     * @return The SDF string if the file exists and it was successfully
+     *         converted, an empty string otherwise.
+     */
+    std::string URDFFileToSDFString(const std::string& urdfFile);
 
-            /**
-             * Denormalize a vector from [-1, 1].
-             *
-             * The denormalization applies the following equation, where
-             * \f$ v \f$ is the input, \f$ l \f$ and \f$ h \f$ are respectively
-             * the lower and higher limits:
-             *
-             * \f$ v_{denormalized} = \frac{1}{2} (v + 1)(h - l) - l \f$
-             *
-             * The input, low and high arguments are broadcasted to a common
-             * size. Refer to the following for broadcasting definition:
-             *
-             * https://numpy.org/doc/stable/user/basics.broadcasting.html
-             *
-             * @throws std::invalid_argument If the arguments cannot be
-             * broadcasted.
-             * @param input The input vector.
-             * @param low The lower limit.
-             * @param high The higher limit.
-             * @return The denormalized input.
-             */
-            std::vector<double> denormalize(const std::vector<double>& input,
-                                            const std::vector<double>& low,
-                                            const std::vector<double>& high);
-        } // namespace utils
-    } // namespace gazebo
-} // namespace scenario
+    /**
+     * Convert a URDF string to a SDF string.
+     *
+     * @param urdfFile A URDF string.
+     * @return The SDF string if the URDF string was successfully
+     *         converted, an empty string otherwise.
+     */
+    std::string URDFStringToSDFString(const std::string& urdfString);
+
+    /**
+     * Normalize a vector in [-1, 1].
+     *
+     * The normalization applies the following equation, where
+     * \f$ v \f$ is the input, \f$ l \f$ and \f$ h \f$ are respectively
+     * the lower and higher limits:
+     *
+     * \f$ v_{normalized} = 2 \frac{v - l}{h - l} - 1 \f$
+     *
+     * The input, low and high arguments are broadcasted to a common
+     * size. Refer to the following for broadcasting definition:
+     *
+     * https://numpy.org/doc/stable/user/basics.broadcasting.html
+     *
+     * @note If the lower limit matches the higher limit, the
+     * corresponding input value is not normalized.
+     *
+     * @param input The input vector.
+     * @param low The lower limit.
+     * @param high The higher limit.
+     * @throw std::invalid_argument If the arguments cannot be
+     * broadcasted.
+     * @return The normalized input.
+     */
+    std::vector<double> normalize(const std::vector<double>& input,
+                                  const std::vector<double>& low,
+                                  const std::vector<double>& high);
+
+    /**
+     * Denormalize a vector from [-1, 1].
+     *
+     * The denormalization applies the following equation, where
+     * \f$ v \f$ is the input, \f$ l \f$ and \f$ h \f$ are respectively
+     * the lower and higher limits:
+     *
+     * \f$ v_{denormalized} = \frac{1}{2} (v + 1)(h - l) - l \f$
+     *
+     * The input, low and high arguments are broadcasted to a common
+     * size. Refer to the following for broadcasting definition:
+     *
+     * https://numpy.org/doc/stable/user/basics.broadcasting.html
+     *
+     * @param input The input vector.
+     * @param low The lower limit.
+     * @param high The higher limit.
+     * @throw std::invalid_argument If the arguments cannot be
+     * broadcasted.
+     * @return The denormalized input.
+     */
+    std::vector<double> denormalize(const std::vector<double>& input,
+                                    const std::vector<double>& low,
+                                    const std::vector<double>& high);
+} // namespace scenario::gazebo::utils
 
 #endif // SCENARIO_GAZEBO_UTILS_H

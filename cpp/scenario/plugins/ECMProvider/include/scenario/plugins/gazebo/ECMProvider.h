@@ -35,13 +35,9 @@
 
 #include <memory>
 
-namespace scenario {
-    namespace plugins {
-        namespace gazebo {
-            class ECMProvider;
-        } // namespace gazebo
-    } // namespace plugins
-} // namespace scenario
+namespace scenario::plugins::gazebo {
+    class ECMProvider;
+} // namespace scenario::plugins::gazebo
 
 class scenario::plugins::gazebo::ECMProvider final
     : public ignition::gazebo::System

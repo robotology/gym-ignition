@@ -22,6 +22,8 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+find_package(sdformat9 REQUIRED)
+
 # ==================
 # ControllersFactory
 # ==================
@@ -33,9 +35,10 @@ add_library(ControllersFactory STATIC
 target_link_libraries(ControllersFactory
     PUBLIC
     Controller
+    ScenarioCore
+    sdformat9::sdformat9
     PRIVATE
     ScenarioGazebo
-    ignition-gazebo3::core
     ComputedTorqueFixedBase)
 
 target_include_directories(ControllersFactory PRIVATE

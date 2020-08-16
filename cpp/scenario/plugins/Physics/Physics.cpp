@@ -1164,13 +1164,13 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
 
             if (jointVelocity.size()
                 != jointIt->second->GetDegreesOfFreedom()) {
-                ignwarn << "There is a mismatch in the degrees of freedom "
-                           "between "
-                        << "Joint [" << _name->Data() << "(Entity=" << _entity
-                        << ")] and its JointForceCmd component. The joint has "
-                        << jointIt->second->GetDegreesOfFreedom()
-                        << " while the "
-                        << " component has " << jointVelocity.size() << ".\n";
+                ignwarn
+                    << "There is a mismatch in the degrees of freedom "
+                       "between "
+                    << "Joint [" << _name->Data() << "(Entity=" << _entity
+                    << ")] and its JointVelocityReset component. The joint has "
+                    << jointIt->second->GetDegreesOfFreedom() << " while the "
+                    << " component has " << jointVelocity.size() << ".\n";
             }
 
             std::size_t nDofs = std::min(
@@ -1187,13 +1187,13 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
 
             if (jointPosition.size()
                 != jointIt->second->GetDegreesOfFreedom()) {
-                ignwarn << "There is a mismatch in the degrees of freedom "
-                           "between "
-                        << "Joint [" << _name->Data() << "(Entity=" << _entity
-                        << ")] and its JointForceCmd component. The joint has "
-                        << jointIt->second->GetDegreesOfFreedom()
-                        << " while the "
-                        << " component has " << jointPosition.size() << ".\n";
+                ignwarn
+                    << "There is a mismatch in the degrees of freedom "
+                       "between "
+                    << "Joint [" << _name->Data() << "(Entity=" << _entity
+                    << ")] and its JointPositionReset component. The joint has "
+                    << jointIt->second->GetDegreesOfFreedom() << " while the "
+                    << " component has " << jointPosition.size() << ".\n";
             }
             std::size_t nDofs = std::min(
                 jointPosition.size(), jointIt->second->GetDegreesOfFreedom());

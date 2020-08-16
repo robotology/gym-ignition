@@ -5,19 +5,20 @@
 import pytest
 pytestmark = pytest.mark.scenario
 
+from scenario import core
 from ..common import utils
+from scenario import gazebo as scenario
 from ..common.utils import gazebo_fixture as gazebo
-from gym_ignition import scenario_bindings as bindings
 
 # Set the verbosity
-bindings.set_verbosity(4)
+scenario.set_verbosity(scenario.Verbosity_debug)
 
 
 @pytest.mark.parametrize("gazebo",
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_load_default_world(gazebo: bindings.GazeboSimulator):
+def test_load_default_world(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
     world = gazebo.get_world()
@@ -31,7 +32,7 @@ def test_load_default_world(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_load_default_world_from_file(gazebo: bindings.GazeboSimulator):
+def test_load_default_world_from_file(gazebo: scenario.GazeboSimulator):
 
     empty_world_sdf = utils.get_empty_world_sdf()
 
@@ -49,7 +50,7 @@ def test_load_default_world_from_file(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_rename_default_world(gazebo: bindings.GazeboSimulator):
+def test_rename_default_world(gazebo: scenario.GazeboSimulator):
 
     empty_world_sdf = utils.get_empty_world_sdf()
     assert gazebo.insert_world_from_sdf(empty_world_sdf, "myWorld")
@@ -72,7 +73,7 @@ def test_rename_default_world(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_world_api(gazebo: bindings.GazeboSimulator):
+def test_world_api(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
     world = gazebo.get_world()
@@ -91,7 +92,7 @@ def test_world_api(gazebo: bindings.GazeboSimulator):
     assert world.insert_model(cube_urdf)
     assert len(world.model_names()) == 1
 
-    default_model_name = bindings.get_model_name_from_sdf(cube_urdf, 0)
+    default_model_name = scenario.get_model_name_from_sdf(cube_urdf, 0)
     assert default_model_name in world.model_names()
     cube1 = world.get_model(default_model_name)
     # TODO: assert cube1
@@ -107,7 +108,7 @@ def test_world_api(gazebo: bindings.GazeboSimulator):
     # Insert second cube with custom name and pose
     custom_model_name = "other_cube"
     assert custom_model_name != default_model_name
-    custom_model_pose = bindings.Pose([1, 1, 0], [0, 0, 0, 1])
+    custom_model_pose = core.Pose([1, 1, 0], [0, 0, 0, 1])
 
     assert world.insert_model(cube_urdf, custom_model_pose, custom_model_name)
     assert custom_model_name in world.model_names()
@@ -138,7 +139,7 @@ def test_world_api(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_world_physics_plugin(gazebo: bindings.GazeboSimulator):
+def test_world_physics_plugin(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
     world = gazebo.get_world()
@@ -150,7 +151,7 @@ def test_world_physics_plugin(gazebo: bindings.GazeboSimulator):
     # Insert a cube
     cube_urdf = utils.get_cube_urdf()
     cube_name = "my_cube"
-    cube_pose = bindings.Pose([0, 0, 1.0], [1, 0, 0, 0])
+    cube_pose = core.Pose([0, 0, 1.0], [1, 0, 0, 0])
     assert world.insert_model(cube_urdf, cube_pose, cube_name)
     assert cube_name in world.model_names()
 
@@ -164,7 +165,7 @@ def test_world_physics_plugin(gazebo: bindings.GazeboSimulator):
     assert world.time() == 0
 
     # Insert the Physics system
-    assert world.set_physics_engine(bindings.PhysicsEngine_dart)
+    assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
     # After the first step, the physics catches up with time
     gazebo.run()
@@ -185,7 +186,7 @@ def test_world_physics_plugin(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_sim_time_starts_from_zero(gazebo: bindings.GazeboSimulator):
+def test_sim_time_starts_from_zero(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
     world = gazebo.get_world()
@@ -193,7 +194,7 @@ def test_sim_time_starts_from_zero(gazebo: bindings.GazeboSimulator):
     dt = gazebo.step_size()
 
     assert world.time() == 0
-    assert world.set_physics_engine(bindings.PhysicsEngine_dart)
+    assert world.set_physics_engine(scenario.PhysicsEngine_dart)
     assert world.time() == 0
 
     gazebo.run(paused=True)

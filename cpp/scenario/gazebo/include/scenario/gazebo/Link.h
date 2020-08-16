@@ -27,6 +27,9 @@
 #ifndef SCENARIO_GAZEBO_LINK_H
 #define SCENARIO_GAZEBO_LINK_H
 
+#include "scenario/core/Link.h"
+#include "scenario/gazebo/GazeboEntity.h"
+
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
 #include <ignition/gazebo/EventManager.hh>
@@ -37,120 +40,82 @@
 #include <utility>
 #include <vector>
 
-namespace scenario {
-    namespace base {
-        struct Pose;
-        struct Contact;
-        struct ContactPoint;
-    } // namespace base
-    namespace gazebo {
-        class Link;
-        class Model;
-    } // namespace gazebo
-} // namespace scenario
+namespace scenario::gazebo {
+    class Link;
+} // namespace scenario::gazebo
 
-class scenario::gazebo::Link
+class scenario::gazebo::Link final
+    : public scenario::core::Link
+    , public scenario::gazebo::GazeboEntity
+    , public std::enable_shared_from_this<scenario::gazebo::Link>
 {
 public:
     Link();
     virtual ~Link();
 
-    // ===========
-    // Gazebo Link
-    // ===========
+    // =============
+    // Gazebo Entity
+    // =============
 
-    uint64_t id() const;
+    uint64_t id() const override;
+
     bool initialize(const ignition::gazebo::Entity linkEntity,
                     ignition::gazebo::EntityComponentManager* ecm,
-                    ignition::gazebo::EventManager* eventManager);
-    bool createECMResources();
+                    ignition::gazebo::EventManager* eventManager) override;
+
+    bool createECMResources() override;
 
     // =========
     // Link Core
     // =========
 
-    /**
-     * Get the name of the link.
-     *
-     * @param scoped If true, the scoped name of the link is returned.
-     * @return The name of the link.
-     */
-    std::string name(const bool scoped = false) const;
-    double mass() const;
+    std::string name(const bool scoped = false) const override;
 
-    std::array<double, 3> position() const;
-    std::array<double, 4> orientation() const;
+    double mass() const override;
 
-    std::array<double, 3> worldLinearVelocity() const;
-    std::array<double, 3> worldAngularVelocity() const;
-    std::array<double, 3> bodyLinearVelocity() const;
-    std::array<double, 3> bodyAngularVelocity() const;
+    std::array<double, 3> position() const override;
 
-    std::array<double, 3> worldLinearAcceleration() const;
-    std::array<double, 3> worldAngularAcceleration() const;
-    std::array<double, 3> bodyLinearAcceleration() const;
-    std::array<double, 3> bodyAngularAcceleration() const;
+    std::array<double, 4> orientation() const override;
 
-    bool contactsEnabled() const;
-    bool enableContactDetection(const bool enable);
+    std::array<double, 3> worldLinearVelocity() const override;
 
-    bool inContact() const;
-    std::vector<base::Contact> contacts() const;
-    std::array<double, 6> contactWrench() const;
+    std::array<double, 3> worldAngularVelocity() const override;
+
+    std::array<double, 3> bodyLinearVelocity() const override;
+
+    std::array<double, 3> bodyAngularVelocity() const override;
+
+    std::array<double, 3> worldLinearAcceleration() const override;
+
+    std::array<double, 3> worldAngularAcceleration() const override;
+
+    std::array<double, 3> bodyLinearAcceleration() const override;
+
+    std::array<double, 3> bodyAngularAcceleration() const override;
+
+    bool contactsEnabled() const override;
+
+    bool enableContactDetection(const bool enable) override;
+
+    bool inContact() const override;
+
+    std::vector<core::Contact> contacts() const override;
+
+    std::array<double, 6> contactWrench() const override;
 
     bool applyWorldForce(const std::array<double, 3>& force,
-                         const double duration = 0.0);
+                         const double duration = 0.0) override;
+
     bool applyWorldTorque(const std::array<double, 3>& torque,
-                          const double duration = 0.0);
+                          const double duration = 0.0) override;
+
     bool applyWorldWrench(const std::array<double, 3>& force,
                           const std::array<double, 3>& torque,
-                          const double duration = 0.0);
+                          const double duration = 0.0) override;
 
 private:
     class Impl;
     std::unique_ptr<Impl> pImpl;
-};
-
-struct scenario::base::Pose
-{
-    Pose() = default;
-    Pose(std::array<double, 3> p, std::array<double, 4> o)
-        : position(p)
-        , orientation(o)
-    {}
-    Pose(std::pair<std::array<double, 3>, std::array<double, 4>> pose)
-        : position(pose.first)
-        , orientation(pose.second)
-    {}
-
-    static scenario::base::Pose Identity() { return {}; }
-
-    bool operator==(const Pose& other) const
-    {
-        return this->position == other.position
-               && this->orientation == other.orientation;
-    }
-
-    bool operator!=(const Pose& other) const { return !(*this == other); }
-
-    std::array<double, 3> position = {0, 0, 0};
-    std::array<double, 4> orientation = {1, 0, 0, 0};
-};
-
-struct scenario::base::ContactPoint
-{
-    double depth;
-    std::array<double, 3> force;
-    std::array<double, 3> torque;
-    std::array<double, 3> normal;
-    std::array<double, 3> position;
-};
-
-struct scenario::base::Contact
-{
-    std::string bodyA;
-    std::string bodyB;
-    std::vector<ContactPoint> points;
 };
 
 #endif // SCENARIO_GAZEBO_LINK_H
