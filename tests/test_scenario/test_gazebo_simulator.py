@@ -6,11 +6,11 @@ import pytest
 pytestmark = pytest.mark.scenario
 
 from ..common import utils
+from scenario import gazebo as scenario
 from ..common.utils import gazebo_fixture as gazebo
-from gym_ignition import scenario_bindings as bindings
 
 # Set the verbosity
-bindings.set_verbosity(4)
+scenario.set_verbosity(scenario.Verbosity_debug)
 
 
 @pytest.mark.parametrize("gazebo",
@@ -22,7 +22,7 @@ bindings.set_verbosity(4)
                              (0.001, 1.0, 0),
                              (0, 1.0, 1),
                          ], indirect=True, ids=utils.id_gazebo_fn)
-def test_initialization(gazebo: bindings.GazeboSimulator):
+def test_initialization(gazebo: scenario.GazeboSimulator):
 
     ok = gazebo.initialize()
 
@@ -54,7 +54,7 @@ def test_initialization(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_run(gazebo: bindings.GazeboSimulator):
+def test_run(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
     assert gazebo.run(paused=True)
@@ -65,7 +65,7 @@ def test_run(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_pause(gazebo: bindings.GazeboSimulator):
+def test_pause(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
     assert not gazebo.running()
@@ -89,7 +89,7 @@ def test_pause(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_load_default_world(gazebo: bindings.GazeboSimulator):
+def test_load_default_world(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
     assert gazebo.world_names()

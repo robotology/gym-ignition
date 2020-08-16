@@ -3,6 +3,8 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+pytestmark = pytest.mark.gym_ignition
+
 from gym_ignition.utils.math import normalize, denormalize
 
 

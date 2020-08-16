@@ -7,16 +7,17 @@ pytestmark = pytest.mark.gympp
 
 import numpy as np
 from numpy import pi
-from gym_ignition import scenario_bindings
+from scenario import gazebo as scenario
+
 
 try:
-    from gym_ignition import gympp_bindings as bindings
+    import gympp_bindings as bindings
 except ImportError:
     pytest.skip("gympp bindings not found", allow_module_level=True)
 
 
 # Set verbosity
-scenario_bindings.set_verbosity(4)
+scenario.set_verbosity(4)
 
 
 @pytest.fixture

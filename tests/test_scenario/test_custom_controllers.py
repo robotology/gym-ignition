@@ -6,21 +6,22 @@ import pytest
 pytestmark = pytest.mark.scenario
 
 import numpy as np
+from scenario import core
 import gym_ignition_models
 from ..common import utils
+from scenario import gazebo as scenario
 from ..common.utils import gazebo_fixture as gazebo
-from gym_ignition import scenario_bindings as bindings
 from gym_ignition.controllers.gazebo import computed_torque_fixed_base as context
 
 # Set the verbosity
-bindings.set_verbosity(4)
+scenario.set_verbosity(scenario.Verbosity_debug)
 
 
 @pytest.mark.parametrize("gazebo",
                          [(0.001, 5.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_computed_torque_fixed_base(gazebo: bindings.GazeboSimulator):
+def test_computed_torque_fixed_base(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
     step_size = gazebo.step_size()
@@ -29,21 +30,21 @@ def test_computed_torque_fixed_base(gazebo: bindings.GazeboSimulator):
     world = gazebo.get_world()
 
     # Insert the physics
-    assert world.set_physics_engine(bindings.PhysicsEngine_dart)
+    assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
     # Get the panda urdf
     panda_urdf = gym_ignition_models.get_model_file("panda")
 
     # Insert the panda arm
     model_name = "panda"
-    assert world.insert_model(panda_urdf, bindings.Pose_identity(), model_name)
+    assert world.insert_model(panda_urdf, core.Pose_identity(), model_name)
 
     # import time
     # gazebo.gui()
     # time.sleep(3)
 
     # Get the model
-    panda: bindings.Model = world.get_model(model_name)
+    panda: scenario.Model = world.get_model(model_name).to_gazebo()
 
     # Disable self-collisions
     panda.enable_self_collisions(False)
