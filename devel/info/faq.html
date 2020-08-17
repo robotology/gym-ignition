@@ -1,0 +1,336 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>FAQ &mdash; gym-ignition  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/underscore.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Limitations" href="limitations.html" />
+    <link rel="prev" title="gym_ignition_environments.tasks" href="../apidoc/gym-ignition-environments/gym_ignition_environments.tasks.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> gym-ignition
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/stable.html">Stable Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/nightly.html">Nightly Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/optional_dependencies.html">Optional Dependencies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../breathe/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../breathe/gazebo.html">Gazebo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python Packages</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../apidoc/scenario/scenario.bindings.html">scenario.bindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.html">gym_ignition</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../apidoc/gym-ignition-environments/gym_ignition_environments.html">gym_ignition_environments</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Information</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">FAQ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#interaction-with-tensorflow">Interaction with Tensorflow</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ogre2-and-opengl">Ogre2 and OpenGL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#default-sdf-world">Default SDF world</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="limitations.html">Limitations</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">gym-ignition</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>FAQ</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/info/faq.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="faq">
+<h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="interaction-with-tensorflow">
+<h2>Interaction with Tensorflow<a class="headerlink" href="#interaction-with-tensorflow" title="Permalink to this headline">¶</a></h2>
+<p>If your Python application imports both <code class="docutils literal notranslate"><span class="pre">scenario</span></code> and <code class="docutils literal notranslate"><span class="pre">tensorflow</span></code>,
+you might experience segfaults with no error messages.
+Likely the problem is the <a class="reference external" href="https://github.com/protocolbuffers/protobuf">protobuf</a> library.
+In fact, both Tensorflow and Ignition Gazebo link agains protobuf, but while Gazebo uses the
+default version of your OS, Tensorflow vendors a more recent version.
+If you import <code class="docutils literal notranslate"><span class="pre">scenario</span></code> before <code class="docutils literal notranslate"><span class="pre">tensorflow</span></code>, the system protobuf is loaded, and
+Tensorflow will segfault.</p>
+<p>The only workaround we found is importing Tensorflow first:</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">tensorflow</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scenario.bindings.gazebo</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="ogre2-and-opengl">
+<h2>Ogre2 and OpenGL<a class="headerlink" href="#ogre2-and-opengl" title="Permalink to this headline">¶</a></h2>
+<p>On GNU/Linux distributions that ship an old OpenGL version, the GUI could fail to open printing
+error like <em>Unable to create the rendering window</em>.
+The reason is that Ignition Gazebo has <a class="reference external" href="https://github.com/OGRECave/ogre-next">ogre-next</a>
+(also known as ogre2) as default rendering engine, and it requires OpenGL greater than 3.3.
+You can find more details <a class="reference external" href="https://github.com/ignitionrobotics/blob/master/docs/dome/install_ubuntu_src.md#unable-to-create-the-rendering-window">here</a>.</p>
+<p>The workaround we recommend is modifying the file <code class="docutils literal notranslate"><span class="pre">~/.ignition/gazebo/gui.config</span></code> as follows:</p>
+<div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">--- .ignition/gazebo/gui.config 2020-06-04 14:41:33.471804733 +0200</span>
+<span class="gi">+++ .ignition/gazebo/gui.config 2020-06-04 14:42:47.826475035 +0200</span>
+<span class="gu">@@ -30,7 +30,7 @@</span>
+     &lt;property type=&#39;bool&#39; key=&#39;showTitleBar&#39;&gt;false&lt;/property&gt;
+     &lt;property type=&#39;string&#39; key=&#39;state&#39;&gt;docked&lt;/property&gt;
+   &lt;/ignition-gui&gt;
+<span class="gd">-  &lt;engine&gt;ogre2&lt;/engine&gt;</span>
+<span class="gi">+  &lt;engine&gt;ogre&lt;/engine&gt;</span>
+   &lt;scene&gt;scene&lt;/scene&gt;
+   &lt;ambient_light&gt;0.4 0.4 0.4&lt;/ambient_light&gt;
+   &lt;background_color&gt;0.8 0.8 0.8&lt;/background_color&gt;
+</pre></div>
+</div>
+<p>After this modification, world SDF files that do no specifically ask <code class="docutils literal notranslate"><span class="pre">ogre2</span></code> will use
+<code class="docutils literal notranslate"><span class="pre">ogre</span></code> as default rendering engine which works also with older OpenGL versions.</p>
+</div>
+<div class="section" id="default-sdf-world">
+<h2>Default SDF world<a class="headerlink" href="#default-sdf-world" title="Permalink to this headline">¶</a></h2>
+<p>If not specified differently, the <a class="reference internal" href="../breathe/gazebo.html#_CPPv4N8scenario6gazebo15GazeboSimulatorE" title="scenario::gazebo::GazeboSimulator"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">GazeboSimulator</span></code></a>
+class uses a default world file that is completely empty, without even the ground plane.
+You can load a custom SDF world using <a class="reference internal" href="../breathe/gazebo.html#_CPPv4N8scenario6gazebo15GazeboSimulator18insertWorldFromSDFERKNSt6stringERKNSt6stringE" title="scenario::gazebo::GazeboSimulator::insertWorldFromSDF"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">insertWorldFromSDF()</span></code></a> and then
+extracting it from the simulator with <a class="reference internal" href="../breathe/gazebo.html#_CPPv4NK8scenario6gazebo15GazeboSimulator8getWorldERKNSt6stringE" title="scenario::gazebo::GazeboSimulator::getWorld"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">getWorld()</span></code></a> using its name.</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">empty.world</span></code>: use this file as starting point for your custom world</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; ?&gt;</span>
+<span class="nt">&lt;sdf</span> <span class="na">version=</span><span class="s">&quot;1.7&quot;</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;world</span> <span class="na">name=</span><span class="s">&quot;default&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;physics</span> <span class="na">default=</span><span class="s">&quot;true&quot;</span> <span class="na">type=</span><span class="s">&quot;dart&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/physics&gt;</span>
+        <span class="nt">&lt;light</span> <span class="na">type=</span><span class="s">&quot;directional&quot;</span> <span class="na">name=</span><span class="s">&quot;sun&quot;</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;cast_shadows&gt;</span>true<span class="nt">&lt;/cast_shadows&gt;</span>
+            <span class="nt">&lt;pose&gt;</span>0 0 10 0 0 0<span class="nt">&lt;/pose&gt;</span>
+            <span class="nt">&lt;diffuse&gt;</span>1 1 1 1<span class="nt">&lt;/diffuse&gt;</span>
+            <span class="nt">&lt;specular&gt;</span>0.5 0.5 0.5 1<span class="nt">&lt;/specular&gt;</span>
+            <span class="nt">&lt;attenuation&gt;</span>
+                <span class="nt">&lt;range&gt;</span>1000<span class="nt">&lt;/range&gt;</span>
+                <span class="nt">&lt;constant&gt;</span>0.9<span class="nt">&lt;/constant&gt;</span>
+                <span class="nt">&lt;linear&gt;</span>0.01<span class="nt">&lt;/linear&gt;</span>
+                <span class="nt">&lt;quadratic&gt;</span>0.001<span class="nt">&lt;/quadratic&gt;</span>
+            <span class="nt">&lt;/attenuation&gt;</span>
+            <span class="nt">&lt;direction&gt;</span>-0.5 0.1 -0.9<span class="nt">&lt;/direction&gt;</span>
+        <span class="nt">&lt;/light&gt;</span>
+    <span class="nt">&lt;/world&gt;</span>
+<span class="nt">&lt;/sdf&gt;</span>
+</pre></div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you don’t specify any GUI configuration, the default <code class="docutils literal notranslate"><span class="pre">~/.ignition/gazebo/gui.config</span></code> is used.
+This is the preferred approach since it’s easier to maintain and keep world files updated.
+You can find more information in the upstream <a class="reference external" href="https://github.com/ignitionrobotics/ign-gazebo/blob/master/examples/worlds/default.sdf">default.sdf</a>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You don’t need to add the physics plugin in the world file. You can use
+<a class="reference internal" href="../breathe/gazebo.html#_CPPv4N8scenario6gazebo5World16setPhysicsEngineEK13PhysicsEngine" title="scenario::gazebo::World::setPhysicsEngine"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">scenario::gazebo::World::setPhysicsEngine()</span></code></a> from your code.
+You can also load other plugins during runtime using
+<a class="reference internal" href="../breathe/gazebo.html#_CPPv4N8scenario6gazebo5World17insertWorldPluginERKNSt6stringERKNSt6stringERKNSt6stringE" title="scenario::gazebo::World::insertWorldPlugin"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">scenario::gazebo::World::insertWorldPlugin()</span></code></a> and
+<a class="reference internal" href="../breathe/gazebo.html#_CPPv4N8scenario6gazebo5Model17insertModelPluginERKNSt6stringERKNSt6stringERKNSt6stringE" title="scenario::gazebo::Model::insertModelPlugin"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">scenario::gazebo::Model::insertModelPlugin()</span></code></a>.</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="limitations.html" class="btn btn-neutral float-right" title="Limitations" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../apidoc/gym-ignition-environments/gym_ignition_environments.tasks.html" class="btn btn-neutral float-left" title="gym_ignition_environments.tasks" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Istituto Italiano di Tecnologia
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: devel
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="faq.html">devel</a></dd>
+    </dl>
+  </div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

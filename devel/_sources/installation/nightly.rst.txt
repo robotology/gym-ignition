@@ -4,7 +4,7 @@ Nightly Channel
 ===============
 
 The nightly channel contains the most recent updates of the project.
-As described in the `introduction <installation_intro_ignition_robotics>`_, this channel requires building many dependencies from sources.
+As described in the :ref:`introduction <installation_intro_ignition_robotics>`, this channel requires building many dependencies from sources.
 
 Make sure that the default compiler of your system meets the :ref:`requirements <installation_intro_cpp>`.
 

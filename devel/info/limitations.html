@@ -7,7 +7,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Optional Dependencies &mdash; gym-ignition  documentation</title>
+  <title>Limitations &mdash; gym-ignition  documentation</title>
   
 
   
@@ -37,8 +37,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Core" href="../breathe/core.html" />
-    <link rel="prev" title="Nightly Channel" href="nightly.html" /> 
+    <link rel="prev" title="FAQ" href="faq.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -84,14 +83,11 @@
             
             
               <p class="caption"><span class="caption-text">Installation:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="stable.html">Stable Channel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="nightly.html">Nightly Channel</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Optional Dependencies</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#installation-optional-dependencies-idyntree">iDynTree</a></li>
-</ul>
-</li>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/stable.html">Stable Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/nightly.html">Nightly Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../installation/optional_dependencies.html">Optional Dependencies</a></li>
 </ul>
 <p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
 <ul>
@@ -105,9 +101,12 @@
 <li class="toctree-l1"><a class="reference internal" href="../apidoc/gym-ignition-environments/gym_ignition_environments.html">gym_ignition_environments</a></li>
 </ul>
 <p class="caption"><span class="caption-text">Information</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../info/faq.html">FAQ</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../info/limitations.html">Limitations</a></li>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="faq.html">FAQ</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Limitations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#sensors-support">Sensors support</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -154,13 +153,13 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>Optional Dependencies</li>
+      <li>Limitations</li>
     
     
       <li class="wy-breadcrumbs-aside">
         
             
-            <a href="../_sources/installation/optional_dependencies.rst.txt" rel="nofollow"> View page source</a>
+            <a href="../_sources/info/limitations.rst.txt" rel="nofollow"> View page source</a>
           
         
       </li>
@@ -173,19 +172,14 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="optional-dependencies">
-<span id="installation-optional-dependencies"></span><h1>Optional Dependencies<a class="headerlink" href="#optional-dependencies" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="installation-optional-dependencies-idyntree">
-<span id="idyntree"></span><h2>iDynTree<a class="headerlink" href="#installation-optional-dependencies-idyntree" title="Permalink to this headline">¶</a></h2>
-<p><strong>gym-ignition</strong> provides helper classes to manipulate the kinematics and the dynamics of rigid-bodies.
-Among the many existing solutions, we selected <a class="reference external" href="https://github.com/robotology/idyntree/">iDynTree</a>.</p>
-<p>Follow the <a class="reference external" href="https://github.com/robotology/idyntree/#installation">official installation instructions</a> and make sure that you also enable and install the <a class="reference external" href="https://github.com/robotology/idyntree/#bindings">Python bindings</a>.</p>
-<p>You can verify that the installation succeeded and your system is properly configured if you can <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">iDynTree</span></code> in a Python interpreter.</p>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>If you want to learn more about <code class="docutils literal notranslate"><span class="pre">iDynTree</span></code>, the two classes we mainly use are <code class="docutils literal notranslate"><span class="pre">iDynTree::KinDynComputations</span></code> (<a class="reference external" href="https://robotology.github.io/idyntree/master/classiDynTree_1_1KinDynComputations.html">docs</a>) and <code class="docutils literal notranslate"><span class="pre">iDynTree::InverseKinematics</span></code> (<a class="reference external" href="https://robotology.github.io/idyntree/master/classiDynTree_1_1InverseKinematics.html">docs</a>).</p>
-<p>The theory and notation behind the library is summarized in <a class="reference external" href="https://pure.tue.nl/ws/portalfiles/portal/139293126/A_Multibody_Dynamics_Notation_Revision_2_.pdf">Multibody dynamics notation</a>.</p>
-</div>
+  <div class="section" id="limitations">
+<h1>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="sensors-support">
+<h2>Sensors support<a class="headerlink" href="#sensors-support" title="Permalink to this headline">¶</a></h2>
+<p>Ignition Gazebo supports a wide variety of <a class="reference external" href="https://ignitionrobotics.org/docs/citadel/comparison#sensors">sensors</a>,
+like cameras, lidars, …
+However, ScenarI/O and consequently gym-ignition are not yet able to extract data from sensors.
+Follow <a class="reference external" href="https://github.com/robotology/gym-ignition/issues/199">#199</a> if you’re interested in sensors support.</p>
 </div>
 </div>
 
@@ -197,10 +191,8 @@ Among the many existing solutions, we selected <a class="reference external" hre
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="../breathe/core.html" class="btn btn-neutral float-right" title="Core" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-      
-        <a href="nightly.html" class="btn btn-neutral float-left" title="Nightly Channel" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="faq.html" class="btn btn-neutral float-left" title="FAQ" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -241,7 +233,7 @@ Among the many existing solutions, we selected <a class="reference external" hre
   <div class="rst-other-versions">
     <dl>
       <dt>Branches</dt>
-      <dd><a href="optional_dependencies.html">devel</a></dd>
+      <dd><a href="limitations.html">devel</a></dd>
     </dl>
   </div>
 </div>
