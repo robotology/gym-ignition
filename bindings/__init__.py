@@ -66,12 +66,21 @@ def import_gazebo() -> None:
         import scenario.bindings.gazebo
 
 
+def create_home_dot_folder() -> None:
+    from pathlib import Path
+
+    # Make sure that the dot folder in the user's home exists
+    Path("~/.ignition/gazebo").expanduser().mkdir(mode=0o755,
+                                                  parents=True,
+                                                  exist_ok=True)
+
 # ===================
 # Import the bindings
 # ===================
 
 try:
     import_gazebo()
+    create_home_dot_folder()
     setup_gazebo_environment()
     from .bindings import gazebo
 except ImportError:
