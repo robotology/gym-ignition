@@ -263,7 +263,7 @@ bool GazeboSimulator::gui(const int verbosity)
         sDebug << "Starting the SceneBroadcaster plugin" << std::endl;
         auto world = this->getWorld(worldName);
         if (!std::static_pointer_cast<World>(world)->insertWorldPlugin(
-                "libignition-gazebo-scene-broadcaster-system.so",
+                "ignition-gazebo-scene-broadcaster-system",
                 "ignition::gazebo::systems::SceneBroadcaster")) {
             sError << "Failed to load SceneBroadcaster plugin" << std::endl;
         }
@@ -608,7 +608,7 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
         // Get the plugin info of the ECM provider
         auto getECMPluginInfo = [](const std::string& worldName) {
             ignition::gazebo::ServerConfig::PluginInfo pluginInfo;
-            pluginInfo.SetFilename("libECMProvider.so");
+            pluginInfo.SetFilename("ECMProvider");
             pluginInfo.SetName("scenario::plugins::gazebo::ECMProvider");
             pluginInfo.SetEntityType("world");
             pluginInfo.SetEntityName(worldName);
