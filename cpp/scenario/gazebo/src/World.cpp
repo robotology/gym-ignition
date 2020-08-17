@@ -154,7 +154,7 @@ bool World::setPhysicsEngine(const PhysicsEngine engine)
 
     switch (engine) {
         case PhysicsEngine::Dart:
-            libName = "libPhysicsSystem.so";
+            libName = "PhysicsSystem";
             className = "scenario::plugins::gazebo::Physics";
             break;
     }
