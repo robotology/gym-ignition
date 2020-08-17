@@ -26,3 +26,10 @@ gym-ignition
    apidoc/scenario/scenario.bindings
    apidoc/gym-ignition/gym_ignition
    apidoc/gym-ignition-environments/gym_ignition_environments
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Information
+
+   info/faq
+   info/limitations
