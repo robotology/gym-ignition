@@ -99,6 +99,8 @@ Model::Model()
     : pImpl{std::make_unique<Impl>()}
 {}
 
+Model::~Model() = default;
+
 uint64_t Model::id() const
 {
     // Get the parent world
@@ -112,8 +114,6 @@ uint64_t Model::id() const
     // Return the hashed string
     return std::hash<std::string>{}(scopedModelName);
 }
-
-Model::~Model() = default;
 
 bool Model::initialize(const ignition::gazebo::Entity modelEntity,
                        ignition::gazebo::EntityComponentManager* ecm,
@@ -339,8 +339,7 @@ bool Model::resetBaseWorldVelocity(const std::array<double, 3>& linear,
 
 bool Model::valid() const
 {
-    // TODO: extend the checks
-    return pImpl->model.Valid(*m_ecm);
+    return this->validEntity() && pImpl->model.Valid(*m_ecm);
 }
 
 size_t Model::dofs(const std::vector<std::string>& jointNames) const

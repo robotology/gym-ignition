@@ -142,6 +142,8 @@ public:
     // World Core
     // ==========
 
+    bool valid() const override;
+
     double time() const override;
 
     std::string name() const override;

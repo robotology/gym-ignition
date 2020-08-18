@@ -69,6 +69,8 @@ Joint::Joint()
     : pImpl{std::make_unique<Impl>()}
 {}
 
+Joint::~Joint() = default;
+
 uint64_t Joint::id() const
 {
     // Get the parent world
@@ -88,8 +90,6 @@ uint64_t Joint::id() const
     // Return the hashed string
     return std::hash<std::string>{}(scopedJointName);
 }
-
-Joint::~Joint() = default;
 
 bool Joint::initialize(const ignition::gazebo::Entity jointEntity,
                        ignition::gazebo::EntityComponentManager* ecm,
@@ -265,6 +265,11 @@ bool Joint::resetJoint(const std::vector<double>& position,
     }
 
     return true;
+}
+
+bool Joint::valid() const
+{
+    return this->validEntity();
 }
 
 size_t Joint::dofs() const

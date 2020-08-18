@@ -73,6 +73,8 @@ Link::Link()
     : pImpl{std::make_unique<Impl>()}
 {}
 
+Link::~Link() = default;
+
 uint64_t Link::id() const
 {
     // Get the parent world
@@ -92,8 +94,6 @@ uint64_t Link::id() const
     // Return the hashed string
     return std::hash<std::string>{}(scopedLinkName);
 }
-
-Link::~Link() = default;
 
 bool Link::initialize(const ignition::gazebo::Entity linkEntity,
                       ignition::gazebo::EntityComponentManager* ecm,
@@ -143,6 +143,11 @@ bool Link::createECMResources()
     }
 
     return true;
+}
+
+bool Link::valid() const
+{
+    return this->validEntity() && pImpl->link.Valid(*m_ecm);
 }
 
 std::string Link::name(const bool scoped) const

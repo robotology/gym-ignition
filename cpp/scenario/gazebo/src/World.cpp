@@ -71,12 +71,12 @@ World::World()
     : pImpl{std::make_unique<Impl>()}
 {}
 
+World::~World() = default;
+
 uint64_t World::id() const
 {
     return std::hash<std::string>{}(this->name());
 }
-
-World::~World() = default;
 
 bool World::initialize(const ignition::gazebo::Entity worldEntity,
                        ignition::gazebo::EntityComponentManager* ecm,
@@ -189,6 +189,11 @@ bool World::setGravity(const std::array<double, 3>& gravity)
         m_ecm, m_entity, utils::toIgnitionVector3(gravity));
 
     return true;
+}
+
+bool World::valid() const
+{
+    return this->validEntity();
 }
 
 double World::time() const
