@@ -34,6 +34,7 @@ set(EXTRA_COMPONENTS_HDRS
     ${CMAKE_CURRENT_SOURCE_DIR}/include/scenario/gazebo/components/BaseWorldAccelerationTarget.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/scenario/gazebo/components/MaxJointForce.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/scenario/gazebo/components/JointControlMode.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/scenario/gazebo/components/JointController.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/scenario/gazebo/components/WorldVelocityCmd.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/scenario/gazebo/components/JointPositionTarget.h
     ${CMAKE_CURRENT_SOURCE_DIR}/include/scenario/gazebo/components/JointVelocityTarget.h
