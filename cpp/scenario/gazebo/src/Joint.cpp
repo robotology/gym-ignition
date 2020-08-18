@@ -31,6 +31,7 @@
 #include "scenario/gazebo/components/HistoryOfAppliedJointForces.h"
 #include "scenario/gazebo/components/JointAccelerationTarget.h"
 #include "scenario/gazebo/components/JointControlMode.h"
+#include "scenario/gazebo/components/JointController.h"
 #include "scenario/gazebo/components/JointControllerPeriod.h"
 #include "scenario/gazebo/components/JointPID.h"
 #include "scenario/gazebo/components/JointPositionTarget.h"
@@ -48,6 +49,7 @@
 #include <ignition/gazebo/components/JointVelocity.hh>
 #include <ignition/gazebo/components/JointVelocityReset.hh>
 #include <ignition/gazebo/components/Name.hh>
+#include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/math/PID.hh>
 #include <sdf/Joint.hh>
 #include <sdf/JointAxis.hh>
@@ -340,6 +342,46 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
     if (mode == core::JointControlMode::PositionInterpolated) {
         sError << "PositionInterpolated not yet supported" << std::endl;
         return false;
+    }
+
+    // Insert the JointController plugin to the model if the control
+    // mode is either Position or Velocity
+    if (mode == core::JointControlMode::Position
+        || mode == core::JointControlMode::Velocity) {
+
+        // Get the parent model entity
+        auto parentModelEntity = pImpl->ecm->Component< //
+            ignition::gazebo::components::ParentEntity>(pImpl->jointEntity);
+        assert(parentModelEntity);
+
+        // Get the parent model
+        auto parentModel = utils::getParentModel(
+            pImpl->ecm, pImpl->eventManager, parentModelEntity->Data());
+
+        if (!parentModel) {
+            sError << "Failed to get the parent model of joint '"
+                   << this->name() << "' for inserting the "
+                   << "JointController" << std::endl;
+            return false;
+        }
+
+        // Insert the plugin if the model does not have it already
+        if (!pImpl->ecm->EntityHasComponentType(
+                parentModelEntity->Data(),
+                ignition::gazebo::components::JointController().TypeId())) {
+
+            sDebug << "Loading JointController plugin for model '"
+                   << parentModel->name() << "'" << std::endl;
+
+            // Load the JointController plugin
+            if (!parentModel->insertModelPlugin(
+                    "JointController",
+                    "scenario::plugins::gazebo::JointController")) {
+                sError << "Failed to insert JointController plugin for model '"
+                       << parentModel->name() << "'" << std::endl;
+                return false;
+            }
+        }
     }
 
     utils::setExistingComponentData<
