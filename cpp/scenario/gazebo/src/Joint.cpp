@@ -63,10 +63,6 @@ const ignition::math::PID DefaultPID(1, 0.1, 0.01, 1, -1, 10000, -10000);
 class Joint::Impl
 {
 public:
-    ignition::gazebo::EventManager* eventManager = nullptr;
-    ignition::gazebo::EntityComponentManager* ecm = nullptr;
-
-    ignition::gazebo::Entity jointEntity = ignition::gazebo::kNullEntity;
 };
 
 Joint::Joint()
@@ -76,13 +72,13 @@ Joint::Joint()
 uint64_t Joint::id() const
 {
     // Get the parent world
-    core::WorldPtr parentWorld = utils::getParentWorld(
-        pImpl->ecm, pImpl->eventManager, pImpl->jointEntity);
+    core::WorldPtr parentWorld =
+        utils::getParentWorld(m_ecm, m_eventManager, m_entity);
     assert(parentWorld);
 
     // Get the parent model
-    core::ModelPtr parentModel = utils::getParentModel(
-        pImpl->ecm, pImpl->eventManager, pImpl->jointEntity);
+    core::ModelPtr parentModel =
+        utils::getParentModel(m_ecm, m_eventManager, m_entity);
     assert(parentModel);
 
     // Build a unique string identifier of this joint
@@ -104,9 +100,9 @@ bool Joint::initialize(const ignition::gazebo::Entity jointEntity,
         return false;
     }
 
-    pImpl->ecm = ecm;
-    pImpl->jointEntity = jointEntity;
-    pImpl->eventManager = eventManager;
+    m_ecm = ecm;
+    m_entity = jointEntity;
+    m_eventManager = eventManager;
 
     if (this->dofs() > 1) {
         sError << "Joints with DoFs > 1 are not currently supported"
@@ -119,8 +115,7 @@ bool Joint::initialize(const ignition::gazebo::Entity jointEntity,
 
 bool Joint::createECMResources()
 {
-    sMessage << "  [" << pImpl->jointEntity << "] " << this->name()
-             << std::endl;
+    sMessage << "  [" << m_entity << "] " << this->name() << std::endl;
 
     using namespace ignition::gazebo;
 
@@ -130,19 +125,13 @@ bool Joint::createECMResources()
         std::numeric_limits<double>::infinity());
 
     // Create required components
-    pImpl->ecm->CreateComponent(pImpl->jointEntity,
-                                components::JointForce(zero));
-    pImpl->ecm->CreateComponent(pImpl->jointEntity,
-                                components::JointPosition(zero));
-    pImpl->ecm->CreateComponent(pImpl->jointEntity,
-                                components::JointVelocity(zero));
-    pImpl->ecm->CreateComponent(pImpl->jointEntity,
-                                components::JointPID(DefaultPID));
-    pImpl->ecm->CreateComponent(
-        pImpl->jointEntity,
-        components::JointControlMode(core::JointControlMode::Idle));
-    pImpl->ecm->CreateComponent(pImpl->jointEntity,
-                                components::MaxJointForce(infinity));
+    m_ecm->CreateComponent(m_entity, components::JointForce(zero));
+    m_ecm->CreateComponent(m_entity, components::JointPosition(zero));
+    m_ecm->CreateComponent(m_entity, components::JointVelocity(zero));
+    m_ecm->CreateComponent(m_entity, components::JointPID(DefaultPID));
+    m_ecm->CreateComponent(
+        m_entity, components::JointControlMode(core::JointControlMode::Idle));
+    m_ecm->CreateComponent(m_entity, components::MaxJointForce(infinity));
 
     return true;
 }
@@ -156,8 +145,7 @@ bool Joint::resetPosition(const double position, size_t dof)
     }
 
     auto& jointPositionReset = utils::getComponentData< //
-        ignition::gazebo::components::JointPositionReset>(pImpl->ecm,
-                                                          pImpl->jointEntity);
+        ignition::gazebo::components::JointPositionReset>(m_ecm, m_entity);
 
     if (jointPositionReset.size() != this->dofs()) {
         assert(jointPositionReset.size() == 0);
@@ -166,7 +154,7 @@ bool Joint::resetPosition(const double position, size_t dof)
 
     // Reset the PID
     auto JointPIDComponent = utils::getExistingComponent< //
-        ignition::gazebo::components::JointPID>(pImpl->ecm, pImpl->jointEntity);
+        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
     JointPIDComponent->Data().Reset();
 
     jointPositionReset[dof] = position;
@@ -182,8 +170,7 @@ bool Joint::resetVelocity(const double velocity, const size_t dof)
     }
 
     auto& jointVelocityReset = utils::getComponentData< //
-        ignition::gazebo::components::JointVelocityReset>(pImpl->ecm,
-                                                          pImpl->jointEntity);
+        ignition::gazebo::components::JointVelocityReset>(m_ecm, m_entity);
 
     if (jointVelocityReset.size() != this->dofs()) {
         assert(jointVelocityReset.size() == 0);
@@ -192,7 +179,7 @@ bool Joint::resetVelocity(const double velocity, const size_t dof)
 
     // Reset the PID
     auto JointPIDComponent = utils::getExistingComponent< //
-        ignition::gazebo::components::JointPID>(pImpl->ecm, pImpl->jointEntity);
+        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
     JointPIDComponent->Data().Reset();
 
     jointVelocityReset[dof] = velocity;
@@ -225,15 +212,14 @@ bool Joint::resetJointPosition(const std::vector<double>& position)
     }
 
     auto& jointPositionReset = utils::getComponentData< //
-        ignition::gazebo::components::JointPositionReset>(pImpl->ecm,
-                                                          pImpl->jointEntity);
+        ignition::gazebo::components::JointPositionReset>(m_ecm, m_entity);
 
     // Update the position
     jointPositionReset = position;
 
     // Get the PID
     ignition::math::PID& pid = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointPID>(pImpl->ecm, pImpl->jointEntity);
+        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
 
     // Reset the PID
     pid.Reset();
@@ -250,15 +236,14 @@ bool Joint::resetJointVelocity(const std::vector<double>& velocity)
     }
 
     auto& jointVelocityReset = utils::getComponentData< //
-        ignition::gazebo::components::JointVelocityReset>(pImpl->ecm,
-                                                          pImpl->jointEntity);
+        ignition::gazebo::components::JointVelocityReset>(m_ecm, m_entity);
 
     // Update the velocity
     jointVelocityReset = velocity;
 
     // Get the PID
     ignition::math::PID& pid = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointPID>(pImpl->ecm, pImpl->jointEntity);
+        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
 
     // Reset the PID
     pid.Reset();
@@ -304,11 +289,11 @@ size_t Joint::dofs() const
 std::string Joint::name(const bool scoped) const
 {
     std::string jointName = utils::getExistingComponentData< //
-        ignition::gazebo::components::Name>(pImpl->ecm, pImpl->jointEntity);
+        ignition::gazebo::components::Name>(m_ecm, m_entity);
 
     if (scoped) {
-        auto parentModel = utils::getParentModel(
-            pImpl->ecm, pImpl->eventManager, pImpl->jointEntity);
+        auto parentModel =
+            utils::getParentModel(m_ecm, m_eventManager, m_entity);
         jointName = parentModel->name() + "::" + jointName;
     }
 
@@ -319,8 +304,7 @@ scenario::core::JointType Joint::type() const
 {
     // Get the joint type
     sdf::JointType sdfType = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointType>(pImpl->ecm,
-                                                 pImpl->jointEntity);
+        ignition::gazebo::components::JointType>(m_ecm, m_entity);
 
     // Convert the joint type
     core::JointType type = utils::fromSdf(sdfType);
@@ -331,8 +315,7 @@ scenario::core::JointType Joint::type() const
 scenario::core::JointControlMode Joint::controlMode() const
 {
     core::JointControlMode jointControlMode = utils::getExistingComponentData<
-        ignition::gazebo::components::JointControlMode>(pImpl->ecm,
-                                                        pImpl->jointEntity);
+        ignition::gazebo::components::JointControlMode>(m_ecm, m_entity);
 
     return jointControlMode;
 }
@@ -350,13 +333,13 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
         || mode == core::JointControlMode::Velocity) {
 
         // Get the parent model entity
-        auto parentModelEntity = pImpl->ecm->Component< //
-            ignition::gazebo::components::ParentEntity>(pImpl->jointEntity);
+        auto parentModelEntity = m_ecm->Component< //
+            ignition::gazebo::components::ParentEntity>(m_entity);
         assert(parentModelEntity);
 
         // Get the parent model
         auto parentModel = utils::getParentModel(
-            pImpl->ecm, pImpl->eventManager, parentModelEntity->Data());
+            m_ecm, m_eventManager, parentModelEntity->Data());
 
         if (!parentModel) {
             sError << "Failed to get the parent model of joint '"
@@ -366,7 +349,7 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
         }
 
         // Insert the plugin if the model does not have it already
-        if (!pImpl->ecm->EntityHasComponentType(
+        if (!m_ecm->EntityHasComponentType(
                 parentModelEntity->Data(),
                 ignition::gazebo::components::JointController().TypeId())) {
 
@@ -385,31 +368,28 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
     }
 
     utils::setExistingComponentData<
-        ignition::gazebo::components::JointControlMode>(
-        pImpl->ecm, pImpl->jointEntity, mode);
+        ignition::gazebo::components::JointControlMode>(m_ecm, m_entity, mode);
 
     // Delete the existing targets if they exist
     sDebug << "Deleting existing position and velocity targets after "
            << "changing control mode" << std::endl;
-    pImpl->ecm->RemoveComponent(
-        pImpl->jointEntity,
-        ignition::gazebo::components::JointPositionTarget().TypeId());
-    pImpl->ecm->RemoveComponent(
-        pImpl->jointEntity,
-        ignition::gazebo::components::JointVelocityTarget().TypeId());
+    m_ecm->RemoveComponent(
+        m_entity, ignition::gazebo::components::JointPositionTarget().TypeId());
+    m_ecm->RemoveComponent(
+        m_entity, ignition::gazebo::components::JointVelocityTarget().TypeId());
 
     // Initialize the target as the current position / velocity
     switch (mode) {
         case core::JointControlMode::Position:
         case core::JointControlMode::PositionInterpolated:
-            pImpl->ecm->CreateComponent(
-                pImpl->jointEntity,
+            m_ecm->CreateComponent(
+                m_entity,
                 ignition::gazebo::components::JointPositionTarget(
                     this->jointPosition()));
             break;
         case core::JointControlMode::Velocity:
-            pImpl->ecm->CreateComponent(
-                pImpl->jointEntity,
+            m_ecm->CreateComponent(
+                m_entity,
                 ignition::gazebo::components::JointVelocityTarget(
                     this->jointVelocity()));
             break;
@@ -423,7 +403,7 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
 
     // Get the PID
     ignition::math::PID& pid = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointPID>(pImpl->ecm, pImpl->jointEntity);
+        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
 
     // Reset the PID
     pid.Reset();
@@ -435,7 +415,7 @@ double Joint::controllerPeriod() const
 {
     auto duration = utils::getExistingComponentData< //
         ignition::gazebo::components::JointControllerPeriod>(
-        pImpl->ecm, pImpl->ecm->ParentEntity(pImpl->jointEntity));
+        m_ecm, m_ecm->ParentEntity(m_entity));
 
     return utils::steadyClockDurationToDouble(duration);
 }
@@ -443,7 +423,7 @@ double Joint::controllerPeriod() const
 scenario::core::PID Joint::pid() const
 {
     const ignition::math::PID& pid = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointPID>(pImpl->ecm, pImpl->jointEntity);
+        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
 
     return utils::fromIgnitionPID(pid);
 }
@@ -490,15 +470,15 @@ bool Joint::setPID(const scenario::core::PID& pid)
     // Store the new PID in the ECM
     utils::setExistingComponentData<ignition::gazebo::components::JointPID,
                                     ignition::math::PID>(
-        pImpl->ecm, pImpl->jointEntity, pidIgnitionMath, eqOp);
+        m_ecm, m_entity, pidIgnitionMath, eqOp);
 
     return true;
 }
 
 bool Joint::historyOfAppliedJointForcesEnabled() const
 {
-    return pImpl->ecm->EntityHasComponentType(
-        pImpl->jointEntity,
+    return m_ecm->EntityHasComponentType(
+        m_entity,
         ignition::gazebo::components::HistoryOfAppliedJointForces().TypeId());
 }
 
@@ -509,13 +489,11 @@ bool Joint::enableHistoryOfAppliedJointForces(const bool enable,
         // If the component already exists, its value is not overridden
         utils::getComponent<
             ignition::gazebo::components::HistoryOfAppliedJointForces>(
-            pImpl->ecm,
-            pImpl->jointEntity,
-            utils::FixedSizeQueue(maxHistorySize));
+            m_ecm, m_entity, utils::FixedSizeQueue(maxHistorySize));
     }
     else {
-        pImpl->ecm->RemoveComponent(
-            pImpl->jointEntity,
+        m_ecm->RemoveComponent(
+            m_entity,
             ignition::gazebo::components::HistoryOfAppliedJointForces()
                 .TypeId());
     }
@@ -530,8 +508,8 @@ std::vector<double> Joint::historyOfAppliedJointForces() const
     }
 
     auto fixedSizeQueue = utils::getExistingComponentData<
-        ignition::gazebo::components::HistoryOfAppliedJointForces>(
-        pImpl->ecm, pImpl->jointEntity);
+        ignition::gazebo::components::HistoryOfAppliedJointForces>(m_ecm,
+                                                                   m_entity);
 
     return fixedSizeQueue.toStdVector();
 }
@@ -568,8 +546,7 @@ bool Joint::setMaxGeneralizedForce(const double maxForce, const size_t dof)
     }
 
     auto& maxJointForce = utils::getComponentData< //
-        ignition::gazebo::components::MaxJointForce>(pImpl->ecm,
-                                                     pImpl->jointEntity);
+        ignition::gazebo::components::MaxJointForce>(m_ecm, m_entity);
 
     if (maxJointForce.size() != this->dofs()) {
         assert(maxJointForce.size() == 0);
@@ -626,8 +603,7 @@ bool Joint::setPositionTarget(const double position, const size_t dof)
     }
 
     auto& jointPositionTarget = utils::getComponentData< //
-        ignition::gazebo::components::JointPositionTarget>(pImpl->ecm,
-                                                           pImpl->jointEntity);
+        ignition::gazebo::components::JointPositionTarget>(m_ecm, m_entity);
 
     if (jointPositionTarget.size() != this->dofs()) {
         assert(jointPositionTarget.size() == 0);
@@ -656,8 +632,7 @@ bool Joint::setVelocityTarget(const double velocity, const size_t dof)
     }
 
     auto& jointVelocityTarget = utils::getComponentData< //
-        ignition::gazebo::components::JointVelocityTarget>(pImpl->ecm,
-                                                           pImpl->jointEntity);
+        ignition::gazebo::components::JointVelocityTarget>(m_ecm, m_entity);
 
     if (jointVelocityTarget.size() != this->dofs()) {
         assert(jointVelocityTarget.size() == 0);
@@ -685,8 +660,7 @@ bool Joint::setAccelerationTarget(const double acceleration, const size_t dof)
     }
 
     auto& jointAccelerationTarget = utils::getComponentData< //
-        ignition::gazebo::components::JointAccelerationTarget>(
-        pImpl->ecm, pImpl->jointEntity);
+        ignition::gazebo::components::JointAccelerationTarget>(m_ecm, m_entity);
 
     if (jointAccelerationTarget.size() != this->dofs()) {
         assert(jointAccelerationTarget.size() == 0);
@@ -722,8 +696,7 @@ bool Joint::setGeneralizedForceTarget(const double force, const size_t dof)
     }
 
     auto& jointForce = utils::getComponentData< //
-        ignition::gazebo::components::JointForceCmd>(pImpl->ecm,
-                                                     pImpl->jointEntity);
+        ignition::gazebo::components::JointForceCmd>(m_ecm, m_entity);
 
     if (jointForce.size() != this->dofs()) {
         assert(jointForce.size() == 0);
@@ -788,8 +761,7 @@ scenario::core::JointLimit Joint::jointPositionLimit() const
         case core::JointType::Revolute:
         case core::JointType::Prismatic: {
             sdf::JointAxis& axis = utils::getExistingComponentData< //
-                ignition::gazebo::components::JointAxis>(pImpl->ecm,
-                                                         pImpl->jointEntity);
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
             jointLimit.min[0] = axis.Lower();
             jointLimit.max[0] = axis.Upper();
             break;
@@ -811,8 +783,7 @@ scenario::core::JointLimit Joint::jointPositionLimit() const
 std::vector<double> Joint::jointMaxGeneralizedForce() const
 {
     std::vector<double>& maxJointForce = utils::getExistingComponentData< //
-        ignition::gazebo::components::MaxJointForce>(pImpl->ecm,
-                                                     pImpl->jointEntity);
+        ignition::gazebo::components::MaxJointForce>(m_ecm, m_entity);
 
     return maxJointForce;
 }
@@ -826,8 +797,7 @@ bool Joint::setJointMaxGeneralizedForce(const std::vector<double>& maxForce)
     }
 
     auto& maxJointForce = utils::getComponentData< //
-        ignition::gazebo::components::MaxJointForce>(pImpl->ecm,
-                                                     pImpl->jointEntity);
+        ignition::gazebo::components::MaxJointForce>(m_ecm, m_entity);
 
     maxJointForce = maxForce;
     return true;
@@ -836,8 +806,7 @@ bool Joint::setJointMaxGeneralizedForce(const std::vector<double>& maxForce)
 std::vector<double> Joint::jointPosition() const
 {
     std::vector<double>& jointPosition = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointPosition>(pImpl->ecm,
-                                                     pImpl->jointEntity);
+        ignition::gazebo::components::JointPosition>(m_ecm, m_entity);
 
     if (jointPosition.size() != this->dofs()) {
         throw exceptions::DOFMismatch(
@@ -850,8 +819,7 @@ std::vector<double> Joint::jointPosition() const
 std::vector<double> Joint::jointVelocity() const
 {
     std::vector<double>& jointVelocity = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointVelocity>(pImpl->ecm,
-                                                     pImpl->jointEntity);
+        ignition::gazebo::components::JointVelocity>(m_ecm, m_entity);
 
     if (jointVelocity.size() != this->dofs()) {
         throw exceptions::DOFMismatch(
@@ -870,8 +838,7 @@ bool Joint::setJointPositionTarget(const std::vector<double>& position)
     }
 
     auto& jointPositionTarget = utils::getComponentData< //
-        ignition::gazebo::components::JointPositionTarget>(pImpl->ecm,
-                                                           pImpl->jointEntity);
+        ignition::gazebo::components::JointPositionTarget>(m_ecm, m_entity);
 
     jointPositionTarget = position;
     return true;
@@ -886,8 +853,7 @@ bool Joint::setJointVelocityTarget(const std::vector<double>& velocity)
     }
 
     auto& jointVelocityTarget = utils::getComponentData< //
-        ignition::gazebo::components::JointVelocityTarget>(pImpl->ecm,
-                                                           pImpl->jointEntity);
+        ignition::gazebo::components::JointVelocityTarget>(m_ecm, m_entity);
 
     jointVelocityTarget = velocity;
     return true;
@@ -902,8 +868,7 @@ bool Joint::setJointAccelerationTarget(const std::vector<double>& acceleration)
     }
 
     auto& jointAccelerationTarget = utils::getComponentData< //
-        ignition::gazebo::components::JointAccelerationTarget>(
-        pImpl->ecm, pImpl->jointEntity);
+        ignition::gazebo::components::JointAccelerationTarget>(m_ecm, m_entity);
 
     jointAccelerationTarget = acceleration;
     return true;
@@ -918,8 +883,7 @@ bool Joint::setJointGeneralizedForceTarget(const std::vector<double>& force)
     }
 
     auto& jointForceTarget = utils::getComponentData< //
-        ignition::gazebo::components::JointForceCmd>(pImpl->ecm,
-                                                     pImpl->jointEntity);
+        ignition::gazebo::components::JointForceCmd>(m_ecm, m_entity);
 
     std::vector<double> clippedForce = std::move(force);
     const std::vector<double> maxForce = this->jointMaxGeneralizedForce();
@@ -936,8 +900,7 @@ bool Joint::setJointGeneralizedForceTarget(const std::vector<double>& force)
 std::vector<double> Joint::jointPositionTarget() const
 {
     std::vector<double>& jointPositionTarget = utils::getExistingComponentData<
-        ignition::gazebo::components::JointPositionTarget>(pImpl->ecm,
-                                                           pImpl->jointEntity);
+        ignition::gazebo::components::JointPositionTarget>(m_ecm, m_entity);
 
     if (jointPositionTarget.size() != this->dofs()) {
         throw exceptions::DOFMismatch(
@@ -950,8 +913,7 @@ std::vector<double> Joint::jointPositionTarget() const
 std::vector<double> Joint::jointVelocityTarget() const
 {
     std::vector<double>& jointVelocityTarget = utils::getExistingComponentData<
-        ignition::gazebo::components::JointVelocityTarget>(pImpl->ecm,
-                                                           pImpl->jointEntity);
+        ignition::gazebo::components::JointVelocityTarget>(m_ecm, m_entity);
 
     if (jointVelocityTarget.size() != this->dofs()) {
         throw exceptions::DOFMismatch(
@@ -964,8 +926,7 @@ std::vector<double> Joint::jointVelocityTarget() const
 std::vector<double> Joint::jointAccelerationTarget() const
 {
     std::vector<double>& jointAccelTarget = utils::getExistingComponentData<
-        ignition::gazebo::components::JointAccelerationTarget>(
-        pImpl->ecm, pImpl->jointEntity);
+        ignition::gazebo::components::JointAccelerationTarget>(m_ecm, m_entity);
 
     if (jointAccelTarget.size() != this->dofs()) {
         throw exceptions::DOFMismatch(
@@ -978,8 +939,7 @@ std::vector<double> Joint::jointAccelerationTarget() const
 std::vector<double> Joint::jointGeneralizedForceTarget() const
 {
     std::vector<double>& jointForceTarget = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointForce>(pImpl->ecm,
-                                                  pImpl->jointEntity);
+        ignition::gazebo::components::JointForce>(m_ecm, m_entity);
 
     if (jointForceTarget.size() != this->dofs()) {
         throw exceptions::DOFMismatch(
