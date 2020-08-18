@@ -44,8 +44,13 @@ public:
     virtual ~GazeboEntity() = default;
 
     /**
-     * Get the unique id of the entity.
-     * @return The unique entity id.
+     * Get the unique id of the object.
+     *
+     * @note It might differ from the entity number since a multi-world setting
+     * with the same models inserted in the same order would result to same
+     * numbering.
+     *
+     * @return The unique object id. Invalid objects return 0.
      */
     virtual uint64_t id() const = 0;
 
@@ -69,6 +74,49 @@ public:
      * @return True for success, false otherwise.
      */
     virtual bool createECMResources() = 0;
+
+    /**
+     * Return the entity of this object.
+     *
+     * @return The entity that corresponds to this object.
+     */
+    inline ignition::gazebo::Entity entity() const { return this->m_entity; }
+
+    /**
+     * Return the pointer to the event manager.
+     *
+     * @return The pointer to the event manager.
+     */
+    inline ignition::gazebo::EventManager* eventManager() const
+    {
+        return this->m_eventManager;
+    }
+
+    /**
+     * Return the pointer to the Entity Component Manager.
+     *
+     * @return The pointer to the Entity Component Manager.
+     */
+    inline ignition::gazebo::EntityComponentManager* ecm() const
+    {
+        return this->m_ecm;
+    }
+
+    /**
+     * Checks if the GazeboEntity is valid.
+     *
+     * @return True if the GazeboEntity is valid, false otherwise.
+     */
+    inline bool validEntity() const
+    {
+        return m_eventManager && m_ecm
+               && m_entity != ignition::gazebo::kNullEntity;
+    }
+
+protected:
+    ignition::gazebo::EventManager* m_eventManager = nullptr;
+    ignition::gazebo::EntityComponentManager* m_ecm = nullptr;
+    ignition::gazebo::Entity m_entity = ignition::gazebo::kNullEntity;
 };
 
 #endif // SCENARIO_GAZEBO_GAZEBOENTITY_H

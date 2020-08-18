@@ -175,15 +175,9 @@ namespace scenario::gazebo::utils {
                             const ignition::math::Pose3d& M_H_B,
                             const ignition::math::Quaterniond& W_R_B);
 
-    std::shared_ptr<World>
-    getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
-                   ignition::gazebo::EventManager* eventManager,
-                   const ignition::gazebo::Entity entity);
+    std::shared_ptr<World> getParentWorld(const GazeboEntity& gazeboEntity);
 
-    std::shared_ptr<Model>
-    getParentModel(ignition::gazebo::EntityComponentManager* ecm,
-                   ignition::gazebo::EventManager* eventManager,
-                   const ignition::gazebo::Entity entity);
+    std::shared_ptr<Model> getParentModel(const GazeboEntity& gazeboEntity);
 
     template <typename ComponentType>
     ignition::gazebo::Entity getFirstParentEntityWithComponent(

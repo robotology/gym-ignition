@@ -29,6 +29,13 @@ public:
     virtual ~Link() = default;
 
     /**
+     * Check if the link is valid.
+     *
+     * @return True if the link is valid, false otherwise.
+     */
+    virtual bool valid() const = 0;
+
+    /**
      * Get the name of the link.
      *
      * @param scoped If true, the scoped name of the link is returned.

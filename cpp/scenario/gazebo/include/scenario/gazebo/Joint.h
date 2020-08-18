@@ -135,6 +135,8 @@ public:
     // Joint Core
     // ==========
 
+    bool valid() const override;
+
     size_t dofs() const override;
 
     std::string name(const bool scoped = false) const override;

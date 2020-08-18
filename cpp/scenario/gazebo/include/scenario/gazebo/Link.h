@@ -69,6 +69,8 @@ public:
     // Link Core
     // =========
 
+    bool valid() const override;
+
     std::string name(const bool scoped = false) const override;
 
     double mass() const override;
