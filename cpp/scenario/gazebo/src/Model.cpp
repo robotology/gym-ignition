@@ -104,8 +104,7 @@ Model::~Model() = default;
 uint64_t Model::id() const
 {
     // Get the parent world
-    core::WorldPtr parentWorld =
-        utils::getParentWorld(m_ecm, m_eventManager, m_entity);
+    core::WorldPtr parentWorld = utils::getParentWorld(*this);
     assert(parentWorld);
 
     // Build a unique string identifier of this model

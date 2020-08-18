@@ -78,13 +78,11 @@ Link::~Link() = default;
 uint64_t Link::id() const
 {
     // Get the parent world
-    core::WorldPtr parentWorld =
-        utils::getParentWorld(m_ecm, m_eventManager, m_entity);
+    core::WorldPtr parentWorld = utils::getParentWorld(*this);
     assert(parentWorld);
 
     // Get the parent model
-    core::ModelPtr parentModel =
-        utils::getParentModel(m_ecm, m_eventManager, m_entity);
+    core::ModelPtr parentModel = utils::getParentModel(*this);
     assert(parentModel);
 
     // Build a unique string identifier of this joint
@@ -161,9 +159,7 @@ std::string Link::name(const bool scoped) const
     std::string linkName = linkNameOptional.value();
 
     if (scoped) {
-        auto parentModel =
-            utils::getParentModel(m_ecm, m_eventManager, m_entity);
-        linkName = parentModel->name() + "::" + linkName;
+        linkName = utils::getParentModel(*this)->name() + "::" + linkName;
     }
 
     return linkName;

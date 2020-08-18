@@ -499,17 +499,21 @@ utils::fromBaseToModelVelocity(const ignition::math::Vector3d& linBaseVelocity,
     return {linModelVelocity, angModelVelocity};
 }
 
-std::shared_ptr<World>
-utils::getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
-                      ignition::gazebo::EventManager* eventManager,
-                      const ignition::gazebo::Entity entity)
+std::shared_ptr<World> utils::getParentWorld(const GazeboEntity& gazeboEntity)
 {
+    if (!gazeboEntity.validEntity()) {
+        sError << "The GazeboEntity is not valid" << std::endl;
+        return nullptr;
+    }
+
     auto worldEntity = getFirstParentEntityWithComponent< //
-        ignition::gazebo::components::World>(ecm, entity);
+        ignition::gazebo::components::World>(gazeboEntity.ecm(),
+                                             gazeboEntity.entity());
 
     auto world = std::make_shared<World>();
 
-    if (!world->initialize(worldEntity, ecm, eventManager)) {
+    if (!world->initialize(
+            worldEntity, gazeboEntity.ecm(), gazeboEntity.eventManager())) {
         sError << "Failed to initialize world" << std::endl;
         return nullptr;
     }
@@ -517,17 +521,21 @@ utils::getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
     return world;
 }
 
-std::shared_ptr<Model>
-utils::getParentModel(ignition::gazebo::EntityComponentManager* ecm,
-                      ignition::gazebo::EventManager* eventManager,
-                      const ignition::gazebo::Entity entity)
+std::shared_ptr<Model> utils::getParentModel(const GazeboEntity& gazeboEntity)
 {
+    if (!gazeboEntity.validEntity()) {
+        sError << "The GazeboEntity is not valid" << std::endl;
+        return nullptr;
+    }
+
     auto modelEntity = getFirstParentEntityWithComponent< //
-        ignition::gazebo::components::Model>(ecm, entity);
+        ignition::gazebo::components::Model>(gazeboEntity.ecm(),
+                                             gazeboEntity.entity());
 
     auto model = std::make_shared<Model>();
 
-    if (!model->initialize(modelEntity, ecm, eventManager)) {
+    if (!model->initialize(
+            modelEntity, gazeboEntity.ecm(), gazeboEntity.eventManager())) {
         sError << "Failed to initialize model" << std::endl;
         return nullptr;
     }

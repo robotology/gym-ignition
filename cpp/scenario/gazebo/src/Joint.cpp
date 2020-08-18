@@ -74,13 +74,11 @@ Joint::~Joint() = default;
 uint64_t Joint::id() const
 {
     // Get the parent world
-    core::WorldPtr parentWorld =
-        utils::getParentWorld(m_ecm, m_eventManager, m_entity);
+    core::WorldPtr parentWorld = utils::getParentWorld(*this);
     assert(parentWorld);
 
     // Get the parent model
-    core::ModelPtr parentModel =
-        utils::getParentModel(m_ecm, m_eventManager, m_entity);
+    core::ModelPtr parentModel = utils::getParentModel(*this);
     assert(parentModel);
 
     // Build a unique string identifier of this joint
@@ -297,9 +295,7 @@ std::string Joint::name(const bool scoped) const
         ignition::gazebo::components::Name>(m_ecm, m_entity);
 
     if (scoped) {
-        auto parentModel =
-            utils::getParentModel(m_ecm, m_eventManager, m_entity);
-        jointName = parentModel->name() + "::" + jointName;
+        jointName = utils::getParentModel(*this)->name() + "::" + jointName;
     }
 
     return jointName;
@@ -343,8 +339,7 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
         assert(parentModelEntity);
 
         // Get the parent model
-        auto parentModel = utils::getParentModel(
-            m_ecm, m_eventManager, parentModelEntity->Data());
+        auto parentModel = utils::getParentModel(*this);
 
         if (!parentModel) {
             sError << "Failed to get the parent model of joint '"
