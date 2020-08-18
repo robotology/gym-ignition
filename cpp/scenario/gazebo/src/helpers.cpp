@@ -499,7 +499,7 @@ utils::fromBaseToModelVelocity(const ignition::math::Vector3d& linBaseVelocity,
     return {linModelVelocity, angModelVelocity};
 }
 
-scenario::core::WorldPtr
+std::shared_ptr<World>
 utils::getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
                       ignition::gazebo::EventManager* eventManager,
                       const ignition::gazebo::Entity entity)
@@ -517,7 +517,7 @@ utils::getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
     return world;
 }
 
-scenario::core::ModelPtr
+std::shared_ptr<Model>
 utils::getParentModel(ignition::gazebo::EntityComponentManager* ecm,
                       ignition::gazebo::EventManager* eventManager,
                       const ignition::gazebo::Entity entity)

@@ -27,7 +27,6 @@
 #ifndef SCENARIO_GAZEBO_HELPERS_H
 #define SCENARIO_GAZEBO_HELPERS_H
 
-#include "scenario/core/World.h"
 #include "scenario/gazebo/Joint.h"
 #include "scenario/gazebo/Link.h"
 #include "scenario/gazebo/Model.h"
@@ -176,13 +175,15 @@ namespace scenario::gazebo::utils {
                             const ignition::math::Pose3d& M_H_B,
                             const ignition::math::Quaterniond& W_R_B);
 
-    core::WorldPtr getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
-                                  ignition::gazebo::EventManager* eventManager,
-                                  const ignition::gazebo::Entity entity);
+    std::shared_ptr<World>
+    getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
+                   ignition::gazebo::EventManager* eventManager,
+                   const ignition::gazebo::Entity entity);
 
-    core::ModelPtr getParentModel(ignition::gazebo::EntityComponentManager* ecm,
-                                  ignition::gazebo::EventManager* eventManager,
-                                  const ignition::gazebo::Entity entity);
+    std::shared_ptr<Model>
+    getParentModel(ignition::gazebo::EntityComponentManager* ecm,
+                   ignition::gazebo::EventManager* eventManager,
+                   const ignition::gazebo::Entity entity);
 
     template <typename ComponentType>
     ignition::gazebo::Entity getFirstParentEntityWithComponent(
