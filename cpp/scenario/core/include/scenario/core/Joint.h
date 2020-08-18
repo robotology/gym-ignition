@@ -53,6 +53,13 @@ public:
     virtual ~Joint() = default;
 
     /**
+     * Check if the joint is valid.
+     *
+     * @return True if the joint is valid, false otherwise.
+     */
+    virtual bool valid() const = 0;
+
+    /**
      * Get the number of degrees of freedom of the joint.
      *
      * @return The number of DOFs of the joint.

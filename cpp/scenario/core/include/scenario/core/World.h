@@ -29,6 +29,13 @@ public:
     virtual ~World() = default;
 
     /**
+     * Check if the world is valid.
+     *
+     * @return True if the world is valid, false otherwise.
+     */
+    virtual bool valid() const = 0;
+
+    /**
      * Get the simulated time.
      *
      * @note A physics plugin need to be part of the simulation
