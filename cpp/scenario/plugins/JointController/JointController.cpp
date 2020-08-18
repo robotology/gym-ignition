@@ -29,6 +29,7 @@
 #include "scenario/gazebo/Log.h"
 #include "scenario/gazebo/Model.h"
 #include "scenario/gazebo/components/JointControlMode.h"
+#include "scenario/gazebo/components/JointController.h"
 #include "scenario/gazebo/components/JointPID.h"
 #include "scenario/gazebo/components/JointPositionTarget.h"
 #include "scenario/gazebo/components/JointVelocityTarget.h"
@@ -79,6 +80,13 @@ void JointController::Configure(
     ignition::gazebo::EntityComponentManager& ecm,
     ignition::gazebo::EventManager& eventMgr)
 {
+    // Check if the model already has a JointController plugin
+    if (ecm.EntityHasComponentType(
+            entity, ignition::gazebo::components::JointController().TypeId())) {
+        sError << "The model already has a JointController plugin" << std::endl;
+        return;
+    }
+
     // Store the model entity
     pImpl->modelEntity = entity;
 
@@ -96,6 +104,10 @@ void JointController::Configure(
                << std::endl;
         return;
     }
+
+    // Add the JointController component to the model
+    utils::setComponentData<ignition::gazebo::components::JointController>(
+        &ecm, entity, true);
 }
 
 void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
