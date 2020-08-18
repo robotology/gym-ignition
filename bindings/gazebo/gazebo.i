@@ -75,7 +75,10 @@ namespace scenario::gazebo::utils {
 %shared_ptr(scenario::gazebo::GazeboEntity)
 
 // Ignored methods
+%ignore scenario::gazebo::GazeboEntity::ecm;
 %ignore scenario::gazebo::GazeboEntity::initialize;
+%ignore scenario::gazebo::GazeboEntity::validEntity;
+%ignore scenario::gazebo::GazeboEntity::eventManager;
 %ignore scenario::gazebo::GazeboEntity::createECMResources;
 
 // Workaround for https://github.com/swig/swig/issues/1830
