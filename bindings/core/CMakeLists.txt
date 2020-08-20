@@ -14,11 +14,11 @@ swig_add_library(${scenario_swig_name}
     OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/../scenario/bindings
     OUTFILE_DIR ${CMAKE_CURRENT_BINARY_DIR}/..
     SOURCES ${scenario_swig_name}.i)
-add_library(Scenario::SwigScenarioCore ALIAS core)
+add_library(ScenarioSwig::Core ALIAS core)
 
 target_link_libraries(${scenario_swig_name} PUBLIC
-    ScenarioCore
-    ScenarioCoreUtils
+    ScenarioCore::ScenarioABC
+    ScenarioCore::CoreUtils
     Python3::Python)
 
 set_property(TARGET ${scenario_swig_name} PROPERTY
@@ -41,7 +41,6 @@ get_property(WRAPPER_PY_FILE TARGET ${scenario_swig_name} PROPERTY SWIG_SUPPORT_
 
 install(
     TARGETS ${scenario_swig_name}
-    EXPORT bindings
     LIBRARY DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings
     ARCHIVE DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings
     RUNTIME DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings)

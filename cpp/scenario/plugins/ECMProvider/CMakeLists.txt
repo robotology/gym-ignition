@@ -35,8 +35,8 @@ target_link_libraries(ECMProvider
     ignition-gazebo3::core
     PRIVATE
     ECMSingleton
-    ScenarioGazebo
-    ExtraComponents)
+    ScenarioGazebo::ScenarioGazebo
+    ScenarioGazebo::ExtraComponents)
 
 target_include_directories(ECMProvider PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
@@ -45,41 +45,41 @@ target_include_directories(ECMProvider PRIVATE
 # ECMSingleton
 # ============
 
+# Always compile the singletons as shared libraries even if
+# they are not plugins
 add_library(ECMSingleton SHARED
     include/scenario/plugins/gazebo/ECMSingleton.h
     ECMSingleton.cpp)
+add_library(ScenarioGazeboPlugins::ECMSingleton ALIAS ECMSingleton)
 
 target_include_directories(ECMSingleton PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+    $<INSTALL_INTERFACE:${SCENARIO_INSTALL_INCLUDEDIR}>)
 
 target_link_libraries(ECMSingleton
     PUBLIC
     ignition-gazebo3::core
     PRIVATE
-    ScenarioGazebo)
+    ScenarioGazebo::ScenarioGazebo)
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    set_target_properties(ECMSingleton PROPERTIES
-        PUBLIC_HEADER include/scenario/plugins/gazebo/ECMSingleton.h)
-endif()
+set_target_properties(ECMSingleton PROPERTIES
+    PUBLIC_HEADER include/scenario/plugins/gazebo/ECMSingleton.h)
 
 # ===================
 # Install the targets
 # ===================
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    install(
-        TARGETS ECMProvider
-        EXPORT scenario
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/scenario/plugins)
-    install(
-        TARGETS ECMSingleton
-        EXPORT scenario
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/scenario/plugins/gazebo)
-endif()
+install(
+    TARGETS ECMProvider
+    LIBRARY DESTINATION ${SCENARIO_INSTALL_LIBDIR}/scenario/plugins
+    ARCHIVE DESTINATION ${SCENARIO_INSTALL_LIBDIR}/scenario/plugins
+    RUNTIME DESTINATION ${SCENARIO_INSTALL_BINDIR})
+
+install(
+    TARGETS ECMSingleton
+    EXPORT ScenarioGazeboPluginsExport
+    LIBRARY DESTINATION ${SCENARIO_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${SCENARIO_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${SCENARIO_INSTALL_BINDIR}
+    PUBLIC_HEADER DESTINATION
+    ${SCENARIO_INSTALL_INCLUDEDIR}/scenario/plugins/gazebo)

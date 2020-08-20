@@ -2,43 +2,56 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-# ============
-# ScenarioCore
-# ============
+# ===========
+# ScenarioABC
+# ===========
 
-# Group files with the correct path for the target_sources command
-file(GLOB_RECURSE CORE_HEADERS_BUILD include/*.h)
-file(GLOB_RECURSE CORE_HEADERS_INSTALL
-     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
-     *.h)
+set(SCENARIO_ABC_PUBLIC_HEADERS
+    include/scenario/core/World.h
+    include/scenario/core/Model.h
+    include/scenario/core/Joint.h
+    include/scenario/core/Link.h)
 
-set(CORE_HEADERS
-    $<BUILD_INTERFACE:${CORE_HEADERS_BUILD}>
-    $<INSTALL_INTERFACE:${CORE_HEADERS_INSTALL}>)
+add_library(ScenarioABC INTERFACE)
+add_library(ScenarioCore::ScenarioABC ALIAS ScenarioABC)
 
-add_library(ScenarioCore INTERFACE)
-target_sources(ScenarioCore INTERFACE ${CORE_HEADERS})
-
-target_include_directories(ScenarioCore INTERFACE
+target_include_directories(ScenarioABC INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+    $<INSTALL_INTERFACE:${SCENARIO_INSTALL_INCLUDEDIR}>)
+
+set_target_properties(ScenarioABC PROPERTIES
+    PUBLIC_HEADER "${SCENARIO_ABC_PUBLIC_HEADERS}")
+
+# https://stackoverflow.com/a/29214327
+# As a workaround target_sources can be used, however it requires more
+# boilerplate code and it has probles when exporting the INTERFACE target:
+# https://crascit.com/2016/01/31/enhanced-source-file-handling-with-target_sources/
+add_custom_target(ScenarioCoreABC SOURCES ${SCENARIO_ABC_PUBLIC_HEADERS})
 
 # =================
 # ScenarioCoreUtils
 # =================
 
-add_library(ScenarioCoreUtils
+set(CORE_UTILS_HEADERS
+    include/scenario/core/utils/Log.h
     include/scenario/core/utils/signals.h
-    include/scenario/core/utils/utils.h
+    include/scenario/core/utils/utils.h)
+
+add_library(CoreUtils
+    ${CORE_UTILS_HEADERS}
     src/signals.cpp
     src/utils.cpp)
+add_library(ScenarioCore::CoreUtils ALIAS CoreUtils)
 
-target_include_directories(ScenarioCoreUtils PUBLIC
+target_include_directories(CoreUtils PUBLIC
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
-    $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
+    $<INSTALL_INTERFACE:${SCENARIO_INSTALL_INCLUDEDIR}>)
+
+set_target_properties(CoreUtils PROPERTIES
+    PUBLIC_HEADER "${CORE_UTILS_HEADERS}")
 
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    target_compile_options(ScenarioCoreUtils PRIVATE
+    target_compile_options(CoreUtils PRIVATE
         -DSCENARIO_CMAKE_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
 endif()
 
@@ -46,8 +59,30 @@ endif()
 # Install the targets
 # ===================
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    install(
-        TARGETS ScenarioCore ScenarioCoreUtils
-        EXPORT scenario)
-endif()
+install(
+    TARGETS ScenarioABC
+    EXPORT ScenarioCoreExport
+    LIBRARY DESTINATION ${SCENARIO_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${SCENARIO_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${SCENARIO_INSTALL_BINDIR}
+    PUBLIC_HEADER DESTINATION
+    ${SCENARIO_INSTALL_INCLUDEDIR}/scenario/core)
+
+install(
+    TARGETS CoreUtils
+    EXPORT ScenarioCoreExport
+    LIBRARY DESTINATION ${SCENARIO_INSTALL_LIBDIR}
+    ARCHIVE DESTINATION ${SCENARIO_INSTALL_LIBDIR}
+    RUNTIME DESTINATION ${SCENARIO_INSTALL_BINDIR}
+    PUBLIC_HEADER DESTINATION
+    ${SCENARIO_INSTALL_INCLUDEDIR}/scenario/core/utils)
+
+install_basic_package_files(ScenarioCore
+    COMPONENT Core
+    VERSION ${PROJECT_VERSION}
+    COMPATIBILITY AnyNewerVersion
+    EXPORT ScenarioCoreExport
+    NAMESPACE ScenarioCore::
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
+    INSTALL_DESTINATION
+    ${SCENARIO_INSTALL_LIBDIR}/cmake/ScenarioCore)

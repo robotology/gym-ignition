@@ -34,11 +34,11 @@ add_library(ControllersFactory STATIC
 
 target_link_libraries(ControllersFactory
     PUBLIC
-    Controller
-    ScenarioCore
     sdformat9::sdformat9
+    ScenarioCore::ScenarioABC
+    ScenarioControllers::ControllersABC
     PRIVATE
-    ScenarioGazebo
+    ScenarioGazebo::ScenarioGazebo
     ComputedTorqueFixedBase)
 
 target_include_directories(ControllersFactory PRIVATE
@@ -56,20 +56,20 @@ target_link_libraries(ControllerRunner
     PUBLIC
     ignition-gazebo3::core
     PRIVATE
-    Controller
-    ScenarioGazebo
-    ExtraComponents
+    ScenarioGazebo::ScenarioGazebo
+    ScenarioGazebo::ExtraComponents
+    ScenarioControllers::ControllersABC
     ControllersFactory)
 
 target_include_directories(ControllerRunner PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    install(
-        TARGETS
-        ControllerRunner
-        EXPORT scenario
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/scenario/plugins)
-endif()
+# ===================
+# Install the targets
+# ===================
+
+install(
+    TARGETS ControllerRunner
+    LIBRARY DESTINATION ${SCENARIO_INSTALL_LIBDIR}/scenario/plugins
+    ARCHIVE DESTINATION ${SCENARIO_INSTALL_LIBDIR}/scenario/plugins
+    RUNTIME DESTINATION ${SCENARIO_INSTALL_BINDIR})

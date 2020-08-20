@@ -47,29 +47,27 @@ else()
     set(BINDINGS_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
 endif()
 
-if(GYMIGNITION_ENABLE_SCENARIO)
+# Add the SWIG folders
+add_subdirectory(core)
+add_subdirectory(gazebo)
 
-    add_subdirectory(core)
-    add_subdirectory(gazebo)
+# Move main init.py file to package root of the build tree
+configure_file(
+    ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
+    ${CMAKE_CURRENT_BINARY_DIR}/scenario/__init__.py)
 
-    if(GYMIGNITION_ENABLE_GYMPP)
-        add_subdirectory(gympp)
-    endif()
+# Make scenario.bindings a package
+file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/scenario/bindings)
+file(TOUCH ${CMAKE_CURRENT_BINARY_DIR}/scenario/bindings/__init__.py)
 
-    # Move main init.py file to package root of the build tree
-    configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
-        ${CMAKE_CURRENT_BINARY_DIR}/scenario/__init__.py)
+# Move main init.py file to package root of the install tree
+install(
+    FILES ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
+    DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/)
 
-    # Make scenario.bindings a package
-    file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/scenario/bindings)
-    file(TOUCH ${CMAKE_CURRENT_BINARY_DIR}/scenario/bindings/__init__.py)
-
-    # Move main init.py file to package root of the install tree
-    install(
-        FILES ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
-        DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/)
-
+# Experimental gympp
+if(GYMIGNITION_ENABLE_GYMPP)
+    add_subdirectory(gympp)
 endif()
 
 

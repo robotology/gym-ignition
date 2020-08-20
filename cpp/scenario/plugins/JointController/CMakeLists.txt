@@ -22,6 +22,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+# ===============
+# JointController
+# ===============
+
 add_library(JointController SHARED
     JointController.h
     JointController.cpp)
@@ -30,17 +34,18 @@ target_link_libraries(JointController
     PUBLIC
     ignition-gazebo3::core
     PRIVATE
-    ExtraComponents
-    ScenarioGazebo)
+    ScenarioGazebo::ScenarioGazebo
+    ScenarioGazebo::ExtraComponents)
 
 target_include_directories(JointController PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    install(
-        TARGETS JointController
-        EXPORT scenario
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/scenario/plugins)
-endif()
+# ===================
+# Install the targets
+# ===================
+
+install(
+    TARGETS JointController
+    LIBRARY DESTINATION ${SCENARIO_INSTALL_LIBDIR}/scenario/plugins
+    ARCHIVE DESTINATION ${SCENARIO_INSTALL_LIBDIR}/scenario/plugins
+    RUNTIME DESTINATION ${SCENARIO_INSTALL_BINDIR}/scenario/plugins)

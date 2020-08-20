@@ -50,22 +50,48 @@ if(NOT ${tiny-process-library_FOUND})
     if(NOT tinyprocesslibrary_POPULATED)
         FetchContent_Populate(tinyprocesslibrary)
 
-        # Disable building the tests
-        set(BUILD_TESTING OFF)
+        # We don't want to install this library in the system, we instead
+        # compile it as an OBJECT library and embed in either the shared or
+        # static libraries that need it.
+        # From https://gitlab.kitware.com/cmake/cmake/-/issues/18935 it seems
+        # that OBJECT libraries that are not installed become INTERFACE when
+        # part of an EXPORT set.
+        # This behaviour allows setting transitively tiny-process-library infos
+        # to the consuming targets while not breaking the EXPORT process. In fact,
+        # the conversion to INTERFACE allows to add tiny-process-library to the
+        # targets of the EXPORT that contains targets linking against it.
+        # See also https://cmake.org/pipermail/cmake/2018-September/068250.html.
 
-        # Build the library as static
-        set(default_build_type ${BUILD_SHARED_LIBS})
-        set(BUILD_SHARED_LIBS OFF)
-        add_subdirectory(${tinyprocesslibrary_SOURCE_DIR}
-                         ${tinyprocesslibrary_BINARY_DIR}
-                         EXCLUDE_FROM_ALL)
-        set(BUILD_SHARED_LIBS ${default_build_type})
+        if(WIN32)
+            add_library(tiny-process-library OBJECT
+                ${tinyprocesslibrary_SOURCE_DIR}/process.cpp
+                ${tinyprocesslibrary_SOURCE_DIR}/process_win.cpp)
+            #If compiled using MSYS2, use sh to run commands
+            if(MSYS)
+                target_compile_definitions(tiny-process-library
+                    PUBLIC MSYS_PROCESS_USE_SH)
+            endif()
+        else()
+            add_library(tiny-process-library OBJECT
+                ${tinyprocesslibrary_SOURCE_DIR}/process.cpp
+                ${tinyprocesslibrary_SOURCE_DIR}/process_unix.cpp)
+        endif()
 
-        set_target_properties(tiny-process-library PROPERTIES
-            PUBLIC_HEADER ${tinyprocesslibrary_SOURCE_DIR}/process.hpp
-            POSITION_INDEPENDENT_CODE ON)
+        if(MSVC)
+            target_compile_definitions(tiny-process-library
+                PRIVATE /D_CRT_SECURE_NO_WARNINGS)
+        else()
+            target_compile_options(tiny-process-library
+                PRIVATE -std=c++11 -Wall -Wextra)
+        endif()
 
-        mark_as_advanced(BUILD_TESTING)
+        find_package(Threads REQUIRED)
+
+        target_link_libraries(tiny-process-library PRIVATE
+            ${CMAKE_THREAD_LIBS_INIT})
+        target_include_directories(tiny-process-library PUBLIC
+            $<BUILD_INTERFACE:${tinyprocesslibrary_SOURCE_DIR}>)
+
     endif()
 endif()
 
