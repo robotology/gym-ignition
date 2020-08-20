@@ -4,6 +4,7 @@
 
 import os
 import sys
+from pathlib import Path
 from enum import auto, Enum
 
 
@@ -31,13 +32,12 @@ def setup_gazebo_environment() -> None:
 
     # Add the plugins path
     if detect_install_mode() == InstallMode.Developer:
-        # Get the install prefix from C++. It is defined only in Developer mode.
-        install_prefix = scenario.bindings.core.get_install_prefix()
-        ign_gazebo_system_plugin_path += f":{install_prefix}/lib/scenario/plugins"
+        install_prefix = Path(scenario.bindings.core.get_install_prefix())
     else:
-        from pathlib import Path
-        plugin_dir = Path(os.path.dirname(__file__)) / "plugins"
-        ign_gazebo_system_plugin_path += f":{str(plugin_dir)}"
+        install_prefix = Path(os.path.dirname(__file__))
+
+    plugin_dir = install_prefix / "lib" / "scenario" / "plugins"
+    ign_gazebo_system_plugin_path += f":{str(plugin_dir)}"
 
     os.environ["IGN_GAZEBO_SYSTEM_PLUGIN_PATH"] = ign_gazebo_system_plugin_path
 
