@@ -16,8 +16,8 @@ std::string utils::getInstallPrefix()
 #ifdef SCENARIO_CMAKE_INSTALL_PREFIX
     return SCENARIO_CMAKE_INSTALL_PREFIX;
 #else
-    sDebug << "User installation detected. The install prefix "
-           << "could be detected from the Python module path." << std::endl;
+    // The install prefix of the User installation can be computed
+    // from the Python module path
     return "";
 #endif
 }
