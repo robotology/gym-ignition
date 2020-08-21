@@ -86,9 +86,6 @@ if(NOT ${tiny-process-library_FOUND} AND NOT ${GYMIGNITION_USE_SYSTEM_TPL})
         if(MSVC)
             target_compile_definitions(tiny-process-library
                 PRIVATE /D_CRT_SECURE_NO_WARNINGS)
-        else()
-            target_compile_options(tiny-process-library
-                PRIVATE -std=c++11 -Wall -Wextra)
         endif()
 
         find_package(Threads REQUIRED)
