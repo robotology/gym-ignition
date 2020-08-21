@@ -22,7 +22,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-find_package(ignition-physics2 COMPONENTS dartsim REQUIRED)
+# =============
+# PhysicsSystem
+# =============
 
 add_library(PhysicsSystem SHARED
     Physics.h
@@ -31,19 +33,20 @@ add_library(PhysicsSystem SHARED
 target_link_libraries(PhysicsSystem
     PUBLIC
     ignition-gazebo3::core
+    ignition-physics2::ignition-physics2
     PRIVATE
-    ignition-physics2
-    ExtraComponents
-    ScenarioGazebo)
+    ScenarioGazebo::ScenarioGazebo
+    ScenarioGazebo::ExtraComponents)
 
 target_include_directories(PhysicsSystem PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    install(
-        TARGETS PhysicsSystem
-        EXPORT scenario
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
-        ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}/scenario/plugins
-        RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}/scenario/plugins)
-endif()
+# ===================
+# Install the targets
+# ===================
+
+install(
+    TARGETS PhysicsSystem
+    LIBRARY DESTINATION ${SCENARIO_INSTALL_LIBDIR}/scenario/plugins
+    ARCHIVE DESTINATION ${SCENARIO_INSTALL_LIBDIR}/scenario/plugins
+    RUNTIME DESTINATION ${SCENARIO_INSTALL_BINDIR}/scenario/plugins)

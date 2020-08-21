@@ -3,7 +3,6 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import os
-import sys
 import platform
 import subprocess
 from setuptools import setup, find_packages, Extension
@@ -61,9 +60,6 @@ class BuildExtension(build_ext):
         # On Ubuntu it will be '/tmp/pip-req-build-<randomseq>/build/linux-x86_64-3.6'.
         ext_dir = os.path.abspath(os.path.dirname(self.get_ext_fullpath(ext.name)))
 
-        # Get Python version
-        python_ver = sys.version_info
-
         # Shared CMake arguments
         cmake_args = [
             f"-DCMAKE_INSTALL_PREFIX:PATH={ext_dir}",
@@ -93,6 +89,8 @@ class BuildExtension(build_ext):
         build_command = ['cmake', '--build', '.'] + build_args
         install_command = ['cmake', '--build', '.', '--target', install_target]
 
+        print("")
+        print(f"Build folder: {self.build_temp}")
         print("")
         print(f"1) Configuring: {configure_command}")
         print(f"2) Building   : {build_command}")

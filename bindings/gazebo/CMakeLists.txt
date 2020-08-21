@@ -15,13 +15,13 @@ swig_add_library(${scenario_swig_name}
     OUTFILE_DIR ${CMAKE_CURRENT_BINARY_DIR}/..
     SOURCES ${scenario_swig_name}.i)
 
-target_link_libraries(${scenario_swig_name} PUBLIC
+target_link_libraries(${scenario_swig_name}
+    PUBLIC
     ECMSingleton
-    ScenarioCore
-    ScenarioGazebo
-    GazeboSimulator
+    ScenarioGazebo::ScenarioGazebo
+    ScenarioGazebo::GazeboSimulator
     Python3::Python)
-add_library(Scenario::SwigScenarioGazebo ALIAS gazebo)
+add_library(ScenarioSwig::Gazebo ALIAS gazebo)
 
 set_property(TARGET ${scenario_swig_name} PROPERTY
     SWIG_USE_TARGET_INCLUDE_DIRECTORIES TRUE)
@@ -42,7 +42,6 @@ get_property(WRAPPER_PY_FILE TARGET ${scenario_swig_name} PROPERTY SWIG_SUPPORT_
 
 install(
     TARGETS ${scenario_swig_name}
-    EXPORT bindings
     LIBRARY DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings
     ARCHIVE DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings
     RUNTIME DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings)
@@ -50,19 +49,3 @@ install(
 install(
     FILES ${WRAPPER_PY_FILE}
     DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings)
-
-# When packaging for PyPI, also install in the Python site-package the
-# Ignition Gazebo plugins and their dependending libraries
-if(CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    # Install the plugins
-    install(
-        TARGETS ECMProvider PhysicsSystem ControllerRunner JointController
-        LIBRARY DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/plugins)
-
-    # Install other shared libraries.
-    # Required for libs that contain singletons otherwise when the
-    # project is statically compiled they do not work properly.
-    install(
-        TARGETS ECMSingleton
-        LIBRARY DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/lib)
-endif()

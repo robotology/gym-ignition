@@ -27,7 +27,7 @@ set(BINDINGS_MODULES_DIR "${PROJECT_BINARY_DIR}/bindings")
 
 find_package(SphinxApidoc REQUIRED)
 add_custom_target(apidoc ALL DEPENDS
-    doxygen Scenario::SwigScenarioCore Scenario::SwigScenarioGazebo)
+    doxygen ScenarioSwig::Core ScenarioSwig::Gazebo)
 
 add_custom_command(
     TARGET apidoc POST_BUILD
