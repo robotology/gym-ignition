@@ -9,8 +9,11 @@ include(FetchContent)
 # ===
 
 find_package(YCM QUIET)
+option(GYMIGNITION_USE_SYSTEM_YCM
+    "Use system-installed YCM, rather than a private copy"
+    ${YCM_FOUND})
 
-if(NOT ${YCM_FOUND})
+if(NOT ${YCM_FOUND} AND NOT ${GYMIGNITION_USE_SYSTEM_YCM})
 
     FetchContent_Declare(
         ycm
@@ -38,8 +41,11 @@ endif()
 # ====================
 
 find_package(tiny-process-library QUIET)
+option(GYMIGNITION_USE_SYSTEM_TPL
+    "Use system-installed tiny-process-library, rather than a private copy"
+    ${tiny-process-library_FOUND})
 
-if(NOT ${tiny-process-library_FOUND})
+if(NOT ${tiny-process-library_FOUND} AND NOT ${GYMIGNITION_USE_SYSTEM_TPL})
 
     FetchContent_Declare(
         tinyprocesslibrary
