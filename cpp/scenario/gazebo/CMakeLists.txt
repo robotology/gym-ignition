@@ -75,12 +75,12 @@ set(SCENARIO_GAZEBO_PUBLIC_HDRS
     include/scenario/gazebo/Joint.h
     include/scenario/gazebo/Link.h
     include/scenario/gazebo/Log.h
-    include/scenario/gazebo/utils.h)
+    include/scenario/gazebo/utils.h
+    include/scenario/gazebo/helpers.h
+    include/scenario/gazebo/exceptions.h)
 
 add_library(ScenarioGazebo
     ${SCENARIO_GAZEBO_PUBLIC_HDRS}
-    include/scenario/gazebo/helpers.h
-    include/scenario/gazebo/exceptions.h
     src/World.cpp
     src/Model.cpp
     src/Joint.cpp
