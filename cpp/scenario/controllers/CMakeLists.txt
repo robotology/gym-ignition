@@ -33,7 +33,7 @@ add_custom_target(ScenarioControllersABC SOURCES ${CONTROLLERS_ABC_PUBLIC_HDRS})
 # ComputedTorqueFixedBase
 # =======================
 
-add_library(ComputedTorqueFixedBase
+add_library(ComputedTorqueFixedBase SHARED
     include/scenario/controllers/ComputedTorqueFixedBase.h
     src/ComputedTorqueFixedBase.cpp)
 add_library(ScenarioControllers::ComputedTorqueFixedBase ALIAS ComputedTorqueFixedBase)
