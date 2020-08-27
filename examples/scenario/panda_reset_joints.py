@@ -5,7 +5,8 @@
 import abc
 import numpy as np
 import gym_ignition_models
-from gym_ignition import scenario_bindings as scenario
+from scenario import core
+from scenario import gazebo as scenario
 from gym_ignition.utils.scenario import init_gazebo_sim
 from typing import List
 from scipy.spatial.transform import Rotation
@@ -42,33 +43,30 @@ class Quaternion(abc.ABC):
 
 
 # Define a helper class to simplify model insertion.
-class Panda(scenario.Model):
+class Panda(core.Model):
 
     def __init__(self,
                  world: scenario.World,
                  position: List[float] = (0., 0, 0),
                  orientation: List[float] = (1., 0, 0, 0)):
-        # Initialize the base class
-        super().__init__()
 
         # Get the model file
         urdf = gym_ignition_models.get_model_file("panda")
 
         # Insert the model in the world
         name = "panda_manipulator"
-        pose = scenario.Pose(position, orientation)
+        pose = core.Pose(position, orientation)
         world.insert_model(urdf, pose, name)
 
         # Get and store the model from the world
         self.model = world.get_model(model_name=name)
 
     def __getattr__(self, name):
-        print("getting", name)
         return getattr(self.model, name)
 
 
 # Set the verbosity
-scenario.set_verbosity(level=2)
+scenario.set_verbosity(scenario.Verbosity_warning)
 
 # Get the default simulator and the default empty world
 gazebo, world = init_gazebo_sim()
@@ -86,10 +84,10 @@ gazebo.run(paused=True)
 time.sleep(3)
 
 # Disable self-collisions
-panda.model.enable_self_collisions(False)
+panda.enable_self_collisions(False)
 
 # List the joints to reset
-joints_no_fingers = [j for j in panda.model.joint_names() if j.startswith("panda_joint")]
+joints_no_fingers = [j for j in panda.joint_names() if j.startswith("panda_joint")]
 nr_of_joints = len(joints_no_fingers)
 
 # Step the simulator for a couple of seconds with the Panda falling under gravity
@@ -99,8 +97,8 @@ for _ in range(1000):
 # Reset the listed joints at the initial pose
 q0 = [np.deg2rad(0)] * nr_of_joints
 dq0 = [0] * nr_of_joints
-panda.model.reset_joint_positions(q0, joints_no_fingers)
-panda.model.reset_joint_velocities(dq0, joints_no_fingers)
+panda.to_gazebo().reset_joint_positions(q0, joints_no_fingers)
+panda.to_gazebo().reset_joint_velocities(dq0, joints_no_fingers)
 
 # Step the simulator for a couple of seconds with the Panda falling under gravity
 for _ in range(1000):
@@ -109,8 +107,8 @@ for _ in range(1000):
 # Reset the listed joints at different positions
 q0 = np.deg2rad([45, -30, 0, -60, 50, 90, 0])
 dq0 = [0] * nr_of_joints
-panda.model.reset_joint_positions(q0, joints_no_fingers)
-panda.model.reset_joint_velocities(dq0, joints_no_fingers)
+panda.to_gazebo().reset_joint_positions(q0, joints_no_fingers)
+panda.to_gazebo().reset_joint_velocities(dq0, joints_no_fingers)
 
 # Step the simulator for a couple of seconds with the Panda falling under gravity
 for _ in range(1000):
