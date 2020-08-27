@@ -5,7 +5,8 @@
 import abc
 import numpy as np
 import gym_ignition_models
-from gym_ignition import scenario_bindings as scenario
+from scenario import core
+from scenario import gazebo as scenario
 from gym_ignition.utils.scenario import init_gazebo_sim
 from typing import List
 from scipy.spatial.transform import Rotation
@@ -42,33 +43,30 @@ class Quaternion(abc.ABC):
 
 
 # Define a helper class to simplify model insertion.
-class Panda(scenario.Model):
+class Panda(core.Model):
 
     def __init__(self,
                  world: scenario.World,
                  position: List[float] = (0., 0, 0),
                  orientation: List[float] = (1., 0, 0, 0)):
-        # Initialize the base class
-        super().__init__()
 
         # Get the model file
         urdf = gym_ignition_models.get_model_file("panda")
 
         # Insert the model in the world
         name = "panda_manipulator"
-        pose = scenario.Pose(position, orientation)
+        pose = core.Pose(position, orientation)
         world.insert_model(urdf, pose, name)
 
         # Get and store the model from the world
         self.model = world.get_model(model_name=name)
 
     def __getattr__(self, name):
-        print("getting", name)
         return getattr(self.model, name)
 
 
 # Set the verbosity
-scenario.set_verbosity(level=2)
+scenario.set_verbosity(scenario.Verbosity_warning)
 
 # Get the default simulator and the default empty world
 gazebo, world = init_gazebo_sim()
@@ -86,17 +84,17 @@ gazebo.run(paused=True)
 time.sleep(3)
 
 # Disable self-collisions
-panda.model.enable_self_collisions(False)
+panda.enable_self_collisions(False)
 
 # Set the controller period
 controller_period = 0.001
-panda.model.set_controller_period(controller_period)
+panda.set_controller_period(controller_period)
 
 # List the controlled joints
-joints = panda.model.joint_names()
+joints = panda.joint_names()
 
 # Switch the controlled joints in position mode
-panda.model.set_joint_control_mode(scenario.JointControlMode_position, list(joints))
+panda.set_joint_control_mode(core.JointControlMode_position, list(joints))
 
 # Define PID gains (from https://github.com/mkrizmancic/franka_gazebo/commit/4a88ce6ca7d3d7bb87bd3fbe91e12873cc42f9b9)
 panda_pid_gains = {
@@ -113,48 +111,44 @@ panda_pid_gains = {
 
 # Configure the PIDs
 for joint_name in joints:
-    pid = scenario.PID()
+    pid = core.PID()
     pid_gains = panda_pid_gains[joint_name]
     pid.p, pid.i, pid.d = pid_gains['p'], pid_gains['i'], pid_gains['d']
-    panda.model.get_joint(joint_name).set_pid(pid)
-
-# Insert the joint controller plugin
-ok_controller = panda.model.insert_model_plugin(
-    "libJointController.so", "scenario::plugins::gazebo::JointController")
+    panda.get_joint(joint_name).set_pid(pid)
 
 # Set the references
-panda.model.set_joint_position_targets([0.0] * panda.model.dofs())
+panda.set_joint_position_targets([0.0] * panda.dofs())
 
 # List the joints to reset
-joints_no_fingers = [j for j in panda.model.joint_names() if j.startswith("panda_joint")]
+joints_no_fingers = [j for j in panda.joint_names() if j.startswith("panda_joint")]
 nr_of_joints = len(joints_no_fingers)
 
 # Reset the listed joints
 q0 = [np.deg2rad(15)] * nr_of_joints
 dq0 = [0.05] * nr_of_joints
-panda.model.reset_joint_positions(q0, joints_no_fingers)
-panda.model.reset_joint_velocities(dq0, joints_no_fingers)
+panda.to_gazebo().reset_joint_positions(q0, joints_no_fingers)
+panda.to_gazebo().reset_joint_velocities(dq0, joints_no_fingers)
 
 # Step the simulator for a couple of seconds with the Panda reaching the reference positions from the initial state
 for _ in range(5000):
     gazebo.run()
 
 # Apply an external force
-panda.model.get_link("panda_link4").apply_world_force([400.0, 0, 0], 0.8)
+panda.get_link("panda_link4").apply_world_force([400.0, 0, 0], 0.8)
 
 # Step the simulator for a couple of seconds with the Panda recovering the reference positions
 for _ in range(5000):
     assert gazebo.run()
 
 # Apply another external force
-panda.model.get_link("panda_link4").apply_world_force([0, -400, 0], 0.8)
+panda.get_link("panda_link4").apply_world_force([0, -400, 0], 0.8)
 
 # Step the simulator for a couple of seconds with the Panda recovering the reference positions
 for _ in range(5000):
     assert gazebo.run()
 
 # Change the reference positions
-panda.model.set_joint_position_targets([0.1] * panda.model.dofs())
+panda.set_joint_position_targets([0.1] * panda.dofs())
 
 # Step the simulator for a couple of seconds with the Panda reaching the new reference positions
 for _ in range(5000):
