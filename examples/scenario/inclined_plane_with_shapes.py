@@ -4,7 +4,8 @@
 
 import abc
 import numpy as np
-from gym_ignition import scenario_bindings as scenario
+from scenario import core
+from scenario import gazebo as scenario
 from scipy.spatial.transform import Rotation
 import gym_ignition_models
 from dataclasses import dataclass
@@ -221,7 +222,7 @@ class Shape:
         while name in world.model_names():
             name = f"{name}{index}"
 
-        assert world.insert_model(self.sdf, scenario.Pose(position, orientation), name)
+        assert world.insert_model(self.sdf, core.Pose(position, orientation), name)
         self.model: scenario.Model = world.get_model(name)
         self.world: scenario.World = world
 
@@ -240,7 +241,7 @@ class Shape:
 
 
 # Set the verbosity
-scenario.set_verbosity(level=2)
+scenario.set_verbosity(scenario.Verbosity_warning)
 
 # Create the simulator
 step_size = 0.001
@@ -263,7 +264,7 @@ world.set_physics_engine(engine=scenario.PhysicsEngine_dart)
 ground_plane_pitch = -0.25 * np.pi
 ground_plane_quaternion = Quaternion.to_wxyz(Rotation.from_euler('y', ground_plane_pitch).as_quat())
 ground_plane_position = [0.0, 0.0, 0.0]
-ground_plane_pose = scenario.Pose(ground_plane_position, ground_plane_quaternion)
+ground_plane_pose = core.Pose(ground_plane_position, ground_plane_quaternion)
 world.insert_model(gym_ignition_models.get_model_file("ground_plane"),
                    ground_plane_pose)
 
