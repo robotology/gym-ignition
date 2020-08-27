@@ -3,14 +3,13 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym_ignition_models
-from gym_ignition import base
+from gym_ignition import base, utils
 from gym_ignition.base import runtime
 from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
-from gym_ignition.utils import scenario
+from scenario import gazebo as scenario
 from gym_ignition.randomizers.base import physics
 from gym_ignition.randomizers.physics import dart
-from gym_ignition import scenario_bindings as bindings
 
 
 class GazeboRuntime(runtime.Runtime):
@@ -44,9 +43,6 @@ class GazeboRuntime(runtime.Runtime):
                  physics_randomizer: physics.PhysicsRandomizer = dart.DART(),
                  world: str = None,
                  **kwargs):
-
-        # Delete and create a new robot every environment reset
-        self._first_run = True
 
         # Gazebo attributes
         self._gazebo = None
@@ -185,7 +181,7 @@ class GazeboRuntime(runtime.Runtime):
     # ==============================
 
     @property
-    def gazebo(self) -> bindings.GazeboSimulator:
+    def gazebo(self) -> scenario.GazeboSimulator:
 
         if self._gazebo is not None:
             assert self._gazebo.initialized()
@@ -199,7 +195,7 @@ class GazeboRuntime(runtime.Runtime):
                         .format(int(num_of_steps_per_run), num_of_steps_per_run))
 
         # Create the simulator
-        gazebo = bindings.GazeboSimulator(1.0 / self._physics_rate,
+        gazebo = scenario.GazeboSimulator(1.0 / self._physics_rate,
                                           self._real_time_factor,
                                           int(num_of_steps_per_run))
 
@@ -213,7 +209,7 @@ class GazeboRuntime(runtime.Runtime):
         return self._gazebo
 
     @property
-    def world(self) -> bindings.World:
+    def world(self) -> scenario.World:
 
         if self._world is not None:
             assert self.gazebo.initialized()
@@ -222,16 +218,18 @@ class GazeboRuntime(runtime.Runtime):
         if self._gazebo is None:
             raise RuntimeError("Gazebo has not yet been created")
 
+        # Help type hinting
+        self._gazebo: scenario.GazeboSimulator
+
         if self._gazebo.initialized():
             raise RuntimeError("Gazebo was already initialized, cannot insert world")
 
         if self._world_sdf is None:
             self._world_sdf = ""
-            self._world_name = scenario.get_unique_world_name("default")
-
+            self._world_name = utils.scenario.get_unique_world_name("default")
         else:
-            sdf_world_name = bindings.get_world_name_from_sdf(self._world_sdf)
-            self._world_name = scenario.get_unique_world_name(sdf_world_name)
+            sdf_world_name = scenario.get_world_name_from_sdf(self._world_sdf)
+            self._world_name = utils.scenario.get_unique_world_name(sdf_world_name)
 
         # Load the world
         ok_world = self._gazebo.insert_world_from_sdf(self._world_sdf, self._world_name)

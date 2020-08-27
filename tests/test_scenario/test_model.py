@@ -7,31 +7,34 @@ pytestmark = pytest.mark.scenario
 
 import numpy as np
 from typing import Tuple
+from scenario import core
 from ..common import utils
 import gym_ignition_models
+from scenario import gazebo as scenario
 from ..common.utils import gazebo_fixture as gazebo
-from gym_ignition import scenario_bindings as bindings
 from ..common.utils import default_world_fixture as default_world
 
 # Set the verbosity
-bindings.set_verbosity(4)
+scenario.set_verbosity(scenario.Verbosity_debug)
 
 
-def get_model(gazebo: bindings.GazeboSimulator,
-              gym_ignition_model_name: str) -> bindings.Model:
+def get_model(gazebo: scenario.GazeboSimulator,
+              gym_ignition_model_name: str) -> scenario.Model:
 
-    world = gazebo.get_world()
-    # TODO: assert world
+    # Get the world and cast it to a Gazebo world
+    world = gazebo.get_world().to_gazebo()
 
-    assert world.set_physics_engine(bindings.PhysicsEngine_dart)
+    assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
     model_urdf = gym_ignition_models.get_model_file(gym_ignition_model_name)
     assert world.insert_model(model_urdf,
-                              bindings.Pose_identity(),
+                              core.Pose_identity(),
                               gym_ignition_model_name)
 
-    model = world.get_model(gym_ignition_model_name)
+    # Get the model and cast it to a Gazebo model
+    model = world.get_model(gym_ignition_model_name).to_gazebo()
     assert model.id() != 0
+    assert model.valid()
 
     return model
 
@@ -40,7 +43,7 @@ def get_model(gazebo: bindings.GazeboSimulator,
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_model_core_api(gazebo: bindings.GazeboSimulator):
+def test_model_core_api(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
 
@@ -62,7 +65,7 @@ def test_model_core_api(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_model_joints(gazebo: bindings.GazeboSimulator):
+def test_model_joints(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
 
@@ -110,7 +113,7 @@ def test_model_joints(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_model_base(gazebo: bindings.GazeboSimulator):
+def test_model_base(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
 
@@ -119,7 +122,7 @@ def test_model_base(gazebo: bindings.GazeboSimulator):
     assert gym_ignition_model_name in gazebo.get_world().model_names()
 
     assert model.base_frame() == "support"
-    assert model.set_base_frame("support")
+    # assert model.set_base_frame("support")  # TODO: Not yet supported
     # assert model.set_base_frame("pendulum")  # TODO: Not yet supported
 
     # Check that the pose is the identical
@@ -169,7 +172,7 @@ def test_model_base(gazebo: bindings.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_model_references(gazebo: bindings.GazeboSimulator):
+def test_model_references(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
 
@@ -196,14 +199,14 @@ def test_model_references(gazebo: bindings.GazeboSimulator):
     # assert model.joint_generalized_force_targets() == pytest.approx([20.1, -13])
     # assert model.joint_generalized_force_targets(["pivot"]) == pytest.approx([-13])
 
-    assert model.set_base_pose_target([0, 0, 5], [0, 0, 0, 1.0])
-    assert model.set_base_orientation_target([0, 0, 1.0, 0])
+    assert model.set_base_pose_target((0, 0, 5), (0, 0, 0, 1.0))
+    assert model.set_base_orientation_target((0, 0, 1.0, 0))
     assert model.base_position_target() == pytest.approx([0, 0, 5])
     assert model.base_orientation_target() == pytest.approx([0, 0, 1.0, 0])
 
-    assert model.set_base_world_linear_velocity_target([1, 2, 3])
-    assert model.set_base_world_angular_velocity_target([4, 5, 6])
-    assert model.set_base_world_angular_acceleration_target([-1, -2, -3])
+    assert model.set_base_world_linear_velocity_target((1, 2, 3))
+    assert model.set_base_world_angular_velocity_target((4, 5, 6))
+    assert model.set_base_world_angular_acceleration_target((-1, -2, -3))
     assert model.base_world_linear_velocity_target() == pytest.approx([1, 2, 3])
     assert model.base_world_angular_velocity_target() == pytest.approx([4, 5, 6])
     assert model.base_world_angular_acceleration_target() == pytest.approx([-1, -2, -3])
@@ -215,7 +218,7 @@ def test_model_references(gazebo: bindings.GazeboSimulator):
 
 @pytest.mark.parametrize("default_world", [(1.0 / 1_000, 1.0, 1)], indirect=True)
 def test_history_of_joint_forces(
-        default_world: Tuple[bindings.GazeboSimulator, bindings.World]):
+        default_world: Tuple[scenario.GazeboSimulator, scenario.World]):
 
     # Get the simulator and the world
     gazebo, world = default_world
@@ -229,7 +232,7 @@ def test_history_of_joint_forces(
     panda = world.get_model("panda")
 
     # Control the robot in Force
-    assert panda.set_joint_control_mode(bindings.JointControlMode_force)
+    assert panda.set_joint_control_mode(core.JointControlMode_force)
 
     # Enable the history for 3 steps
     assert panda.enable_history_of_applied_joint_forces(True, 3)

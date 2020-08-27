@@ -48,7 +48,7 @@ else()
         message(FATAL_ERROR "PyPI packages can be only created for Linux at the moment")
     endif()
 
-    if(${GYMIGNITION_BUILD_SHARED_LIBRARY})
+    if(GYMIGNITION_BUILD_SHARED_LIBRARY)
         message(WARNING "Enabling static compilation, required by the PyPI build mode")
     endif()
 
@@ -77,6 +77,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
 
 # Get include-what-you-use information when compiling
 option(GYMIGNITION_USE_IWYU "Get the output of include-what-you-use" OFF)
+mark_as_advanced(GYMIGNITION_USE_IWYU)
 if(GYMIGNITION_USE_IWYU)
     find_program(IWYU_PATH NAMES include-what-you-use iwyu)
     if(IWYU_PATH)
@@ -102,26 +103,48 @@ set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTU
 
 # Find Python3
 find_package(Python3 3.6 EXACT COMPONENTS Interpreter Development REQUIRED)
+message(STATUS "Using Python: ${Python3_EXECUTABLE}")
+
+# Select the appropriate install prefix used throughout the project
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    # Regular prefix (default /usr/local)
+    set(SCENARIO_INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR})
+    set(SCENARIO_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
+    set(SCENARIO_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
+    # Add the libraries installed in the Python site-package folder
+    set(EXTRA_RPATH_DIRS
+        "${Python3_SITELIB}"
+        "${Python3_SITELIB}/scenario/bindings")
+else()
+    # Relative to the active Python site-package
+    # Example: $HOME/venv/lib/pythonX.Y/site-packages/{scenario,gympp}
+    set(GYMPP_INSTALL_BINDIR gympp/${CMAKE_INSTALL_BINDIR})
+    set(GYMPP_INSTALL_LIBDIR gympp/${CMAKE_INSTALL_LIBDIR})
+    set(GYMPP_INSTALL_INCLUDEDIR gympp/${CMAKE_INSTALL_INCLUDEDIR})
+    set(SCENARIO_INSTALL_BINDIR scenario/${CMAKE_INSTALL_BINDIR})
+    set(SCENARIO_INSTALL_LIBDIR scenario/${CMAKE_INSTALL_LIBDIR})
+    set(SCENARIO_INSTALL_INCLUDEDIR scenario/${CMAKE_INSTALL_INCLUDEDIR})
+    # Add the libraries installed in the Python site-package folder
+    # (that in this case is CMAKE_INSTALL_PREFIX)
+    set(EXTRA_RPATH_DIRS
+        "${CMAKE_INSTALL_PREFIX}"
+        "${CMAKE_INSTALL_PREFIX}/scenario/bindings")
+endif()
 
 # Configure RPATH
 include(AddInstallRPATHSupport)
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    add_install_rpath_support(
-        BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
-        LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
-                 "${CMAKE_INSTALL_FULL_LIBDIR}/scenario/plugins"
-                 "${Python3_SITELIB}"
-        INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
-        DEPENDS ENABLE_RPATH
-        USE_LINK_PATH)
-else()
-    add_install_rpath_support(
-        BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
-        LIB_DIRS "${Python3_SITELIB}"
-        INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
-        DEPENDS ENABLE_RPATH
-        USE_LINK_PATH)
-endif()
+add_install_rpath_support(
+    BIN_DIRS
+    "${CMAKE_INSTALL_PREFIX}/${GYMPP_INSTALL_BINDIR}"
+    "${CMAKE_INSTALL_PREFIX}/${SCENARIO_INSTALL_BINDIR}"
+    LIB_DIRS
+    "${CMAKE_INSTALL_PREFIX}/${SCENARIO_INSTALL_LIBDIR}"
+    "${CMAKE_INSTALL_PREFIX}/${SCENARIO_INSTALL_LIBDIR}/scenario/plugins"
+    "${EXTRA_RPATH_DIRS}"
+    INSTALL_NAME_DIR
+    "${CMAKE_INSTALL_PREFIX}/${SCENARIO_INSTALL_LIBDIR}"
+    DEPENDS ENABLE_RPATH
+    USE_LINK_PATH)
 
 # Find Ignition Gazebo
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
@@ -133,41 +156,34 @@ endif()
 option(GYMIGNITION_USE_IGNITION
     "Build C++ code depending on Ignition Robotics" ${ignition-gazebo3_FOUND})
 
+# Helper for exporting targets
+include(InstallBasicPackageFiles)
+
+# =========
+# SCENARI/O
+# =========
+
+option(GYMIGNITION_ENABLE_SCENARIO "Enable ScenarI/O library" ON)
+
+if(GYMIGNITION_ENABLE_SCENARIO)
+    add_subdirectory(cpp/scenario)
+endif()
+
 # =====
 # GYMPP
 # =====
 
 option(GYMIGNITION_ENABLE_GYMPP "Enable Gympp library" OFF)
+mark_as_advanced(GYMIGNITION_ENABLE_GYMPP)
 
 if(GYMIGNITION_ENABLE_GYMPP)
 
-    add_subdirectory(cpp/gympp/base)
-
-    if(${GYMIGNITION_USE_IGNITION})
-
-        add_subdirectory(cpp/gympp/gazebo)
-        add_subdirectory(cpp/gympp/plugins)
-        add_subdirectory(examples/cpp)
-
+    if(NOT GYMIGNITION_USE_IGNITION)
+        message(FATAL_ERROR "Required Ignition Gazebo libraries not found")
     endif()
 
-endif()
-
-# ========
-# SCENARIO
-# ========
-
-option(GYMIGNITION_ENABLE_SCENARIO "Enable Scenario library" ON)
-
-if(GYMIGNITION_ENABLE_SCENARIO)
-
-    if(${GYMIGNITION_USE_IGNITION})
-
-        add_subdirectory(cpp/scenario/gazebo)
-        add_subdirectory(cpp/scenario/plugins)
-        add_subdirectory(cpp/scenario/controllers)
-
-    endif()
+    add_subdirectory(cpp/gympp)
+    add_subdirectory(examples/cpp)
 
 endif()
 
@@ -177,7 +193,12 @@ endif()
 
 option(GYMIGNITION_ENABLE_BINDINGS "Enable SWIG bindings" ON)
 
-if(GYMIGNITION_ENABLE_BINDINGS AND GYMIGNITION_USE_IGNITION)
+if(GYMIGNITION_ENABLE_BINDINGS)
+
+    if (NOT GYMIGNITION_ENABLE_SCENARIO)
+        message(FATAL_ERROR "The bindings require ScenarI/O to be enabled")
+    endif()
+
     add_subdirectory(bindings)
 endif()
 

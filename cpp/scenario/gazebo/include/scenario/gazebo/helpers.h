@@ -131,16 +131,16 @@ namespace scenario::gazebo::utils {
                                   const ignition::gazebo::Entity entity)
         -> decltype(ComponentTypeT().Data());
 
-    scenario::base::Pose
+    scenario::core::Pose
     fromIgnitionPose(const ignition::math::Pose3d& ignitionPose);
 
-    ignition::math::Pose3d toIgnitionPose(const scenario::base::Pose& pose);
+    ignition::math::Pose3d toIgnitionPose(const scenario::core::Pose& pose);
 
-    scenario::base::Contact
+    scenario::core::Contact
     fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
                             const ignition::msgs::Contact& contactMsg);
 
-    std::vector<scenario::base::Contact>
+    std::vector<scenario::core::Contact>
     fromIgnitionContactsMsgs(ignition::gazebo::EntityComponentManager* ecm,
                              const ignition::msgs::Contacts& contactsMsg);
 
@@ -160,8 +160,8 @@ namespace scenario::gazebo::utils {
     sdf::ElementPtr getPluginSDFElement(const std::string& libName,
                                         const std::string& className);
 
-    sdf::JointType toSdf(const scenario::base::JointType type);
-    scenario::base::JointType fromSdf(const sdf::JointType sdfType);
+    sdf::JointType toSdf(const scenario::core::JointType type);
+    scenario::core::JointType fromSdf(const sdf::JointType sdfType);
 
     std::pair<ignition::math::Vector3d, ignition::math::Vector3d>
     fromModelToBaseVelocity(const ignition::math::Vector3d& linModelVelocity,
@@ -175,13 +175,9 @@ namespace scenario::gazebo::utils {
                             const ignition::math::Pose3d& M_H_B,
                             const ignition::math::Quaterniond& W_R_B);
 
-    WorldPtr getParentWorld(ignition::gazebo::EntityComponentManager* ecm,
-                            ignition::gazebo::EventManager* eventManager,
-                            const ignition::gazebo::Entity entity);
+    std::shared_ptr<World> getParentWorld(const GazeboEntity& gazeboEntity);
 
-    ModelPtr getParentModel(ignition::gazebo::EntityComponentManager* ecm,
-                            ignition::gazebo::EventManager* eventManager,
-                            const ignition::gazebo::Entity entity);
+    std::shared_ptr<Model> getParentModel(const GazeboEntity& gazeboEntity);
 
     template <typename ComponentType>
     ignition::gazebo::Entity getFirstParentEntityWithComponent(
@@ -264,7 +260,7 @@ namespace scenario::gazebo::utils {
     }
 
     static inline ignition::math::PID
-    toIgnitionPID(const scenario::base::PID& pid)
+    toIgnitionPID(const scenario::core::PID& pid)
     {
         return {pid.p,
                 pid.i,
@@ -276,10 +272,10 @@ namespace scenario::gazebo::utils {
                 pid.cmdOffset};
     }
 
-    static inline scenario::base::PID
+    static inline scenario::core::PID
     fromIgnitionPID(const ignition::math::PID& pid)
     {
-        scenario::base::PID pidScenario(pid.PGain(), pid.IGain(), pid.DGain());
+        scenario::core::PID pidScenario(pid.PGain(), pid.IGain(), pid.DGain());
         pidScenario.cmdMin = pid.CmdMin();
         pidScenario.cmdMax = pid.CmdMax();
         pidScenario.cmdOffset = pid.CmdOffset();

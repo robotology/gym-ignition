@@ -27,210 +27,211 @@
 #ifndef SCENARIO_GAZEBO_JOINT_H
 #define SCENARIO_GAZEBO_JOINT_H
 
-#include "scenario/gazebo/Log.h"
+#include "scenario/core/Joint.h"
+#include "scenario/gazebo/GazeboEntity.h"
 
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/EntityComponentManager.hh>
 #include <ignition/gazebo/EventManager.hh>
 
-#include <algorithm>
-#include <limits>
 #include <memory>
 #include <string>
 #include <vector>
 
-namespace scenario {
-    namespace base {
-        struct PID;
-        struct Limit;
-        struct JointLimit;
-        enum class JointType
-        {
-            Invalid,
-            Fixed,
-            Revolute,
-            Prismatic,
-            Ball,
-        };
-        enum class JointControlMode
-        {
-            Idle,
-            Force,
-            Velocity,
-            Position,
-            PositionInterpolated,
-        };
-    } // namespace base
-    namespace gazebo {
-        class Joint;
-        class Model;
-    } // namespace gazebo
-} // namespace scenario
+namespace scenario::gazebo {
+    class Joint;
+} // namespace scenario::gazebo
 
-class scenario::gazebo::Joint
+class scenario::gazebo::Joint final
+    : public scenario::core::Joint
+    , public scenario::gazebo::GazeboEntity
+    , public std::enable_shared_from_this<scenario::gazebo::Joint>
 {
 public:
     Joint();
     virtual ~Joint();
 
+    // =============
+    // Gazebo Entity
+    // =============
+
+    uint64_t id() const override;
+
+    bool initialize(const ignition::gazebo::Entity jointEntity,
+                    ignition::gazebo::EntityComponentManager* ecm,
+                    ignition::gazebo::EventManager* eventManager) override;
+
+    bool createECMResources() override;
+
     // ============
     // Gazebo Joint
     // ============
 
-    uint64_t id() const;
-    bool initialize(const ignition::gazebo::Entity jointEntity,
-                    ignition::gazebo::EntityComponentManager* ecm,
-                    ignition::gazebo::EventManager* eventManager);
-    bool createECMResources();
+    /**
+     * Reset the position of a joint DOF.
+     *
+     * @param position The desired position.
+     * @param dof The index of the DOF.
+     * @return True for success, false otherwise.
+     */
+    bool resetPosition(const double position = 0, const size_t dof = 0);
 
-    bool historyOfAppliedJointForcesEnabled() const;
-    bool enableHistoryOfAppliedJointForces( //
-        const bool enable = true,
-        const size_t maxHistorySize = 100);
-    std::vector<double> historyOfAppliedJointForces() const;
+    /**
+     * Reset the velocity of a joint DOF.
+     *
+     * @param velocity The desired velocity.
+     * @param dof The index of the DOF.
+     * @return True for success, false otherwise.
+     */
+    bool resetVelocity(const double velocity = 0, const size_t dof = 0);
+
+    /**
+     * Reset the state of a joint DOF.
+     *
+     * This method also resets the PID state of the joint.
+     *
+     * @param position The desired position.
+     * @param velocity The desired velocity.
+     * @param dof The index of the DOF.
+     * @return True for success, false otherwise.
+     */
+    bool reset(const double position = 0,
+               const double velocity = 0,
+               const size_t dof = 0);
+
+    /**
+     * Reset the position of the joint.
+     *
+     * This method also resets the PID state of the joint.
+     *
+     * @param position The desired position.
+     * @return True for success, false otherwise.
+     */
+    bool resetJointPosition(const std::vector<double>& position);
+
+    /**
+     * Reset the velocity of the joint.
+     *
+     * This method also resets the PID state of the joint.
+     *
+     * @param velocity The desired velocity.
+     * @return True for success, false otherwise.
+     */
+    bool resetJointVelocity(const std::vector<double>& velocity);
+
+    /**
+     * Reset the state of the joint.
+     *
+     * This method also resets the PID state of the joint.
+     *
+     * @param position The desired position.
+     * @param velocity The desired velocity.
+     * @return True for success, false otherwise.
+     */
+    bool resetJoint(const std::vector<double>& position,
+                    const std::vector<double>& velocity);
 
     // ==========
     // Joint Core
     // ==========
 
-    size_t dofs() const;
+    bool valid() const override;
 
-    /**
-     * Get the name of the joint.
-     *
-     * @param scoped If true, the scoped name of the joint is returned.
-     * @return The name of the joint.
-     */
-    std::string name(const bool scoped = false) const;
+    size_t dofs() const override;
 
-    base::JointType type() const;
+    std::string name(const bool scoped = false) const override;
 
-    base::JointControlMode controlMode() const;
-    bool setControlMode(const base::JointControlMode mode);
+    core::JointType type() const override;
 
-    double controllerPeriod() const;
+    core::JointControlMode controlMode() const override;
 
-    base::PID pid() const;
-    bool setPID(const base::PID& pid);
+    bool setControlMode(const core::JointControlMode mode) override;
+
+    double controllerPeriod() const override;
+
+    core::PID pid() const override;
+
+    bool setPID(const core::PID& pid) override;
+
+    bool historyOfAppliedJointForcesEnabled() const override;
+
+    bool enableHistoryOfAppliedJointForces(
+        const bool enable = true,
+        const size_t maxHistorySize = 100) override;
+
+    std::vector<double> historyOfAppliedJointForces() const override;
 
     // ==================
     // Single DOF methods
     // ==================
 
-    base::Limit positionLimit(const size_t dof = 0) const;
+    core::Limit positionLimit(const size_t dof = 0) const override;
 
-    double maxGeneralizedForce(const size_t dof = 0) const;
-    bool setMaxGeneralizedForce(const double maxForce, const size_t dof = 0);
+    double maxGeneralizedForce(const size_t dof = 0) const override;
 
-    double position(const size_t dof = 0) const;
-    double velocity(const size_t dof = 0) const;
+    bool setMaxGeneralizedForce(const double maxForce,
+                                const size_t dof = 0) override;
 
-    bool setPositionTarget(const double position, const size_t dof = 0);
-    bool setVelocityTarget(const double velocity, const size_t dof = 0);
-    bool setAccelerationTarget(const double acceleration, const size_t dof = 0);
-    bool setGeneralizedForceTarget(const double force, const size_t dof = 0);
+    double position(const size_t dof = 0) const override;
 
-    double positionTarget(const size_t dof = 0) const;
-    double velocityTarget(const size_t dof = 0) const;
-    double accelerationTarget(const size_t dof = 0) const;
-    double generalizedForceTarget(const size_t dof = 0) const;
+    double velocity(const size_t dof = 0) const override;
 
-    bool resetPosition(const double position = 0, const size_t dof = 0);
-    bool resetVelocity(const double velocity = 0, const size_t dof = 0);
-    bool reset(const double position = 0, //
-               const double velocity = 0,
-               const size_t dof = 0);
+    bool setPositionTarget(const double position,
+                           const size_t dof = 0) override;
+
+    bool setVelocityTarget(const double velocity,
+                           const size_t dof = 0) override;
+
+    bool setAccelerationTarget(const double acceleration,
+                               const size_t dof = 0) override;
+
+    bool setGeneralizedForceTarget(const double force,
+                                   const size_t dof = 0) override;
+
+    double positionTarget(const size_t dof = 0) const override;
+
+    double velocityTarget(const size_t dof = 0) const override;
+
+    double accelerationTarget(const size_t dof = 0) const override;
+
+    double generalizedForceTarget(const size_t dof = 0) const override;
 
     // =================
     // Multi DOF methods
     // =================
 
-    base::JointLimit jointPositionLimit() const;
+    core::JointLimit jointPositionLimit() const override;
 
-    std::vector<double> jointMaxGeneralizedForce() const;
-    bool setJointMaxGeneralizedForce(const std::vector<double>& maxForce);
+    std::vector<double> jointMaxGeneralizedForce() const override;
 
-    std::vector<double> jointPosition() const;
-    std::vector<double> jointVelocity() const;
+    bool setJointMaxGeneralizedForce( //
+        const std::vector<double>& maxForce) override;
 
-    bool setJointPositionTarget(const std::vector<double>& position);
-    bool setJointVelocityTarget(const std::vector<double>& velocity);
-    bool setJointAccelerationTarget(const std::vector<double>& acceleration);
-    bool setJointGeneralizedForceTarget(const std::vector<double>& force);
+    std::vector<double> jointPosition() const override;
 
-    std::vector<double> jointPositionTarget() const;
-    std::vector<double> jointVelocityTarget() const;
-    std::vector<double> jointAccelerationTarget() const;
-    std::vector<double> jointGeneralizedForceTarget() const;
+    std::vector<double> jointVelocity() const override;
 
-    bool resetJointPosition(const std::vector<double>& position = {0});
-    bool resetJointVelocity(const std::vector<double>& velocity = {0});
-    bool resetJoint(const std::vector<double>& position = {0},
-                    const std::vector<double>& velocity = {0});
+    bool setJointPositionTarget(const std::vector<double>& position) override;
+
+    bool setJointVelocityTarget(const std::vector<double>& velocity) override;
+
+    bool setJointAccelerationTarget(
+        const std::vector<double>& acceleration) override;
+
+    bool setJointGeneralizedForceTarget( //
+        const std::vector<double>& force) override;
+
+    std::vector<double> jointPositionTarget() const override;
+
+    std::vector<double> jointVelocityTarget() const override;
+
+    std::vector<double> jointAccelerationTarget() const override;
+
+    std::vector<double> jointGeneralizedForceTarget() const override;
 
 private:
     class Impl;
     std::unique_ptr<Impl> pImpl;
-};
-
-struct scenario::base::PID
-{
-    PID() = default;
-    PID(const double _p, const double _i, const double _d)
-        : p(_p)
-        , i(_i)
-        , d(_d)
-    {}
-
-    double p = 0;
-    double i = 0;
-    double d = 0;
-    double cmdMin = std::numeric_limits<double>::lowest();
-    double cmdMax = std::numeric_limits<double>::max();
-    double cmdOffset = 0;
-    double iMin = std::numeric_limits<double>::lowest();
-    double iMax = std::numeric_limits<double>::max();
-};
-
-struct scenario::base::Limit
-{
-    Limit() = default;
-    Limit(const double _min, const double _max)
-        : min(_min)
-        , max(_max)
-    {}
-
-    double min = std::numeric_limits<double>::lowest();
-    double max = std::numeric_limits<double>::max();
-};
-
-struct scenario::base::JointLimit
-{
-    JointLimit(const size_t dofs)
-    {
-        constexpr double m = std::numeric_limits<double>::lowest();
-        constexpr double M = std::numeric_limits<double>::max();
-
-        min = std::vector<double>(dofs, m);
-        max = std::vector<double>(dofs, M);
-    }
-
-    JointLimit(const std::vector<double>& _min, const std::vector<double>& _max)
-        : JointLimit(std::min(_min.size(), _max.size()))
-    {
-        if (_min.size() != _max.size()) {
-            sWarning << "The max and min limits have different size. "
-                     << "Ignoring the limits and using the smaller dimension."
-                     << std::endl;
-            return;
-        }
-
-        min = _min;
-        max = _max;
-    }
-
-    std::vector<double> min;
-    std::vector<double> max;
 };
 
 #endif // SCENARIO_GAZEBO_JOINT_H

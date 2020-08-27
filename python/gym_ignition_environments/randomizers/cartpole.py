@@ -8,9 +8,9 @@ from typing import Union
 from gym_ignition import utils
 from gym_ignition.utils import misc
 from gym_ignition import randomizers
+from scenario import gazebo as scenario
 from gym_ignition_environments import tasks
 from gym_ignition_environments.models import cartpole
-from gym_ignition import scenario_bindings as bindings
 from gym_ignition.randomizers import gazebo_env_randomizer
 from gym_ignition.randomizers.gazebo_env_randomizer import MakeEnvCallable
 from gym_ignition.randomizers.model.sdf import Method, Distribution, UniformParams
@@ -60,15 +60,15 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
 
         self.np_random_physics = np.random.default_rng(seed=self._seed)
 
-    def randomize_physics(self, world: bindings.World) -> None:
+    def randomize_physics(self, world: scenario.World) -> None:
 
-        ok_physics = world.set_physics_engine(bindings.PhysicsEngine_dart)
+        ok_physics = world.set_physics_engine(scenario.PhysicsEngine_dart)
 
         if not ok_physics:
             raise RuntimeError("Failed to insert the physics plugin")
 
         gravity_z = self.np_random_physics.normal(loc=-9.8, scale=0.2)
-        ok_gravity = world.set_gravity([0, 0, gravity_z])
+        ok_gravity = world.set_gravity((0, 0, gravity_z))
 
         if not ok_gravity:
             raise RuntimeError("Failed to set the gravity")
@@ -86,11 +86,15 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
 
     def randomize_task(self,
                        task: SupportedTasks,
-                       gazebo: bindings.GazeboSimulator,
                        **kwargs) -> None:
 
         # Remove the model from the world
         self._clean_world(task=task)
+
+        if "gazebo" not in kwargs:
+            raise ValueError("gazebo kwarg not passed to the task randomizer")
+
+        gazebo = kwargs["gazebo"]
 
         # Execute a paused run to process model removal
         ok_paused_run = gazebo.run(paused=True)
@@ -140,7 +144,7 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
         urdf_model_file = cartpole.CartPole.get_model_file()
 
         # Convert the URDF to SDF
-        sdf_model_string = bindings.urdffile_to_sdfstring(urdf_model_file)
+        sdf_model_string = scenario.urdffile_to_sdfstring(urdf_model_file)
 
         # Write the SDF string to a temp file
         sdf_model = utils.misc.string_to_file(sdf_model_string)
@@ -173,7 +177,7 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
         # Remove the model from the simulation
         if task.model_name is not None and task.model_name in task.world.model_names():
 
-            ok_removed = task.world.remove_model(task.model_name)
+            ok_removed = task.world.to_gazebo().remove_model(task.model_name)
 
             if not ok_removed:
                 raise RuntimeError("Failed to remove the cartpole from the world")

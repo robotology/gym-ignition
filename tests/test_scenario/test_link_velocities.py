@@ -6,13 +6,17 @@ import pytest
 pytestmark = pytest.mark.scenario
 
 import numpy as np
+from scenario import core
 from ..common import utils
 import gym_ignition_models
-from typing import Callable, List, Tuple
+from typing import Callable, Tuple
+from scenario import gazebo as scenario
 from scipy.spatial.transform import Rotation
-from gym_ignition import scenario_bindings as bindings
 from ..common.utils import default_world_fixture as default_world
 from gym_ignition.utils.scenario import get_joint_positions_space
+
+# Set the verbosity
+scenario.set_verbosity(scenario.Verbosity_debug)
 
 
 def to_wxyz(xyzw: np.ndarray) -> np.ndarray:
@@ -31,14 +35,14 @@ def to_xyzw(wxyz: np.ndarray) -> np.ndarray:
     return wxyz[[1, 2, 3, 0]]
 
 
-def to_matrix(quaternion: List[float]) -> np.ndarray:
+def to_matrix(quaternion: Tuple[float, float, float, float]) -> np.ndarray:
 
     quaternion_xyzw = to_xyzw(np.array(quaternion))
     return Rotation.from_quat(quaternion_xyzw).as_matrix()
 
 
-def get_random_panda(gazebo: bindings.GazeboSimulator,
-                     world: bindings.World) -> bindings.Model:
+def get_random_panda(gazebo: scenario.GazeboSimulator,
+                     world: scenario.World) -> core.Model:
 
     panda_urdf = gym_ignition_models.get_model_file("panda")
     assert world.insert_model(panda_urdf)
@@ -52,18 +56,18 @@ def get_random_panda(gazebo: bindings.GazeboSimulator,
     q = joint_space.sample()
     dq = joint_space.np_random.uniform(low=-1.0, high=1.0, size=q.shape)
 
-    assert panda.reset_joint_positions(q.tolist())
-    assert panda.reset_joint_velocities(dq.tolist())
+    assert panda.to_gazebo().reset_joint_positions(q.tolist())
+    assert panda.to_gazebo().reset_joint_velocities(dq.tolist())
 
     assert gazebo.run(paused=True)
     return panda
 
 
-def get_cube(gazebo: bindings.GazeboSimulator,
-             world: bindings.World) -> bindings.Model:
+def get_cube(gazebo: scenario.GazeboSimulator,
+             world: scenario.World) -> core.Model:
 
     quaternion = to_wxyz(Rotation.from_euler('x', 45, degrees=True).as_quat())
-    initial_pose = bindings.Pose([0, 0, 0.5], quaternion.tolist())
+    initial_pose = core.Pose([0, 0, 0.5], quaternion.tolist())
 
     cube_urdf = utils.get_cube_urdf()
     assert world.insert_model(cube_urdf, initial_pose)
@@ -71,8 +75,8 @@ def get_cube(gazebo: bindings.GazeboSimulator,
 
     cube = world.get_model("cube_robot")
 
-    assert cube.reset_base_world_linear_velocity([0.1, -0.2, -0.3])
-    assert cube.reset_base_world_angular_velocity([-0.1, 2.0, 0.3])
+    assert cube.to_gazebo().reset_base_world_linear_velocity([0.1, -0.2, -0.3])
+    assert cube.to_gazebo().reset_base_world_angular_velocity([-0.1, 2.0, 0.3])
 
     assert gazebo.run(paused=True)
     return cube
@@ -85,8 +89,8 @@ def get_cube(gazebo: bindings.GazeboSimulator,
                           ],
                          indirect=["default_world"])
 def test_linear_velocity(
-        default_world: Tuple[bindings.GazeboSimulator, bindings.World],
-        get_model: Callable[[bindings.GazeboSimulator, bindings.World], bindings.Model],
+        default_world: Tuple[scenario.GazeboSimulator, scenario.World],
+        get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
         link_name: str):
 
     # Get the simulator and the world
@@ -142,8 +146,8 @@ def test_linear_velocity(
                           ],
                          indirect=["default_world"])
 def test_angular_velocity(
-        default_world: Tuple[bindings.GazeboSimulator, bindings.World],
-        get_model: Callable[[bindings.GazeboSimulator, bindings.World], bindings.Model],
+        default_world: Tuple[scenario.GazeboSimulator, scenario.World],
+        get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
         link_name: str):
 
     # Get the simulator and the world
@@ -198,8 +202,8 @@ def test_angular_velocity(
                           ],
                          indirect=["default_world"])
 def test_linear_acceleration(
-        default_world: Tuple[bindings.GazeboSimulator, bindings.World],
-        get_model: Callable[[bindings.GazeboSimulator, bindings.World], bindings.Model],
+        default_world: Tuple[scenario.GazeboSimulator, scenario.World],
+        get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
         link_name: str):
 
     # Get the simulator and the world
@@ -261,8 +265,8 @@ def test_linear_acceleration(
                           ],
                          indirect=["default_world"])
 def test_angular_acceleration(
-        default_world: Tuple[bindings.GazeboSimulator, bindings.World],
-        get_model: Callable[[bindings.GazeboSimulator, bindings.World], bindings.Model],
+        default_world: Tuple[scenario.GazeboSimulator, scenario.World],
+        get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
         link_name: str):
 
     # Get the simulator and the world

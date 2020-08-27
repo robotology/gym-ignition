@@ -25,7 +25,6 @@
  */
 
 #include "scenario/gazebo/Model.h"
-
 #include "scenario/gazebo/Joint.h"
 #include "scenario/gazebo/Link.h"
 #include "scenario/gazebo/Log.h"
@@ -66,17 +65,13 @@ using namespace scenario::gazebo;
 class Model::Impl
 {
 public:
-    ignition::gazebo::EventManager* eventManager = nullptr;
-    ignition::gazebo::EntityComponentManager* ecm = nullptr;
-
     ignition::gazebo::Model model;
-    ignition::gazebo::Entity modelEntity = ignition::gazebo::kNullEntity;
 
     using LinkName = std::string;
     using JointName = std::string;
 
-    std::unordered_map<LinkName, scenario::gazebo::LinkPtr> links;
-    std::unordered_map<JointName, scenario::gazebo::JointPtr> joints;
+    std::unordered_map<LinkName, core::LinkPtr> links;
+    std::unordered_map<JointName, core::JointPtr> joints;
 
     struct
     {
@@ -90,24 +85,26 @@ public:
     static std::vector<double> getJointDataSerialized(
         const Model* model,
         const std::vector<std::string>& jointNames,
-        std::function<double(JointPtr, const size_t)> getJointData);
+        std::function<double(core::JointPtr, const size_t)> getJointData);
 
     static bool setJointDataSerialized(
         Model* model,
         const std::vector<double>& data,
         const std::vector<std::string>& jointNames,
-        std::function<bool(JointPtr, const double, const size_t)> setDataToDOF);
+        std::function<bool(core::JointPtr, const double, const size_t)>
+            setDataToDOF);
 };
 
 Model::Model()
     : pImpl{std::make_unique<Impl>()}
 {}
 
+Model::~Model() = default;
+
 uint64_t Model::id() const
 {
     // Get the parent world
-    WorldPtr parentWorld = utils::getParentWorld(
-        pImpl->ecm, pImpl->eventManager, pImpl->modelEntity);
+    core::WorldPtr parentWorld = utils::getParentWorld(*this);
     assert(parentWorld);
 
     // Build a unique string identifier of this model
@@ -117,8 +114,6 @@ uint64_t Model::id() const
     return std::hash<std::string>{}(scopedModelName);
 }
 
-Model::~Model() = default;
-
 bool Model::initialize(const ignition::gazebo::Entity modelEntity,
                        ignition::gazebo::EntityComponentManager* ecm,
                        ignition::gazebo::EventManager* eventManager)
@@ -127,9 +122,9 @@ bool Model::initialize(const ignition::gazebo::Entity modelEntity,
         return false;
     }
 
-    pImpl->ecm = ecm;
-    pImpl->modelEntity = modelEntity;
-    pImpl->eventManager = eventManager;
+    m_ecm = ecm;
+    m_entity = modelEntity;
+    m_eventManager = eventManager;
 
     // Create the model
     pImpl->model = ignition::gazebo::Model(modelEntity);
@@ -145,13 +140,12 @@ bool Model::initialize(const ignition::gazebo::Entity modelEntity,
 
 bool Model::createECMResources()
 {
-    sMessage << "Model: [" << pImpl->modelEntity << "] " << this->name()
-             << std::endl;
+    sMessage << "Model: [" << m_entity << "] " << this->name() << std::endl;
 
     // Create required link resources
     sMessage << "Links:" << std::endl;
-    for (const auto& linkName : this->linkNames()) {
-        if (!this->getLink(linkName)->createECMResources()) {
+    for (const auto& link : this->links()) {
+        if (!std::static_pointer_cast<Link>(link)->createECMResources()) {
             sError << "Failed to initialize ECM link resources" << std::endl;
             return false;
         }
@@ -159,8 +153,8 @@ bool Model::createECMResources()
 
     // Create required model resources
     sMessage << "Joints:" << std::endl;
-    for (const auto& jointName : this->jointNames()) {
-        if (!this->getJoint(jointName)->createECMResources()) {
+    for (const auto& joint : this->joints()) {
+        if (!std::static_pointer_cast<Joint>(joint)->createECMResources()) {
             sError << "Failed to initialize ECM joint resources" << std::endl;
             return false;
         }
@@ -174,10 +168,9 @@ bool Model::createECMResources()
     // Initialize the Joint Controller period as maximum duration.
     // In this way controllers are never updated unless a new period is
     // configured.
-    pImpl->ecm->CreateComponent(
-        pImpl->modelEntity,
-        ignition::gazebo::components::JointControllerPeriod(
-            std::chrono::steady_clock::duration().max()));
+    m_ecm->CreateComponent(m_entity,
+                           ignition::gazebo::components::JointControllerPeriod(
+                               std::chrono::steady_clock::duration().max()));
 
     return true;
 }
@@ -216,25 +209,356 @@ bool Model::insertModelPlugin(const std::string& libName,
     auto wrapped = sdf::SDF::WrapInRoot(pluginElement);
 
     // Trigger the plugin loading
-    pImpl->eventManager->Emit<ignition::gazebo::events::LoadPlugins>(
-        pImpl->modelEntity, wrapped);
+    m_eventManager->Emit<ignition::gazebo::events::LoadPlugins>(m_entity,
+                                                                wrapped);
 
     return true;
 }
 
-bool Model::historyOfAppliedJointForcesEnabled(
-    const std::vector<std::string>& jointNames) const
+bool Model::resetJointPositions(const std::vector<double>& positions,
+                                const std::vector<std::string>& jointNames)
+{
+    auto lambda = [](core::JointPtr joint,
+                     const double position,
+                     const size_t dof) -> bool {
+        return std::static_pointer_cast<Joint>(joint)->resetPosition(position,
+                                                                     dof);
+    };
+
+    return Impl::setJointDataSerialized(this, positions, jointNames, lambda);
+}
+
+bool Model::resetJointVelocities(const std::vector<double>& velocities,
+                                 const std::vector<std::string>& jointNames)
+{
+    auto lambda = [](core::JointPtr joint,
+                     const double velocity,
+                     const size_t dof) -> bool {
+        return std::static_pointer_cast<Joint>(joint)->resetVelocity(velocity,
+                                                                     dof);
+    };
+
+    return Impl::setJointDataSerialized(this, velocities, jointNames, lambda);
+}
+
+bool Model::resetBasePose(const std::array<double, 3>& position,
+                          const std::array<double, 4>& orientation)
+{
+    // Construct the desired transform between world and base
+    core::Pose pose;
+    pose.position = position;
+    pose.orientation = orientation;
+    ignition::math::Pose3d world_H_base = utils::toIgnitionPose(pose);
+
+    // Get the entity of the canonical link
+    auto canonicalLinkEntity = m_ecm->EntityByComponents(
+        ignition::gazebo::components::Link(),
+        ignition::gazebo::components::CanonicalLink(),
+        ignition::gazebo::components::Name(this->baseFrame()),
+        ignition::gazebo::components::ParentEntity(m_entity));
+
+    if (canonicalLinkEntity == ignition::gazebo::kNullEntity) {
+        sError << "Failed to get entity of canonical link" << std::endl;
+        return false;
+    }
+
+    // Get the Pose component of the canonical link.
+    // This is the fixed transformation between the model and the base.
+    auto& model_H_base = utils::getExistingComponentData< //
+        ignition::gazebo::components::Pose>(m_ecm, canonicalLinkEntity);
+
+    // Compute the robot pose that corresponds to the desired base pose
+    const ignition::math::Pose3d& world_H_model =
+        world_H_base * model_H_base.Inverse();
+
+    // Store the new pose
+    utils::setComponentData<ignition::gazebo::components::WorldPoseCmd>(
+        m_ecm, m_entity, world_H_model);
+
+    return true;
+}
+
+bool Model::resetBasePosition(const std::array<double, 3>& position)
+{
+    return this->resetBasePose(position, this->baseOrientation());
+}
+
+bool Model::resetBaseOrientation(const std::array<double, 4>& orientation)
+{
+    return this->resetBasePose(this->basePosition(), orientation);
+}
+
+bool Model::resetBaseWorldLinearVelocity(const std::array<double, 3>& linear)
+{
+    return this->resetBaseWorldVelocity(linear,
+                                        this->baseWorldAngularVelocity());
+}
+
+bool Model::resetBaseWorldAngularVelocity(const std::array<double, 3>& angular)
+{
+    return this->resetBaseWorldVelocity(this->baseWorldLinearVelocity(),
+                                        angular);
+}
+
+bool Model::resetBaseWorldVelocity(const std::array<double, 3>& linear,
+                                   const std::array<double, 3>& angular)
+{
+    // Get the entity of the canonical (base) link
+    auto canonicalLinkEntity = m_ecm->EntityByComponents(
+        ignition::gazebo::components::Link(),
+        ignition::gazebo::components::CanonicalLink(),
+        ignition::gazebo::components::Name(this->baseFrame()),
+        ignition::gazebo::components::ParentEntity(m_entity));
+
+    // Get the Pose component of the canonical link.
+    // This is the fixed transformation between the model and the base.
+    auto& M_H_B = utils::getExistingComponentData< //
+        ignition::gazebo::components::Pose>(m_ecm, canonicalLinkEntity);
+
+    // Get the rotation between base link and world
+    auto W_R_B = utils::toIgnitionQuaternion(
+        this->getLink(this->baseFrame())->orientation());
+
+    // Create the new model velocity
+    ignition::gazebo::WorldVelocity baseWorldVelocity;
+
+    // Compute the mixed velocity of the base link
+    std::tie(baseWorldVelocity.linear, baseWorldVelocity.angular) =
+        utils::fromModelToBaseVelocity(utils::toIgnitionVector3(linear),
+                                       utils::toIgnitionVector3(angular),
+                                       M_H_B,
+                                       W_R_B);
+
+    // Store the new velocity
+    utils::setComponentData<ignition::gazebo::components::WorldVelocityCmd>(
+        m_ecm, m_entity, baseWorldVelocity);
+
+    return true;
+}
+
+bool Model::valid() const
+{
+    return this->validEntity() && pImpl->model.Valid(*m_ecm);
+}
+
+size_t Model::dofs(const std::vector<std::string>& jointNames) const
 {
     const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? this->jointNames() : jointNames;
 
-    bool enabled = true;
+    size_t dofs = 0;
 
-    for (const auto& joint : this->joints(jointSerialization)) {
-        enabled = enabled && joint->historyOfAppliedJointForcesEnabled();
+    for (const auto& jointName : jointSerialization) {
+        dofs += this->getJoint(jointName)->dofs();
     }
 
-    return enabled;
+    return dofs;
+}
+
+std::string Model::name() const
+{
+    return pImpl->model.Name(*m_ecm);
+}
+
+size_t Model::nrOfLinks() const
+{
+    return this->linkNames().size();
+}
+
+size_t Model::nrOfJoints() const
+{
+    return this->jointNames().size();
+}
+
+double Model::totalMass(const std::vector<std::string>& linkNames) const
+{
+    const std::vector<std::string>& linkSerialization =
+        linkNames.empty() ? this->linkNames() : linkNames;
+
+    double mass = 0.0;
+
+    for (const auto& link : this->links(linkSerialization)) {
+        mass += link->mass();
+    }
+
+    return mass;
+}
+
+scenario::core::LinkPtr Model::getLink(const std::string& linkName) const
+{
+    if (pImpl->links.find(linkName) != pImpl->links.end()) {
+        assert(pImpl->links.at(linkName));
+        return pImpl->links.at(linkName);
+    }
+
+    auto linkEntity = pImpl->model.LinkByName(*m_ecm, linkName);
+
+    if (linkEntity == ignition::gazebo::kNullEntity) {
+        throw exceptions::LinkNotFound(linkName);
+    }
+
+    // Create the link
+    auto link = std::make_shared<scenario::gazebo::Link>();
+
+    if (!link->initialize(linkEntity, m_ecm, m_eventManager)) {
+        throw exceptions::LinkError("Failed to initialize link", linkName);
+    }
+
+    // Cache the link instance
+    pImpl->links[linkName] = link;
+
+    return link;
+}
+
+scenario::core::JointPtr Model::getJoint(const std::string& jointName) const
+{
+    if (pImpl->joints.find(jointName) != pImpl->joints.end()) {
+        assert(pImpl->joints.at(jointName));
+        return pImpl->joints.at(jointName);
+    }
+
+    auto jointEntity = pImpl->model.JointByName(*m_ecm, jointName);
+
+    if (jointEntity == ignition::gazebo::kNullEntity) {
+        throw exceptions::JointNotFound(jointName);
+    }
+
+    // Create the joint
+    auto joint = std::make_shared<scenario::gazebo::Joint>();
+
+    if (!joint->initialize(jointEntity, m_ecm, m_eventManager)) {
+        throw exceptions::JointError("Failed to initialize joint", jointName);
+    }
+
+    // Cache the joint instance
+    pImpl->joints[jointName] = joint;
+
+    return joint;
+}
+
+std::vector<std::string> Model::linkNames(const bool scoped) const
+{
+    if (!scoped && pImpl->buffers.linkNames.has_value()) {
+        return pImpl->buffers.linkNames.value();
+    }
+
+    if (scoped && pImpl->buffers.scopedLinkNames.has_value()) {
+        return pImpl->buffers.scopedLinkNames.value();
+    }
+
+    std::vector<std::string> linkNames;
+
+    m_ecm->Each<ignition::gazebo::components::Name,
+                ignition::gazebo::components::Link,
+                ignition::gazebo::components::ParentEntity>(
+        [&](const ignition::gazebo::Entity& /*entity*/,
+            ignition::gazebo::components::Name* nameComponent,
+            ignition::gazebo::components::Link* /*linkComponent*/,
+            ignition::gazebo::components::ParentEntity* parentEntityComponent)
+            -> bool {
+            assert(nameComponent);
+            assert(parentEntityComponent);
+
+            // Discard links not belonging to this model
+            if (parentEntityComponent->Data() != m_entity) {
+                return true;
+            }
+
+            std::string prefix = "";
+            if (scoped) {
+                prefix = this->name() + "::";
+            }
+
+            // Append the link name
+            linkNames.push_back(prefix + nameComponent->Data());
+            return true;
+        });
+
+    if (!scoped) {
+        pImpl->buffers.linkNames = std::move(linkNames);
+        return pImpl->buffers.linkNames.value();
+    }
+    else {
+        pImpl->buffers.scopedLinkNames = std::move(linkNames);
+        return pImpl->buffers.scopedLinkNames.value();
+    }
+}
+
+std::vector<std::string> Model::jointNames(const bool scoped) const
+{
+    if (!scoped && pImpl->buffers.jointNames.has_value()) {
+        return pImpl->buffers.jointNames.value();
+    }
+
+    if (scoped && pImpl->buffers.scopedLinkNames.has_value()) {
+        return pImpl->buffers.scopedLinkNames.value();
+    }
+
+    std::vector<std::string> jointNames;
+
+    m_ecm->Each<ignition::gazebo::components::Name,
+                ignition::gazebo::components::Joint,
+                ignition::gazebo::components::ParentEntity>(
+        [&](const ignition::gazebo::Entity& /*jointEntity*/,
+            ignition::gazebo::components::Name* nameComponent,
+            ignition::gazebo::components::Joint* /*jointComponent*/,
+            ignition::gazebo::components::ParentEntity* parentEntityComponent)
+            -> bool {
+            assert(nameComponent);
+            assert(parentEntityComponent);
+
+            // Discard joints not belonging to this model
+            if (parentEntityComponent->Data() != m_entity) {
+                return true;
+            }
+
+            // Discard joints with no DoFs
+            auto joint = this->getJoint(nameComponent->Data());
+            if (joint->dofs() == 0) {
+                return true;
+            }
+
+            std::string prefix = "";
+            if (scoped) {
+                prefix = this->name() + "::";
+            }
+
+            // Append the joint name
+            jointNames.push_back(prefix + nameComponent->Data());
+            return true;
+        });
+
+    if (!scoped) {
+        pImpl->buffers.jointNames = std::move(jointNames);
+        return pImpl->buffers.jointNames.value();
+    }
+    else {
+        pImpl->buffers.scopedJointNames = std::move(jointNames);
+        return pImpl->buffers.scopedJointNames.value();
+    }
+}
+
+double Model::controllerPeriod() const
+{
+    auto duration = utils::getExistingComponentData< //
+        ignition::gazebo::components::JointControllerPeriod>(m_ecm, m_entity);
+
+    return utils::steadyClockDurationToDouble(duration);
+}
+
+bool Model::setControllerPeriod(const double period)
+{
+    if (period <= 0) {
+        sError << "The controller period must be greater than zero"
+               << std::endl;
+        return false;
+    }
+
+    // Store the new period in the ECM
+    utils::setExistingComponentData<
+        ignition::gazebo::components::JointControllerPeriod>(
+        m_ecm, m_entity, utils::doubleToSteadyClockDuration(period));
+    return true;
 }
 
 bool Model::enableHistoryOfAppliedJointForces(
@@ -254,6 +578,21 @@ bool Model::enableHistoryOfAppliedJointForces(
     }
 
     return ok;
+}
+
+bool Model::historyOfAppliedJointForcesEnabled(
+    const std::vector<std::string>& jointNames) const
+{
+    const std::vector<std::string>& jointSerialization =
+        jointNames.empty() ? this->jointNames() : jointNames;
+
+    bool enabled = true;
+
+    for (const auto& joint : this->joints(jointSerialization)) {
+        enabled = enabled && joint->historyOfAppliedJointForcesEnabled();
+    }
+
+    return enabled;
 }
 
 std::vector<double> Model::historyOfAppliedJointForces(
@@ -292,235 +631,6 @@ std::vector<double> Model::historyOfAppliedJointForces(
     return allAppliedJointForces;
 }
 
-bool Model::valid() const
-{
-    // TODO: extend the checks
-    return pImpl->model.Valid(*pImpl->ecm);
-}
-
-size_t Model::dofs(const std::vector<std::string>& jointNames) const
-{
-    const std::vector<std::string>& jointSerialization =
-        jointNames.empty() ? this->jointNames() : jointNames;
-
-    size_t dofs = 0;
-
-    for (const auto& jointName : jointSerialization) {
-        dofs += this->getJoint(jointName)->dofs();
-    }
-
-    return dofs;
-}
-
-std::string Model::name() const
-{
-    return pImpl->model.Name(*pImpl->ecm);
-}
-
-size_t Model::nrOfLinks() const
-{
-    return this->linkNames().size();
-}
-
-size_t Model::nrOfJoints() const
-{
-    return this->jointNames().size();
-}
-
-double Model::totalMass(const std::vector<std::string>& linkNames) const
-{
-    const std::vector<std::string>& linkSerialization =
-        linkNames.empty() ? this->linkNames() : linkNames;
-
-    double mass = 0.0;
-
-    for (const auto& link : this->links(linkSerialization)) {
-        mass += link->mass();
-    }
-
-    return mass;
-}
-
-scenario::gazebo::LinkPtr Model::getLink(const std::string& linkName) const
-{
-    if (pImpl->links.find(linkName) != pImpl->links.end()) {
-        assert(pImpl->links.at(linkName));
-        return pImpl->links.at(linkName);
-    }
-
-    auto linkEntity = pImpl->model.LinkByName(*pImpl->ecm, linkName);
-
-    if (linkEntity == ignition::gazebo::kNullEntity) {
-        throw exceptions::LinkNotFound(linkName);
-    }
-
-    // Create the link
-    auto link = std::make_shared<scenario::gazebo::Link>();
-
-    if (!link->initialize(linkEntity, pImpl->ecm, pImpl->eventManager)) {
-        throw exceptions::LinkError("Failed to initialize link", linkName);
-    }
-
-    // Cache the link instance
-    pImpl->links[linkName] = link;
-
-    return link;
-}
-
-scenario::gazebo::JointPtr Model::getJoint(const std::string& jointName) const
-{
-    if (pImpl->joints.find(jointName) != pImpl->joints.end()) {
-        assert(pImpl->joints.at(jointName));
-        return pImpl->joints.at(jointName);
-    }
-
-    auto jointEntity = pImpl->model.JointByName(*pImpl->ecm, jointName);
-
-    if (jointEntity == ignition::gazebo::kNullEntity) {
-        throw exceptions::JointNotFound(jointName);
-    }
-
-    // Create the joint
-    auto joint = std::make_shared<scenario::gazebo::Joint>();
-
-    if (!joint->initialize(jointEntity, pImpl->ecm, pImpl->eventManager)) {
-        throw exceptions::JointError("Failed to initialize joint", jointName);
-    }
-
-    // Cache the joint instance
-    pImpl->joints[jointName] = joint;
-
-    return joint;
-}
-
-std::vector<std::string> Model::linkNames(const bool scoped) const
-{
-    if (!scoped && pImpl->buffers.linkNames.has_value()) {
-        return pImpl->buffers.linkNames.value();
-    }
-
-    if (scoped && pImpl->buffers.scopedLinkNames.has_value()) {
-        return pImpl->buffers.scopedLinkNames.value();
-    }
-
-    std::vector<std::string> linkNames;
-
-    pImpl->ecm->Each<ignition::gazebo::components::Name,
-                     ignition::gazebo::components::Link,
-                     ignition::gazebo::components::ParentEntity>(
-        [&](const ignition::gazebo::Entity& /*entity*/,
-            ignition::gazebo::components::Name* nameComponent,
-            ignition::gazebo::components::Link* /*linkComponent*/,
-            ignition::gazebo::components::ParentEntity* parentEntityComponent)
-            -> bool {
-            assert(nameComponent);
-            assert(parentEntityComponent);
-
-            // Discard links not belonging to this model
-            if (parentEntityComponent->Data() != pImpl->modelEntity) {
-                return true;
-            }
-
-            std::string prefix = "";
-            if (scoped) {
-                prefix = this->name() + "::";
-            }
-
-            // Append the link name
-            linkNames.push_back(prefix + nameComponent->Data());
-            return true;
-        });
-
-    if (!scoped) {
-        pImpl->buffers.linkNames = std::move(linkNames);
-        return pImpl->buffers.linkNames.value();
-    }
-    else {
-        pImpl->buffers.scopedLinkNames = std::move(linkNames);
-        return pImpl->buffers.scopedLinkNames.value();
-    }
-}
-
-std::vector<std::string> Model::jointNames(const bool scoped) const
-{
-    if (!scoped && pImpl->buffers.jointNames.has_value()) {
-        return pImpl->buffers.jointNames.value();
-    }
-
-    if (scoped && pImpl->buffers.scopedLinkNames.has_value()) {
-        return pImpl->buffers.scopedLinkNames.value();
-    }
-
-    std::vector<std::string> jointNames;
-
-    pImpl->ecm->Each<ignition::gazebo::components::Name,
-                     ignition::gazebo::components::Joint,
-                     ignition::gazebo::components::ParentEntity>(
-        [&](const ignition::gazebo::Entity& /*jointEntity*/,
-            ignition::gazebo::components::Name* nameComponent,
-            ignition::gazebo::components::Joint* /*jointComponent*/,
-            ignition::gazebo::components::ParentEntity* parentEntityComponent)
-            -> bool {
-            assert(nameComponent);
-            assert(parentEntityComponent);
-
-            // Discard joints not belonging to this model
-            if (parentEntityComponent->Data() != pImpl->modelEntity) {
-                return true;
-            }
-
-            // Discard joints with no DoFs
-            auto joint = this->getJoint(nameComponent->Data());
-            if (joint->dofs() == 0) {
-                return true;
-            }
-
-            std::string prefix = "";
-            if (scoped) {
-                prefix = this->name() + "::";
-            }
-
-            // Append the joint name
-            jointNames.push_back(prefix + nameComponent->Data());
-            return true;
-        });
-
-    if (!scoped) {
-        pImpl->buffers.jointNames = std::move(jointNames);
-        return pImpl->buffers.jointNames.value();
-    }
-    else {
-        pImpl->buffers.scopedJointNames = std::move(jointNames);
-        return pImpl->buffers.scopedJointNames.value();
-    }
-}
-
-double Model::controllerPeriod() const
-{
-    auto duration = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointControllerPeriod>(
-        pImpl->ecm, pImpl->modelEntity);
-
-    return utils::steadyClockDurationToDouble(duration);
-}
-
-bool Model::setControllerPeriod(const double period)
-{
-    if (period <= 0) {
-        sError << "The controller period must be greater than zero"
-               << std::endl;
-        return false;
-    }
-
-    // Store the new period in the ECM
-    utils::setExistingComponentData<
-        ignition::gazebo::components::JointControllerPeriod>(
-        pImpl->ecm,
-        pImpl->modelEntity,
-        utils::doubleToSteadyClockDuration(period));
-    return true;
-}
-
 bool Model::contactsEnabled() const
 {
     bool enabled = true;
@@ -546,8 +656,7 @@ bool Model::enableContacts(const bool enable)
 bool Model::selfCollisionsEnabled() const
 {
     const bool selfCollisionsEnabled = utils::getExistingComponentData<
-        ignition::gazebo::components::SelfCollide>(pImpl->ecm,
-                                                   pImpl->modelEntity);
+        ignition::gazebo::components::SelfCollide>(m_ecm, m_entity);
 
     return selfCollisionsEnabled;
 }
@@ -561,7 +670,7 @@ bool Model::enableSelfCollisions(const bool enable)
     }
 
     utils::setExistingComponentData<ignition::gazebo::components::SelfCollide>(
-        pImpl->ecm, pImpl->modelEntity, enable);
+        m_ecm, m_entity, enable);
 
     return true;
 }
@@ -579,13 +688,13 @@ std::vector<std::string> Model::linksInContact() const
     return pImpl->buffers.linksInContact;
 }
 
-std::vector<scenario::base::Contact>
+std::vector<scenario::core::Contact>
 Model::contacts(const std::vector<std::string>& linkNames) const
 {
     const std::vector<std::string>& linkSerialization =
         linkNames.empty() ? this->linkNames() : linkNames;
 
-    std::vector<scenario::base::Contact> allContacts;
+    std::vector<scenario::core::Contact> allContacts;
 
     for (const auto& linkName : linkSerialization) {
         auto contacts = this->getLink(linkName)->contacts();
@@ -600,7 +709,7 @@ Model::contacts(const std::vector<std::string>& linkNames) const
 std::vector<double>
 Model::jointPositions(const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->position(dof);
     };
 
@@ -610,14 +719,14 @@ Model::jointPositions(const std::vector<std::string>& jointNames) const
 std::vector<double>
 Model::jointVelocities(const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->velocity(dof);
     };
 
     return Impl::getJointDataSerialized(this, jointNames, lambda);
 }
 
-scenario::base::JointLimit
+scenario::core::JointLimit
 Model::jointLimits(const std::vector<std::string>& jointNames) const
 {
     const std::vector<std::string>& jointSerialization =
@@ -635,10 +744,10 @@ Model::jointLimits(const std::vector<std::string>& jointNames) const
         std::move(limit.max.begin(), limit.max.end(), std::back_inserter(high));
     }
 
-    return base::JointLimit(low, high);
+    return core::JointLimit(low, high);
 }
 
-bool Model::setJointControlMode(const scenario::base::JointControlMode mode,
+bool Model::setJointControlMode(const scenario::core::JointControlMode mode,
                                 const std::vector<std::string>& jointNames)
 {
     const std::vector<std::string>& jointSerialization =
@@ -653,13 +762,13 @@ bool Model::setJointControlMode(const scenario::base::JointControlMode mode,
     return ok;
 }
 
-std::vector<LinkPtr>
+std::vector<scenario::core::LinkPtr>
 Model::links(const std::vector<std::string>& linkNames) const
 {
     const std::vector<std::string>& linkSerialization =
         linkNames.empty() ? this->linkNames() : linkNames;
 
-    std::vector<LinkPtr> links;
+    std::vector<core::LinkPtr> links;
 
     for (const auto& linkName : linkSerialization) {
         links.push_back(this->getLink(linkName));
@@ -668,13 +777,13 @@ Model::links(const std::vector<std::string>& linkNames) const
     return links;
 }
 
-std::vector<JointPtr>
+std::vector<scenario::core::JointPtr>
 Model::joints(const std::vector<std::string>& jointNames) const
 {
     const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? this->jointNames() : jointNames;
 
-    std::vector<JointPtr> joints;
+    std::vector<core::JointPtr> joints;
 
     for (const auto& jointName : jointSerialization) {
         joints.push_back(this->getJoint(jointName));
@@ -686,8 +795,9 @@ Model::joints(const std::vector<std::string>& jointNames) const
 bool Model::setJointPositionTargets(const std::vector<double>& positions,
                                     const std::vector<std::string>& jointNames)
 {
-    auto lambda =
-        [](JointPtr joint, const double position, const size_t dof) -> bool {
+    auto lambda = [](core::JointPtr joint,
+                     const double position,
+                     const size_t dof) -> bool {
         return joint->setPositionTarget(position, dof);
     };
 
@@ -697,8 +807,9 @@ bool Model::setJointPositionTargets(const std::vector<double>& positions,
 bool Model::setJointVelocityTargets(const std::vector<double>& velocities,
                                     const std::vector<std::string>& jointNames)
 {
-    auto lambda =
-        [](JointPtr joint, const double velocity, const size_t dof) -> bool {
+    auto lambda = [](core::JointPtr joint,
+                     const double velocity,
+                     const size_t dof) -> bool {
         return joint->setVelocityTarget(velocity, dof);
     };
 
@@ -706,15 +817,17 @@ bool Model::setJointVelocityTargets(const std::vector<double>& velocities,
 }
 
 bool Model::setJointAccelerationTargets(
-    const std::vector<double>& velocities,
+    const std::vector<double>& accelerations,
     const std::vector<std::string>& jointNames)
 {
-    auto lambda =
-        [](JointPtr joint, const double velocity, const size_t dof) -> bool {
-        return joint->setAccelerationTarget(velocity, dof);
+    auto lambda = [](core::JointPtr joint,
+                     const double acceleration,
+                     const size_t dof) -> bool {
+        return joint->setAccelerationTarget(acceleration, dof);
     };
 
-    return Impl::setJointDataSerialized(this, velocities, jointNames, lambda);
+    return Impl::setJointDataSerialized(
+        this, accelerations, jointNames, lambda);
 }
 
 bool Model::setJointGeneralizedForceTargets(
@@ -722,39 +835,17 @@ bool Model::setJointGeneralizedForceTargets(
     const std::vector<std::string>& jointNames)
 {
     auto lambda =
-        [](JointPtr joint, const double force, const size_t dof) -> bool {
+        [](core::JointPtr joint, const double force, const size_t dof) -> bool {
         return joint->setGeneralizedForceTarget(force, dof);
     };
 
     return Impl::setJointDataSerialized(this, forces, jointNames, lambda);
 }
 
-bool Model::resetJointPositions(const std::vector<double>& positions,
-                                const std::vector<std::string>& jointNames)
-{
-    auto lambda =
-        [](JointPtr joint, const double position, const size_t dof) -> bool {
-        return joint->resetPosition(position, dof);
-    };
-
-    return Impl::setJointDataSerialized(this, positions, jointNames, lambda);
-}
-
-bool Model::resetJointVelocities(const std::vector<double>& velocities,
-                                 const std::vector<std::string>& jointNames)
-{
-    auto lambda =
-        [](JointPtr joint, const double velocity, const size_t dof) -> bool {
-        return joint->resetVelocity(velocity, dof);
-    };
-
-    return Impl::setJointDataSerialized(this, velocities, jointNames, lambda);
-}
-
 std::vector<double>
 Model::jointPositionTargets(const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->positionTarget(dof);
     };
 
@@ -764,7 +855,7 @@ Model::jointPositionTargets(const std::vector<std::string>& jointNames) const
 std::vector<double>
 Model::jointVelocityTargets(const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->velocityTarget(dof);
     };
 
@@ -774,7 +865,7 @@ Model::jointVelocityTargets(const std::vector<std::string>& jointNames) const
 std::vector<double> Model::jointAccelerationTargets(
     const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->accelerationTarget(dof);
     };
 
@@ -784,7 +875,7 @@ std::vector<double> Model::jointAccelerationTargets(
 std::vector<double> Model::jointGeneralizedForceTargets(
     const std::vector<std::string>& jointNames) const
 {
-    auto lambda = [](JointPtr joint, const size_t dof) -> double {
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
         return joint->generalizedForceTarget(dof);
     };
 
@@ -794,7 +885,7 @@ std::vector<double> Model::jointGeneralizedForceTargets(
 std::string Model::baseFrame() const
 {
     // Get all the canonical links of the model
-    auto candidateBaseLinks = pImpl->ecm->EntitiesByComponents(
+    auto candidateBaseLinks = m_ecm->EntitiesByComponents(
         ignition::gazebo::components::CanonicalLink(),
         ignition::gazebo::components::ParentEntity(pImpl->model.Entity()));
 
@@ -810,49 +901,16 @@ std::string Model::baseFrame() const
 
     // Get the name of the base link
     std::string baseLinkName = utils::getExistingComponentData< //
-        ignition::gazebo::components::Name>(pImpl->ecm,
-                                            candidateBaseLinks.front());
+        ignition::gazebo::components::Name>(m_ecm, candidateBaseLinks.front());
 
     return baseLinkName;
-}
-
-bool Model::setBaseFrame(const std::string& frameName)
-{
-    const auto linkNames = this->linkNames();
-
-    if (std::find(linkNames.begin(), linkNames.end(), frameName)
-        == linkNames.end()) {
-        sError
-            << "Failed to set the model base on the frame of nonexistent link '"
-            << frameName << "'" << std::endl;
-        return false;
-    }
-
-    if (frameName == this->baseFrame()) {
-        sDebug << "Frame '" << baseFrame()
-               << "' is already the current model base" << std::endl;
-        return true;
-    }
-
-    sError << "Changing the base link is not yet supported" << std::endl;
-    throw exceptions::NotImplementedError(__FUNCTION__);
-}
-
-bool Model::fixedBase() const
-{
-    throw exceptions::NotImplementedError(__FUNCTION__);
-}
-
-bool Model::setAsFixedBase(const bool fixedBase)
-{
-    throw exceptions::NotImplementedError(__FUNCTION__);
 }
 
 std::array<double, 3> Model::basePosition() const
 {
     // Get the model pose
     ignition::math::Pose3d world_H_model = utils::getExistingComponentData< //
-        ignition::gazebo::components::Pose>(pImpl->ecm, pImpl->modelEntity);
+        ignition::gazebo::components::Pose>(m_ecm, m_entity);
 
     return utils::fromIgnitionPose(world_H_model).position;
 }
@@ -861,7 +919,7 @@ std::array<double, 4> Model::baseOrientation() const
 {
     // Get the model pose
     ignition::math::Pose3d world_H_model = utils::getExistingComponentData< //
-        ignition::gazebo::components::Pose>(pImpl->ecm, pImpl->modelEntity);
+        ignition::gazebo::components::Pose>(m_ecm, m_entity);
 
     return utils::fromIgnitionPose(world_H_model).orientation;
 }
@@ -873,7 +931,7 @@ std::array<double, 3> Model::baseBodyLinearVelocity() const
 
     // Get the model pose
     ignition::math::Pose3d world_H_model = utils::getExistingComponentData< //
-        ignition::gazebo::components::Pose>(pImpl->ecm, pImpl->modelEntity);
+        ignition::gazebo::components::Pose>(m_ecm, m_entity);
 
     return utils::fromIgnitionVector( //
         world_H_model.Inverse().Rot() * baseWorldLinearVelocity);
@@ -886,7 +944,7 @@ std::array<double, 3> Model::baseBodyAngularVelocity() const
 
     // Get the model pose
     ignition::math::Pose3d world_H_model = utils::getExistingComponentData< //
-        ignition::gazebo::components::Pose>(pImpl->ecm, pImpl->modelEntity);
+        ignition::gazebo::components::Pose>(m_ecm, m_entity);
 
     return utils::fromIgnitionVector( //
         world_H_model.Inverse().Rot() * baseWorldAngularVelocity);
@@ -895,16 +953,16 @@ std::array<double, 3> Model::baseBodyAngularVelocity() const
 std::array<double, 3> Model::baseWorldLinearVelocity() const
 {
     // Get the entity of the canonical link
-    auto canonicalLinkEntity = pImpl->ecm->EntityByComponents(
+    auto canonicalLinkEntity = m_ecm->EntityByComponents(
         ignition::gazebo::components::Link(),
         ignition::gazebo::components::CanonicalLink(),
         ignition::gazebo::components::Name(this->baseFrame()),
-        ignition::gazebo::components::ParentEntity(pImpl->modelEntity));
+        ignition::gazebo::components::ParentEntity(m_entity));
 
     // Get the Pose component of the canonical link.
     // This is the fixed transformation between the model and the base.
     auto& M_H_B = utils::getExistingComponentData< //
-        ignition::gazebo::components::Pose>(pImpl->ecm, canonicalLinkEntity);
+        ignition::gazebo::components::Pose>(m_ecm, canonicalLinkEntity);
 
     // Get the rotation between base link and world
     auto W_R_B = utils::toIgnitionQuaternion(
@@ -927,7 +985,7 @@ std::array<double, 3> Model::baseWorldLinearVelocity() const
         M_H_B,
         W_R_B);
 
-    // Return the linear partmodel6DVelocity.first
+    // Return the linear part
     return utils::fromIgnitionVector(modelLinearVelocity);
 }
 
@@ -945,109 +1003,14 @@ std::array<double, 3> Model::baseWorldAngularVelocity() const
     return this->getLink(baseLink)->worldAngularVelocity();
 }
 
-bool Model::resetBasePose(const std::array<double, 3>& position,
-                          const std::array<double, 4>& orientation)
-{
-    // Construct the desired transform between world and base
-    base::Pose pose;
-    pose.position = position;
-    pose.orientation = orientation;
-    ignition::math::Pose3d world_H_base = utils::toIgnitionPose(pose);
-
-    // Get the entity of the canonical link
-    auto canonicalLinkEntity = pImpl->ecm->EntityByComponents(
-        ignition::gazebo::components::Link(),
-        ignition::gazebo::components::CanonicalLink(),
-        ignition::gazebo::components::Name(this->baseFrame()),
-        ignition::gazebo::components::ParentEntity(pImpl->modelEntity));
-
-    if (canonicalLinkEntity == ignition::gazebo::kNullEntity) {
-        sError << "Failed to get entity of canonical link" << std::endl;
-        return false;
-    }
-
-    // Get the Pose component of the canonical link.
-    // This is the fixed transformation between the model and the base.
-    auto& model_H_base = utils::getExistingComponentData< //
-        ignition::gazebo::components::Pose>(pImpl->ecm, canonicalLinkEntity);
-
-    // Compute the robot pose that corresponds to the desired base pose
-    const ignition::math::Pose3d& world_H_model =
-        world_H_base * model_H_base.Inverse();
-
-    // Store the new pose
-    utils::setComponentData<ignition::gazebo::components::WorldPoseCmd>(
-        pImpl->ecm, pImpl->modelEntity, world_H_model);
-
-    return true;
-}
-
-bool Model::resetBasePosition(const std::array<double, 3>& position)
-{
-    return this->resetBasePose(position, this->baseOrientation());
-}
-
-bool Model::resetBaseOrientation(const std::array<double, 4>& orientation)
-{
-    return this->resetBasePose(this->basePosition(), orientation);
-}
-
-bool Model::resetBaseWorldLinearVelocity(const std::array<double, 3>& linear)
-{
-    return this->resetBaseWorldVelocity(linear,
-                                        this->baseWorldAngularVelocity());
-}
-
-bool Model::resetBaseWorldAngularVelocity(const std::array<double, 3>& angular)
-{
-    return this->resetBaseWorldVelocity(this->baseWorldLinearVelocity(),
-                                        angular);
-}
-
-bool Model::resetBaseWorldVelocity(const std::array<double, 3>& linear,
-                                   const std::array<double, 3>& angular)
-{
-    // Get the entity of the canonical (base) link
-    auto canonicalLinkEntity = pImpl->ecm->EntityByComponents(
-        ignition::gazebo::components::Link(),
-        ignition::gazebo::components::CanonicalLink(),
-        ignition::gazebo::components::Name(this->baseFrame()),
-        ignition::gazebo::components::ParentEntity(pImpl->modelEntity));
-
-    // Get the Pose component of the canonical link.
-    // This is the fixed transformation between the model and the base.
-    auto& M_H_B = utils::getExistingComponentData< //
-        ignition::gazebo::components::Pose>(pImpl->ecm, canonicalLinkEntity);
-
-    // Get the rotation between base link and world
-    auto W_R_B = utils::toIgnitionQuaternion(
-        this->getLink(this->baseFrame())->orientation());
-
-    // Create the new model velocity
-    ignition::gazebo::WorldVelocity baseWorldVelocity;
-
-    // Compute the mixed velocity of the base link
-    std::tie(baseWorldVelocity.linear, baseWorldVelocity.angular) =
-        utils::fromModelToBaseVelocity(utils::toIgnitionVector3(linear),
-                                       utils::toIgnitionVector3(angular),
-                                       M_H_B,
-                                       W_R_B);
-
-    // Store the new velocity
-    utils::setComponentData<ignition::gazebo::components::WorldVelocityCmd>(
-        pImpl->ecm, pImpl->modelEntity, baseWorldVelocity);
-
-    return true;
-}
-
 bool Model::setBasePoseTarget(const std::array<double, 3>& position,
                               const std::array<double, 4>& orientation)
 {
     ignition::math::Pose3d basePoseTarget =
-        utils::toIgnitionPose(base::Pose{position, orientation});
+        utils::toIgnitionPose(core::Pose{position, orientation});
 
     utils::setComponentData<ignition::gazebo::components::BasePoseTarget>(
-        pImpl->ecm, pImpl->modelEntity, basePoseTarget);
+        m_ecm, m_entity, basePoseTarget);
 
     return true;
 }
@@ -1056,7 +1019,7 @@ bool Model::setBasePositionTarget(const std::array<double, 3>& position)
 {
     auto basePoseTargetComponent = utils::getComponent< //
         ignition::gazebo::components::BasePoseTarget>(
-        pImpl->ecm, pImpl->modelEntity, ignition::math::Pose3d::Zero);
+        m_ecm, m_entity, ignition::math::Pose3d::Zero);
 
     auto basePoseTarget =
         ignition::math::Pose3d(utils::toIgnitionVector3(position),
@@ -1064,7 +1027,7 @@ bool Model::setBasePositionTarget(const std::array<double, 3>& position)
 
     utils::setExistingComponentData<
         ignition::gazebo::components::BasePoseTarget>(
-        pImpl->ecm, pImpl->modelEntity, basePoseTarget);
+        m_ecm, m_entity, basePoseTarget);
 
     return true;
 }
@@ -1073,14 +1036,14 @@ bool Model::setBaseOrientationTarget(const std::array<double, 4>& orientation)
 {
     auto basePoseTargetComponent = utils::getComponent< //
         ignition::gazebo::components::BasePoseTarget,
-        ignition::math::Pose3d>(pImpl->ecm, pImpl->modelEntity);
+        ignition::math::Pose3d>(m_ecm, m_entity);
 
     auto basePoseTarget =
         ignition::math::Pose3d(basePoseTargetComponent->Data().Pos(),
                                utils::toIgnitionQuaternion(orientation));
 
     utils::setComponentData<ignition::gazebo::components::BasePoseTarget>(
-        pImpl->ecm, pImpl->modelEntity, basePoseTarget);
+        m_ecm, m_entity, basePoseTarget);
 
     return true;
 }
@@ -1102,7 +1065,7 @@ bool Model::setBaseWorldLinearVelocityTarget(
 
     utils::setComponentData<
         ignition::gazebo::components::BaseWorldLinearVelocityTarget>(
-        pImpl->ecm, pImpl->modelEntity, baseWorldLinearVelocity);
+        m_ecm, m_entity, baseWorldLinearVelocity);
 
     return true;
 }
@@ -1115,7 +1078,7 @@ bool Model::setBaseWorldAngularVelocityTarget(
 
     utils::setComponentData<
         ignition::gazebo::components::BaseWorldAngularVelocityTarget>(
-        pImpl->ecm, pImpl->modelEntity, baseWorldAngularVelocity);
+        m_ecm, m_entity, baseWorldAngularVelocity);
 
     return true;
 }
@@ -1132,7 +1095,7 @@ bool Model::setBaseWorldLinearAccelerationTarget(
 
     utils::setComponentData<
         ignition::gazebo::components::BaseWorldLinearAccelerationTarget>(
-        pImpl->ecm, pImpl->modelEntity, baseWorldLinearAcceleration);
+        m_ecm, m_entity, baseWorldLinearAcceleration);
 
     return true;
 }
@@ -1145,7 +1108,7 @@ bool Model::setBaseWorldAngularAccelerationTarget(
 
     utils::setComponentData<
         ignition::gazebo::components::BaseWorldAngularAccelerationTarget>(
-        pImpl->ecm, pImpl->modelEntity, baseWorldAngularAcceleration);
+        m_ecm, m_entity, baseWorldAngularAcceleration);
 
     return true;
 }
@@ -1153,8 +1116,7 @@ bool Model::setBaseWorldAngularAccelerationTarget(
 std::array<double, 3> Model::basePositionTarget() const
 {
     ignition::math::Pose3d& basePoseTarget = utils::getExistingComponentData<
-        ignition::gazebo::components::BasePoseTarget>(pImpl->ecm,
-                                                      pImpl->modelEntity);
+        ignition::gazebo::components::BasePoseTarget>(m_ecm, m_entity);
 
     return utils::fromIgnitionPose(basePoseTarget).position;
 }
@@ -1162,8 +1124,7 @@ std::array<double, 3> Model::basePositionTarget() const
 std::array<double, 4> Model::baseOrientationTarget() const
 {
     ignition::math::Pose3d& basePoseTarget = utils::getExistingComponentData<
-        ignition::gazebo::components::BasePoseTarget>(pImpl->ecm,
-                                                      pImpl->modelEntity);
+        ignition::gazebo::components::BasePoseTarget>(m_ecm, m_entity);
 
     return utils::fromIgnitionPose(basePoseTarget).orientation;
 }
@@ -1171,8 +1132,8 @@ std::array<double, 4> Model::baseOrientationTarget() const
 std::array<double, 3> Model::baseWorldLinearVelocityTarget() const
 {
     ignition::math::Vector3d& baseLinTarget = utils::getExistingComponentData<
-        ignition::gazebo::components::BaseWorldLinearVelocityTarget>(
-        pImpl->ecm, pImpl->modelEntity);
+        ignition::gazebo::components::BaseWorldLinearVelocityTarget>(m_ecm,
+                                                                     m_entity);
 
     return utils::fromIgnitionVector(baseLinTarget);
 }
@@ -1180,8 +1141,8 @@ std::array<double, 3> Model::baseWorldLinearVelocityTarget() const
 std::array<double, 3> Model::baseWorldAngularVelocityTarget() const
 {
     ignition::math::Vector3d& baseAngTarget = utils::getExistingComponentData<
-        ignition::gazebo::components::BaseWorldAngularVelocityTarget>(
-        pImpl->ecm, pImpl->modelEntity);
+        ignition::gazebo::components::BaseWorldAngularVelocityTarget>(m_ecm,
+                                                                      m_entity);
 
     return utils::fromIgnitionVector(baseAngTarget);
 }
@@ -1190,7 +1151,7 @@ std::array<double, 3> Model::baseWorldLinearAccelerationTarget() const
 {
     ignition::math::Vector3d& baseLinTarget = utils::getExistingComponentData<
         ignition::gazebo::components::BaseWorldLinearAccelerationTarget>(
-        pImpl->ecm, pImpl->modelEntity);
+        m_ecm, m_entity);
 
     return utils::fromIgnitionVector(baseLinTarget);
 }
@@ -1199,7 +1160,7 @@ std::array<double, 3> Model::baseWorldAngularAccelerationTarget() const
 {
     ignition::math::Vector3d& baseAngTarget = utils::getExistingComponentData<
         ignition::gazebo::components::BaseWorldAngularAccelerationTarget>(
-        pImpl->ecm, pImpl->modelEntity);
+        m_ecm, m_entity);
 
     return utils::fromIgnitionVector(baseAngTarget);
 }
@@ -1211,7 +1172,7 @@ std::array<double, 3> Model::baseWorldAngularAccelerationTarget() const
 std::vector<double> Model::Impl::getJointDataSerialized(
     const Model* model,
     const std::vector<std::string>& jointNames,
-    std::function<double(JointPtr, const size_t)> getJointData)
+    std::function<double(core::JointPtr, const size_t)> getJointData)
 {
     const std::vector<std::string>& jointSerialization =
         jointNames.empty() ? model->jointNames() : jointNames;
@@ -1232,7 +1193,8 @@ bool Model::Impl::setJointDataSerialized(
     Model* model,
     const std::vector<double>& data,
     const std::vector<std::string>& jointNames,
-    std::function<bool(JointPtr, const double, const size_t)> setJointData)
+    std::function<bool(core::JointPtr, const double, const size_t)>
+        setJointData)
 {
     std::vector<std::string> jointSerialization;
 

@@ -3,14 +3,14 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
-from gym_ignition import scenario_bindings as bindings
+from scenario import core as scenario
 
 
-class ModelWrapper(bindings.Model, abc.ABC):
+class ModelWrapper(scenario.Model, abc.ABC):
 
-    def __init__(self, model: bindings.Model):
+    def __init__(self, model: scenario.Model):
 
-        # No need to call bindings.Model.__init__()!
+        # No need to call scenario.Model.__init__()!
         abc.ABC.__init__(self)
 
         self.model = model

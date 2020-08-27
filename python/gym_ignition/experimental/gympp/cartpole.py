@@ -20,7 +20,7 @@ class CartPoleDiscrete(gympp_env.GymppEnv):
     def _plugin_metadata(self) -> "gympp_bindings.PluginMetadata":
 
         # Lazy module import
-        from gym_ignition import gympp_bindings as bindings
+        import gympp_bindings as bindings
 
         # Get the empty world file
         empty_world_sdf = misc.string_to_file(gympp.get_empty_world())

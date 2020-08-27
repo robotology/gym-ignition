@@ -26,7 +26,6 @@ author = 'Diego Ferigo'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'breathe',
     'sphinx.ext.autodoc',
     'sphinx.ext.todo',
     'sphinx.ext.mathjax',
@@ -36,6 +35,7 @@ extensions = [
     'sphinx_autodoc_typehints',
     "sphinx_multiversion",
     "sphinx_fontawesome",
+    'breathe',
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -76,7 +76,7 @@ todo_include_todos = True
 
 # -- Options for breathe extension ----------------------------------------------
 
-breathe_default_project = "GymIgnition"
+breathe_default_project = "scenario"
 
 # -- Options for sphinx_multiversion extension ----------------------------------
 

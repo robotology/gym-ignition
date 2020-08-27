@@ -6,7 +6,7 @@ import pytest
 from typing import Tuple
 import gym_ignition_models
 from gym_ignition.utils import misc
-from gym_ignition import scenario_bindings as bindings
+from scenario import gazebo as scenario
 
 
 def id_gazebo_fn(val: Tuple[float, float, float]):
@@ -22,26 +22,28 @@ def gazebo_fixture(request):
 
     Example:
 
+        from ..common.utils import gazebo_fixture as gazebo
+
         @pytest.mark.parametrize("gazebo", [(0.001, 1.0, 1)], indirect=True)
-        def test_foo(gazebo: bindings.GazeboSimulator):
+        def test_foo(gazebo: scenario.gazebo.GazeboSimulator):
 
             assert gazebo.initialize()
-            ...
+            # ...
 
         @pytest.mark.parametrize("gazebo, name",
                                  [((0.001, 1.0, 1), "name_1"),
                                   ((0.001, 1.0, 1), "name_2"),
                                   ((0.001, 1.0, 1), "name_3")],
                                   indirect="gazebo")
-        def test_foo(gazebo: bindings.GazeboSimulator, name: str):
+        def test_foo(gazebo: scenario.gazebo.GazeboSimulator, name: str):
 
             model_name = name
             assert gazebo.initialize()
-            ...
+            # ...
     """
 
     step_size, rtf, iterations = request.param
-    gazebo = bindings.GazeboSimulator(step_size, rtf, iterations)
+    gazebo = scenario.GazeboSimulator(step_size, rtf, iterations)
 
     yield gazebo
 
@@ -51,16 +53,29 @@ def gazebo_fixture(request):
 @pytest.fixture(scope="function")
 def default_world_fixture(request):
     """
+    Initialize a default world with ground and physics.
+
+    Example:
+
+        from ..common.utils import default_world_fixture as default_world
+
+        @pytest.mark.parametrize("default_world", [(0.001, 1.0, 1)], indirect=True)
+        def test_foo(default_world: Tuple[scenario.GazeboSimulator, scenario.World]):
+
+            # Get the simulator and the world
+            gazebo, world = default_world
+
+            # ...
     """
 
     step_size, rtf, iterations = request.param
-    gazebo = bindings.GazeboSimulator(step_size, rtf, iterations)
+    gazebo = scenario.GazeboSimulator(step_size, rtf, iterations)
 
     assert gazebo.initialize()
 
-    world = gazebo.get_world()
+    world = gazebo.get_world().to_gazebo()
     assert world.insert_model(gym_ignition_models.get_model_file("ground_plane"))
-    assert world.set_physics_engine(bindings.PhysicsEngine_dart)
+    assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
     yield gazebo, world
 
@@ -121,7 +136,7 @@ def get_cube_urdf() -> str:
 
 def get_empty_world_sdf() -> str:
 
-    world_sdf_string = bindings.get_empty_world()
+    world_sdf_string = scenario.get_empty_world()
 
     world_file = misc.string_to_file(world_sdf_string)
     return world_file

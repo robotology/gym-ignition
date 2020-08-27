@@ -48,7 +48,7 @@ class GymppEnv(gym.Env):
         if self._env:
             return self._env
 
-        from gym_ignition import gympp_bindings as bindings
+        import gympp_bindings as bindings
 
         # Get the metadata
         md = self._plugin_metadata
@@ -69,7 +69,7 @@ class GymppEnv(gym.Env):
 
     @property
     def gazebo(self):
-        from gym_ignition import gympp_bindings as bindings
+        import gympp_bindings as bindings
         return bindings.env_to_gazebo_simulator(self.gympp_env)
 
     @property
@@ -122,7 +122,7 @@ class GymppEnv(gym.Env):
             action_list = list(action)
 
         # Create the gympp::Sample object
-        from gym_ignition import gympp_bindings as bindings
+        import gympp_bindings as bindings
         action_buffer = getattr(bindings, 'Vector' + self._act_dt)(action_list)
         action_sample = bindings.Sample(action_buffer)
 
@@ -195,7 +195,7 @@ class GymppEnv(gym.Env):
 
     def render(self, mode: str = 'human') -> None:
 
-        from gym_ignition import gympp_bindings as bindings
+        import gympp_bindings as bindings
 
         render_mode = {'human': bindings.Environment.RenderMode_human}
         ok = self.gympp_env.render(render_mode[mode])
@@ -246,7 +246,7 @@ class GymppEnv(gym.Env):
               also a method suffix string (such as "_d" for double) that is appended to
               the calls of the swig bindings methods (e.g. obs.getBuffer_d()).
         """
-        from gym_ignition import gympp_bindings as bindings
+        import gympp_bindings as bindings
         assert isinstance(md, bindings.SpaceMetadata), "Wrong type for method argument"
 
         space_type = md.get_type()

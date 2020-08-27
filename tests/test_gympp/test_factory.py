@@ -10,17 +10,17 @@ import numpy as np
 from pathlib import Path
 import gym_ignition_models
 from gym_ignition.utils import misc
-from gym_ignition import scenario_bindings
+from scenario import gazebo as scenario
 from gym_ignition.experimental import gympp
 
 try:
-    from gym_ignition import gympp_bindings as bindings
+    import gympp_bindings as bindings
 except ImportError:
     pytest.skip("gympp bindings not found", allow_module_level=True)
 
 
 # Set verbosity
-scenario_bindings.set_verbosity(4)
+scenario.set_verbosity(4)
 
 
 def test_metadata():

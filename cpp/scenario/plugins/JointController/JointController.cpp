@@ -29,6 +29,7 @@
 #include "scenario/gazebo/Log.h"
 #include "scenario/gazebo/Model.h"
 #include "scenario/gazebo/components/JointControlMode.h"
+#include "scenario/gazebo/components/JointController.h"
 #include "scenario/gazebo/components/JointPID.h"
 #include "scenario/gazebo/components/JointPositionTarget.h"
 #include "scenario/gazebo/components/JointVelocityTarget.h"
@@ -54,8 +55,8 @@ using namespace scenario::plugins::gazebo;
 class JointController::Impl
 {
 public:
-    scenario::gazebo::ModelPtr model;
     ignition::gazebo::Entity modelEntity;
+    std::shared_ptr<scenario::gazebo::Model> model;
     std::chrono::steady_clock::duration prevUpdateTime{0};
 
     static bool runPIDController(scenario::gazebo::Joint& joint,
@@ -79,6 +80,13 @@ void JointController::Configure(
     ignition::gazebo::EntityComponentManager& ecm,
     ignition::gazebo::EventManager& eventMgr)
 {
+    // Check if the model already has a JointController plugin
+    if (ecm.EntityHasComponentType(
+            entity, ignition::gazebo::components::JointController().TypeId())) {
+        sError << "The model already has a JointController plugin" << std::endl;
+        return;
+    }
+
     // Store the model entity
     pImpl->modelEntity = entity;
 
@@ -96,6 +104,10 @@ void JointController::Configure(
                << std::endl;
         return;
     }
+
+    // Add the JointController component to the model
+    utils::setComponentData<ignition::gazebo::components::JointController>(
+        &ecm, entity, true);
 }
 
 void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
@@ -159,19 +171,19 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
         ignition::gazebo::components::Joint(),
         ignition::gazebo::components::ParentEntity(pImpl->modelEntity),
         ignition::gazebo::components::JointControlMode(
-            base::JointControlMode::Position));
+            core::JointControlMode::Position));
 
     auto positionInterpolatedControlledJoints = ecm.EntitiesByComponents(
         ignition::gazebo::components::Joint(),
         ignition::gazebo::components::ParentEntity(pImpl->modelEntity),
         ignition::gazebo::components::JointControlMode(
-            base::JointControlMode::PositionInterpolated));
+            core::JointControlMode::PositionInterpolated));
 
     auto velocityControlledJoints = ecm.EntitiesByComponents(
         ignition::gazebo::components::Joint(),
         ignition::gazebo::components::ParentEntity(pImpl->modelEntity),
         ignition::gazebo::components::JointControlMode(
-            base::JointControlMode::Velocity));
+            core::JointControlMode::Velocity));
 
     // Update PIDs for Revolute and Prismatic joints controlled in Position
     for (const auto jointEntity : positionControlledJoints) {
@@ -183,13 +195,15 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
             ignition::gazebo::components::Name>(&ecm, jointEntity);
 
         auto joint = pImpl->model->getJoint(jointName);
+        auto jointGazebo = std::static_pointer_cast<Joint>(joint);
+
         const std::vector<double>& position = joint->jointPosition();
 
         std::vector<double>& positionTarget = utils::getExistingComponentData<
             ignition::gazebo::components::JointPositionTarget>(&ecm,
                                                                jointEntity);
 
-        if (!Impl::runPIDController(*joint,
+        if (!Impl::runPIDController(*jointGazebo,
                                     computeNewForce,
                                     pid,
                                     info.dt,
@@ -214,13 +228,15 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
                 &ecm, jointEntity);
 
         auto joint = pImpl->model->getJoint(jointName);
+        auto jointGazebo = std::static_pointer_cast<Joint>(joint);
+
         const std::vector<double>& velocity = joint->jointVelocity();
 
         std::vector<double>& velocityTarget = utils::getExistingComponentData<
             ignition::gazebo::components::JointVelocityTarget>(&ecm,
                                                                jointEntity);
 
-        if (!Impl::runPIDController(*joint,
+        if (!Impl::runPIDController(*jointGazebo,
                                     computeNewForce,
                                     pid,
                                     info.dt,
@@ -242,8 +258,8 @@ bool JointController::Impl::runPIDController(
 {
     switch (joint.type()) {
 
-        case base::JointType::Revolute:
-        case base::JointType::Prismatic: {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic: {
 
             double force;
 
@@ -265,9 +281,9 @@ bool JointController::Impl::runPIDController(
             }
             return true;
         }
-        case base::JointType::Fixed:
-        case base::JointType::Ball:
-        case base::JointType::Invalid:
+        case core::JointType::Fixed:
+        case core::JointType::Ball:
+        case core::JointType::Invalid:
             sWarning << "Type of joint '" << joint.name() << " not supported"
                      << std::endl;
             return true;

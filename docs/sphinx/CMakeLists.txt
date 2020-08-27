@@ -26,27 +26,38 @@ set(BINDINGS_MODULES_DIR "${PROJECT_BINARY_DIR}/bindings")
 # - docs/sphinx/gym_ignition_environments
 
 find_package(SphinxApidoc REQUIRED)
-add_custom_target(apidoc ALL DEPENDS scenario_bindings)
+add_custom_target(apidoc ALL DEPENDS
+    doxygen ScenarioSwig::Core ScenarioSwig::Gazebo)
 
 add_custom_command(
     TARGET apidoc POST_BUILD
     COMMAND
-    ${SPHINX_APIDOC_EXECUTABLE} -f -o ${CMAKE_CURRENT_SOURCE_DIR}/gym-ignition
+    ${SPHINX_APIDOC_EXECUTABLE} --force
+    --no-toc --module-first --maxdepth 4
+    -t ${CMAKE_CURRENT_SOURCE_DIR}/_templates
+    -o ${CMAKE_CURRENT_SOURCE_DIR}/apidoc/gym-ignition
     ${PYTHON_PACKAGES_DIR}/gym_ignition
-    COMMENT "Building gym-ignition apidoc")
+    COMMENT "Building <gym-ignition> apidoc")
 
 add_custom_command(
     TARGET apidoc POST_BUILD
     COMMAND
-    ${SPHINX_APIDOC_EXECUTABLE} -f -o ${CMAKE_CURRENT_SOURCE_DIR}/gym-ignition-environments
+    ${SPHINX_APIDOC_EXECUTABLE} --force
+    --no-toc --module-first --maxdepth 4
+    -t ${CMAKE_CURRENT_SOURCE_DIR}/_templates
+    -o ${CMAKE_CURRENT_SOURCE_DIR}/apidoc/gym-ignition-environments
     ${PYTHON_PACKAGES_DIR}/gym_ignition_environments
-    COMMENT "Building gym-ignition apidoc")
+    COMMENT "Building <gym-ignition-environments> apidoc")
 
 add_custom_command(
     TARGET apidoc POST_BUILD
     COMMAND
-    ${SPHINX_APIDOC_EXECUTABLE} -f -o ${CMAKE_CURRENT_SOURCE_DIR}/scenario ${BINDINGS_MODULES_DIR}
-    COMMENT "Building scenario apidoc")
+    ${SPHINX_APIDOC_EXECUTABLE} --force
+    --no-toc --module-first --maxdepth 4
+    -t ${CMAKE_CURRENT_SOURCE_DIR}/_templates
+    -o ${CMAKE_CURRENT_SOURCE_DIR}/apidoc/scenario
+    ${BINDINGS_MODULES_DIR}
+    COMMENT "Building <scenario> apidoc")
 
 # =============
 # SPHINX TARGET
@@ -66,10 +77,10 @@ set(SPHINX_SOURCE ${CMAKE_CURRENT_SOURCE_DIR})
 set(SPHINX_CMD export PYTHONPATH="${PYTHON_PACKAGES_DIR}:${BINDINGS_MODULES_DIR}:$ENV{PYTHONPATH}" &&)
 
 # Sphinx build command
-list(APPEND
-    SPHINX_CMD ${SPHINX_MULTIVERSION_EXECUTABLE}
+list(APPEND SPHINX_CMD
+    ${SPHINX_MULTIVERSION_EXECUTABLE}
     ${SPHINX_SOURCE} ${SPHINX_BUILD}
-    -D breathe_projects.GymIgnition="${DOXYGEN_OUTPUT_DIRECTORY}/xml")
+    -D breathe_projects.scenario="${DOXYGEN_OUTPUT_DIRECTORY}/xml")
 
 # Generate the website
 add_custom_target(sphinx ALL

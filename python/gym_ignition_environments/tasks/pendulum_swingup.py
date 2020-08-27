@@ -7,7 +7,7 @@ import gym
 import numpy as np
 from typing import Tuple
 from gym_ignition.base import task
-from gym_ignition import scenario_bindings as bindings
+from scenario import core as scenario
 from gym_ignition.utils.typing import Action, Observation, Reward
 from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 
@@ -109,7 +109,7 @@ class PendulumSwingUp(task.Task, abc.ABC):
 
         # Control the pendulum in force mode
         pivot = model.get_joint("pivot")
-        ok_control_mode = pivot.set_control_mode(bindings.JointControlMode_force)
+        ok_control_mode = pivot.set_control_mode(scenario.JointControlMode_force)
 
         if not ok_control_mode:
             raise RuntimeError("Failed to change the control mode of the pendulum")
@@ -124,7 +124,7 @@ class PendulumSwingUp(task.Task, abc.ABC):
         q, dq = float(q), float(dq)
 
         # Reset the pendulum state
-        ok_reset = pivot.reset(q, dq)
+        ok_reset = pivot.to_gazebo().reset(q, dq)
 
         if not ok_reset:
             raise RuntimeError("Failed to reset the pendulum state")

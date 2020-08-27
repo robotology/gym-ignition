@@ -24,37 +24,24 @@
  * limitations under the License.
  */
 
-#ifndef SCENARIO_GAZEBO_SIGNALS_H
-#define SCENARIO_GAZEBO_SIGNALS_H
+#ifndef IGNITION_GAZEBO_COMPONENTS_JOINTCONTROLLER_H
+#define IGNITION_GAZEBO_COMPONENTS_JOINTCONTROLLER_H
 
-#include <functional>
-#include <memory>
+#include <ignition/gazebo/components/Component.hh>
+#include <ignition/gazebo/components/Factory.hh>
+#include <ignition/gazebo/config.hh>
 
-namespace scenario {
-    namespace base {
-        class SignalManager;
-    } // namespace base
-} // namespace scenario
+namespace ignition::gazebo {
+    // Inline bracket to help doxygen filtering.
+    inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
+        namespace components {
+            /// \brief Marks whether a model has a JointController plugin.
+            using JointController = Component<bool, class JointControllerTag>;
+            IGN_GAZEBO_REGISTER_COMPONENT(
+                "ign_gazebo_components.JointController",
+                JointController)
+        } // namespace components
+    } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
+} // namespace ignition::gazebo
 
-class scenario::base::SignalManager
-{
-public:
-    using SignalType = int;
-    using SignalCallback = std::function<void(int)>;
-
-    SignalManager();
-    ~SignalManager();
-
-    static void ExecuteCallback(SignalType type);
-
-    static SignalManager& Instance();
-    SignalCallback getCallback(const SignalType type) const;
-    SignalCallback setCallback(const SignalType type,
-                               const SignalCallback& callback);
-
-private:
-    class Impl;
-    std::unique_ptr<Impl> pImpl;
-};
-
-#endif // SCENARIO_GAZEBO_SIGNALS_H
+#endif // IGNITION_GAZEBO_COMPONENTS_JOINTCONTROLLER_H

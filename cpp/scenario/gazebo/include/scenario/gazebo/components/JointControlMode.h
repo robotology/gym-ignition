@@ -42,7 +42,7 @@ namespace ignition::gazebo {
 
         namespace components {
             /// \brief Joint control mode.
-            using JointControlMode = Component<scenario::base::JointControlMode,
+            using JointControlMode = Component<scenario::core::JointControlMode,
                                                class JointControlModeTag>;
             IGN_GAZEBO_REGISTER_COMPONENT(
                 "ign_gazebo_components.JointControlMode",

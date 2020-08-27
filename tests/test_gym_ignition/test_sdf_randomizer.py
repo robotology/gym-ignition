@@ -8,8 +8,9 @@ pytestmark = pytest.mark.gym_ignition
 from lxml import etree
 import gym_ignition_models
 from gym_ignition.utils import misc
+
+from scenario import gazebo as scenario
 from gym_ignition.randomizers.model import sdf
-from gym_ignition import scenario_bindings as bindings
 from gym_ignition.randomizers.model.sdf import Distribution, Method
 from gym_ignition.randomizers.model.sdf import UniformParams, GaussianParams
 
@@ -20,7 +21,7 @@ def test_sdf_randomizer():
     urdf_model = gym_ignition_models.get_model_file("cartpole")
 
     # Convert it to a SDF string
-    sdf_model_string = bindings.urdffile_to_sdfstring(urdf_model)
+    sdf_model_string = scenario.urdffile_to_sdfstring(urdf_model)
 
     # Write the SDF string to a temp file
     sdf_model = misc.string_to_file(sdf_model_string)
@@ -104,12 +105,6 @@ def test_randomizer_reproducibility():
         .sampled_from(Distribution.Uniform,
                       UniformParams(low=0, high=100)) \
         .add()
-    randomizer1.new_randomization() \
-        .at_xpath("*/link/collision/surface/friction/ode/mu2") \
-        .method(Method.Absolute) \
-        .sampled_from(Distribution.Uniform,
-                      UniformParams(low=0, high=50)) \
-        .add()
 
     # Add randomizations for #2
     randomizer2.new_randomization() \
@@ -118,12 +113,6 @@ def test_randomizer_reproducibility():
         .sampled_from(Distribution.Uniform,
                       UniformParams(low=0, high=100)) \
         .add()
-    randomizer2.new_randomization() \
-        .at_xpath("*/link/collision/surface/friction/ode/mu2") \
-        .method(Method.Absolute) \
-        .sampled_from(Distribution.Uniform,
-                      UniformParams(low=0, high=50)) \
-        .add()
 
     # Add randomizations for #3
     randomizer3.new_randomization() \
@@ -131,12 +120,6 @@ def test_randomizer_reproducibility():
         .method(Method.Absolute) \
         .sampled_from(Distribution.Uniform,
                       UniformParams(low=0, high=100)) \
-        .add()
-    randomizer3.new_randomization() \
-        .at_xpath("*/link/collision/surface/friction/ode/mu2") \
-        .method(Method.Absolute) \
-        .sampled_from(Distribution.Uniform,
-                      UniformParams(low=0, high=50)) \
         .add()
 
     # Process the randomizations
@@ -159,7 +142,7 @@ def test_randomize_missing_element():
     urdf_model = gym_ignition_models.get_model_file("pendulum")
 
     # Convert it to a SDF string
-    sdf_model_string = bindings.urdffile_to_sdfstring(urdf_model)
+    sdf_model_string = scenario.urdffile_to_sdfstring(urdf_model)
 
     # Write the SDF string to a temp file
     sdf_model = misc.string_to_file(sdf_model_string)
@@ -218,7 +201,7 @@ def test_full_panda_randomization():
     urdf_model = gym_ignition_models.get_model_file("panda")
 
     # Convert it to a SDF string
-    sdf_model_string = bindings.urdffile_to_sdfstring(urdf_model)
+    sdf_model_string = scenario.urdffile_to_sdfstring(urdf_model)
 
     # Write the SDF string to a temp file
     sdf_model = misc.string_to_file(sdf_model_string)

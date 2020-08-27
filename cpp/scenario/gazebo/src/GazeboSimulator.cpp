@@ -26,12 +26,12 @@
 
 #include "scenario/gazebo/GazeboSimulator.h"
 #include "process.hpp"
+#include "scenario/core/utils/signals.h"
 #include "scenario/gazebo/Log.h"
 #include "scenario/gazebo/World.h"
 #include "scenario/gazebo/components/SimulatedTime.h"
 #include "scenario/gazebo/components/Timestamp.h"
 #include "scenario/gazebo/helpers.h"
-#include "scenario/gazebo/signals.h"
 #include "scenario/gazebo/utils.h"
 #include "scenario/plugins/gazebo/ECMSingleton.h"
 
@@ -58,13 +58,9 @@
 
 using namespace scenario::gazebo;
 
-namespace scenario {
-    namespace gazebo {
-        namespace detail {
-            struct PhysicsData;
-        } //  namespace detail
-    } // namespace gazebo
-} // namespace scenario
+namespace scenario::gazebo::detail {
+    struct PhysicsData;
+} // namespace scenario::gazebo::detail
 
 struct detail::PhysicsData
 {
@@ -116,7 +112,8 @@ public:
     bool postProcessWorld(const std::string& worldName);
 
     using WorldName = std::string;
-    std::unordered_map<WorldName, scenario::gazebo::WorldPtr> worlds;
+    using GazeboWorldPtr = std::shared_ptr<scenario::gazebo::World>;
+    std::unordered_map<WorldName, GazeboWorldPtr> worlds;
 
     static detail::PhysicsData getPhysicsData(const sdf::Root& root,
                                               const size_t worldIndex);
@@ -181,9 +178,9 @@ bool GazeboSimulator::initialize()
     // Setup signals callbacks.
     // It must be done after the creation of the simulator since
     // we override their callbacks.
-    base::SignalManager::Instance().setCallback(SIGINT, cb);
-    base::SignalManager::Instance().setCallback(SIGTERM, cb);
-    base::SignalManager::Instance().setCallback(SIGABRT, cb);
+    core::utils::SignalManager::Instance().setCallback(SIGINT, cb);
+    core::utils::SignalManager::Instance().setCallback(SIGTERM, cb);
+    core::utils::SignalManager::Instance().setCallback(SIGABRT, cb);
 
     return true;
 }
@@ -265,8 +262,8 @@ bool GazeboSimulator::gui(const int verbosity)
     if (!pImpl->sceneBroadcasterActive(worldName)) {
         sDebug << "Starting the SceneBroadcaster plugin" << std::endl;
         auto world = this->getWorld(worldName);
-        if (!world->insertWorldPlugin(
-                "libignition-gazebo-scene-broadcaster-system.so",
+        if (!std::static_pointer_cast<World>(world)->insertWorldPlugin(
+                "ignition-gazebo-scene-broadcaster-system",
                 "ignition::gazebo::systems::SceneBroadcaster")) {
             sError << "Failed to load SceneBroadcaster plugin" << std::endl;
         }
@@ -611,7 +608,7 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
         // Get the plugin info of the ECM provider
         auto getECMPluginInfo = [](const std::string& worldName) {
             ignition::gazebo::ServerConfig::PluginInfo pluginInfo;
-            pluginInfo.SetFilename("libECMProvider.so");
+            pluginInfo.SetFilename("ECMProvider");
             pluginInfo.SetName("scenario::plugins::gazebo::ECMProvider");
             pluginInfo.SetEntityType("world");
             pluginInfo.SetEntityName(worldName);

@@ -27,11 +27,16 @@
 #ifndef SCENARIO_GAZEBO_LOG
 #define SCENARIO_GAZEBO_LOG
 
+#ifndef SCENARIO_LOG_MACROS_DEFINED
+#define SCENARIO_LOG_MACROS_DEFINED
+
 #include <ignition/common/Console.hh>
 #define sError ::ignition::common::Console::err(__FILE__, __LINE__)
 #define sWarning ::ignition::common::Console::warn(__FILE__, __LINE__)
 #define sMessage ::ignition::common::Console::msg(__FILE__, __LINE__)
 #define sDebug ::ignition::common::Console::dbg(__FILE__, __LINE__)
-#define gymppLog ::ignition::common::Console::log(__FILE__, __LINE__)
+#define sLog ::ignition::common::Console::log(__FILE__, __LINE__)
+
+#endif // SCENARIO_LOG_MACROS_DEFINED
 
 #endif // SCENARIO_GAZEBO_LOG

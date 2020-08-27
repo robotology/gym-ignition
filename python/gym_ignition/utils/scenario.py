@@ -4,12 +4,13 @@
 
 import gym.spaces
 import numpy as np
+from scenario import core
 import gym_ignition_models
-from typing import List, Tuple
-from gym_ignition import scenario_bindings as bindings
+from typing import List, Tuple, Union
+from scenario import gazebo as scenario
 
 
-def get_unique_model_name(world: bindings.World, model_name: str) -> str:
+def get_unique_model_name(world: scenario.World, model_name: str) -> str:
     """
     Get a unique model name given a world configuration.
 
@@ -47,7 +48,7 @@ def get_unique_world_name(world_name: str) -> str:
 
     postfix = 0
     world_name_tentative = f"{world_name}"
-    ecm_singleton = bindings.ECMSingleton_instance()
+    ecm_singleton = scenario.ECMSingleton_instance()
 
     while world_name_tentative in ecm_singleton.world_names():
         postfix += 1
@@ -58,8 +59,8 @@ def get_unique_world_name(world_name: str) -> str:
 
 def init_gazebo_sim(step_size: float = 0.001,
                     real_time_factor: float = 1.0,
-                    steps_per_run: int = 1) -> Tuple[bindings.GazeboSimulator,
-                                                     bindings.World]:
+                    steps_per_run: int = 1) -> Tuple[scenario.GazeboSimulator,
+                                                     Union[scenario.World, core.World]]:
     """
     Initialize a Gazebo simulation with an empty world and default physics.
 
@@ -77,7 +78,7 @@ def init_gazebo_sim(step_size: float = 0.001,
     """
 
     # Create the simulator
-    gazebo = bindings.GazeboSimulator(step_size, real_time_factor, steps_per_run)
+    gazebo = scenario.GazeboSimulator(step_size, real_time_factor, steps_per_run)
 
     # Initialize the simulator
     ok_initialize = gazebo.initialize()
@@ -94,7 +95,7 @@ def init_gazebo_sim(step_size: float = 0.001,
     if not ok_ground:
         raise RuntimeError("Failed to insert the ground plane")
 
-    ok_physics = world.set_physics_engine(bindings.PhysicsEngine_dart)
+    ok_physics = world.set_physics_engine(scenario.PhysicsEngine_dart)
 
     if not ok_physics:
         raise RuntimeError("Failed to insert the physics plugin")
@@ -102,7 +103,7 @@ def init_gazebo_sim(step_size: float = 0.001,
     return gazebo, world
 
 
-def get_joint_positions_space(model: bindings.Model,
+def get_joint_positions_space(model: scenario.Model,
                               considered_joints: List[str] = None) -> gym.spaces.Box:
     """
     Build a Box space from the joint position limits.

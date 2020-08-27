@@ -7,7 +7,7 @@ import gym
 import numpy as np
 from typing import Tuple
 from gym_ignition.base import task
-from gym_ignition import scenario_bindings as bindings
+from scenario import core as scenario
 from gym_ignition.utils.typing import Action, Reward, Observation
 from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 
@@ -130,7 +130,7 @@ class CartPoleContinuousBalancing(task.Task, abc.ABC):
 
         # Control the cart in force mode
         linear = model.get_joint("linear")
-        ok_control_mode = linear.set_control_mode(bindings.JointControlMode_force)
+        ok_control_mode = linear.set_control_mode(scenario.JointControlMode_force)
 
         if not ok_control_mode:
             raise RuntimeError("Failed to change the control mode of the cartpole")
@@ -139,8 +139,8 @@ class CartPoleContinuousBalancing(task.Task, abc.ABC):
         x, dx, q, dq = self.np_random.uniform(low=-0.05, high=0.05, size=(4,))
 
         # Reset the cartpole state
-        ok_reset_pos = model.reset_joint_positions([x, q], ["linear", "pivot"])
-        ok_reset_vel = model.reset_joint_velocities([dx, dq], ["linear", "pivot"])
+        ok_reset_pos = model.to_gazebo().reset_joint_positions([x, q], ["linear", "pivot"])
+        ok_reset_vel = model.to_gazebo().reset_joint_velocities([dx, dq], ["linear", "pivot"])
 
-        if not ok_reset_pos and not ok_reset_vel:
+        if not (ok_reset_pos and ok_reset_vel):
             raise RuntimeError("Failed to reset the cartpole state")
