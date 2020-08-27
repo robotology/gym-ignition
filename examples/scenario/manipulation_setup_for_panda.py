@@ -5,7 +5,8 @@
 import abc
 import numpy as np
 import gym_ignition_models
-from gym_ignition import scenario_bindings as scenario
+from scenario import core
+from scenario import gazebo as scenario
 from gym_ignition.utils.scenario import init_gazebo_sim
 from typing import List
 from scipy.spatial.transform import Rotation
@@ -42,33 +43,30 @@ class Quaternion(abc.ABC):
 
 
 # Define a helper class to simplify model insertion.
-class Panda(scenario.Model):
+class Panda(core.Model):
 
     def __init__(self,
                  world: scenario.World,
                  position: List[float] = (0., 0, 0),
                  orientation: List[float] = (1., 0, 0, 0)):
-        # Initialize the base class
-        super().__init__()
 
         # Get the model file
         urdf = gym_ignition_models.get_model_file("panda")
 
         # Insert the model in the world
         name = "panda_manipulator"
-        pose = scenario.Pose(position, orientation)
+        pose = core.Pose(position, orientation)
         world.insert_model(urdf, pose, name)
 
         # Get and store the model from the world
         self.model = world.get_model(model_name=name)
 
     def __getattr__(self, name):
-        print("getting", name)
         return getattr(self.model, name)
 
 
 # Set the verbosity
-scenario.set_verbosity(level=2)
+scenario.set_verbosity(scenario.Verbosity_warning)
 
 # Get the default simulator and the default empty world
 gazebo, world = init_gazebo_sim()
@@ -78,7 +76,7 @@ gazebo, world = init_gazebo_sim()
 model_name = "Cafe Table"
 model_sdf = scenario.get_model_file_from_fuel(
     f"https://fuel.ignitionrobotics.org/openrobotics/models/{model_name}", False)
-world.insert_model(model_sdf, scenario.Pose_identity())
+world.insert_model(model_sdf, core.Pose_identity())
 
 # Insert a beer on the table
 # Notice that not all the models from fuel are rendered properly (for instance for "Beer" no texture is shown)
@@ -87,7 +85,7 @@ model_sdf = scenario.get_model_file_from_fuel(
     f"https://fuel.ignitionrobotics.org/openrobotics/models/{model_name}", False)
 beer_position = [-0.3, 0.3, 0.76]
 beer_quaternions = [1., 0, 0, 0]
-beer_pose = scenario.Pose(beer_position, beer_quaternions)
+beer_pose = core.Pose(beer_position, beer_quaternions)
 world.insert_model(model_sdf, beer_pose)
 
 # Insert a Panda using the class
