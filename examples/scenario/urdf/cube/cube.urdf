@@ -1,0 +1,21 @@
+<robot name="cube_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <link name="cube">
+        <inertial>
+          <origin rpy="0 0 0" xyz="0 0 0"/>
+          <mass value="1"/>
+          <inertia ixx="0.167" ixy="0" ixz="0" iyy="0.167" iyz="0" izz="0.167"/>
+        </inertial>
+        <visual>
+          <geometry>
+            <box size="1 1 1"/>
+          </geometry>
+          <origin rpy="0 0 0" xyz="0 0 0"/>
+        </visual>
+        <collision>
+          <geometry>
+            <box size="1 1 1"/>
+          </geometry>
+          <origin rpy="0 0 0" xyz="0 0 0"/>
+        </collision>
+    </link>
+</robot>
