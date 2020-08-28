@@ -2,7 +2,9 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from gym_ignition import scenario_bindings as scenario
+from scenario import core as scenario_core
+from scenario import gazebo as scenario_gazebo
+
 from gym_ignition.utils.scenario import init_gazebo_sim
 import tempfile
 import time
@@ -42,14 +44,14 @@ def get_cube_urdf(mass: float = 5.0, edge: float = 0.2) -> str:
 
 
 # Set the verbosity
-scenario.set_verbosity(level=2)
+scenario_gazebo.set_verbosity(scenario_gazebo.Verbosity_warning)
 
 # Get the default simulator and the default empty world
 gazebo, world = init_gazebo_sim()
 
 # Insert a cube model specifying the pose and the model name
 model_name = "my_cube"
-default_pose = scenario.Pose([0, 0, 10.], [1., 0, 0, 0])
+default_pose = scenario_core.Pose([0, 0, 10.], [1., 0, 0, 0])
 
 # Write the cube URDF to a temporary file
 handle, model_file = tempfile.mkstemp()
@@ -68,11 +70,11 @@ if GUI:
 print("Models currently inserted in the world:", world.model_names())
 
 # Get the cube  model
-cube: scenario.Model = world.get_model(model_name=model_name)
+cube: scenario_core.Model = world.get_model(model_name=model_name)
 print("cube.contacts_enabled():", cube.contacts_enabled())
 
 # Get the cube link
-cube_link: scenario.Link = cube.get_link("cube")
+cube_link: scenario_core.Link = cube.get_link("cube")
 print("cube_link.contacts_enabled():", cube_link.contacts_enabled())
 
 # The cube was inserted floating in the air at 1m height.
