@@ -3,7 +3,8 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from typing import List
-from gym_ignition import scenario_bindings as scenario
+from scenario import core as scenario_core
+from scenario import gazebo as scenario_gazebo
 from gym_ignition.utils.scenario import init_gazebo_sim
 import tempfile
 import time
@@ -12,8 +13,11 @@ import time
 # Experiment Configuration
 ###############################
 
-GUI = True      # Render scene
-scenario.set_verbosity(level=2)     # Set the verbosity
+# Render scene flag
+GUI = True
+
+# Set the verbosity
+scenario_gazebo.set_verbosity(scenario_gazebo.Verbosity_warning)
 
 num_cubes = 7   # Number of cubes
 cubes_colors = ((1., 0., 0., 1.),   # Cubes color codes
@@ -111,7 +115,7 @@ gazebo, world = init_gazebo_sim()
 # Insert cube models specifying the pose and the model name
 for i in range(num_cubes):
     model_name = "cube_" + str(i)
-    model_pose = scenario.Pose([0., 3.0 - i, 0.25], [1., 0, 0, 0])
+    model_pose = scenario_core.Pose([0., 3.0 - i, 0.25], [1., 0, 0, 0])
 
     # Write the cube URDF to a temporary file
     handle, model_file = tempfile.mkstemp()
@@ -134,12 +138,12 @@ if GUI:
 print("Models currently inserted in the world:", world.model_names())
 
 # Get the ground plane model and link
-ground_model: scenario.Model = world.get_model("ground_plane")
-ground_link: scenario.Link = ground_model.get_link("link")
+ground_model: scenario_core.Model = world.get_model("ground_plane")
+ground_link: scenario_core.Link = ground_model.get_link("link")
 
 # Get the cubes models and links
-cube_models: List[scenario.Model] = []
-cube_links: List[scenario.Link] = []
+cube_models: List[scenario_core.Model] = []
+cube_links: List[scenario_core.Link] = []
 for i in range(num_cubes):
     cube_models.append(world.get_model(model_name="cube_" + str(i)))
     cube_links.append(cube_models[i].get_link("cube"))
