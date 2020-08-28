@@ -3,6 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from gym_ignition_environments import models
+
 # from gym_ignition import scenario_bindings as scenario
 from scenario import gazebo as scenario_gazebo
 from scenario import core as scenario_core
