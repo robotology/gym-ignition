@@ -45,7 +45,6 @@ class Panda(scenario_core.Model):
         self.model = world.get_model(model_name=name).to_gazebo()
 
     def __getattr__(self, name):
-        # print("getting", name)
         return getattr(self.model, name)
 
 panda_pos = [0, 0, 0]
