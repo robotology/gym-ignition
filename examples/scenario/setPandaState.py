@@ -47,7 +47,6 @@ class Panda(scenario_core.Model):
         # print("getting", name)
         return getattr(self.model, name)
 
-
 panda_pos = [0, 0, 0]
 panda_ori = [1, 0, 0, 0]  # quaternion: w,x,y,z
 panda = Panda(world=world, position=panda_pos, orientation=panda_ori)
