@@ -20,7 +20,7 @@ services:
         from: diegoferigo/gym-ignition:base
         ignition_codename: citadel
       context: .
-      dockerfile: Dockerfile.cicd-master
+      dockerfile: cicd-master.Dockerfile
     image: diegoferigo/gym-ignition:ci-master
 
   pypi-master:
@@ -29,7 +29,7 @@ services:
         from: diegoferigo/gym-ignition:base
         ignition_codename: citadel
       context: .
-      dockerfile: Dockerfile.cicd-master
+      dockerfile: cicd-master.Dockerfile
     image: diegoferigo/gym-ignition:pypi-master
 
   # =====
@@ -43,7 +43,7 @@ services:
         ignition_codename: citadel
         CMAKE_BUILD_TYPE: Debug
       context: .
-      dockerfile: Dockerfile.cicd-devel
+      dockerfile: cicd-devel.Dockerfile
     image: diegoferigo/gym-ignition:ci-devel
 
   pypi-devel:
@@ -53,7 +53,7 @@ services:
         ignition_codename: citadel
         CMAKE_BUILD_TYPE: Release
       context: .
-      dockerfile: Dockerfile.cicd-devel
+      dockerfile: cicd-devel.Dockerfile
     image: diegoferigo/gym-ignition:pypi-devel
 
   # ====
