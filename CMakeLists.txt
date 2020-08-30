@@ -102,7 +102,7 @@ mark_as_advanced(Python3_FIND_VIRTUALENV)
 set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTUALENV_TYPES})
 
 # Find Python3
-find_package(Python3 3.6 EXACT COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 message(STATUS "Using Python: ${Python3_EXECUTABLE}")
 
 # Select the appropriate install prefix used throughout the project
