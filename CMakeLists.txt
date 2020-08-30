@@ -94,6 +94,10 @@ endif()
 # Dependencies
 add_subdirectory(deps)
 
+if(${CMAKE_VERSION} VERSION_GREATER 3.15)
+    cmake_policy(SET CMP0094 NEW)
+endif()
+
 # Find virtualenv's before system's interpreters
 set(Python3_FIND_VIRTUALENV "FIRST" CACHE STRING
     "Configure the detection of virtual environments")
