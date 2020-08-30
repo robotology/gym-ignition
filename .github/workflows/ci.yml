@@ -7,15 +7,18 @@ on:
 jobs:
   developer:
     name: Developer installation
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: [3.6]
+        python: [3.8]
         build_type: [Debug]
         compiler:
           #- gcc7
-          - gcc8
+          #- gcc8
+          - gcc9
           #- clang9
+          #- clang10
+          #- clang11
 
     steps:
 
@@ -25,8 +28,9 @@ jobs:
       - name: Setup Environment
         run: |
           case ${{ matrix.compiler }} in
-            gcc7)   CC=gcc ;    CXX=g++ ;;
+            gcc7)   CC=gcc-7 ;  CXX=g++-7 ;;
             gcc8)   CC=gcc-8 ;  CXX=g++-8 ;;
+            gcc9)   CC=gcc   ;  CXX=g++   ;;
             clang6) CC=clang;   CXX=clang++ ;;
             clang7) CC=clang-7; CXX=clang++-7 ;;
             clang8) CC=clang-8; CXX=clang++-8 ;;
@@ -106,9 +110,9 @@ jobs:
     strategy:
       matrix:
         python:
-          - 3.6
+          - 3.8
         os:
-          - ubuntu-18.04
+          - ubuntu-latest
 
     steps:
 
@@ -125,8 +129,8 @@ jobs:
             -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
             diegoferigo/gym-ignition:ci-master bash
         env:
-          CC: gcc-8
-          CXX: g++-8
+          CC: gcc
+          CXX: g++
 
       - name: Setup docker image [other]
         if: |
@@ -138,8 +142,8 @@ jobs:
             -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
             diegoferigo/gym-ignition:ci-devel bash
         env:
-          CC: gcc-8
-          CXX: g++-8
+          CC: gcc
+          CXX: g++
 
       - name: Wait entrypoint
         run: sleep 30
