@@ -94,6 +94,10 @@ endif()
 # Dependencies
 add_subdirectory(deps)
 
+if(${CMAKE_VERSION} VERSION_GREATER 3.15)
+    cmake_policy(SET CMP0094 NEW)
+endif()
+
 # Find virtualenv's before system's interpreters
 set(Python3_FIND_VIRTUALENV "FIRST" CACHE STRING
     "Configure the detection of virtual environments")
@@ -102,7 +106,7 @@ mark_as_advanced(Python3_FIND_VIRTUALENV)
 set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTUALENV_TYPES})
 
 # Find Python3
-find_package(Python3 3.6 EXACT COMPONENTS Interpreter Development REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 message(STATUS "Using Python: ${Python3_EXECUTABLE}")
 
 # Select the appropriate install prefix used throughout the project
