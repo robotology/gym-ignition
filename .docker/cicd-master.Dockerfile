@@ -1,14 +1,6 @@
 ARG from=diegoferigo/gym-ignition:base
 FROM ${from}
 
-# Extra dependencies
-RUN apt-get update &&\
-    apt-get install -y --no-install-recommends \
-        rename \
-        source-highlight \
-        &&\
-    rm -rf /var/lib/apt/lists/*
-
 # Install ignition gazebo
 ARG ignition_codename="citadel"
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \

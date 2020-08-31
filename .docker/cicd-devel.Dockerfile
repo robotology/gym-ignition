@@ -1,14 +1,6 @@
 ARG from=diegoferigo/gym-ignition:base
 FROM ${from}
 
-# Extra dependencies
-RUN apt-get update &&\
-    apt-get install -y --no-install-recommends \
-        rename \
-        source-highlight \
-        &&\
-    rm -rf /var/lib/apt/lists/*
-
 ARG IGNITION_DEFAULT_CHANNEL="stable"
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-${IGNITION_DEFAULT_CHANNEL} `lsb_release -cs` main" > \
         /etc/apt/sources.list.d/gazebo-${IGNITION_DEFAULT_CHANNEL}.list &&\
