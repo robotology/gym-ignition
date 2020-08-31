@@ -42,6 +42,7 @@ services:
         from: diegoferigo/gym-ignition:base
         ignition_codename: citadel
         CMAKE_BUILD_TYPE: Debug
+        BUILD_SHARED_LIBS: "ON"
       context: .
       dockerfile: cicd-devel.Dockerfile
     image: diegoferigo/gym-ignition:ci-devel
@@ -52,6 +53,7 @@ services:
         from: diegoferigo/gym-ignition:base
         ignition_codename: citadel
         CMAKE_BUILD_TYPE: Release
+        BUILD_SHARED_LIBS: "OFF"
       context: .
       dockerfile: cicd-devel.Dockerfile
     image: diegoferigo/gym-ignition:pypi-devel
