@@ -27,7 +27,7 @@ jobs:
           - ci-devel
           - pypi-master
           - pypi-devel
-          - latest
+          #- latest
           - nightly
 
     steps:
