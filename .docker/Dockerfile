@@ -1,6 +1,9 @@
 ARG from=diegoferigo/gym-ignition:pypi-master
 FROM ${from}
 
+# Source /etc/bash.bashrc before each command
+SHELL ["/bin/bash", "-i", "-c"]
+
 # Install the PyPI package in a virtualenv
 ARG pypi_package="gym-ignition"
 RUN virtualenv -p $(which python3) ${VIRTUAL_ENV} &&\
