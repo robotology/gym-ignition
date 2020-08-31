@@ -20,7 +20,7 @@ jobs:
     strategy:
       matrix:
         python_version:
-          - 3.6
+          - 3.8
         package:
           - sdist
           - bdist_wheel
@@ -32,8 +32,8 @@ jobs:
 
       - name: Setup Environment
         run: |
-          echo "::set-env name=CC::gcc-8"
-          echo "::set-env name=CXX::g++-8"
+          echo "::set-env name=CC::gcc"
+          echo "::set-env name=CXX::g++"
           echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
           env
 
@@ -86,7 +86,7 @@ jobs:
     strategy:
       matrix:
         python_version:
-          - 3.6
+          - 3.8
 
     steps:
 
@@ -110,8 +110,8 @@ jobs:
 
       - name: Setup Environment
         run: |
-          echo "::set-env name=CC::gcc-8"
-          echo "::set-env name=CXX::g++-8"
+          echo "::set-env name=CC::gcc"
+          echo "::set-env name=CXX::g++"
           echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
           env
 

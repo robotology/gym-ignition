@@ -18,14 +18,16 @@ jobs:
     name: 'diegoferigo/gym-ignition:${{ matrix.tag }}'
     runs-on: ubuntu-latest
     strategy:
+      max-parallel: 1
       matrix:
         baseimage: ['ubuntu:bionic']
         tag:
+          - base
           - ci-master
           - ci-devel
           - pypi-master
           - pypi-devel
-          - latest
+          #- latest
           - nightly
 
     steps:
