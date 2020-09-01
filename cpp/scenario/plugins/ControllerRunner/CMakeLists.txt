@@ -39,7 +39,7 @@ target_link_libraries(ControllersFactory
     ScenarioControllers::ControllersABC
     PRIVATE
     ScenarioGazebo::ScenarioGazebo
-    ComputedTorqueFixedBase)
+    ScenarioControllers::ComputedTorqueFixedBase)
 
 target_include_directories(ControllersFactory PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
