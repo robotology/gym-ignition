@@ -224,10 +224,16 @@ bool GazeboSimulator::run(const bool paused)
         iterations = 1;
     }
 
+    if (paused && !server->RunOnce(/*paused=*/true)) {
+        sError << "The server couldn't execute the paused step" << std::endl;
+        return false;
+    }
+
     // Run the simulation
-    if (!server->Run(/*blocking=*/deterministic,
-                     /*iterations=*/iterations,
-                     /*paused=*/paused)) {
+    if (!paused
+        && !server->Run(/*blocking=*/deterministic,
+                        /*iterations=*/iterations,
+                        /*paused=*/false)) {
         sError << "The server couldn't execute the step" << std::endl;
         return false;
     }
@@ -663,8 +669,8 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
         assert(server);
 
         sDebug << "Starting the gazebo server" << std::endl;
-        if (!server->Run(
-                /*blocking=*/true, /*iterations=*/1, /*paused=*/true)) {
+
+        if (!server->RunOnce(/*paused=*/true)) {
             sError << "Failed to initialize the first gazebo server run"
                    << std::endl;
             return nullptr;

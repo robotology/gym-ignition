@@ -6,6 +6,7 @@ import pytest
 pytestmark = pytest.mark.scenario
 
 from ..common import utils
+import gym_ignition_models
 from scenario import gazebo as scenario
 from ..common.utils import gazebo_fixture as gazebo
 
@@ -84,6 +85,26 @@ def test_pause(gazebo: scenario.GazeboSimulator):
     assert not gazebo.running()
     assert gazebo.pause()
 
+
+@pytest.mark.parametrize("gazebo",
+                         [(0.001, 1.0, 1)],
+                         indirect=True,
+                         ids=utils.id_gazebo_fn)
+def test_paused_step(gazebo: scenario.GazeboSimulator):
+
+    assert gazebo.initialize()
+
+    world = gazebo.get_world().to_gazebo()
+    assert world.insert_model(gym_ignition_models.get_model_file("ground_plane"))
+    assert "ground_plane" in world.model_names()
+    gazebo.run(paused=True)
+
+    world.remove_model("ground_plane")
+
+    assert "ground_plane" in world.model_names()
+    gazebo.run(paused=True)
+    assert "ground_plane" not in world.model_names()
+    assert world.time() == 0.0
 
 @pytest.mark.parametrize("gazebo",
                          [(0.001, 1.0, 1)],
