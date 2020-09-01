@@ -64,7 +64,7 @@ RUN apt-get update &&\
     apt-get install -y --no-install-recommends \
         python3-numpy libxml2-dev coinor-libipopt-dev libeigen3-dev &&\
     rm -rf /var/lib/apt/lists/* &&\
-    git clone --depth 1 -b feature/numpy https://github.com/diegoferigo/idyntree /tmp/idyntree &&\
+    git clone --depth 1 -b devel https://github.com/robotology/idyntree /tmp/idyntree &&\
     mkdir -p /tmp/idyntree/build && cd /tmp/idyntree/build &&\
     cmake .. \
         -GNinja \
