@@ -69,7 +69,7 @@ RUN apt-get update &&\
     cmake .. \
         -GNinja \
         -DCMAKE_BUILD_TYPE=Release \
-        -DIDYNTREE_SHARED_LIBRARY:BOOL=OFF \
+        -DBUILD_SHARED_LIBRARY:BOOL=OFF \
         -DIDYNTREE_USES_PYTHON=True \
         -DIDYNTREE_USES_IPOPT:BOOL=ON \
         &&\
