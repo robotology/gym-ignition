@@ -261,7 +261,7 @@ world = gazebo.get_world()
 world.set_physics_engine(engine=scenario.PhysicsEngine_dart)
 
 # Insert the inclined ground plane
-ground_plane_pitch = -0.25 * np.pi
+ground_plane_pitch = 0.25 * np.pi
 ground_plane_quaternion = Quaternion.to_wxyz(Rotation.from_euler('y', ground_plane_pitch).as_quat())
 ground_plane_position = [0.0, 0.0, 0.0]
 ground_plane_pose = core.Pose(ground_plane_position, ground_plane_quaternion)
@@ -273,10 +273,10 @@ mass = 10
 mu = 0.8
 
 # Insert a cube
-cube_pitch = -0.25 * np.pi
+cube_pitch = 0.25 * np.pi
 cube_quaternion = list(Quaternion.to_wxyz(Rotation.from_euler('y', ground_plane_pitch).as_quat()))
 cube_edge = 0.2
-cube_position = [6.0, 0.0, 6.0+cube_edge/2]
+cube_position = [-6.0, 0.0, 6.0+cube_edge/2]
 cube = Shape(world=world,
              model_string=CubeURDF(mass=mass, edge=cube_edge, mu=mu).urdf(),
              position=cube_position,
@@ -285,18 +285,18 @@ cube = Shape(world=world,
 # Insert a sphere
 sphere_quaternion = [1,0,0,0]
 sphere_radius = 0.1
-sphere_position = [6.0, 0.5, 6.0+sphere_radius]
+sphere_position = [-6.0, -0.5, 6.0+sphere_radius]
 sphere = Shape(world=world,
                model_string=SphereURDF(mass=mass, radius=sphere_radius, mu=mu).urdf(),
                position=sphere_position,
                orientation=sphere_quaternion)
 
 # Insert a cylinder
-cylinder_roll = 0.5 * np.pi
+cylinder_roll = -0.5 * np.pi
 cylinder_quaternion = list(Quaternion.to_wxyz(Rotation.from_euler('x', cylinder_roll).as_quat()))
 cylinder_radius = 0.1
 cylinder_length = 0.5
-cylinder_position = [6.0, 1.0, 6.0+cylinder_radius]
+cylinder_position = [-6.0, -1.0, 6.0+cylinder_radius]
 cylinder = Shape(world=world,
                  model_string=CylinderURDF(mass=mass, radius=cylinder_radius, length=cylinder_length, mu=mu).urdf(),
                  position=cylinder_position,
@@ -312,7 +312,7 @@ gazebo.run(paused=True)
 time.sleep(3)
 
 # peform 2 seconds of simulation with the shapes falling down on the inclined plane
-for i in range(2000):
+for i in range(1300):
     gazebo.run()
 
 time.sleep(5)
