@@ -78,19 +78,19 @@ model_sdf = scenario.get_model_file_from_fuel(
     f"https://fuel.ignitionrobotics.org/openrobotics/models/{model_name}", False)
 world.insert_model(model_sdf, core.Pose_identity())
 
-# Insert a beer on the table
+# Insert a coke on the table
 # Notice that not all the models from fuel are rendered properly (for instance for "Beer" no texture is shown)
 model_name = "Coke"
 model_sdf = scenario.get_model_file_from_fuel(
     f"https://fuel.ignitionrobotics.org/openrobotics/models/{model_name}", False)
-beer_position = [-0.3, 0.3, 0.76]
+beer_position = [0.3, -0.3, 0.76]
 beer_quaternions = [1., 0, 0, 0]
 beer_pose = core.Pose(beer_position, beer_quaternions)
 world.insert_model(model_sdf, beer_pose)
 
 # Insert a Panda using the class
-panda_position = [0.2, 0, 0.76]
-panda_yaw = np.pi
+panda_position = [-0.2, 0, 0.76]
+panda_yaw = 0 # change this angle if you want to rotate the panda along the vertical axes
 panda_quaternion = list(Quaternion.to_wxyz(Rotation.from_euler('z', panda_yaw).as_quat()))
 panda = Panda(world=world, position=panda_position, orientation=panda_quaternion)
 
