@@ -73,7 +73,7 @@ gazebo, world = init_gazebo_sim()
 
 # Insert a Panda using the class
 panda_position = [0, 0, 0]
-panda_yaw = np.pi
+panda_yaw = 0 # change this angle if you want to rotate the panda along the vertical axes
 panda_quaternion = list(Quaternion.to_wxyz(Rotation.from_euler('z', panda_yaw).as_quat()))
 panda = Panda(world=world, position=panda_position, orientation=panda_quaternion)
 
@@ -134,7 +134,7 @@ for _ in range(5000):
     gazebo.run()
 
 # Apply an external force
-panda.get_link("panda_link4").apply_world_force([400.0, 0, 0], 0.8)
+panda.get_link("panda_link4").apply_world_force([-400.0, 0, 0], 0.2)
 
 # Step the simulator for a couple of seconds with the Panda recovering the reference positions
 for _ in range(5000):
