@@ -74,7 +74,7 @@ gazebo, world = init_gazebo_sim()
 
 # Insert a Panda using the class
 panda_position = [0, 0, 0]
-panda_yaw = np.pi
+panda_yaw = 0 # change this angle if you want to rotate the panda along the vertical axes
 panda_quaternion = list(Quaternion.to_wxyz(Rotation.from_euler('z', panda_yaw).as_quat()))
 panda = Panda(world=world, position=panda_position, orientation=panda_quaternion)
 
