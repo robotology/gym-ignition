@@ -67,11 +67,11 @@ RUN pip3 install vcstool colcon-common-extensions &&\
 ARG BUILD_SHARED_LIBS="ON"
 ARG CMAKE_BUILD_TYPE="Release"
 ARG ignition_codename="citadel"
-ADD tags_${ignition_codename}.yaml /tmp/tags.yaml
 
 RUN mkdir -p /workspace/src &&\
     cd /workspace/src &&\
-    vcs import < /tmp/tags.yaml &&\
+    wget https://raw.githubusercontent.com/ignition-tooling/gazebodistro/master/collection-${ignition_codename}.yaml &&\
+    vcs import < collection-${ignition_codename}.yaml &&\
     cd /workspace &&\
     colcon graph &&\
     colcon build \
