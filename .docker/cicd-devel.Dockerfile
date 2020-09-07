@@ -64,31 +64,20 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-${IGNITION_DEFAULT
 RUN pip3 install vcstool colcon-common-extensions &&\
     rm -r $HOME/.cache/pip
 
-ARG BUILD_SHARED_LIBS="ON"
 ARG CMAKE_BUILD_TYPE="Release"
 ARG ignition_codename="citadel"
-ADD tags_${ignition_codename}.yaml /tmp/tags.yaml
 
 RUN mkdir -p /workspace/src &&\
     cd /workspace/src &&\
-    vcs import < /tmp/tags.yaml &&\
+    wget https://raw.githubusercontent.com/ignition-tooling/gazebodistro/master/collection-${ignition_codename}.yaml &&\
+    vcs import < collection-${ignition_codename}.yaml &&\
     cd /workspace &&\
     colcon graph &&\
     colcon build \
-        --packages-end ignition-sensors3 \
         --cmake-args \
             -GNinja \
             -DBUILD_TESTING:BOOL=OFF \
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
-        --merge-install \
-        &&\
-    colcon build \
-        --packages-start ignition-gazebo3 \
-        --cmake-args \
-            -GNinja \
-            -DBUILD_TESTING:BOOL=OFF \
-            -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE} \
-            -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS} \
         --merge-install \
         &&\
     echo "source /workspace/install/setup.bash" >> /etc/bash.bashrc
