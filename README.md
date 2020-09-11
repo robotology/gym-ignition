@@ -71,26 +71,6 @@
                 </a>
             </td>
         </tr>
-        <tr>
-            <td align="left"><code>gym-ignition-nightly</code></td>
-            <td align="center">
-                <a href="https://pypi.org/project/gym-ignition-nightly/">
-                <img src="https://img.shields.io/pypi/v/gym-ignition-nightly.svg" />
-                </a>
-                <a href="https://pypi.org/project/gym-ignition-nightly/">
-                <img src="https://img.shields.io/pypi/pyversions/gym-ignition-nightly.svg" />
-                </a>
-                <a href="https://pypi.org/project/gym-ignition-nightly/">
-                <img src="https://img.shields.io/pypi/status/gym-ignition-nightly.svg" />
-                </a>
-                <a href="https://pypi.org/project/gym-ignition-nightly/">
-                <img src="https://img.shields.io/pypi/format/gym-ignition-nightly.svg" />
-                </a>
-                <a href="https://pypi.org/project/gym-ignition-nightly/">
-                <img src="https://img.shields.io/pypi/l/gym-ignition-nightly.svg" />
-                </a>
-            </td>
-        </tr>
     </tbody>
 </table>
 <p><br/></p>
