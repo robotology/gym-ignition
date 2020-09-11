@@ -138,15 +138,6 @@ jobs:
       - name: Wait entrypoint
         run: sleep 30
 
-      - name: Setup package name
-        shell: docker exec -i pypi bash -i -e {0}
-        if: github.event_name == 'push'
-        run: |
-          sed -i "s/name='gym-ignition'/name='gym-ignition-nightly'/g" setup.py
-          git config --global user.name "Your Name"
-          git config --global user.email "you@example.com"
-          git commit -a -m "Renamed for nightly release"
-
       - name: Create packages
         shell: docker exec -i pypi bash -i -e {0}
         run: python setup.py sdist bdist_wheel
