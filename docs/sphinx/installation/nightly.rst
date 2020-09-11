@@ -4,7 +4,8 @@ Nightly Channel
 ===============
 
 The nightly channel contains the most recent updates of the project.
-As described in the :ref:`introduction <installation_intro_ignition_robotics>`, this channel requires building many dependencies from sources.
+As described in the :ref:`introduction <installation_intro_ignition_robotics>`,
+this channel requires building many dependencies from sources.
 
 Make sure that the default compiler of your system meets the :ref:`requirements <installation_intro_cpp>`.
 
@@ -78,11 +79,11 @@ Make sure to execute the next steps in a terminal where the virtual environment 
 User Installation
 *****************
 
-Install the `gym-ignition-nightly <https://pypi.org/project/gym-ignition-nightly/>`_ package from PyPI:
+Install the pre-release version of the `gym-ignition <https://pypi.org/project/gym-ignition/>`_ package from PyPI:
 
 .. code-block:: bash
 
-   pip install gym-ignition-nightly
+   pip install --pre gym-ignition
 
 .. _installation_nightly_developer:
 

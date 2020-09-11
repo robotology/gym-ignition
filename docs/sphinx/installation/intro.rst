@@ -51,7 +51,8 @@ As soon as we update to Ubuntu 20.04, we will bump the Python version to 3.7.
 gym-ignition can be installed either from sources or from PyPI packages (see below for more details).
 We provide ``sdist`` packages that can be installed on all systems that meet the dependencies requirements, and ``wheel`` packages for the supported Python version.
 
-You can find `gym-ignition <https://pypi.org/project/gym-ignition/>`_ and `gym-ignition-nightly <https://pypi.org/project/gym-ignition-nightly/>`_ in the Python Package Index. They are mapped respectively to our Stable and Nightly channels.
+You can find `gym-ignition <https://pypi.org/project/gym-ignition/>`_ in the Python Package Index.
+Stable and pre-release packages are mapped respectively to our Stable and Nightly channels.
 
 .. warning::
     Our ``wheel`` packages are compiled against the supported version of the Ignition Robotics suite.
