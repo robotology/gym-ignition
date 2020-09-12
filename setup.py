@@ -147,6 +147,16 @@ setup(
         'gym_ignition_models',
         'lxml',
     ],
+    extras_require=dict(
+        website=[
+            "sphinx",
+            "sphinx-rtd-theme",
+            "sphinx-autodoc-typehints",
+            "sphinx_fontawesome",
+            "sphinx-multiversion",
+            "breathe",
+        ],
+    ),
     packages=find_packages("python"),
     package_dir={'': "python"},
     ext_modules=[CMakeExtension(name='InstallAllTargets', cmake_configuration='PyPI')],
