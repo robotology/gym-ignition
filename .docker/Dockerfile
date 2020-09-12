@@ -5,9 +5,9 @@ FROM ${from}
 SHELL ["/bin/bash", "-i", "-c"]
 
 # Install the PyPI package in a virtualenv
-ARG pypi_package="gym-ignition"
+ARG pip_options=""
 RUN virtualenv -p $(which python3) ${VIRTUAL_ENV} &&\
-    pip install --pre ${pypi_package} &&\
+    pip install ${pip_options} gym-ignition &&\
     rm -r $HOME/.cache/pip
 
 # Clone the repository
