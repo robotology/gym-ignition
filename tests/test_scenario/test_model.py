@@ -19,20 +19,21 @@ scenario.set_verbosity(scenario.Verbosity_debug)
 
 
 def get_model(gazebo: scenario.GazeboSimulator,
-              gym_ignition_model_name: str) -> scenario.Model:
+              gym_ignition_models_name: str) -> scenario.Model:
 
     # Get the world and cast it to a Gazebo world
     world = gazebo.get_world().to_gazebo()
 
     assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
-    model_urdf = gym_ignition_models.get_model_file(gym_ignition_model_name)
+    model_urdf = gym_ignition_models.get_model_file(gym_ignition_models_name)
+
     assert world.insert_model(model_urdf,
                               core.Pose_identity(),
-                              gym_ignition_model_name)
+                              gym_ignition_models_name)
 
     # Get the model and cast it to a Gazebo model
-    model = world.get_model(gym_ignition_model_name).to_gazebo()
+    model = world.get_model(gym_ignition_models_name).to_gazebo()
     assert model.id() != 0
     assert model.valid()
 
@@ -113,7 +114,7 @@ def test_model_joints(gazebo: scenario.GazeboSimulator):
                          [(0.001, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
-def test_model_base(gazebo: scenario.GazeboSimulator):
+def test_model_base_pose(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
 
@@ -143,29 +144,74 @@ def test_model_base(gazebo: scenario.GazeboSimulator):
     assert model.base_position() == pytest.approx(new_base_pose['position'])
     assert model.base_orientation() == pytest.approx(new_base_pose['orientation'])
 
-    # Reset the linear velocity
+
+@pytest.mark.parametrize("default_world",
+                         [(0.001, 1.0, 1)],
+                         indirect=True,
+                         ids=utils.id_gazebo_fn)
+def test_model_base_velocity(
+        default_world: Tuple[scenario.GazeboSimulator, scenario.World]):
+
+    # Get the simulator and the world
+    gazebo, world = default_world
+
+    model_urdf = gym_ignition_models.get_model_file("pendulum")
+
+    # Insert the first pendulum
+    model1_name = "pendulum1"
+    model1_pose = core.Pose([0, 1.0, 1.0], [1.0, 0, 0, 0])
+    assert world.insert_model(model_urdf, model1_pose, model1_name)
+    model1 = world.get_model(model1_name).to_gazebo()
+    assert model1.valid()
+    assert model1_name in gazebo.get_world().model_names()
+    assert model1.base_frame() == "support"
+
+    # Insert the second pendulum
+    model2_name = "pendulum2"
+    model2_pose = core.Pose([0, -1.0, 1.0], [1.0, 0, 0, 0])
+    assert world.insert_model(model_urdf, model2_pose, model2_name)
+    model2 = world.get_model(model2_name).to_gazebo()
+    assert model2.valid()
+    assert model2_name in gazebo.get_world().model_names()
+    assert model2.base_frame() == "support"
+
+    # Target velocity
     lin_velocity = [0, 0, 5.0]
-    assert model.reset_base_world_linear_velocity(lin_velocity)
-    assert model.base_world_linear_velocity() == pytest.approx([0, 0, 0])
-    gazebo.run()
-    assert model.base_world_linear_velocity() == pytest.approx(lin_velocity, abs=0.01)
-
-    # The linear velocity of the support must be the same
-    assert "support" in model.link_names()
-    assert model.get_link("support").world_linear_velocity() == \
-        pytest.approx(lin_velocity, abs=0.01)
-
-    # Reset the angular velocity
     ang_velocity = [0.1, 0.5, -3.0]
-    assert model.reset_base_world_angular_velocity(ang_velocity)
-    assert model.base_world_angular_velocity() == pytest.approx([0, 0, 0])
-    gazebo.run()
-    assert model.base_world_angular_velocity() == pytest.approx(ang_velocity, abs=0.01)
 
-    # The angular velocity of the support must be the same
-    assert "support" in model.link_names()
-    assert model.get_link("support").world_angular_velocity() == \
-        pytest.approx(ang_velocity, abs=0.01)
+    # Reset both linear and angular of pendulum1 by calling the combined method
+    assert model1.reset_base_world_velocity(lin_velocity, ang_velocity)
+    assert model1.base_world_linear_velocity() == pytest.approx([0, 0, 0])
+    assert model1.base_world_angular_velocity() == pytest.approx([0, 0, 0])
+
+    # Reset both linear and angular of pendulum2 by calling the individual method
+    assert model2.reset_base_world_linear_velocity(lin_velocity)
+    assert model2.reset_base_world_angular_velocity(ang_velocity)
+    assert model2.base_world_linear_velocity() == pytest.approx([0, 0, 0])
+    assert model2.base_world_angular_velocity() == pytest.approx([0, 0, 0])
+
+    # Run the simulation
+    gazebo.run()
+
+    # Check model1 velocity
+    assert model1.base_world_linear_velocity() == pytest.approx(lin_velocity, abs=0.01)
+    assert model1.base_world_angular_velocity() == pytest.approx(ang_velocity, abs=0.01)
+
+    # Check model2 velocity
+    assert model2.base_world_linear_velocity() == pytest.approx(lin_velocity, abs=0.01)
+    assert model2.base_world_angular_velocity() == pytest.approx(ang_velocity, abs=0.01)
+
+    # The velocity of the base link must be the same
+    assert model1.get_link("support").world_linear_velocity() == \
+           pytest.approx(lin_velocity, abs=0.01)
+    assert model1.get_link("support").world_angular_velocity() == \
+           pytest.approx(ang_velocity, abs=0.01)
+
+    # The velocity of the base link must be the same
+    assert model2.get_link("support").world_linear_velocity() == \
+           pytest.approx(lin_velocity, abs=0.01)
+    assert model2.get_link("support").world_angular_velocity() == \
+           pytest.approx(ang_velocity, abs=0.01)
 
 
 @pytest.mark.parametrize("gazebo",
