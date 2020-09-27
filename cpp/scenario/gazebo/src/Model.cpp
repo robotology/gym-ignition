@@ -290,14 +290,44 @@ bool Model::resetBaseOrientation(const std::array<double, 4>& orientation)
 
 bool Model::resetBaseWorldLinearVelocity(const std::array<double, 3>& linear)
 {
-    return this->resetBaseWorldVelocity(linear,
-                                        this->baseWorldAngularVelocity());
+    // Check if the velocity was not already reset in this simulation run,
+    // otherwise the previous target would get overridden
+    if (!this->m_ecm->EntityHasComponentType(
+            this->m_entity,
+            ignition::gazebo::components::WorldVelocityCmd().TypeId())) {
+
+        return this->resetBaseWorldVelocity(linear,
+                                            this->baseWorldAngularVelocity());
+    }
+
+    // Get the existing cmd
+    const auto& velocityCmd = utils::getExistingComponentData<
+        ignition::gazebo::components::WorldVelocityCmd>(m_ecm, m_entity);
+
+    // Override only the linear velocity
+    return this->resetBaseWorldVelocity(
+        linear, utils::fromIgnitionVector(velocityCmd.angular));
 }
 
 bool Model::resetBaseWorldAngularVelocity(const std::array<double, 3>& angular)
 {
-    return this->resetBaseWorldVelocity(this->baseWorldLinearVelocity(),
-                                        angular);
+    // Check if the velocity was not already reset in this simulation run,
+    // otherwise the previous target would get overridden
+    if (!this->m_ecm->EntityHasComponentType(
+            this->m_entity,
+            ignition::gazebo::components::WorldVelocityCmd().TypeId())) {
+
+        return this->resetBaseWorldVelocity(this->baseWorldLinearVelocity(),
+                                            angular);
+    }
+
+    // Get the existing cmd
+    const auto& velocityCmd = utils::getExistingComponentData<
+        ignition::gazebo::components::WorldVelocityCmd>(m_ecm, m_entity);
+
+    // Override only the angular velocity
+    return this->resetBaseWorldVelocity(
+        utils::fromIgnitionVector(velocityCmd.linear), angular);
 }
 
 bool Model::resetBaseWorldVelocity(const std::array<double, 3>& linear,
