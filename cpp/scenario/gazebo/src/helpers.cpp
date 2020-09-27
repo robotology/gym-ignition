@@ -40,6 +40,7 @@
 #include <sdf/World.hh>
 
 #include <cassert>
+#include <sstream>
 
 using namespace scenario::gazebo;
 
@@ -335,6 +336,27 @@ bool utils::renameSDFModel(sdf::Root& sdfRoot,
     return true;
 }
 
+namespace scenario::gazebo::utils {
+    /**
+     * Convert a double to a string ignoring the current locale.
+     *
+     * Furthermore, set it with precision 25 to ensure that the
+     * string can be converted back exactly to the double that
+     * generated it.
+     */
+    std::string toExactStringNoLocale(const double in);
+}
+
+
+std::string utils::toExactStringNoLocale(const double in)
+{
+    std::ostringstream ss;
+    ss.imbue(std::locale::classic());
+    ss << std::setprecision(25) << in;
+    return ss.str();
+}
+
+
 bool utils::updateSDFPhysics(sdf::Root& sdfRoot,
                              const double maxStepSize,
                              const double rtf,
@@ -372,16 +394,16 @@ bool utils::updateSDFPhysics(sdf::Root& sdfRoot,
     assert(physicsElement);
 
     sdf::ElementPtr max_step_size = physicsElement->GetElement("max_step_size");
-    max_step_size->AddValue("double", std::to_string(maxStepSize), true);
+    max_step_size->AddValue("double", toExactStringNoLocale(maxStepSize), true);
 
     sdf::ElementPtr real_time_update_rate =
         physicsElement->GetElement("real_time_update_rate");
     real_time_update_rate->AddValue(
-        "double", std::to_string(realTimeUpdateRate), true);
+        "double", toExactStringNoLocale(realTimeUpdateRate), true);
 
     sdf::ElementPtr real_time_factor =
         physicsElement->GetElement("real_time_factor");
-    real_time_factor->AddValue("double", std::to_string(rtf), true);
+    real_time_factor->AddValue("double", toExactStringNoLocale(rtf), true);
 
     return true;
 }

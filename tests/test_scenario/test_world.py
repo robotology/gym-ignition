@@ -183,7 +183,7 @@ def test_world_physics_plugin(gazebo: scenario.GazeboSimulator):
 
 
 @pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
+                         [(0.001, 1.0, 1), (1e-9, 1.0, 1)],
                          indirect=True,
                          ids=utils.id_gazebo_fn)
 def test_sim_time_starts_from_zero(gazebo: scenario.GazeboSimulator):
@@ -207,4 +207,4 @@ def test_sim_time_starts_from_zero(gazebo: scenario.GazeboSimulator):
     assert world.time() == 2 * dt
 
     gazebo.run(paused=False)
-    assert world.time() == 3 * dt
+    assert world.time() == pytest.approx(3 * dt)
