@@ -22,19 +22,35 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-add_subdirectory(Physics)
-add_subdirectory(Sensors)
-add_subdirectory(ECMProvider)
-add_subdirectory(JointController)
-add_subdirectory(ControllerRunner)
+find_package(ignition-sensors3-all REQUIRED)
+find_package(ignition-rendering3 REQUIRED)
+find_package(ignition-gazebo3-rendering REQUIRED)
 
-install_basic_package_files(ScenarioGazeboPlugins
-    COMPONENT ScenarioGazeboPlugins
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY AnyNewerVersion
-    EXPORT ScenarioGazeboPluginsExport
-    DEPENDENCIES ${ignition-gazebo}
-    NAMESPACE ScenarioGazeboPlugins::
-    NO_CHECK_REQUIRED_COMPONENTS_MACRO
-    INSTALL_DESTINATION
-    ${SCENARIO_INSTALL_LIBDIR}/cmake/ScenarioGazeboPlugins)
+# =======
+# Sensors
+# =======
+
+add_library(Sensors SHARED
+    Sensors.h
+    Sensors.cpp)
+
+target_link_libraries(Sensors
+    PUBLIC
+    ignition-gazebo3::core
+    PRIVATE
+    ignition-sensors3::ignition-sensors3-all
+    ignition-rendering3::ignition-rendering3
+    ignition-gazebo3::ignition-gazebo3-rendering)
+
+target_include_directories(Sensors PRIVATE
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+
+# ===================
+# Install the targets
+# ===================
+
+install(
+    TARGETS Sensors
+    LIBRARY DESTINATION ${SCENARIO_INSTALL_LIBDIR}/scenario/plugins
+    ARCHIVE DESTINATION ${SCENARIO_INSTALL_LIBDIR}/scenario/plugins
+    RUNTIME DESTINATION ${SCENARIO_INSTALL_BINDIR})
