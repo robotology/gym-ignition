@@ -15,48 +15,41 @@
  *
  */
 
-#include <set>
+#include "Sensors.h"
 
 #include <ignition/common/Profiler.hh>
-#include <ignition/plugin/Register.hh>
-
-#include <sdf/Sensor.hh>
-
 #include <ignition/common/Time.hh>
+#include <ignition/gazebo/EntityComponentManager.hh>
+#include <ignition/gazebo/Events.hh>
+#include <ignition/gazebo/components/Atmosphere.hh>
+#include <ignition/gazebo/components/Camera.hh>
+#include <ignition/gazebo/components/DepthCamera.hh>
+#include <ignition/gazebo/components/GpuLidar.hh>
+#include <ignition/gazebo/components/RgbdCamera.hh>
+#include <ignition/gazebo/components/ThermalCamera.hh>
+#include <ignition/gazebo/components/World.hh>
+#include <ignition/gazebo/rendering/RenderUtil.hh>
 #include <ignition/math/Helpers.hh>
-
+#include <ignition/plugin/Register.hh>
 #include <ignition/rendering/Scene.hh>
 #include <ignition/sensors/CameraSensor.hh>
+#include <ignition/sensors/DepthCameraSensor.hh>
 #include <ignition/sensors/Manager.hh>
 #include <ignition/sensors/RenderingSensor.hh>
 #include <ignition/sensors/ThermalCameraSensor.hh>
+#include <sdf/Sensor.hh>
 
-#include "ignition/gazebo/EntityComponentManager.hh"
-#include "ignition/gazebo/Events.hh"
-#include "ignition/gazebo/components/Atmosphere.hh"
-#include "ignition/gazebo/components/Camera.hh"
-#include "ignition/gazebo/components/DepthCamera.hh"
-#include "ignition/gazebo/components/GpuLidar.hh"
-#include "ignition/gazebo/components/RgbdCamera.hh"
-#include "ignition/gazebo/components/ThermalCamera.hh"
-#include "ignition/gazebo/components/World.hh"
+#include <set>
 
-#include "ignition/gazebo/rendering/RenderUtil.hh"
-
-#include "Sensors.h"
-
-using namespace ignition;
-using namespace gazebo;
-using namespace systems;
 using namespace scenario::plugins::gazebo;
 
 // Private data class.
-class scenario::plugins::gazebo::Sensors::SensorsPrivate
+class Sensors::SensorsPrivate
 {
     /// \brief Sensor manager object. This manages the lifecycle of the
     /// instantiated sensors.
 public:
-    sensors::Manager sensorManager;
+    ignition::sensors::Manager sensorManager;
 
     /// \brief used to store whether rendering objects have been created.
 public:
@@ -64,17 +57,17 @@ public:
 
     /// \brief Main rendering interface
 public:
-    RenderUtil renderUtil;
+    ignition::gazebo::RenderUtil renderUtil;
 
     /// \brief Unique set of sensor ids
     // TODO(anyone) Remove element when sensor is deleted
 public:
-    std::set<sensors::SensorId> sensorIds;
+    std::set<ignition::sensors::SensorId> sensorIds;
 
     /// \brief rendering scene to be managed by the scene manager and used to
     /// generate sensor data
 public:
-    rendering::ScenePtr scene;
+    ignition::rendering::ScenePtr scene;
 
     /// \brief Temperature used by thermal camera. Defaults to temperature at
     /// sea level
@@ -86,7 +79,7 @@ public:
     /// Value: Pointer to camera
     // TODO(anyone) Remove element when sensor is deleted
 public:
-    std::map<std::string, sensors::CameraSensor*> cameras;
+    std::map<std::string, ignition::sensors::CameraSensor*> cameras;
 
     /// \brief Flag to indicate if worker threads are running
 public:
@@ -126,7 +119,7 @@ public:
 
     /// \brief Sensors to include in the next rendering iteration
 public:
-    std::vector<sensors::RenderingSensor*> activeSensors;
+    std::vector<ignition::sensors::RenderingSensor*> activeSensors;
 
     /// \brief Mutex to protect sensorMask
 public:
@@ -134,7 +127,7 @@ public:
 
     /// \brief Mask sensor updates for sensors currently being rendered
 public:
-    std::map<sensors::SensorId, ignition::common::Time> sensorMask;
+    std::map<ignition::sensors::SensorId, ignition::common::Time> sensorMask;
 
     /// \brief Wait for initialization to happen
 private:
@@ -325,10 +318,10 @@ Sensors::~Sensors()
 }
 
 //////////////////////////////////////////////////
-void Sensors::Configure(const Entity& /*_id*/,
+void Sensors::Configure(const ignition::gazebo::Entity& /*_entity*/,
                         const std::shared_ptr<const sdf::Element>& _sdf,
-                        EntityComponentManager& _ecm,
-                        EventManager& _eventMgr)
+                        ignition::gazebo::EntityComponentManager& _ecm,
+                        ignition::gazebo::EventManager& _eventMgr)
 {
     ignwarn << "Configuring Sensors system" << std::endl;
     // Setup rendering
@@ -344,10 +337,12 @@ void Sensors::Configure(const Entity& /*_id*/,
                   std::placeholders::_2));
 
     // parse sensor-specific data
-    auto worldEntity = _ecm.EntityByComponents(components::World());
-    if (kNullEntity != worldEntity) {
+    auto worldEntity =
+        _ecm.EntityByComponents(ignition::gazebo::components::World());
+    if (ignition::gazebo::kNullEntity != worldEntity) {
         // temperature used by thermal camera
-        auto atmosphere = _ecm.Component<components::Atmosphere>(worldEntity);
+        auto atmosphere =
+            _ecm.Component<ignition::gazebo::components::Atmosphere>(
         if (atmosphere) {
             auto atmosphereSdf = atmosphere->Data();
             this->dataPtr->ambientTemperature =
@@ -355,7 +350,7 @@ void Sensors::Configure(const Entity& /*_id*/,
         }
     }
 
-    this->dataPtr->stopConn = _eventMgr.Connect<events::Stop>(
+    this->dataPtr->stopConn = _eventMgr.Connect<ignition::gazebo::events::Stop>(
         std::bind(&SensorsPrivate::Stop, this->dataPtr.get()));
 
     // Kick off worker thread
@@ -363,8 +358,8 @@ void Sensors::Configure(const Entity& /*_id*/,
 }
 
 //////////////////////////////////////////////////
-void Sensors::PostUpdate(const UpdateInfo& _info,
-                         const EntityComponentManager& _ecm)
+void Sensors::PostUpdate(const ignition::gazebo::UpdateInfo& _info,
+                         const ignition::gazebo::EntityComponentManager& _ecm)
 {
     IGN_PROFILE("Sensors::PostUpdate");
 
@@ -377,11 +372,15 @@ void Sensors::PostUpdate(const UpdateInfo& _info,
     }
 
     if (!this->dataPtr->initialized
-        && (_ecm.HasComponentType(components::Camera::typeId)
-            || _ecm.HasComponentType(components::DepthCamera::typeId)
-            || _ecm.HasComponentType(components::GpuLidar::typeId)
-            || _ecm.HasComponentType(components::RgbdCamera::typeId)
-            || _ecm.HasComponentType(components::ThermalCamera::typeId))) {
+        && (_ecm.HasComponentType(ignition::gazebo::components::Camera::typeId)
+            || _ecm.HasComponentType(
+                ignition::gazebo::components::DepthCamera::typeId)
+            || _ecm.HasComponentType(
+                ignition::gazebo::components::GpuLidar::typeId)
+            || _ecm.HasComponentType(
+                ignition::gazebo::components::RgbdCamera::typeId)
+            || _ecm.HasComponentType(
+                ignition::gazebo::components::ThermalCamera::typeId))) {
         igndbg << "Initialization needed" << std::endl;
         std::unique_lock<std::mutex> lock(this->dataPtr->renderMutex);
         this->dataPtr->doInit = true;
@@ -391,15 +390,16 @@ void Sensors::PostUpdate(const UpdateInfo& _info,
     if (this->dataPtr->running && this->dataPtr->initialized) {
         this->dataPtr->renderUtil.UpdateFromECM(_info, _ecm);
 
-        auto time = math::durationToSecNsec(_info.simTime);
-        auto t = common::Time(time.first, time.second);
+        auto time = ignition::math::durationToSecNsec(_info.simTime);
+        auto t = ignition::common::Time(time.first, time.second);
 
-        std::vector<sensors::RenderingSensor*> activeSensors;
+        std::vector<ignition::sensors::RenderingSensor*> activeSensors;
 
         this->dataPtr->sensorMaskMutex.lock();
         for (auto id : this->dataPtr->sensorIds) {
-            sensors::Sensor* s = this->dataPtr->sensorManager.Sensor(id);
-            auto rs = dynamic_cast<sensors::RenderingSensor*>(s);
+            ignition::sensors::Sensor* s =
+                this->dataPtr->sensorManager.Sensor(id);
+            auto rs = dynamic_cast<ignition::sensors::RenderingSensor*>(s);
 
             auto it = this->dataPtr->sensorMask.find(id);
             if (it != this->dataPtr->sensorMask.end()) {
@@ -451,7 +451,7 @@ std::string Sensors::CreateSensor(const sdf::Sensor& _sdf,
     auto sensorId = this->dataPtr->sensorManager.CreateSensor(_sdf);
     auto sensor = this->dataPtr->sensorManager.Sensor(sensorId);
 
-    if (nullptr == sensor || sensors::NO_SENSOR == sensor->Id()) {
+    if (nullptr == sensor || ignition::sensors::NO_SENSOR == sensor->Id()) {
         ignerr << "Failed to create sensor [" << _sdf.Name() << "]"
                << std::endl;
         return std::string();
@@ -460,13 +460,14 @@ std::string Sensors::CreateSensor(const sdf::Sensor& _sdf,
     this->dataPtr->sensorIds.insert(sensorId);
 
     // Set the scene so it can create the rendering sensor
-    auto renderingSensor = dynamic_cast<sensors::RenderingSensor*>(sensor);
+    auto renderingSensor =
+        dynamic_cast<ignition::sensors::RenderingSensor*>(sensor);
     renderingSensor->SetScene(this->dataPtr->scene);
     renderingSensor->SetParent(_parentName);
     renderingSensor->SetManualSceneUpdate(true);
 
     // Special case for stereo cameras
-    auto cameraSensor = dynamic_cast<sensors::CameraSensor*>(sensor);
+    auto cameraSensor = dynamic_cast<ignition::sensors::CameraSensor*>(sensor);
     if (nullptr != cameraSensor) {
         // Parent
         auto parent = cameraSensor->Parent();
@@ -501,7 +502,8 @@ std::string Sensors::CreateSensor(const sdf::Sensor& _sdf,
     }
 
     // Sensor-specific settings
-    auto thermalSensor = dynamic_cast<sensors::ThermalCameraSensor*>(sensor);
+    auto thermalSensor =
+        dynamic_cast<ignition::sensors::ThermalCameraSensor*>(sensor);
     if (nullptr != thermalSensor) {
         thermalSensor->SetAmbientTemperature(this->dataPtr->ambientTemperature);
     }
@@ -509,9 +511,7 @@ std::string Sensors::CreateSensor(const sdf::Sensor& _sdf,
     return sensor->Name();
 }
 
-IGNITION_ADD_PLUGIN(Sensors,
-                    System,
-                    Sensors::ISystemConfigure,
-                    Sensors::ISystemPostUpdate)
-
-IGNITION_ADD_PLUGIN_ALIAS(Sensors, "ignition::gazebo::systems::Sensors")
+IGNITION_ADD_PLUGIN(scenario::plugins::gazebo::Sensors,
+                    scenario::plugins::gazebo::Sensors::System,
+                    scenario::plugins::gazebo::Sensors::ISystemConfigure,
+                    scenario::plugins::gazebo::Sensors::ISystemPostUpdate)
