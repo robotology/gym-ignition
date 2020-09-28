@@ -53,10 +53,11 @@ private:
     /// \brief Create a rendering sensor from sdf
     /// \param[in] _sdf SDF description of the sensor
     /// \param[in] _parentName Name of parent that the sensor is attached to
+    /// \param[in] _ecm The EntityComponentManager of the simulation instance
     /// \return Sensor name
     std::string CreateSensor(const sdf::Sensor& _sdf,
-                             const std::string& _parentName);
-
+                             const std::string& _parentName,
+                             ignition::gazebo::EntityComponentManager& _ecm);
 
     /// \brief Private data pointer.
     class SensorsPrivate;

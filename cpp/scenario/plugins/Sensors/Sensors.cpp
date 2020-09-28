@@ -16,6 +16,9 @@
  */
 
 #include "Sensors.h"
+#include "scenario/gazebo/components/DepthCameraPtr.h"
+#include "scenario/gazebo/components/SensorsPlugin.h"
+#include "scenario/gazebo/helpers.h"
 
 #include <ignition/common/Profiler.hh>
 #include <ignition/common/Time.hh>
@@ -25,6 +28,8 @@
 #include <ignition/gazebo/components/Camera.hh>
 #include <ignition/gazebo/components/DepthCamera.hh>
 #include <ignition/gazebo/components/GpuLidar.hh>
+#include <ignition/gazebo/components/Name.hh>
+#include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/gazebo/components/RgbdCamera.hh>
 #include <ignition/gazebo/components/ThermalCamera.hh>
 #include <ignition/gazebo/components/World.hh>
@@ -129,6 +134,10 @@ public:
 public:
     std::map<ignition::sensors::SensorId, ignition::common::Time> sensorMask;
 
+    /// \brief Marks whether PostUpdate is called from a paused or running state
+public:
+    bool pausedStep{false};
+
     /// \brief Wait for initialization to happen
 private:
     void WaitForInit();
@@ -166,6 +175,34 @@ private:
 private:
     void RenderThread();
 
+public:
+    /// Helper to store the pointer of a sensor in the ECM
+    static bool
+    StoreSensorIntoECM(ignition::sensors::Sensor* sensor,
+                       const sdf::SensorType type,
+                       const std::string& scopedParentName,
+                       ignition::gazebo::EntityComponentManager& ecm);
+
+public:
+    /// Template for the helper that stores the pointer of a sensor in the ECM
+    template <typename IgnitionSensorType,
+              typename ComponentOfSensor,
+              typename ComponentOfSensorPtr>
+    static bool
+    StoreSensorIntoECMTemplate(ignition::sensors::Sensor* sensor,
+                               const std::string& scopedParentName,
+                               ignition::gazebo::EntityComponentManager& ecm);
+
+public:
+    /// Helper to extract the entity and name of server from the ECM given
+    /// its parent's scoped name.
+    template <typename ComponentOfSensor>
+    static bool
+    GetSensorDataFromECM(ignition::gazebo::EntityComponentManager& ecm,
+                         const std::string& scopedParentName,
+                         std::string& sensorName,
+                         ignition::gazebo::Entity& sensorEntity);
+
     /// \brief Launch the rendering thread
 public:
     void Run();
@@ -188,14 +225,14 @@ void Sensors::SensorsPrivate::WaitForInit()
 
         if (this->doInit) {
             // Only initialize if there are rendering sensors
-            ignwarn << "Initializing render context" << std::endl;
+            ignwarn << "Intializing render context" << std::endl;
             this->renderUtil.Init();
             this->scene = this->renderUtil.Scene();
             this->initialized = true;
         }
 
         this->updateAvailable = false;
-        this->renderCv.notify_one();
+        this->renderCv.notify_one(); // Unlock PostUpdate
     }
     ignwarn << "Rendering Thread initialized" << std::endl;
 }
@@ -203,7 +240,7 @@ void Sensors::SensorsPrivate::WaitForInit()
 //////////////////////////////////////////////////
 void Sensors::SensorsPrivate::RunOnce()
 {
-    std::unique_lock<std::mutex> lock(this->renderMutex);
+    std::unique_lock lock(this->renderMutex);
     this->renderCv.wait(
         lock, [this]() { return !this->running || this->updateAvailable; });
 
@@ -230,7 +267,7 @@ void Sensors::SensorsPrivate::RunOnce()
         for (const auto& sensor : this->activeSensors) {
             // 90% of update delta (1/UpdateRate());
             ignition::common::Time delta(0.9 / sensor->UpdateRate());
-            this->sensorMask[sensor->Id()] = this->updateTime + delta;
+            // this->sensorMask[sensor->Id()] = this->updateTime + delta;
         }
         this->sensorMaskMutex.unlock();
 
@@ -243,7 +280,7 @@ void Sensors::SensorsPrivate::RunOnce()
             this->scene->PreRender();
         }
 
-        {
+        if (!pausedStep) {
             // publish data
             IGN_PROFILE("RunOnce");
             this->sensorManager.RunOnce(this->updateTime);
@@ -318,23 +355,33 @@ Sensors::~Sensors()
 }
 
 //////////////////////////////////////////////////
-void Sensors::Configure(const ignition::gazebo::Entity& /*_entity*/,
+void Sensors::Configure(const ignition::gazebo::Entity& _entity,
                         const std::shared_ptr<const sdf::Element>& _sdf,
                         ignition::gazebo::EntityComponentManager& _ecm,
                         ignition::gazebo::EventManager& _eventMgr)
 {
     ignwarn << "Configuring Sensors system" << std::endl;
+
+    // Check if the model already has a Sensors plugin
+    if (_ecm.EntityHasComponentType(
+            _entity, ignition::gazebo::components::SensorsPlugin::typeId)) {
+        ignerr << "The world already has a Sensors plugin" << std::endl;
+        return;
+    }
+
     // Setup rendering
     std::string engineName =
         _sdf->Get<std::string>("render_engine", "ogre2").first;
 
+    // Close the CreateSensor method in a lambda to catch the ECM required to
+    // store the sensor pointers in custom components
+    auto CreateSensorCB = [&](const sdf::Sensor& sdf,
+                              const std::string& parentName) -> std::string {
+        return this->CreateSensor(sdf, parentName, _ecm);
+    };
+
     this->dataPtr->renderUtil.SetEngineName(engineName);
-    this->dataPtr->renderUtil.SetEnableSensors(
-        true,
-        std::bind(&Sensors::CreateSensor,
-                  this,
-                  std::placeholders::_1,
-                  std::placeholders::_2));
+    this->dataPtr->renderUtil.SetEnableSensors(true, CreateSensorCB);
 
     // parse sensor-specific data
     auto worldEntity =
@@ -343,6 +390,7 @@ void Sensors::Configure(const ignition::gazebo::Entity& /*_entity*/,
         // temperature used by thermal camera
         auto atmosphere =
             _ecm.Component<ignition::gazebo::components::Atmosphere>(
+                worldEntity);
         if (atmosphere) {
             auto atmosphereSdf = atmosphere->Data();
             this->dataPtr->ambientTemperature =
@@ -355,6 +403,10 @@ void Sensors::Configure(const ignition::gazebo::Entity& /*_entity*/,
 
     // Kick off worker thread
     this->dataPtr->Run();
+
+    // Add the SensorsPlugin component to the world
+    scenario::gazebo::utils::setComponentData<
+        ignition::gazebo::components::SensorsPlugin>(&_ecm, _entity, true);
 }
 
 //////////////////////////////////////////////////
@@ -371,6 +423,12 @@ void Sensors::PostUpdate(const ignition::gazebo::UpdateInfo& _info,
                 << "s]. System may not work properly." << std::endl;
     }
 
+    // Set the state of the simulation. Paused step call Scene::Prerender() but
+    // do not execute Manager::RunOnce(). This prevents sensors to generate data
+    // and mess with the time handling of the classes that extract data from the
+    // ECM exposing C++ APIs.
+    this->dataPtr->pausedStep = _info.paused;
+
     if (!this->dataPtr->initialized
         && (_ecm.HasComponentType(ignition::gazebo::components::Camera::typeId)
             || _ecm.HasComponentType(
@@ -381,10 +439,20 @@ void Sensors::PostUpdate(const ignition::gazebo::UpdateInfo& _info,
                 ignition::gazebo::components::RgbdCamera::typeId)
             || _ecm.HasComponentType(
                 ignition::gazebo::components::ThermalCamera::typeId))) {
-        igndbg << "Initialization needed" << std::endl;
-        std::unique_lock<std::mutex> lock(this->dataPtr->renderMutex);
-        this->dataPtr->doInit = true;
-        this->dataPtr->renderCv.notify_one();
+        {
+            igndbg << "Initialization needed" << std::endl;
+            std::unique_lock lock(this->dataPtr->renderMutex);
+            this->dataPtr->doInit = true;
+            this->dataPtr->renderCv.notify_one(); // Unlock WaitForInit
+        }
+
+        {
+            // Wait the render context to be ready
+            std::unique_lock lock(this->dataPtr->renderMutex);
+            this->dataPtr->renderCv.wait(lock, [this] {
+                return this->dataPtr->running && this->dataPtr->initialized;
+            });
+        }
     }
 
     if (this->dataPtr->running && this->dataPtr->initialized) {
@@ -404,6 +472,7 @@ void Sensors::PostUpdate(const ignition::gazebo::UpdateInfo& _info,
             auto it = this->dataPtr->sensorMask.find(id);
             if (it != this->dataPtr->sensorMask.end()) {
                 if (it->second <= t) {
+                    // second = +inf -> never happens
                     this->dataPtr->sensorMask.erase(it);
                 }
                 else {
@@ -417,29 +486,34 @@ void Sensors::PostUpdate(const ignition::gazebo::UpdateInfo& _info,
         }
         this->dataPtr->sensorMaskMutex.unlock();
 
-        if (!activeSensors.empty()
-            || this->dataPtr->renderUtil.PendingSensors() > 0) {
-            std::unique_lock<std::mutex> lock(this->dataPtr->renderMutex);
-            this->dataPtr->renderCv.wait(lock, [this] {
-                return !this->dataPtr->running
-                       || !this->dataPtr->updateAvailable;
-            });
-
-            if (!this->dataPtr->running) {
-                return;
-            }
+        if (this->dataPtr->running
+            && (!activeSensors.empty()
+                || this->dataPtr->renderUtil.PendingSensors() > 0)) {
 
             this->dataPtr->activeSensors = std::move(activeSensors);
             this->dataPtr->updateTime = t;
             this->dataPtr->updateAvailable = true;
+
+            // Trigger RunOnce to create the new sensors and render
+            // the other ones
             this->dataPtr->renderCv.notify_one();
+
+            // Wait that RunOnce finishes. Note that this does not assure that
+            // sensors finished to generate their data. The callbacks that can
+            // be associated to each sensor to get their data must properly
+            // handle the resulting asynchronous behaviour.
+            std::unique_lock lock(this->dataPtr->renderMutex);
+            this->dataPtr->renderCv.wait(
+                lock, [this] { return !this->dataPtr->updateAvailable; });
         }
     }
 }
 
 //////////////////////////////////////////////////
-std::string Sensors::CreateSensor(const sdf::Sensor& _sdf,
-                                  const std::string& _parentName)
+std::string
+Sensors::CreateSensor(const sdf::Sensor& _sdf,
+                      const std::string& _parentName,
+                      ignition::gazebo::EntityComponentManager& _ecm)
 {
     if (_sdf.Type() == sdf::SensorType::NONE) {
         ignerr << "Unable to create sensor. SDF sensor type is NONE."
@@ -508,7 +582,167 @@ std::string Sensors::CreateSensor(const sdf::Sensor& _sdf,
         thermalSensor->SetAmbientTemperature(this->dataPtr->ambientTemperature);
     }
 
+    // Store the sensor in the ECM to access it without relying on transport
+    if (!Sensors::SensorsPrivate::StoreSensorIntoECM(
+            sensor, _sdf.Type(), _parentName, _ecm)) {
+        ignerr << "Failed to store sensor '" << sensor->Name() << "' in the ECM"
+               << std::endl;
+    }
+
     return sensor->Name();
+}
+
+//////////////////////////////////////////////////
+template <typename ComponentOfSensor>
+bool Sensors::SensorsPrivate::GetSensorDataFromECM(
+    ignition::gazebo::EntityComponentManager& ecm,
+    const std::string& scopedParentName,
+    std::string& sensorName,
+    ignition::gazebo::Entity& sensorEntity)
+{
+    // Lambda to tokenize the scoped parent name and extract
+    // the pair <modelName, linkName>
+    auto tokenize =
+        [](const std::string& input,
+           const std::string& delimiter) -> std::vector<std::string> {
+        size_t start = 0;
+        size_t end = input.find(delimiter);
+        std::vector<std::string> tokens;
+
+        while (end != std::string::npos) {
+            tokens.push_back(input.substr(start, end - start));
+            start = end + delimiter.length();
+            end = delimiter.find(delimiter, start);
+        }
+
+        tokens.push_back(input.substr(start, end));
+
+        return tokens;
+    };
+
+    // Tokenize the scoped parent name
+    const auto tokens = tokenize(scopedParentName, "::");
+
+    if (tokens.size() != 2) {
+        ignerr << "Failed to tokenize scoped name of sensor's parent"
+               << std::endl;
+        return false;
+    }
+
+    const std::string& linkName = tokens[1];
+    const std::string& modelName = tokens[0];
+
+    // Get the name and the entity of the sensor
+    ecm.Each<ignition::gazebo::components::Name,
+             ignition::gazebo::components::ParentEntity,
+             ComponentOfSensor>(
+        [&](const ignition::gazebo::Entity& entity,
+            ignition::gazebo::components::Name* nameComponent,
+            ignition::gazebo::components::ParentEntity* parentEntityComponent,
+            ComponentOfSensor*) -> bool {
+            assert(nameComponent);
+            assert(parentEntityComponent);
+
+            const auto parentEntity = parentEntityComponent->Data();
+            const auto grandparentEntity = ecm.ParentEntity(parentEntity);
+
+            if (parentEntity == ignition::gazebo::kNullEntity
+                || grandparentEntity == ignition::gazebo::kNullEntity) {
+                return true;
+            }
+
+            const auto& parentEntityName =
+                scenario::gazebo::utils::getExistingComponentData<
+                    ignition::gazebo::components::Name>(&ecm, parentEntity);
+
+            const auto& grandparentEntityName =
+                scenario::gazebo::utils::getExistingComponentData<
+                    ignition::gazebo::components::Name>(&ecm,
+                                                        grandparentEntity);
+
+            if (parentEntityName == linkName
+                && grandparentEntityName == modelName) {
+                sensorEntity = entity;
+                sensorName = nameComponent->Data();
+            }
+
+            return true;
+        });
+
+    if (sensorEntity == ignition::gazebo::kNullEntity || sensorName.empty()) {
+        ignerr << "Failed to process sensor. "
+               << "Couldn't find the entity with scoped name "
+               << scopedParentName << std::endl;
+        return false;
+    }
+
+    return true;
+}
+
+//////////////////////////////////////////////////
+template <typename IgnitionSensorType,
+          typename ComponentOfSensor,
+          typename ComponentOfSensorPtr>
+bool Sensors::SensorsPrivate::StoreSensorIntoECMTemplate(
+    ignition::sensors::Sensor* sensor,
+    const std::string& scopedParentName,
+    ignition::gazebo::EntityComponentManager& ecm)
+{
+    // Downcast the sensor and check if the type is correct
+    auto downcastSensor = dynamic_cast<IgnitionSensorType*>(sensor);
+
+    if (!downcastSensor) {
+        ignerr << "Failed to downcast sensor" << std::endl;
+        return false;
+    }
+
+    std::string sensorName;
+    ignition::gazebo::Entity sensorEntity;
+
+    // Extract the name and entity of the sensor
+    if (!SensorsPrivate::GetSensorDataFromECM<ComponentOfSensor>(
+            ecm, scopedParentName, sensorName, sensorEntity)) {
+        ignerr << "Failed to get the name and entity of the sensor "
+               << "from the ECM" << std::endl;
+        return false;
+    }
+
+    // Store the downcasted pointer in the ECM. It is used by ScenarI/O
+    // to programmatically extract data from C++.
+    scenario::gazebo::utils::setComponentData<ComponentOfSensorPtr>(
+        &ecm, sensorEntity, downcastSensor);
+
+    ignmsg << "Successfully processed sensor '"
+           << scopedParentName + "::" + sensorName << "' (id=" << sensor->Id()
+           << ")" << std::endl;
+    return true;
+}
+
+//////////////////////////////////////////////////
+bool Sensors::SensorsPrivate::StoreSensorIntoECM(
+    ignition::sensors::Sensor* sensor,
+    const sdf::SensorType type,
+    const std::string& scopedParentName,
+    ignition::gazebo::EntityComponentManager& ecm)
+{
+    switch (type) {
+        case sdf::SensorType::DEPTH_CAMERA: {
+            if (!SensorsPrivate::StoreSensorIntoECMTemplate<
+                    ignition::sensors::DepthCameraSensor,
+                    ignition::gazebo::components::DepthCamera,
+                    ignition::gazebo::components::DepthCameraPtr>(
+                    sensor, scopedParentName, ecm)) {
+                ignerr << "Failed to store the sensor in the ECM" << std::endl;
+                return false;
+            }
+            break;
+        }
+        default:
+            ignerr << "Sensor type " << int(type) << " not yet supported";
+            return false;
+    }
+
+    return true;
 }
 
 IGNITION_ADD_PLUGIN(scenario::plugins::gazebo::Sensors,

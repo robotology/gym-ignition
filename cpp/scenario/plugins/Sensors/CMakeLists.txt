@@ -38,6 +38,8 @@ target_link_libraries(Sensors
     PUBLIC
     ignition-gazebo3::core
     PRIVATE
+    ScenarioGazebo::ScenarioGazebo
+    ScenarioGazebo::ExtraComponents
     ignition-sensors3::ignition-sensors3-all
     ignition-rendering3::ignition-rendering3
     ignition-gazebo3::ignition-gazebo3-rendering)
