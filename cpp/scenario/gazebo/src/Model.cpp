@@ -1021,14 +1021,13 @@ Model::depthCamera(const std::string& name) const
         throw std::runtime_error("Failed to find depth camera '" + name + "'");
     }
 
+    // TODO: cache the object
     auto depthCamera = std::make_shared<sensors::DepthCamera>();
 
-    sError << "initializing" << std::endl;
     if (!depthCamera->initialize(depthCameraEntity, m_ecm, m_eventManager)) {
         throw std::runtime_error("Failed to initialize depth camera '" + name
                                  + "'");
     }
-    sError << "post initializing" << std::endl;
 
     return depthCamera;
 }
