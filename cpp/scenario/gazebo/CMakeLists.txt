@@ -78,7 +78,8 @@ set(SCENARIO_GAZEBO_PUBLIC_HDRS
     include/scenario/gazebo/Log.h
     include/scenario/gazebo/utils.h
     include/scenario/gazebo/helpers.h
-    include/scenario/gazebo/exceptions.h)
+    include/scenario/gazebo/exceptions.h
+    include/scenario/gazebo/sensors/DepthCamera.h)
 
 add_library(ScenarioGazebo
     ${SCENARIO_GAZEBO_PUBLIC_HDRS}
@@ -87,7 +88,8 @@ add_library(ScenarioGazebo
     src/Joint.cpp
     src/Link.cpp
     src/utils.cpp
-    src/helpers.cpp)
+    src/helpers.cpp
+    src/DepthCamera.cpp)
 add_library(ScenarioGazebo::ScenarioGazebo ALIAS ScenarioGazebo)
 
 target_include_directories(ScenarioGazebo PUBLIC
