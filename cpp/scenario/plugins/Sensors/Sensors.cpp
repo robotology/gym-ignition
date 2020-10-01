@@ -600,28 +600,9 @@ bool Sensors::SensorsPrivate::GetSensorDataFromECM(
     std::string& sensorName,
     ignition::gazebo::Entity& sensorEntity)
 {
-    // Lambda to tokenize the scoped parent name and extract
-    // the pair <modelName, linkName>
-    auto tokenize =
-        [](const std::string& input,
-           const std::string& delimiter) -> std::vector<std::string> {
-        size_t start = 0;
-        size_t end = input.find(delimiter);
-        std::vector<std::string> tokens;
-
-        while (end != std::string::npos) {
-            tokens.push_back(input.substr(start, end - start));
-            start = end + delimiter.length();
-            end = delimiter.find(delimiter, start);
-        }
-
-        tokens.push_back(input.substr(start, end));
-
-        return tokens;
-    };
-
-    // Tokenize the scoped parent name
-    const auto tokens = tokenize(scopedParentName, "::");
+    // Tokenize the scoped parent name into a vector [modelName, linkName]
+    const auto tokens =
+        scenario::gazebo::utils::tokenize(scopedParentName, "::");
 
     if (tokens.size() != 2) {
         ignerr << "Failed to tokenize scoped name of sensor's parent"
