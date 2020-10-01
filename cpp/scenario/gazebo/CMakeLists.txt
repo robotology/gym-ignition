@@ -43,6 +43,8 @@ set(EXTRA_COMPONENTS_PUBLIC_HEADERS
     include/scenario/gazebo/components/Timestamp.h
     include/scenario/gazebo/components/JointControllerPeriod.h
     include/scenario/gazebo/components/JointAcceleration.h
+    include/scenario/gazebo/components/DepthCameraPtr.h
+    include/scenario/gazebo/components/SensorsPlugin.h
     )
 
 add_library(ExtraComponents INTERFACE)
