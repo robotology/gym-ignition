@@ -90,12 +90,9 @@ def test_depth_camera(default_world: Tuple[scenario_gazebo.GazeboSimulator,
     # Make the cube fall on the ground
     cube.enable_contacts(enable=True)
 
-    import time
-    now = time.time()
     # TODO: check efficiency, should it be almost one second? we got ~3 now w/o logs in release
     for _ in range(1_000):
         gazebo.run()
-    print(time.time() - now)
 
     # Check that the cube is on the ground
     assert len(cube.links_in_contact()) != 0
