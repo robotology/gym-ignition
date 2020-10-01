@@ -127,6 +127,23 @@ void utils::rowMajorToColumnMajor(std::vector<double>& input,
     colMajorView = rowMajorView.eval();
 }
 
+std::vector<std::string> utils::tokenize(const std::string& input,
+                                         const std::string& delimiter)
+{
+    std::vector<std::string> tokens;
+
+    size_t start = input.find_first_not_of(delimiter);
+    size_t end = start;
+
+    while (start != std::string::npos) {
+        end = input.find(delimiter, start);
+        tokens.push_back(input.substr(start, end - start));
+        start = input.find_first_not_of(delimiter, end);
+    }
+
+    return tokens;
+}
+
 scenario::core::Pose
 utils::fromIgnitionPose(const ignition::math::Pose3d& ignitionPose)
 {

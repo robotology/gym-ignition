@@ -79,6 +79,9 @@ namespace scenario::gazebo::utils {
                                const long rows,
                                const long cols);
 
+    std::vector<std::string> tokenize(const std::string& input,
+                                      const std::string& delimiter);
+
     class FixedSizeQueue
     {
     public:
