@@ -27,6 +27,7 @@
 #include "scenario/gazebo/World.h"
 #include "scenario/gazebo/Log.h"
 #include "scenario/gazebo/Model.h"
+#include "scenario/gazebo/components/SensorsPlugin.h"
 #include "scenario/gazebo/components/SimulatedTime.h"
 #include "scenario/gazebo/components/Timestamp.h"
 #include "scenario/gazebo/exceptions.h"
@@ -400,6 +401,35 @@ bool World::removeModel(const std::string& modelName)
 
     // Remove the cached model
     pImpl->models.erase(modelName);
+
+    return true;
+}
+
+bool World::enableSensors(const bool enable)
+{
+    if (!enable) {
+        sError << "Disabling the sensors is not yet supported" << std::endl;
+        return false;
+    }
+
+    // Insert the plugin if the model does not have it already
+    if (!m_ecm->EntityHasComponentType(
+            m_entity, ignition::gazebo::components::SensorsPlugin::typeId)) {
+
+        sDebug << "Loading Sensors plugin for world '" << this->name() << "'"
+               << std::endl;
+
+        const std::string context =
+            "<sdf version='1.7'><render_engine>ogre2</render_engine></sdf>";
+
+        // Load the JointController plugin
+        if (!this->insertWorldPlugin(
+                "Sensors", "scenario::plugins::gazebo::Sensors", context)) {
+            sError << "Failed to insert the Sensors plugin for world '"
+                   << this->name() << "'" << std::endl;
+            return false;
+        }
+    }
 
     return true;
 }

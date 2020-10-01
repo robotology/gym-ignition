@@ -138,6 +138,17 @@ public:
      */
     bool removeModel(const std::string& modelName);
 
+    /**
+     * Enable the sensors system.
+     *
+     * @note Disabling the sensors once they are already running is not yet
+     * supported.
+     *
+     * @param enable True to enable, false to disable.
+     * @return True for success, false otherwise.
+     */
+    bool enableSensors(const bool enable = true);
+
     // ==========
     // World Core
     // ==========
