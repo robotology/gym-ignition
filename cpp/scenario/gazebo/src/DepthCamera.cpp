@@ -159,10 +159,6 @@ bool DepthCamera::initialize(const ignition::gazebo::Entity parentEntity,
         pImpl->tNextImage += dtCamera;
         const auto tPreviousImage = tCurrentImage - dtCamera;
 
-        sDebug << "t=" << Impl::ToNanoseconds(tCurrentImage)
-               << " CopyImageDataCB" << std::endl;
-        sDebug << "id=" << pImpl->depthCamera->Id() << std::endl;
-
         // Copy the image into the current buffer
         pImpl->imageBuffer->resize(img.width() * img.height());
         std::memcpy(pImpl->imageBuffer->data(),
