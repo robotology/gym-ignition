@@ -5,8 +5,200 @@ on:
   pull_request:
 
 jobs:
-  developer:
-    name: Developer installation
+
+  # ===============================
+  # DEVELOPER INSTALLATION [master]
+  # ===============================
+
+  developer-master:
+    name: master@developer
+#    if: |
+#      (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+#      (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+    runs-on: ubuntu-latest
+    container: 'ubuntu:focal'
+    strategy:
+      matrix:
+        build_type: [ Debug ]
+        ignition:
+          # - citadel
+          - dome
+
+    steps:
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            wget \
+            git \
+            gpg-agent \
+            ninja-build \
+            build-essential \
+            software-properties-common \
+            python3 \
+            python3-pip \
+            python3-wheel \
+            python3-pytest \
+            python3-pytest-xvfb
+        env:
+          DEBIAN_FRONTEND: noninteractive
+
+      - uses: actions/checkout@master
+      - run: git fetch --prune --unshallow
+
+      - name: Install Ignition [${{ matrix.ignition }}]
+        run: |
+          sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
+            /etc/apt/sources.list.d/gazebo-stable.list'
+          wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+          apt-get update
+          apt-get install -y --no-install-recommends ignition-${{ matrix.ignition }}
+
+      - name: Install iDynTree
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            python3-numpy libxml2-dev coinor-libipopt-dev libeigen3-dev libassimp-dev swig
+          pip3 install git+https://github.com/robotology/idyntree@devel
+          IDYNTREE_PYTHON_PKG=$(python3 -c 'import idyntree, pathlib; print(pathlib.Path(idyntree.__file__).parent)')
+          echo "CMAKE_PREFIX_PATH=$IDYNTREE_PYTHON_PKG" >> $GITHUB_ENV
+
+      - name: Build and Install C++
+        run: |
+          env
+          mkdir build && cd build
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake --build . --target install
+
+      - name: Setup Python Package
+        run: pip3 install -e .
+
+      - name: Python Tests [ScenarI/O]
+        run: |
+          cd tests
+          pytest-3 -m "scenario"
+
+      - name: Python Tests with Valgrind [ScenarI/O]
+        if: failure()
+        run: |
+          apt-get install -y --no-install-recommends valgrind
+          pip3 install colour-valgrind
+          cd tests
+          valgrind --log-file=/tmp/valgrind.log pytest-3 -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
+
+      - name: Python Tests [gym_ignition]
+        run: |
+          cd tests
+          pytest-3 -m "gym_ignition"
+
+      - name: Python Tests with Valgrind [gym_ignition]
+        if: failure()
+        run: |
+          pip3 install colour-valgrind
+          cd tests
+          valgrind --log-file=/tmp/valgrind.log pytest-3 -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
+
+  # ==========================
+  # USER INSTALLATION [master]
+  # ==========================
+
+  user-master:
+    name: master@user
+#    if: |
+#      (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+#      (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+    runs-on: ubuntu-latest
+    container: 'ubuntu:focal'
+    strategy:
+      matrix:
+        build_type: [ Debug ]
+        ignition:
+          # - citadel
+          - dome
+
+    steps:
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            wget \
+            git \
+            gpg-agent \
+            ninja-build \
+            build-essential \
+            software-properties-common \
+            python3 \
+            python3-pip \
+            python3-wheel \
+            python3-pytest \
+            python3-pytest-xvfb
+        env:
+          DEBIAN_FRONTEND: noninteractive
+
+      - uses: actions/checkout@master
+      - run: git fetch --prune --unshallow
+
+      - name: Install Ignition [${{ matrix.ignition }}]
+        run: |
+          sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
+            /etc/apt/sources.list.d/gazebo-stable.list'
+          wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+          apt-get update
+          apt-get install -y --no-install-recommends ignition-${{ matrix.ignition }}
+
+      - name: Install iDynTree
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            python3-numpy libxml2-dev coinor-libipopt-dev libeigen3-dev libassimp-dev swig
+          pip3 install git+https://github.com/robotology/idyntree@devel
+          IDYNTREE_PYTHON_PKG=$(python3 -c 'import idyntree, pathlib; print(pathlib.Path(idyntree.__file__).parent)')
+          echo "CMAKE_PREFIX_PATH=$IDYNTREE_PYTHON_PKG" >> $GITHUB_ENV
+
+      - name: Create wheel
+        run: python3 setup.py bdist_wheel
+
+      - name: Install local wheel
+        run: |
+          cd dist
+          pip3 install -v *.whl
+
+      - name: Python Tests [ScenarI/O]
+        run: |
+          cd tests
+          pytest-3 -m "scenario"
+
+      - name: Python Tests with Valgrind [ScenarI/O]
+        if: failure()
+        run: |
+          apt-get install -y --no-install-recommends valgrind
+          pip3 install colour-valgrind
+          cd tests
+          valgrind --log-file=/tmp/valgrind.log pytest-3 -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
+
+      - name: Python Tests [gym_ignition]
+        run: |
+          cd tests
+          pytest-3 -m "gym_ignition"
+
+      - name: Python Tests with Valgrind [gym_ignition]
+        if: failure()
+        run: |
+          pip3 install colour-valgrind
+          cd tests
+          valgrind --log-file=/tmp/valgrind.log pytest-3 -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
+
+  # ==============================
+  # DEVELOPER INSTALLATION [other]
+  # ==============================
+
+  developer-other:
+    name: other@developer
+    if: |
+      (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -104,8 +296,15 @@ jobs:
           cd tests
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
 
-  user:
-    name: User installation
+  # =========================
+  # USER INSTALLATION [other]
+  # =========================
+
+  user-other:
+    name: other@user
+    if: |
+      (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
