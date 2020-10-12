@@ -51,7 +51,7 @@ target_include_directories(ExtraComponents INTERFACE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
     $<INSTALL_INTERFACE:${SCENARIO_INSTALL_INCLUDEDIR}>)
 
-target_link_libraries(ExtraComponents INTERFACE ignition-gazebo3::core)
+target_link_libraries(ExtraComponents INTERFACE ${ignition-gazebo.core})
 
 set_target_properties(ExtraComponents PROPERTIES
     PUBLIC_HEADER "${EXTRA_COMPONENTS_PUBLIC_HEADERS}")
@@ -65,8 +65,6 @@ add_custom_target(GazeboExtraComponents SOURCES ${EXTRA_COMPONENTS_PUBLIC_HEADER
 # ==============
 # ScenarioGazebo
 # ==============
-
-find_package(ignition-common3 REQUIRED)
 
 set(SCENARIO_GAZEBO_PUBLIC_HDRS
     include/scenario/gazebo/GazeboEntity.h
@@ -96,12 +94,11 @@ target_include_directories(ScenarioGazebo PUBLIC
 target_link_libraries(ScenarioGazebo
     PUBLIC
     ScenarioCore::ScenarioABC
-    ignition-gazebo3::core
-    ignition-common3::ignition-common3
+    ${ignition-gazebo.core}
+    ${ignition-common.ignition-common}
     PRIVATE
     ScenarioCore::CoreUtils
-    ScenarioGazebo::ExtraComponents
-    ignition-gazebo3::core)
+    ScenarioGazebo::ExtraComponents)
 
 set_target_properties(ScenarioGazebo PROPERTIES
     PUBLIC_HEADER "${SCENARIO_GAZEBO_PUBLIC_HDRS}")
@@ -124,7 +121,7 @@ target_link_libraries(GazeboSimulator
     ScenarioCore::ScenarioABC
     PRIVATE
     tiny-process-library
-    ignition-gazebo3::core
+    ${ignition-gazebo.core}
     ScenarioCore::CoreUtils
     ScenarioGazebo::ScenarioGazebo
     ScenarioGazebo::ExtraComponents

@@ -150,15 +150,50 @@ add_install_rpath_support(
     DEPENDS ENABLE_RPATH
     USE_LINK_PATH)
 
-# Find Ignition Gazebo
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    find_package(ignition-gazebo3)
+# Find a supported Ignition distribution
+if(NOT IGNITION_DISTRIBUTION)
+
+    include(FindIgnitionDistribution)
+    set(SUPPORTED_IGNITION_DISTRIBUTIONS "Dome" "Citadel")
+
+    foreach(distribution IN LISTS SUPPORTED_IGNITION_DISTRIBUTIONS)
+
+        find_ignition_distribution(
+            CODENAME ${distribution}
+            PACKAGES
+            ignition-gazebo
+            REQUIRED FALSE)
+
+        if(${${distribution}_FOUND})
+            message(STATUS "Found Ignition ${distribution}")
+
+            # Select Ignition distribution
+            set(IGNITION_DISTRIBUTION "${distribution}" CACHE
+                STRING "The Ignition distribution found in the system")
+            set_property(CACHE IGNITION_DISTRIBUTION PROPERTY
+                STRINGS ${SUPPORTED_IGNITION_DISTRIBUTIONS})
+
+            break()
+        endif()
+
+    endforeach()
+
+endif()
+
+if(NOT IGNITION_DISTRIBUTION)
+    set(USE_IGNITION FALSE)
 else()
-    find_package(ignition-gazebo3 REQUIRED)
+    set(USE_IGNITION TRUE)
 endif()
 
 option(GYMIGNITION_USE_IGNITION
-    "Build C++ code depending on Ignition Robotics" ${ignition-gazebo3_FOUND})
+       "Build C++ code depending on Ignition"
+       ${USE_IGNITION})
+
+# Alias the targets
+if(${GYMIGNITION_USE_IGNITION})
+    include(ImportTargets${IGNITION_DISTRIBUTION})
+endif()
 
 # Helper for exporting targets
 include(InstallBasicPackageFiles)
@@ -194,6 +229,11 @@ endif()
 # ========
 # BINDINGS
 # ========
+
+# Require to find Ignition libraries when packaging for PyPI
+if(CMAKE_BUILD_TYPE STREQUAL "PyPI" AND NOT USE_IGNITION)
+    message(FATAL_ERROR "Found no Ignition distribution for PyPI package")
+endif()
 
 option(GYMIGNITION_ENABLE_BINDINGS "Enable SWIG bindings" ON)
 

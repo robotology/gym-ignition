@@ -69,5 +69,3 @@ install(
 if(GYMIGNITION_ENABLE_GYMPP)
     add_subdirectory(gympp)
 endif()
-
-
