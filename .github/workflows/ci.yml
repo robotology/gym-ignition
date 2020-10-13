@@ -133,7 +133,10 @@ jobs:
         run: |
           env
           mkdir build && cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Debug
+          cmake .. \
+            -GNinja \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DIGNITION_DISTRIBUTION=$(python3 -c "print('${{ matrix.ignition }}'.capitalize())")
           cmake --build . --target install
       - name: '[Developer] Setup Python Package'
         if: matrix.type == 'Developer'
@@ -143,7 +146,10 @@ jobs:
       - name: '[User] Create wheel'
         if: matrix.type == 'User'
         shell: bash -i -e {0}
-        run: python3 setup.py bdist_wheel
+        run: |
+          python3 setup.py \
+            bdist_wheel \
+            build_ext -DIGNITION_DISTRIBUTION=$(python3 -c "print('${{ matrix.ignition }}'.capitalize())")
       - name: '[User] Install local wheel'
         if: matrix.type == 'User'
         run: |
