@@ -29,6 +29,28 @@ class BuildExtension(build_ext):
     It processes all the extensions listed in the 'ext_modules' entry.
     """
 
+    # TODO: the help description will contain both the old -D and the new -D
+    user_options = build_ext.user_options + \
+                   [("define=", "D", "Create or update CMake cache")]
+
+    def initialize_options(self):
+
+        # Initialize base class
+        build_ext.initialize_options(self)
+
+        # Override define. This is supposed to pass C preprocessor macros, but we use it
+        # to pass custom options to CMake.
+        self.define = None
+
+    def finalize_options(self):
+
+        # Parse the custom CMake options and store them in a new attribute
+        self.cmake_defines = self.define.split(";") if self.define is not None else []
+        self.cmake_defines = [f"-D{define}" for define in self.cmake_defines]
+
+        # Call base class
+        build_ext.finalize_options(self)
+
     def run(self):
         try:
             _ = subprocess.check_output(['cmake', '--version'])
@@ -83,6 +105,16 @@ class BuildExtension(build_ext):
             install_target = "install"
         else:
             raise RuntimeError(f"Unsupported '{platform.system()}' platform")
+
+        # Parse the optional CMake options. They can be passed as:
+        #
+        # python setup.py build_ext -D"BAR=Foo;VAR=TRUE"
+        # python setup.py bdist_wheel build_ext -D"BAR=Foo;VAR=TRUE"
+        # python setup.py install build_ext -D"BAR=Foo;VAR=TRUE"
+        # python setup.py install -e build_ext -D"BAR=Foo;VAR=TRUE"
+        # pip install --global-option="build_ext" --global-option="-DBAR=Foo;VAR=TRUE" .
+        #
+        cmake_args += self.cmake_defines
 
         # Commands to be executed
         configure_command = ['cmake', ext.source_dir] + cmake_args
