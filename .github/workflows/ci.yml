@@ -6,23 +6,22 @@ on:
 
 jobs:
 
-  # ===============================
-  # DEVELOPER INSTALLATION [master]
-  # ===============================
-
-  developer-master:
-    name: master@developer
-#    if: |
-#      (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
-#      (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+  build-and-test:
+    name: Build and Test
     runs-on: ubuntu-latest
     container: 'ubuntu:focal'
     strategy:
       matrix:
-        build_type: [ Debug ]
+        type:
+          - User
+          - Developer
         ignition:
-          # - citadel
           - dome
+          - citadel
+        # Waiting the new minor release
+        exclude:
+          - type: User
+            ignition: citadel
 
     steps:
 
@@ -38,22 +37,78 @@ jobs:
             software-properties-common \
             python3 \
             python3-pip \
-            python3-wheel \
-            python3-pytest \
-            python3-pytest-xvfb
+            python3-wheel
+          pip3 install pytest pytest-xvfb
         env:
           DEBIAN_FRONTEND: noninteractive
 
       - uses: actions/checkout@master
       - run: git fetch --prune --unshallow
 
-      - name: Install Ignition [${{ matrix.ignition }}]
+      - name: Compilation cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.ccache
+          # We include the commit sha in the cache key, as new cache entries are
+          # only created if there is no existing entry for the key yet.
+          key: ${{ runner.os }}-ccache-${{ matrix.ignition }}-${{ github.sha }}
+          # Restore any ccache cache entry, if none for the key above exists
+          restore-keys: |
+            ${{ runner.os }}-ccache-${{ matrix.ignition }}
+
+      - name: Enable ccache
+        run: |
+          apt-get update
+          apt-get install -y ccache
+          echo "/usr/lib/ccache" >> $GITHUB_PATH
+          mkdir -p ~/.ccache
+          echo "max_size = 5.0G" > ~/.ccache/ccache.conf
+
+      # ================
+      # Install Ignition
+      # ================
+
+      - name: '[Stable Channel] Install Ignition ${{ matrix.ignition }}'
+        if: |
+          github.ref == 'refs/heads/master' ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'refs/heads/master')
         run: |
           sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
             /etc/apt/sources.list.d/gazebo-stable.list'
           wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
           apt-get update
           apt-get install -y --no-install-recommends ignition-${{ matrix.ignition }}
+
+      - name: '[Nightly Channel] Install Ignition ${{ matrix.ignition }}'
+        if: |
+          (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+          (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+        run: |
+          sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
+            /etc/apt/sources.list.d/gazebo-stable.list'
+          wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
+          apt-get update
+          pip3 install vcstool colcon-common-extensions
+          mkdir -p /workspace/src
+          cd /workspace/src
+          wget -O - ${TAGS_YAML} | vcs import
+          SYSTEM_VERSION=$(lsb_release -cs)
+          apt-get -y install $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
+          cd /workspace
+          colcon graph
+          colcon build \
+              --cmake-args \
+                  -GNinja \
+                  -DBUILD_TESTING:BOOL=OFF \
+                  -DCMAKE_BUILD_TYPE=Debug \
+              --merge-install
+          echo "source /workspace/install/setup.bash" >> /etc/bash.bashrc
+        env:
+          TAGS_YAML: https://raw.githubusercontent.com/ignition-tooling/gazebodistro/master/collection-${{ matrix.ignition }}.yaml
+
+      # ==========================
+      # Install other dependencies
+      # ==========================
 
       - name: Install iDynTree
         run: |
@@ -64,321 +119,60 @@ jobs:
           IDYNTREE_PYTHON_PKG=$(python3 -c 'import idyntree, pathlib; print(pathlib.Path(idyntree.__file__).parent)')
           echo "CMAKE_PREFIX_PATH=$IDYNTREE_PYTHON_PKG" >> $GITHUB_ENV
 
-      - name: Build and Install C++
+      # =============
+      # Build project
+      # =============
+
+      # Note: In order to execute the setup.sh script, the file /etc/bash.bashrc must be sourced.
+      #       To do that, we change the shell to a bash interactive session.
+
+      # Developer installation
+      - name: '[Developer] Build and Install C++'
+        if: matrix.type == 'Developer'
+        shell: bash -i -e {0}
         run: |
           env
           mkdir build && cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Debug
           cmake --build . --target install
-
-      - name: Setup Python Package
+      - name: '[Developer] Setup Python Package'
+        if: matrix.type == 'Developer'
         run: pip3 install -e .
 
-      - name: Python Tests [ScenarI/O]
-        run: |
-          cd tests
-          pytest-3 -m "scenario"
-
-      - name: Python Tests with Valgrind [ScenarI/O]
-        if: failure()
-        run: |
-          apt-get install -y --no-install-recommends valgrind
-          pip3 install colour-valgrind
-          cd tests
-          valgrind --log-file=/tmp/valgrind.log pytest-3 -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
-
-      - name: Python Tests [gym_ignition]
-        run: |
-          cd tests
-          pytest-3 -m "gym_ignition"
-
-      - name: Python Tests with Valgrind [gym_ignition]
-        if: failure()
-        run: |
-          pip3 install colour-valgrind
-          cd tests
-          valgrind --log-file=/tmp/valgrind.log pytest-3 -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
-
-  # ==========================
-  # USER INSTALLATION [master]
-  # ==========================
-
-  user-master:
-    name: master@user
-#    if: |
-#      (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
-#      (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
-    runs-on: ubuntu-latest
-    container: 'ubuntu:focal'
-    strategy:
-      matrix:
-        build_type: [ Debug ]
-        ignition:
-          # - citadel
-          - dome
-
-    steps:
-
-      - name: Install dependencies
-        run: |
-          apt-get update
-          apt-get install -y --no-install-recommends \
-            wget \
-            git \
-            gpg-agent \
-            ninja-build \
-            build-essential \
-            software-properties-common \
-            python3 \
-            python3-pip \
-            python3-wheel \
-            python3-pytest \
-            python3-pytest-xvfb
-        env:
-          DEBIAN_FRONTEND: noninteractive
-
-      - uses: actions/checkout@master
-      - run: git fetch --prune --unshallow
-
-      - name: Install Ignition [${{ matrix.ignition }}]
-        run: |
-          sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
-            /etc/apt/sources.list.d/gazebo-stable.list'
-          wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-          apt-get update
-          apt-get install -y --no-install-recommends ignition-${{ matrix.ignition }}
-
-      - name: Install iDynTree
-        run: |
-          apt-get update
-          apt-get install -y --no-install-recommends \
-            python3-numpy libxml2-dev coinor-libipopt-dev libeigen3-dev libassimp-dev swig
-          pip3 install git+https://github.com/robotology/idyntree@devel
-          IDYNTREE_PYTHON_PKG=$(python3 -c 'import idyntree, pathlib; print(pathlib.Path(idyntree.__file__).parent)')
-          echo "CMAKE_PREFIX_PATH=$IDYNTREE_PYTHON_PKG" >> $GITHUB_ENV
-
-      - name: Create wheel
+      # User installation
+      - name: '[User] Create wheel'
+        if: matrix.type == 'User'
+        shell: bash -i -e {0}
         run: python3 setup.py bdist_wheel
-
-      - name: Install local wheel
+      - name: '[User] Install local wheel'
+        if: matrix.type == 'User'
         run: |
           cd dist
           pip3 install -v *.whl
 
-      - name: Python Tests [ScenarI/O]
+      # ============
+      # Test project
+      # ============
+
+      - name: '[ScenarI/O] Python Tests'
         run: |
           cd tests
-          pytest-3 -m "scenario"
+          pytest -m "scenario"
 
-      - name: Python Tests with Valgrind [ScenarI/O]
+      - name: '[ScenarI/O] Python Tests with Valgrind'
         if: failure()
         run: |
           apt-get install -y --no-install-recommends valgrind
           pip3 install colour-valgrind
           cd tests
-          valgrind --log-file=/tmp/valgrind.log pytest-3 -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
-
-      - name: Python Tests [gym_ignition]
-        run: |
-          cd tests
-          pytest-3 -m "gym_ignition"
-
-      - name: Python Tests with Valgrind [gym_ignition]
-        if: failure()
-        run: |
-          pip3 install colour-valgrind
-          cd tests
-          valgrind --log-file=/tmp/valgrind.log pytest-3 -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
-
-  # ==============================
-  # DEVELOPER INSTALLATION [other]
-  # ==============================
-
-  developer-other:
-    name: other@developer
-    if: |
-      (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
-      (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python: [3.8]
-        build_type: [Debug]
-        compiler:
-          #- gcc7
-          #- gcc8
-          - gcc9
-          #- clang9
-          #- clang10
-          #- clang11
-
-    steps:
-
-      - uses: actions/checkout@master
-      - run: git fetch --prune --unshallow
-
-      - name: Setup Environment
-        run: |
-          case ${{ matrix.compiler }} in
-            gcc7)   CC=gcc-7 ;  CXX=g++-7 ;;
-            gcc8)   CC=gcc-8 ;  CXX=g++-8 ;;
-            gcc9)   CC=gcc   ;  CXX=g++   ;;
-            clang6) CC=clang;   CXX=clang++ ;;
-            clang7) CC=clang-7; CXX=clang++-7 ;;
-            clang8) CC=clang-8; CXX=clang++-8 ;;
-            *) echo "Compiler not supported" && exit 1 ;;
-          esac
-          echo "::set-env name=CC::$CC"
-          echo "::set-env name=CXX::$CXX"
-          echo "::set-env name=PYTHON_VERSION::${{ matrix.python }}"
-          env
-
-      - name: Setup docker image [master]
-        if: |
-          github.ref == 'refs/heads/master' ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'refs/heads/master')
-        run: |
-          docker run -d -i --name ci -v $(pwd):/github -w /github \
-            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
-            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
-            diegoferigo/gym-ignition:ci-master bash
-
-      - name: Setup docker image [other]
-        if: |
-          (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
-        run: |
-          docker run -d -i --name ci -v $(pwd):/github -w /github \
-            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
-            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
-            diegoferigo/gym-ignition:ci-devel bash
-
-      - name: Wait entrypoint
-        run: sleep 30
-
-      - name: Build and Install C++
-        shell: docker exec -i ci bash -i -e {0}
-        run: |
-          env
-          mkdir build && cd build
-          cmake .. -GNinja -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
-          cmake --build . --target install
-
-      - name: Setup Python Package
-        shell: docker exec -i ci bash -i -e {0}
-        run: pip install -e .
-
-      - name: Python Tests [ScenarI/O]
-        shell: docker exec -i ci bash -i -e {0}
-        run: |
-          cd tests
-          pytest -m "scenario"
-
-      - name: Python Tests with Valgrind [ScenarI/O]
-        shell: docker exec -i ci bash -i -e {0}
-        if: failure()
-        run: |
-          pip install colour-valgrind
-          cd tests
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
 
-      - name: Python Tests [gym_ignition]
-        shell: docker exec -i ci bash -i -e {0}
+      - name: '[gym_ignition] Python Tests'
         run: |
           cd tests
           pytest -m "gym_ignition"
 
-      - name: Python Tests with Valgrind [gym_ignition]
-        shell: docker exec -i ci bash -i -e {0}
-        if: failure()
-        run: |
-          pip install colour-valgrind
-          cd tests
-          valgrind --log-file=/tmp/valgrind.log pytest -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
-
-  # =========================
-  # USER INSTALLATION [other]
-  # =========================
-
-  user-other:
-    name: other@user
-    if: |
-      (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
-      (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        python:
-          - 3.8
-        os:
-          - ubuntu-latest
-
-    steps:
-
-      - uses: actions/checkout@master
-      - run: git fetch --prune --unshallow
-
-      - name: Setup docker image [master]
-        if: |
-          github.ref == 'refs/heads/master' ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'refs/heads/master')
-        run: |
-          docker run -d -i --name ci -v $(pwd):/github -w /github \
-            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
-            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
-            diegoferigo/gym-ignition:ci-master bash
-        env:
-          CC: gcc
-          CXX: g++
-
-      - name: Setup docker image [other]
-        if: |
-          (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
-        run: |
-          docker run -d -i --name ci -v $(pwd):/github -w /github \
-            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
-            -e PYTHON_VERSION=${{ matrix.python }} -e CC=$CC -e CXX=$CXX \
-            diegoferigo/gym-ignition:ci-devel bash
-        env:
-          CC: gcc
-          CXX: g++
-
-      - name: Wait entrypoint
-        run: sleep 30
-
-      - name: Create wheel
-        shell: docker exec -i ci bash -i -e {0}
-        run: python setup.py bdist_wheel
-
-      - name: Install local wheel
-        shell: docker exec -i ci bash -i -e {0}
-        run: |
-          cd dist
-          pip install -v *.whl
-
-      - name: Python Tests [ScenarI/O]
-        shell: docker exec -i ci bash -i -e {0}
-        run: |
-          cd tests
-          pytest -m "scenario"
-
-      - name: Python Tests with Valgrind [ScenarI/O]
-        shell: docker exec -i ci bash -i -e {0}
-        if: failure()
-        run: |
-          pip3 install colour-valgrind
-          cd tests
-          valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
-
-      - name: Python Tests [gym_ignition]
-        shell: docker exec -i ci bash -i -e {0}
-        run: |
-          cd tests
-          pytest -m "gym_ignition"
-
-      - name: Python Tests with Valgrind [gym_ignition]
-        shell: docker exec -i ci bash -i -e {0}
+      - name: '[gym_ignition] Python Tests with Valgrind'
         if: failure()
         run: |
           pip3 install colour-valgrind
