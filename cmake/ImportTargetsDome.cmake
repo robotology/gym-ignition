@@ -3,7 +3,8 @@ include(AliasImportedTarget)
 # https://ignitionrobotics.org/docs/dome/install#dome-libraries
 
 alias_imported_target(
-    PACKAGE sdformat10
+    PACKAGE_ORIG sdformat10
+    PACKAGE_DEST sdformat
     TARGETS_ORIG sdformat10
     TARGETS_DEST sdformat
     NAMESPACE_ORIG sdformat10
@@ -12,7 +13,8 @@ alias_imported_target(
     )
 
 alias_imported_target(
-    PACKAGE ignition-gazebo4
+    PACKAGE_ORIG ignition-gazebo4
+    PACKAGE_DEST ignition-gazebo
     TARGETS_ORIG ignition-gazebo4 core
     TARGETS_DEST ignition-gazebo  core
     NAMESPACE_ORIG ignition-gazebo4
@@ -21,7 +23,8 @@ alias_imported_target(
     )
 
 alias_imported_target(
-    PACKAGE ignition-common3
+    PACKAGE_ORIG ignition-common3
+    PACKAGE_DEST ignition-common
     TARGETS_ORIG ignition-common3
     TARGETS_DEST ignition-common
     NAMESPACE_ORIG ignition-common3
@@ -30,7 +33,8 @@ alias_imported_target(
     )
 
 alias_imported_target(
-    PACKAGE ignition-sensors4-all
+    PACKAGE_ORIG ignition-sensors4-all
+    PACKAGE_DEST ignition-sensors-all
     TARGETS_ORIG ignition-sensors4-all
     TARGETS_DEST ignition-sensors-all
     NAMESPACE_ORIG ignition-sensors4
@@ -39,7 +43,8 @@ alias_imported_target(
     )
 
 alias_imported_target(
-    PACKAGE ignition-rendering4
+    PACKAGE_ORIG ignition-rendering4
+    PACKAGE_DEST ignition-rendering
     TARGETS_ORIG ignition-rendering4
     TARGETS_DEST ignition-rendering
     NAMESPACE_ORIG ignition-rendering4
@@ -48,7 +53,8 @@ alias_imported_target(
     )
 
 alias_imported_target(
-    PACKAGE ignition-gazebo4-rendering
+    PACKAGE_ORIG ignition-gazebo4-rendering
+    PACKAGE_DEST ignition-gazebo-rendering
     TARGETS_ORIG ignition-gazebo4-rendering
     TARGETS_DEST ignition-gazebo-rendering
     NAMESPACE_ORIG ignition-gazebo4
@@ -57,7 +63,8 @@ alias_imported_target(
     )
 
 alias_imported_target(
-    PACKAGE ignition-physics3
+    PACKAGE_ORIG ignition-physics3
+    PACKAGE_DEST ignition-physics
     TARGETS_ORIG ignition-physics3
     TARGETS_DEST ignition-physics
     NAMESPACE_ORIG ignition-physics3

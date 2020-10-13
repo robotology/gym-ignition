@@ -8,7 +8,8 @@ macro(alias_imported_target)
     string(TOUPPER ${_prefix} _prefix)
 
     set(_oneValueArgs
-        PACKAGE
+        PACKAGE_ORIG
+        PACKAGE_DEST
         NAMESPACE_ORIG
         NAMESPACE_DEST
         REQUIRED)
@@ -34,19 +35,21 @@ macro(alias_imported_target)
 
     if(${${_prefix}_REQUIRED})
         find_package(
-            ${${_prefix}_PACKAGE}
+            ${${_prefix}_PACKAGE_ORIG}
             COMPONENTS ${${_prefix}_COMPONENTS}
             REQUIRED)
     else()
         find_package(
-            ${${_prefix}_PACKAGE}
+            ${${_prefix}_PACKAGE_ORIG}
             COMPONENTS ${${_prefix}_COMPONENTS}
             QUIET)
     endif()
 
-    if(${${_prefix}_PACKAGE}_FOUND)
+    # Example:
+    #  ${${_prefix}_PACKAGE_ORIG} = ign-gazebo3
+    if(${${_prefix}_PACKAGE_ORIG}_FOUND)
 
-        message(DEBUG "Processing package: ${${_prefix}_PACKAGE}")
+        message(DEBUG "Processing package: ${${_prefix}_PACKAGE_ORIG}")
 
         # Check length of lists
         list(LENGTH ${_prefix}_TARGETS_ORIG _num_targets_orig)
@@ -62,6 +65,17 @@ macro(alias_imported_target)
             message(FATAL_ERROR "Number or TARGETS_ elements do not match")
         endif()
 
+        # Example:
+        # ${_package_name} = ignition-gazebo3
+        set(_package_name ${${_prefix}_PACKAGE_ORIG})
+
+        # Example:
+        # ${_variable_name} = ignition-gazebo
+        set(_variable_name ${${_prefix}_PACKAGE_DEST})
+
+        message(DEBUG "  Setting: ${_variable_name}=${_package_name}")
+        set(${_variable_name} ${_package_name})
+
         # TODO Use ZIP_LISTS with CMake > 3.17
         math(EXPR _num_targets "${_num_targets_orig} - 1")
         foreach(idx RANGE ${_num_targets})
@@ -69,7 +83,12 @@ macro(alias_imported_target)
             list(GET ${_prefix}_TARGETS_ORIG ${idx} _target_orig)
             list(GET ${_prefix}_TARGETS_DEST ${idx} _target_dest)
 
+            # Example:
+            # ${_target_name} = ignition-gazebo3::core
             set(_target_name ${${_prefix}_NAMESPACE_ORIG}::${_target_orig})
+
+            # Example:
+            # ${_target_name} = ignition-gazebo.core
             set(_variable_name ${${_prefix}_NAMESPACE_DEST}.${_target_dest})
 
             if(NOT TARGET ${_target_name})
@@ -87,6 +106,7 @@ macro(alias_imported_target)
     unset(_num_targets_orig)
     unset(_num_targets_dest)
     unset(_comparison)
+    unset(_package_name)
     unset(_num_targets)
     unset(_target_orig)
     unset(_target_dest)
