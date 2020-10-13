@@ -64,7 +64,7 @@ jobs:
           apt-get install -y ccache
           echo "/usr/lib/ccache" >> $GITHUB_PATH
           mkdir -p ~/.ccache
-          echo "max_size = 5.0G" > ~/.ccache/ccache.conf
+          echo "max_size = 1.0G" > ~/.ccache/ccache.conf
 
       # ================
       # Install Ignition
