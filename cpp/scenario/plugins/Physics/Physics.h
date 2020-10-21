@@ -110,10 +110,7 @@ scenario::plugins::gazebo::entityCast(
     castEntity =
         ignition::physics::RequestFeatures<ToFeatureList>::From(_minimumEntity);
 
-    if (!castEntity) {
-        ignwarn << "Physics engine missing requested feature." << std::endl;
-    }
-    else {
+    if (castEntity) {
         _castMap.insert(std::make_pair(_entity, castEntity));
     }
 

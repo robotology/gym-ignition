@@ -102,6 +102,7 @@
 #include <sdf/Link.hh>
 #include <sdf/Mesh.hh>
 #include <sdf/Model.hh>
+#include <sdf/Surface.hh>
 #include <sdf/World.hh>
 
 #include <deque>
@@ -361,6 +362,25 @@ public:
     /// All worlds on this map are also in `entityWorldMap`. The difference is
     /// that here they've been casted for `CollisionFeatureList`.
     std::unordered_map<Entity, WorldShapePtrType> entityWorldCollisionMap;
+
+    //////////////////////////////////////////////////
+    // Collision filtering with bitmasks
+
+    /// \brief Feature list to filter collisions with bitmasks.
+    using CollisionMaskFeatureList = ignition::physics::FeatureList<
+        CollisionFeatureList,
+        ignition::physics::CollisionFilterMaskFeature>;
+
+    /// \brief Collision type with collision filtering features.
+    using ShapeFilterMaskPtrType =
+        ignition::physics::ShapePtr<ignition::physics::FeaturePolicy3d,
+                                    CollisionMaskFeatureList>;
+
+    /// \brief A map between collision entity ids in the ECM to Shape Entities
+    /// in ign-physics, with collision filtering feature. All links on this map
+    /// are also in `entityCollisionMap`. The difference is that here they've
+    /// been casted for `CollisionMaskFeatureList`.
+    std::unordered_map<Entity, ShapeFilterMaskPtrType> entityShapeMaskMap;
 
     //////////////////////////////////////////////////
     // Link force
@@ -739,6 +759,7 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
         sdf::Collision collision = _collElement->Data();
         collision.SetRawPose(_pose->Data());
         collision.SetPoseRelativeTo("");
+        auto collideBitmask = collision.Surface()->Contact()->CollideBitmask();
 
         ShapePtrType collisionPtrPhys;
         if (_geom->Data().Type() == sdf::GeometryType::MESH) {
@@ -797,6 +818,23 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
 
             collisionPtrPhys =
                 linkCollisionFeature->ConstructCollision(collision);
+        }
+        // Check that the physics engine has a filter mask feature
+        // Set the collide_bitmask if it does
+        auto filterMaskFeature =
+            entityCast(_parent->Data(), collisionPtrPhys, entityShapeMaskMap);
+        if (filterMaskFeature) {
+            filterMaskFeature->SetCollisionFilterMask(collideBitmask);
+        }
+        else {
+            static bool informed{false};
+            if (!informed) {
+                igndbg
+                    << "Attempting to set collision bitmasks, but the physics "
+                    << "engine doesn't support feature [CollisionFilterMask]. "
+                    << "Collision bitmasks will be ignored." << std::endl;
+                informed = true;
+            }
         }
 
         this->entityCollisionMap.insert(
