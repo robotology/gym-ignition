@@ -25,6 +25,15 @@ jobs:
 
     steps:
 
+      - name: Inspect Environment
+        run: |
+          echo ""
+          env | grep ^GITHUB
+          echo ""
+          cat ${GITHUB_EVENT_PATH}
+          echo ""
+          env
+
       - name: Install dependencies
         run: |
           apt-get update
