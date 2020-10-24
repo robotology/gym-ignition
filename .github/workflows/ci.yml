@@ -82,7 +82,7 @@ jobs:
       - name: '[Stable Channel] Install Ignition ${{ matrix.ignition }}'
         if: |
           github.ref == 'refs/heads/master' ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'refs/heads/master')
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master')
         run: |
           sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
             /etc/apt/sources.list.d/gazebo-stable.list'
@@ -93,7 +93,7 @@ jobs:
       - name: '[Nightly Channel] Install Ignition ${{ matrix.ignition }}'
         if: |
           (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'master')
         run: |
           sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
             /etc/apt/sources.list.d/gazebo-stable.list'

@@ -40,7 +40,7 @@ jobs:
       - name: Setup docker image [master]
         if: |
           github.ref == 'refs/heads/master' ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'refs/heads/master')
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master')
         run: |
           docker run -d -i --name pypi -v $(pwd):/github -w /github \
             -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
@@ -50,7 +50,7 @@ jobs:
       - name: Setup docker image [other]
         if: |
           (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'master')
         run: |
           docker run -d -i --name pypi -v $(pwd):/github -w /github \
             -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
@@ -118,7 +118,7 @@ jobs:
       - name: Setup docker image [master]
         if: |
           github.ref == 'refs/heads/master' ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'refs/heads/master')
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master')
         run: |
           docker run -d -i --name pypi -v $(pwd):/github -w /github \
             -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
@@ -128,7 +128,7 @@ jobs:
       - name: Setup docker image [other]
         if: |
           (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'master')
         run: |
           docker run -d -i --name pypi -v $(pwd):/github -w /github \
             -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
