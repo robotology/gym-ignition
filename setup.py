@@ -164,7 +164,8 @@ setup(
         "Intended Audience :: Developers",
         "Intended Audience :: Science/Research",
         "Programming Language :: C++",
-        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.8",
+        "Programming Language :: Python :: 3.9",
         "Programming Language :: Python :: 3 :: Only",
         "License :: OSI Approved :: GNU General Public License v2 or later (GPLv2+)",
     ],
@@ -172,7 +173,7 @@ setup(
         'local_scheme': 'dirty-tag',
     },
     setup_requires=['setuptools_scm'],
-    python_requires='>=3.6',
+    python_requires='>=3.8',
     install_requires=[
         'gym >= 0.13.1',
         'numpy',
