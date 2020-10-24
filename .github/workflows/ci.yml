@@ -20,10 +20,18 @@ jobs:
           - citadel
         # Waiting the new minor release
         exclude:
-          - type: User
-            ignition: citadel
+          - ignition: citadel
 
     steps:
+
+      - name: Inspect Environment
+        run: |
+          echo ""
+          env | grep ^GITHUB
+          echo ""
+          cat ${GITHUB_EVENT_PATH}
+          echo ""
+          env
 
       - name: Install dependencies
         run: |
@@ -39,7 +47,8 @@ jobs:
             python3-pip \
             python3-wheel \
             libxslt-dev \
-            libopenblas-dev
+            libopenblas-dev \
+            gfortran
           pip3 install pytest pytest-xvfb
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -73,7 +82,7 @@ jobs:
       - name: '[Stable Channel] Install Ignition ${{ matrix.ignition }}'
         if: |
           github.ref == 'refs/heads/master' ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref == 'refs/heads/master')
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master')
         run: |
           sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
             /etc/apt/sources.list.d/gazebo-stable.list'
@@ -84,7 +93,7 @@ jobs:
       - name: '[Nightly Channel] Install Ignition ${{ matrix.ignition }}'
         if: |
           (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
-          (github.event_name == 'pull_request' && github.event.pull_request.head.ref != 'refs/heads/master')
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'master')
         run: |
           sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
             /etc/apt/sources.list.d/gazebo-stable.list'
