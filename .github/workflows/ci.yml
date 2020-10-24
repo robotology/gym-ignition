@@ -47,7 +47,8 @@ jobs:
             python3-pip \
             python3-wheel \
             libxslt-dev \
-            libopenblas-dev
+            libopenblas-dev \
+            gfortran
           pip3 install pytest pytest-xvfb
         env:
           DEBIAN_FRONTEND: noninteractive
