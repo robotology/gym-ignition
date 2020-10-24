@@ -249,7 +249,13 @@ This operation is demanding, consider randomizing physics at a low rate.</p>
 <dl class="py method">
 <dt id="gym_ignition.randomizers.gazebo_env_randomizer.GazeboEnvRandomizer.reset">
 <code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.gazebo_env_randomizer.GazeboEnvRandomizer.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resets the state of the environment and returns an initial observation.</p>
+<dd><p>Resets the environment to an initial state and returns an initial
+observation.</p>
+<p>Note that this function should not reset the environment’s random
+number generator(s); random variables in the environment’s state should
+be sampled independently between multiple calls to <cite>reset()</cite>. In other
+words, each call of <cite>reset()</cite> should yield an environment suitable for
+a new episode, independent of previous episodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the initial observation.</p>

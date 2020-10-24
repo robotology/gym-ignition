@@ -223,7 +223,7 @@ and doing it every rollout is not recommended.</p>
 garbage collected or when the program exits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -291,7 +291,7 @@ in implementations to use the functionality of this method.</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -299,7 +299,13 @@ in implementations to use the functionality of this method.</p>
 <dl class="py method">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.reset">
 <code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resets the state of the environment and returns an initial observation.</p>
+<dd><p>Resets the environment to an initial state and returns an initial
+observation.</p>
+<p>Note that this function should not reset the environment’s random
+number generator(s); random variables in the environment’s state should
+be sampled independently between multiple calls to <cite>reset()</cite>. In other
+words, each call of <cite>reset()</cite> should yield an environment suitable for
+a new episode, independent of previous episodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the initial observation.</p>
@@ -410,7 +416,7 @@ execution.</p>
 garbage collected or when the program exits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -463,7 +469,7 @@ in implementations to use the functionality of this method.</p>
 </dl>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
 </dd>
 </dl>
 </dd></dl>
@@ -471,7 +477,13 @@ in implementations to use the functionality of this method.</p>
 <dl class="py method">
 <dt id="gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.reset">
 <code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Resets the state of the environment and returns an initial observation.</p>
+<dd><p>Resets the environment to an initial state and returns an initial
+observation.</p>
+<p>Note that this function should not reset the environment’s random
+number generator(s); random variables in the environment’s state should
+be sampled independently between multiple calls to <cite>reset()</cite>. In other
+words, each call of <cite>reset()</cite> should yield an environment suitable for
+a new episode, independent of previous episodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>the initial observation.</p>
