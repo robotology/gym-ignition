@@ -20,8 +20,7 @@ jobs:
           - citadel
         # Waiting the new minor release
         exclude:
-          - type: User
-            ignition: citadel
+          - ignition: citadel
 
     steps:
 
