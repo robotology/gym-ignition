@@ -32,7 +32,7 @@ add_library(ECMProvider SHARED
 
 target_link_libraries(ECMProvider
     PUBLIC
-    ignition-gazebo3::core
+    ${ignition-gazebo.core}
     PRIVATE
     ECMSingleton
     ScenarioGazebo::ScenarioGazebo
@@ -58,7 +58,7 @@ target_include_directories(ECMSingleton PUBLIC
 
 target_link_libraries(ECMSingleton
     PUBLIC
-    ignition-gazebo3::core
+    ${ignition-gazebo.core}
     PRIVATE
     ScenarioGazebo::ScenarioGazebo)
 

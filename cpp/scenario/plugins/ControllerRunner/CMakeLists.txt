@@ -22,8 +22,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-find_package(sdformat9 REQUIRED)
-
 # ==================
 # ControllersFactory
 # ==================
@@ -34,7 +32,7 @@ add_library(ControllersFactory STATIC
 
 target_link_libraries(ControllersFactory
     PUBLIC
-    sdformat9::sdformat9
+    ${sdformat.sdformat}
     ScenarioCore::ScenarioABC
     ScenarioControllers::ControllersABC
     PRIVATE
@@ -54,7 +52,7 @@ add_library(ControllerRunner SHARED
 
 target_link_libraries(ControllerRunner
     PUBLIC
-    ignition-gazebo3::core
+    ${ignition-gazebo.core}
     PRIVATE
     ScenarioGazebo::ScenarioGazebo
     ScenarioGazebo::ExtraComponents

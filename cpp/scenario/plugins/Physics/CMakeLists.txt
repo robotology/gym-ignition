@@ -32,8 +32,8 @@ add_library(PhysicsSystem SHARED
 
 target_link_libraries(PhysicsSystem
     PUBLIC
-    ignition-gazebo3::core
-    ignition-physics2::ignition-physics2
+    ${ignition-gazebo.core}
+    ${ignition-physics.ignition-physics}
     PRIVATE
     ScenarioGazebo::ScenarioGazebo
     ScenarioGazebo::ExtraComponents)

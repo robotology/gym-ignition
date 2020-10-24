@@ -32,7 +32,7 @@ install_basic_package_files(ScenarioGazeboPlugins
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY AnyNewerVersion
     EXPORT ScenarioGazeboPluginsExport
-    DEPENDENCIES ignition-gazebo3
+    DEPENDENCIES ${ignition-gazebo}
     NAMESPACE ScenarioGazeboPlugins::
     NO_CHECK_REQUIRED_COMPONENTS_MACRO
     INSTALL_DESTINATION

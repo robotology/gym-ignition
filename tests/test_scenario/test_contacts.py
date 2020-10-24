@@ -113,7 +113,7 @@ def test_cube_contact(gazebo: scenario.GazeboSimulator,
 
     # Check that the contact force matches the weight of the cube
     z_forces = [point.force[2] for point in contact_with_ground.points]
-    assert np.sum(z_forces) == pytest.approx(50, abs=1.0)
+    assert np.sum(z_forces) == pytest.approx(-5 * world.gravity()[2], abs=0.1)
 
     # Forces of all contact points are combined by the following method
     assert cube.get_link("cube").contact_wrench() == \
