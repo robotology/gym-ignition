@@ -37,7 +37,9 @@ jobs:
             software-properties-common \
             python3 \
             python3-pip \
-            python3-wheel
+            python3-wheel \
+            libxslt-dev \
+            libopenblas-dev
           pip3 install pytest pytest-xvfb
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -143,13 +145,15 @@ jobs:
         run: pip3 install -e .
 
       # User installation
+      # Note: using "pip wheel" with "--global-option" forces pip to build dependencies from
+      #       their sdist instead of using wheels.
       - name: '[User] Create wheel'
         if: matrix.type == 'User'
         shell: bash -i -e {0}
         run: |
-          python3 setup.py \
-            bdist_wheel \
-            build_ext -DIGNITION_DISTRIBUTION=$(python3 -c "print('${{ matrix.ignition }}'.capitalize())")
+          pip3 wheel -w dist/ \
+            --global-option="build_ext" \
+            --global-option="-DIGNITION_DISTRIBUTION=$(python3 -c "print('${{ matrix.ignition }}'.capitalize())")" .
       - name: '[User] Install local wheel'
         if: matrix.type == 'User'
         run: |
