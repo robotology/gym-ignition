@@ -121,14 +121,11 @@ jobs:
       # Install other dependencies
       # ==========================
 
-      - name: Install iDynTree
+      - name: Install iDynTree dependencies
         run: |
           apt-get update
           apt-get install -y --no-install-recommends \
             python3-numpy libxml2-dev coinor-libipopt-dev libeigen3-dev libassimp-dev swig
-          pip3 install git+https://github.com/robotology/idyntree@devel
-          IDYNTREE_PYTHON_PKG=$(python3 -c 'import idyntree, pathlib; print(pathlib.Path(idyntree.__file__).parent)')
-          echo "CMAKE_PREFIX_PATH=$IDYNTREE_PYTHON_PKG" >> $GITHUB_ENV
 
       # =============
       # Build project
@@ -138,6 +135,12 @@ jobs:
       #       To do that, we change the shell to a bash interactive session.
 
       # Developer installation
+      - name: Install iDynTree
+        if: matrix.type == 'Developer'
+        run: |
+          pip3 install git+https://github.com/robotology/idyntree@devel
+          IDYNTREE_PYTHON_PKG=$(python3 -c 'import idyntree, pathlib; print(pathlib.Path(idyntree.__file__).parent)')
+          echo "CMAKE_PREFIX_PATH=$IDYNTREE_PYTHON_PKG" >> $GITHUB_ENV
       - name: '[Developer] Build and Install C++'
         if: matrix.type == 'Developer'
         shell: bash -i -e {0}
