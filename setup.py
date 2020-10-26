@@ -63,6 +63,7 @@ setup(
     ext_modules=[CMakeExtension(name='InstallAllTargets',
                                 install_prefix="",
                                 cmake_build_type='PyPI',
+                                cmake_depends_on=["idyntree"],
                                 disable_editable=True)],
     cmdclass={
         'build_ext': BuildExtension,
