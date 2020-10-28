@@ -24,7 +24,6 @@ jobs:
 
       - name: Inspect Environment
         run: |
-          echo ""
           env | grep ^GITHUB
           echo ""
           cat ${GITHUB_EVENT_PATH}
