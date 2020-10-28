@@ -163,6 +163,7 @@ jobs:
         if: matrix.type == 'User'
         shell: bash -i -e {0}
         run: |
+          pip3 install scikit-build
           pip3 wheel -w dist/ \
             --global-option="build_ext" \
             --global-option="-DIGNITION_DISTRIBUTION=$(python3 -c "print('${{ matrix.ignition }}'.capitalize())")" .
