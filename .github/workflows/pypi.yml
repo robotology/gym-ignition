@@ -32,9 +32,9 @@ jobs:
 
       - name: Setup Environment
         run: |
-          echo "::set-env name=CC::gcc"
-          echo "::set-env name=CXX::g++"
-          echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=${{ matrix.python_version }}" >> $GITHUB_ENV
           env
 
       - name: Setup docker image [master]
@@ -117,9 +117,9 @@ jobs:
 
       - name: Setup Environment
         run: |
-          echo "::set-env name=CC::gcc"
-          echo "::set-env name=CXX::g++"
-          echo "::set-env name=PYTHON_VERSION::${{ matrix.python_version }}"
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=${{ matrix.python_version }}" >> $GITHUB_ENV
           env
 
       - name: Setup docker image [master]
