@@ -60,6 +60,13 @@ jobs:
       - name: Wait entrypoint
         run: sleep 30
 
+      - name: Install dependencies
+        shell: docker exec -i pypi bash -i -e {0}
+        run: |
+          pip install \
+            cmake_build_extension \
+            git+https://github.com/robotology/idyntree@devel
+
       - name: Create ${{ matrix.package }}
         shell: docker exec -i pypi bash -i -e {0}
         run: python setup.py ${{ matrix.package }}
@@ -137,6 +144,13 @@ jobs:
 
       - name: Wait entrypoint
         run: sleep 30
+
+      - name: Install dependencies
+        shell: docker exec -i pypi bash -i -e {0}
+        run: |
+          pip install \
+            cmake_build_extension \
+            git+https://github.com/robotology/idyntree@devel
 
       - name: Create packages
         shell: docker exec -i pypi bash -i -e {0}
