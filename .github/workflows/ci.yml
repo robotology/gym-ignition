@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     container: 'ubuntu:focal'
     strategy:
+      fail-fast: false
       matrix:
         type:
           - User
@@ -18,9 +19,6 @@ jobs:
         ignition:
           - dome
           - citadel
-        # Waiting the new minor release
-        exclude:
-          - ignition: citadel
 
     steps:
 
@@ -45,10 +43,7 @@ jobs:
             software-properties-common \
             python3 \
             python3-pip \
-            python3-wheel \
-            libxslt-dev \
-            libopenblas-dev \
-            gfortran
+            python3-wheel
           pip3 install pytest pytest-xvfb
         env:
           DEBIAN_FRONTEND: noninteractive
@@ -157,16 +152,21 @@ jobs:
         run: pip3 install -e .
 
       # User installation
-      # Note: using "pip wheel" with "--global-option" forces pip to build dependencies from
-      #       their sdist instead of using wheels.
       - name: '[User] Create wheel'
-        if: matrix.type == 'User'
+        if: matrix.type == 'User' && matrix.ignition == 'dome'
+        shell: bash -i -e {0}
+        run: pip3 wheel -w dist/ .
+      # Note: calling "pip wheel" with "--global-option" forces dependencies to be build from their sdist.
+      #       Since it's very slow, we create the wheel from setup.py without isolation.
+      - name: '[User] Create wheel'
+        if: matrix.type == 'User' && matrix.ignition != 'dome'
         shell: bash -i -e {0}
         run: |
-          pip3 install scikit-build
-          pip3 wheel -w dist/ \
-            --global-option="build_ext" \
-            --global-option="-DIGNITION_DISTRIBUTION=$(python3 -c "print('${{ matrix.ignition }}'.capitalize())")" .
+          pip3 install \
+            cmake_build_extension \
+            git+https://github.com/robotology/idyntree@devel
+          python3 setup.py bdist_wheel \
+            build_ext -DIGNITION_DISTRIBUTION=$(python3 -c "print('${{ matrix.ignition }}'.capitalize())")
       - name: '[User] Install local wheel'
         if: matrix.type == 'User'
         run: |
