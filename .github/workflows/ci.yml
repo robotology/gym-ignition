@@ -20,6 +20,9 @@ jobs:
           - dome
           - citadel
 
+    env:
+      CCACHE_DIR: ${{ github.workspace }}/.ccache
+
     steps:
 
       - name: Inspect Environment
@@ -53,21 +56,25 @@ jobs:
       - name: Compilation cache
         uses: actions/cache@v2
         with:
-          path: ~/.ccache
+          path: ${{ env.CCACHE_DIR }}
           # We include the commit sha in the cache key, as new cache entries are
           # only created if there is no existing entry for the key yet.
-          key: ${{ runner.os }}-ccache-${{ matrix.ignition }}-${{ github.sha }}
+          key: ${{ runner.os }}-ccache-${{ matrix.ignition }}-${{ matrix.type }}-${{ github.sha }}
           # Restore any ccache cache entry, if none for the key above exists
           restore-keys: |
+            ${{ runner.os }}-ccache-${{ matrix.ignition }}-${{ matrix.type }}
             ${{ runner.os }}-ccache-${{ matrix.ignition }}
+            ${{ runner.os }}-ccache
 
       - name: Enable ccache
         run: |
           apt-get update
           apt-get install -y ccache
           echo "/usr/lib/ccache" >> $GITHUB_PATH
-          mkdir -p ~/.ccache
-          echo "max_size = 1.0G" > ~/.ccache/ccache.conf
+          ccache --set-config=max_size=10.0G
+          ccache --set-config=sloppiness=file_macro,locale,time_macros
+          ccache -p
+          ccache -s
 
       # ================
       # Install Ignition
@@ -171,6 +178,9 @@ jobs:
         run: |
           cd dist
           pip3 install -v *.whl
+
+      - name: Ccache stats
+        run: ccache --show-stats
 
       # ============
       # Test project
