@@ -3,6 +3,9 @@ name: CI
 on:
   push:
   pull_request:
+  release:
+    types:
+      - published
 
 jobs:
 
@@ -46,7 +49,7 @@ jobs:
             python3 \
             python3-pip \
             python3-wheel
-          pip3 install pytest pytest-xvfb
+          pip3 install pytest pytest-xvfb setuptools_scm
         env:
           DEBIAN_FRONTEND: noninteractive
 
@@ -82,7 +85,9 @@ jobs:
 
       - name: '[Stable Channel] Install Ignition ${{ matrix.ignition }}'
         if: |
+          github.event_name == 'release' ||
           github.ref == 'refs/heads/master' ||
+          (startsWith(github.ref, 'refs/tags') && github.base_ref == 'refs/heads/master') ||
           (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master')
         run: |
           sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
@@ -94,6 +99,7 @@ jobs:
       - name: '[Nightly Channel] Install Ignition ${{ matrix.ignition }}'
         if: |
           (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+          (startsWith(github.ref, 'refs/tags') && github.base_ref != 'refs/heads/master') ||
           (github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'master')
         run: |
           sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
@@ -210,3 +216,53 @@ jobs:
           pip3 install colour-valgrind
           cd tests
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
+
+      # ======
+      # Deploy
+      # ======
+
+      - name: Remove other wheels
+        if: matrix.type == 'User'
+        run: find dist/ -type f -not -name 'gym_ignition-*' -delete
+
+      - name: Rename wheel
+        if: matrix.type == 'User'
+        run: |
+          ls dist/
+          find dist/ -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +
+          ls dist/
+
+      # When this workflow will test other OSs, the sdist has to be created and pushed only once
+      - name: Create sdist
+        if: matrix.type == 'User' && startsWith(matrix.os, 'ubuntu')
+        run: |
+          pip3 install cmake_build_extension setuptools_scm
+          python3 setup.py sdist
+
+      # Validate the last tag accordingly to PEP440
+      # From https://stackoverflow.com/a/37972030/12150968
+      - name: Check PEP440 compliance
+        if: github.event_name == 'release'
+        run: |
+          apt-get update
+          apt-get install -y source-highlight
+          last_tag_with_v="$(git describe --abbrev=0 --tags)"
+          last_tag=${last_tag_with_v#v}
+          rel_regexp='^(\d+!)?(\d+)(\.\d+)+([\.\-\_])?((a(lpha)?|b(eta)?|c|r(c|ev)?|pre(view)?)\d*)?(\.?(post|dev)\d*)?$'
+          echo ""
+          echo $last_tag
+          echo ""
+          check-regexp ${rel_regexp} ${last_tag}
+          match=$(check-regexp ${rel_regexp} ${last_tag} | grep matches | cut -d ' ' -f 5)
+          test $match -eq 1 && true
+
+      # The package is deployed only if there's an upstream release / prerelease, or it is upstream's devel.
+      - name: Publish package to PyPI
+        if: |
+          github.repository == 'robotology/gym-ignition' && matrix.type == 'User' &&
+          (github.event_name == 'release' && matrix.ignition == 'dome' ||
+           github.event_name == 'push' && matrix.ignition == 'dome' && github.ref == 'refs/heads/devel')
+        uses: pypa/gh-action-pypi-publish@master
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_TOKEN }}
