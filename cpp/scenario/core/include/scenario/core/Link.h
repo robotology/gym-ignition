@@ -182,41 +182,6 @@ public:
      * @return The total wrench of the active contacts.
      */
     virtual std::array<double, 6> contactWrench() const = 0;
-
-    /**
-     * Apply a force to the CoM of the link.
-     *
-     * @param force The force to apply expressed in world coordinates.
-     * @param duration The duration of the application of the force.
-     * By default the force is applied for a single physics step.
-     * @return True for success, false otherwise.
-     */
-    virtual bool applyWorldForce(const std::array<double, 3>& force,
-                                 const double duration = 0.0) = 0;
-
-    /**
-     * Apply a torque to the CoM of the link.
-     *
-     * @param torque The torque to apply expressed in world coordinates.
-     * @param duration The duration of the application of the torque.
-     * By default the torque is applied for a single physics step.
-     * @return True for success, false otherwise.
-     */
-    virtual bool applyWorldTorque(const std::array<double, 3>& torque,
-                                  const double duration = 0.0) = 0;
-
-    /**
-     * Apply a wrench to the CoM of the link.
-     *
-     * @param force The force to apply expressed in world coordinates.
-     * @param torque The torque to apply expressed in world coordinates.
-     * @param duration The duration of the application of the wrench.
-     * By default the wrench is applied for a single physics step.
-     * @return True for success, false otherwise.
-     */
-    virtual bool applyWorldWrench(const std::array<double, 3>& force,
-                                  const std::array<double, 3>& torque,
-                                  const double duration = 0.0) = 0;
 };
 
 struct scenario::core::Pose
