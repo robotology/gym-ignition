@@ -161,6 +161,10 @@ public:
 
     std::vector<double> historyOfAppliedJointForces() const override;
 
+    double coulombFriction() const override;
+
+    double viscousFriction() const override;
+
     // ==================
     // Single DOF methods
     // ==================

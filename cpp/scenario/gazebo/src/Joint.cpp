@@ -514,6 +514,48 @@ std::vector<double> Joint::historyOfAppliedJointForces() const
     return fixedSizeQueue.toStdVector();
 }
 
+double Joint::coulombFriction() const
+{
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic:
+        case core::JointType::Ball: {
+            const sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            return axis.Friction();
+        }
+        case core::JointType::Fixed:
+        case core::JointType::Invalid:
+            sWarning << "Fixed and Invalid joints have no friction defined."
+                     << std::endl;
+            return 0.0;
+    }
+
+    assert(false);
+    return 0.0;
+}
+
+double Joint::viscousFriction() const
+{
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic:
+        case core::JointType::Ball: {
+            const sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            return axis.Damping();
+        }
+        case core::JointType::Fixed:
+        case core::JointType::Invalid:
+            sWarning << "Fixed and Invalid joints have no friction defined."
+                     << std::endl;
+            return 0.0;
+    }
+
+    assert(false);
+    return 0.0;
+}
+
 scenario::core::Limit Joint::positionLimit(const size_t dof) const
 {
     if (dof >= this->dofs()) {
