@@ -1111,6 +1111,36 @@
 </dd></dl>
 
 <dl class="cpp function">
+<dt id="_CPPv4NK8scenario6gazebo5Model18jointAccelerationsERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3NK8scenario6gazebo5Model18jointAccelerationsERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2NK8scenario6gazebo5Model18jointAccelerationsERKNSt6vectorINSt6stringEEE"></span><span id="scenario::gazebo::Model::jointAccelerations__std::vector:ss:CRC"></span><span class="target" id="classscenario_1_1gazebo_1_1Model_1ae38d10879882505d004126f68e7c0ac8"></span>std::vector&lt;double&gt; <code class="sig-name descname">jointAccelerations</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;std::string&gt; &amp;<em>jointNames</em> = {}<span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Model18jointAccelerationsERKNSt6vectorINSt6stringEEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the joint accelerations.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The serialization of joint accelerations. The vector has as many elements as DoFs of the considered joints. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">jointNames</span></code>: Optional vector of considered joints that also defines the joint serialization. By default, <code class="docutils literal notranslate"><a class="reference internal" href="#classscenario_1_1gazebo_1_1Model_1af396c48bef0b0758060c8f5650590582"><span class="std std-ref"><span class="pre">Model::jointNames</span></span></a></code> is used. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario6gazebo5Model22jointGeneralizedForcesERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3NK8scenario6gazebo5Model22jointGeneralizedForcesERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2NK8scenario6gazebo5Model22jointGeneralizedForcesERKNSt6vectorINSt6stringEEE"></span><span id="scenario::gazebo::Model::jointGeneralizedForces__std::vector:ss:CRC"></span><span class="target" id="classscenario_1_1gazebo_1_1Model_1aa4f5807028d17f92911f5c5e67e0f63b"></span>std::vector&lt;double&gt; <code class="sig-name descname">jointGeneralizedForces</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;std::string&gt; &amp;<em>jointNames</em> = {}<span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Model22jointGeneralizedForcesERKNSt6vectorINSt6stringEEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the joint generalized forces.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The serialization of joint forces. The vector has as many elements as DoFs of the considered joints. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">jointNames</span></code>: Optional vector of considered joints that also defines the joint serialization. By default, <code class="docutils literal notranslate"><a class="reference internal" href="#classscenario_1_1gazebo_1_1Model_1af396c48bef0b0758060c8f5650590582"><span class="std std-ref"><span class="pre">Model::jointNames</span></span></a></code> is used. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
 <dt id="_CPPv4NK8scenario6gazebo5Model11jointLimitsERKNSt6vectorINSt6stringEEE">
 <span id="_CPPv3NK8scenario6gazebo5Model11jointLimitsERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2NK8scenario6gazebo5Model11jointLimitsERKNSt6vectorINSt6stringEEE"></span><span id="scenario::gazebo::Model::jointLimits__std::vector:ss:CRC"></span><span class="target" id="classscenario_1_1gazebo_1_1Model_1aefc8c92f5cd8732cc9f2f30af4d8adc4"></span><a class="reference internal" href="core.html#_CPPv4N8scenario4coreE" title="scenario::core">core</a>::JointLimit <code class="sig-name descname">jointLimits</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;std::string&gt; &amp;<em>jointNames</em> = {}<span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Model11jointLimitsERKNSt6vectorINSt6stringEEE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Get the joint limits of the model.</p>
@@ -1907,8 +1937,9 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N8scenario6gazebo4Link15applyWorldForceERKNSt5arrayIdXL3EEEEKd">
-<span id="_CPPv3N8scenario6gazebo4Link15applyWorldForceERKNSt5arrayIdXL3EEEEKd"></span><span id="_CPPv2N8scenario6gazebo4Link15applyWorldForceERKNSt5arrayIdX3EEEKd"></span><span id="scenario::gazebo::Link::applyWorldForce__std::array:double.3:CR.doubleC"></span><span class="target" id="classscenario_1_1gazebo_1_1Link_1a606846bb13e08863aed5307e5e8fd550"></span>bool <code class="sig-name descname">applyWorldForce</code><span class="sig-paren">(</span><em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>force</em>, <em class="property">const</em> double <em>duration</em> = 0.0<span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N8scenario6gazebo4Link15applyWorldForceERKNSt5arrayIdXL3EEEEKd" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Apply a force to the CoM of the link.</p>
+<span id="_CPPv3N8scenario6gazebo4Link15applyWorldForceERKNSt5arrayIdXL3EEEEKd"></span><span id="_CPPv2N8scenario6gazebo4Link15applyWorldForceERKNSt5arrayIdX3EEEKd"></span><span id="scenario::gazebo::Link::applyWorldForce__std::array:double.3:CR.doubleC"></span><span class="target" id="classscenario_1_1gazebo_1_1Link_1a6564e60e924c69c22cb433be6dd4a587"></span>bool <code class="sig-name descname">applyWorldForce</code><span class="sig-paren">(</span><em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>force</em>, <em class="property">const</em> double <em>duration</em> = 0.0<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo4Link15applyWorldForceERKNSt5arrayIdXL3EEEEKd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Apply a force to the link.</p>
+<p>The force is applied to the origin of the link frame.</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>True for success, false otherwise. </p>
 </dd>
@@ -1923,8 +1954,9 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N8scenario6gazebo4Link16applyWorldTorqueERKNSt5arrayIdXL3EEEEKd">
-<span id="_CPPv3N8scenario6gazebo4Link16applyWorldTorqueERKNSt5arrayIdXL3EEEEKd"></span><span id="_CPPv2N8scenario6gazebo4Link16applyWorldTorqueERKNSt5arrayIdX3EEEKd"></span><span id="scenario::gazebo::Link::applyWorldTorque__std::array:double.3:CR.doubleC"></span><span class="target" id="classscenario_1_1gazebo_1_1Link_1aa3cc96a79ef7237a16e5c4efe8905141"></span>bool <code class="sig-name descname">applyWorldTorque</code><span class="sig-paren">(</span><em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>torque</em>, <em class="property">const</em> double <em>duration</em> = 0.0<span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N8scenario6gazebo4Link16applyWorldTorqueERKNSt5arrayIdXL3EEEEKd" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Apply a torque to the CoM of the link.</p>
+<span id="_CPPv3N8scenario6gazebo4Link16applyWorldTorqueERKNSt5arrayIdXL3EEEEKd"></span><span id="_CPPv2N8scenario6gazebo4Link16applyWorldTorqueERKNSt5arrayIdX3EEEKd"></span><span id="scenario::gazebo::Link::applyWorldTorque__std::array:double.3:CR.doubleC"></span><span class="target" id="classscenario_1_1gazebo_1_1Link_1ab947732307cf1a04b596a880d964f099"></span>bool <code class="sig-name descname">applyWorldTorque</code><span class="sig-paren">(</span><em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>torque</em>, <em class="property">const</em> double <em>duration</em> = 0.0<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo4Link16applyWorldTorqueERKNSt5arrayIdXL3EEEEKd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Apply a torque to the link.</p>
+<p>The force is applied to the origin of the link frame.</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>True for success, false otherwise. </p>
 </dd>
@@ -1939,9 +1971,29 @@
 
 <dl class="cpp function">
 <dt id="_CPPv4N8scenario6gazebo4Link16applyWorldWrenchERKNSt5arrayIdXL3EEEERKNSt5arrayIdXL3EEEEKd">
-<span id="_CPPv3N8scenario6gazebo4Link16applyWorldWrenchERKNSt5arrayIdXL3EEEERKNSt5arrayIdXL3EEEEKd"></span><span id="_CPPv2N8scenario6gazebo4Link16applyWorldWrenchERKNSt5arrayIdX3EEERKNSt5arrayIdX3EEEKd"></span><span id="scenario::gazebo::Link::applyWorldWrench__std::array:double.3:CR.std::array:double.3:CR.doubleC"></span><span class="target" id="classscenario_1_1gazebo_1_1Link_1ad9365f81a58b8e6b7b5af8c2b6362fa5"></span>bool <code class="sig-name descname">applyWorldWrench</code><span class="sig-paren">(</span><em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>force</em>, <em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>torque</em>, <em class="property">const</em> double <em>duration</em> = 0.0<span class="sig-paren">)</span> <em class="property">override</em><a class="headerlink" href="#_CPPv4N8scenario6gazebo4Link16applyWorldWrenchERKNSt5arrayIdXL3EEEERKNSt5arrayIdXL3EEEEKd" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N8scenario6gazebo4Link16applyWorldWrenchERKNSt5arrayIdXL3EEEERKNSt5arrayIdXL3EEEEKd"></span><span id="_CPPv2N8scenario6gazebo4Link16applyWorldWrenchERKNSt5arrayIdX3EEERKNSt5arrayIdX3EEEKd"></span><span id="scenario::gazebo::Link::applyWorldWrench__std::array:double.3:CR.std::array:double.3:CR.doubleC"></span><span class="target" id="classscenario_1_1gazebo_1_1Link_1a6bb05e488ab0c8f304b3057575db5b25"></span>bool <code class="sig-name descname">applyWorldWrench</code><span class="sig-paren">(</span><em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>force</em>, <em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>torque</em>, <em class="property">const</em> double <em>duration</em> = 0.0<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo4Link16applyWorldWrenchERKNSt5arrayIdXL3EEEERKNSt5arrayIdXL3EEEEKd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Apply a wrench to the link.</p>
+<p>The force is applied to the origin of the link frame.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>True for success, false otherwise. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">force</span></code>: The force to apply expressed in world coordinates. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">torque</span></code>: The torque to apply expressed in world coordinates. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">duration</span></code>: The duration of the application of the wrench. By default the wrench is applied for a single physics step. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N8scenario6gazebo4Link21applyWorldWrenchToCoMERKNSt5arrayIdXL3EEEERKNSt5arrayIdXL3EEEEKd">
+<span id="_CPPv3N8scenario6gazebo4Link21applyWorldWrenchToCoMERKNSt5arrayIdXL3EEEERKNSt5arrayIdXL3EEEEKd"></span><span id="_CPPv2N8scenario6gazebo4Link21applyWorldWrenchToCoMERKNSt5arrayIdX3EEERKNSt5arrayIdX3EEEKd"></span><span id="scenario::gazebo::Link::applyWorldWrenchToCoM__std::array:double.3:CR.std::array:double.3:CR.doubleC"></span><span class="target" id="classscenario_1_1gazebo_1_1Link_1a497231c3ab179efce46a2c065470b581"></span>bool <code class="sig-name descname">applyWorldWrenchToCoM</code><span class="sig-paren">(</span><em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>force</em>, <em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>torque</em>, <em class="property">const</em> double <em>duration</em> = 0.0<span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo4Link21applyWorldWrenchToCoMERKNSt5arrayIdXL3EEEERKNSt5arrayIdXL3EEEEKd" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Apply a wrench to the CoM of the link.</p>
 <p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>This method considers the CoM being positioned in the origin of the inertial frame as it is defined in the SDF description of the model. Note that if not explicitly specified, inertial and link frames match. In this case, <code class="docutils literal notranslate"><span class="pre">applyWorldWrench</span></code> and <code class="docutils literal notranslate"><span class="pre">applyWorldWrenchToCoM</span></code> effects will be the same.</p>
+</dd>
 <dt><strong>Return</strong></dt><dd><p>True for success, false otherwise. </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
@@ -2105,6 +2157,40 @@
 </dd></dl>
 
 <dl class="cpp function">
+<dt id="_CPPv4N8scenario6gazebo5Joint18setCoulombFrictionEKd">
+<span id="_CPPv3N8scenario6gazebo5Joint18setCoulombFrictionEKd"></span><span id="_CPPv2N8scenario6gazebo5Joint18setCoulombFrictionEKd"></span><span id="scenario::gazebo::Joint::setCoulombFriction__doubleC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1ab1d55ec0c2cbc866ecad72ef7f99272c"></span>bool <code class="sig-name descname">setCoulombFriction</code><span class="sig-paren">(</span><em class="property">const</em> double <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo5Joint18setCoulombFrictionEKd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the Coulomb friction parameter of the joint.</p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>Friction can be changed only before the first simulated step after model insertion.</p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p>True for success, false otherwise. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code>: The new Coulomb friction value. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N8scenario6gazebo5Joint18setViscousFrictionEKd">
+<span id="_CPPv3N8scenario6gazebo5Joint18setViscousFrictionEKd"></span><span id="_CPPv2N8scenario6gazebo5Joint18setViscousFrictionEKd"></span><span id="scenario::gazebo::Joint::setViscousFriction__doubleC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1aa652e2908a8617229139818932ab87c5"></span>bool <code class="sig-name descname">setViscousFriction</code><span class="sig-paren">(</span><em class="property">const</em> double <em>value</em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo5Joint18setViscousFrictionEKd" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the viscous friction parameter of the joint.</p>
+<p><dl class="simple">
+<dt><strong>Note</strong></dt><dd><p>Friction can be changed only before the first simulated step after model insertion.</p>
+</dd>
+<dt><strong>Return</strong></dt><dd><p>True for success, false otherwise. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">value</span></code>: The new viscous friction value. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
 <dt id="_CPPv4NK8scenario6gazebo5Joint5validEv">
 <span id="_CPPv3NK8scenario6gazebo5Joint5validEv"></span><span id="_CPPv2NK8scenario6gazebo5Joint5validEv"></span><span id="scenario::gazebo::Joint::validC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1a1db870decabe667095b5b70a85bc1acd"></span>bool <code class="sig-name descname">valid</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Joint5validEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Check if the joint is valid.</p>
@@ -2257,6 +2343,32 @@
 </dd></dl>
 
 <dl class="cpp function">
+<dt id="_CPPv4NK8scenario6gazebo5Joint15coulombFrictionEv">
+<span id="_CPPv3NK8scenario6gazebo5Joint15coulombFrictionEv"></span><span id="_CPPv2NK8scenario6gazebo5Joint15coulombFrictionEv"></span><span id="scenario::gazebo::Joint::coulombFrictionC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1ac25bc7752ee3d50b62545332158b2756"></span>double <code class="sig-name descname">coulombFriction</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Joint15coulombFrictionEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the Coulomb friction of the joint.</p>
+<p>If <span class="math notranslate nohighlight">\( K_c \)</span> is the Coulomb friction parameter, and <span class="math notranslate nohighlight">\( \dot{q} \)</span> the joint velocity, the corresponding torque is often modelled as:</p>
+<p><span class="math notranslate nohighlight">\( \tau_{static} = sign(\dot{q}) K_c \)</span></p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The Coulomb friction parameter of the joint. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario6gazebo5Joint15viscousFrictionEv">
+<span id="_CPPv3NK8scenario6gazebo5Joint15viscousFrictionEv"></span><span id="_CPPv2NK8scenario6gazebo5Joint15viscousFrictionEv"></span><span id="scenario::gazebo::Joint::viscousFrictionC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1ab1ed881229f4e2c571e6fa07d60d5a69"></span>double <code class="sig-name descname">viscousFriction</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Joint15viscousFrictionEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the viscous friction of the joint.</p>
+<p>If <span class="math notranslate nohighlight">\( K_v \)</span> is the viscous friction parameter, and <span class="math notranslate nohighlight">\( \dot{q} \)</span> the joint velocity, the corresponding torque is often modelled as:</p>
+<p><span class="math notranslate nohighlight">\( \tau_{static} = K_v \dot{q} \)</span></p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The viscous friction parameter of the joint. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
 <dt id="_CPPv4NK8scenario6gazebo5Joint13positionLimitEK6size_t">
 <span id="_CPPv3NK8scenario6gazebo5Joint13positionLimitEK6size_t"></span><span id="_CPPv2NK8scenario6gazebo5Joint13positionLimitEK6size_t"></span><span id="scenario::gazebo::Joint::positionLimit__sCC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1a412629007a8dbb7a572017581540334a"></span><a class="reference internal" href="core.html#_CPPv4N8scenario4coreE" title="scenario::core">core</a>::Limit <code class="sig-name descname">positionLimit</code><span class="sig-paren">(</span><em class="property">const</em> size_t <em>dof</em> = 0<span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Joint13positionLimitEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Get the position limits of a joint DOF.</p>
@@ -2336,6 +2448,44 @@
 <dd><p>Get the velocity of a joint DOF.</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>The velocity of the joint DOF. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dof</span></code>: The index of the DOF. </p></li>
+</ul>
+</dd>
+<dt><strong>Exceptions</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">std::runtime_error</span></code>: if the DOF is not valid. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario6gazebo5Joint12accelerationEK6size_t">
+<span id="_CPPv3NK8scenario6gazebo5Joint12accelerationEK6size_t"></span><span id="_CPPv2NK8scenario6gazebo5Joint12accelerationEK6size_t"></span><span id="scenario::gazebo::Joint::acceleration__sCC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1ac6dc8caf3cb6d98acefd2f7e53da6234"></span>double <code class="sig-name descname">acceleration</code><span class="sig-paren">(</span><em class="property">const</em> size_t <em>dof</em> = 0<span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Joint12accelerationEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the acceleration of a joint DOF.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The acceleration of the joint DOF. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dof</span></code>: The index of the DOF. </p></li>
+</ul>
+</dd>
+<dt><strong>Exceptions</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">std::runtime_error</span></code>: if the DOF is not valid. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario6gazebo5Joint16generalizedForceEK6size_t">
+<span id="_CPPv3NK8scenario6gazebo5Joint16generalizedForceEK6size_t"></span><span id="_CPPv2NK8scenario6gazebo5Joint16generalizedForceEK6size_t"></span><span id="scenario::gazebo::Joint::generalizedForce__sCC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1ae3becc9ffced53e029ffed7b3cf9e268"></span>double <code class="sig-name descname">generalizedForce</code><span class="sig-paren">(</span><em class="property">const</em> size_t <em>dof</em> = 0<span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Joint16generalizedForceEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the generalized force of a joint DOF.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The generalized force of the joint DOF. </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">dof</span></code>: The index of the DOF. </p></li>
@@ -2552,6 +2702,28 @@
 <dd><p>Get the velocity of the joint.</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>The velocity of the joint. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario6gazebo5Joint17jointAccelerationEv">
+<span id="_CPPv3NK8scenario6gazebo5Joint17jointAccelerationEv"></span><span id="_CPPv2NK8scenario6gazebo5Joint17jointAccelerationEv"></span><span id="scenario::gazebo::Joint::jointAccelerationC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1ae50071b0484270610a1de0bf9d3f70a5"></span>std::vector&lt;double&gt; <code class="sig-name descname">jointAcceleration</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Joint17jointAccelerationEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the acceleration of the joint.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The acceleration of the joint. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario6gazebo5Joint21jointGeneralizedForceEv">
+<span id="_CPPv3NK8scenario6gazebo5Joint21jointGeneralizedForceEv"></span><span id="_CPPv2NK8scenario6gazebo5Joint21jointGeneralizedForceEv"></span><span id="scenario::gazebo::Joint::jointGeneralizedForceC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1ac6ae81ce849445824305acd5a5f9e1a9"></span>std::vector&lt;double&gt; <code class="sig-name descname">jointGeneralizedForce</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> <em class="property">override</em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Joint21jointGeneralizedForceEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the generalized force of the joint.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The generalized force of the joint. </p>
 </dd>
 </dl>
 </p>

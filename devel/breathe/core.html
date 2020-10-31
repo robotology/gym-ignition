@@ -590,6 +590,36 @@
 </dd></dl>
 
 <dl class="cpp function">
+<dt id="_CPPv4NK8scenario4core5Model18jointAccelerationsERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3NK8scenario4core5Model18jointAccelerationsERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2NK8scenario4core5Model18jointAccelerationsERKNSt6vectorINSt6stringEEE"></span><span id="scenario::core::Model::jointAccelerations__std::vector:ss:CRC"></span><span class="target" id="classscenario_1_1core_1_1Model_1a479fde4b6bd1ab8cd0144aa7e0e7e699"></span>std::vector&lt;double&gt; <code class="sig-name descname">jointAccelerations</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;std::string&gt; &amp;<em>jointNames</em> = {}<span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK8scenario4core5Model18jointAccelerationsERKNSt6vectorINSt6stringEEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the joint accelerations.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The serialization of joint accelerations. The vector has as many elements as DoFs of the considered joints. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">jointNames</span></code>: Optional vector of considered joints that also defines the joint serialization. By default, <code class="docutils literal notranslate"><a class="reference internal" href="#classscenario_1_1core_1_1Model_1a6e98721512018f74edaef283e19b3c12"><span class="std std-ref"><span class="pre">Model::jointNames</span></span></a></code> is used. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario4core5Model22jointGeneralizedForcesERKNSt6vectorINSt6stringEEE">
+<span id="_CPPv3NK8scenario4core5Model22jointGeneralizedForcesERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2NK8scenario4core5Model22jointGeneralizedForcesERKNSt6vectorINSt6stringEEE"></span><span id="scenario::core::Model::jointGeneralizedForces__std::vector:ss:CRC"></span><span class="target" id="classscenario_1_1core_1_1Model_1ae933d42289971b2475c78112e6a8d667"></span>std::vector&lt;double&gt; <code class="sig-name descname">jointGeneralizedForces</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;std::string&gt; &amp;<em>jointNames</em> = {}<span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK8scenario4core5Model22jointGeneralizedForcesERKNSt6vectorINSt6stringEEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the joint generalized forces.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The serialization of joint forces. The vector has as many elements as DoFs of the considered joints. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">jointNames</span></code>: Optional vector of considered joints that also defines the joint serialization. By default, <code class="docutils literal notranslate"><a class="reference internal" href="#classscenario_1_1core_1_1Model_1a6e98721512018f74edaef283e19b3c12"><span class="std std-ref"><span class="pre">Model::jointNames</span></span></a></code> is used. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
 <dt id="_CPPv4NK8scenario4core5Model11jointLimitsERKNSt6vectorINSt6stringEEE">
 <span id="_CPPv3NK8scenario4core5Model11jointLimitsERKNSt6vectorINSt6stringEEE"></span><span id="_CPPv2NK8scenario4core5Model11jointLimitsERKNSt6vectorINSt6stringEEE"></span><span id="scenario::core::Model::jointLimits__std::vector:ss:CRC"></span><span class="target" id="classscenario_1_1core_1_1Model_1a6ef89f894afbbaa35b385dd73648e1cc"></span>JointLimit <code class="sig-name descname">jointLimits</code><span class="sig-paren">(</span><em class="property">const</em> std::vector&lt;std::string&gt; &amp;<em>jointNames</em> = {}<span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK8scenario4core5Model11jointLimitsERKNSt6vectorINSt6stringEEE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Get the joint limits of the model.</p>
@@ -1342,55 +1372,6 @@
 </p>
 </dd></dl>
 
-<dl class="cpp function">
-<dt id="_CPPv4N8scenario4core4Link15applyWorldForceERKNSt5arrayIdXL3EEEEKd">
-<span id="_CPPv3N8scenario4core4Link15applyWorldForceERKNSt5arrayIdXL3EEEEKd"></span><span id="_CPPv2N8scenario4core4Link15applyWorldForceERKNSt5arrayIdX3EEEKd"></span><span id="scenario::core::Link::applyWorldForce__std::array:double.3:CR.doubleC"></span><span class="target" id="classscenario_1_1core_1_1Link_1ac7c7c8d4bb31d43ab11004ba0c6da62d"></span>bool <code class="sig-name descname">applyWorldForce</code><span class="sig-paren">(</span><em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>force</em>, <em class="property">const</em> double <em>duration</em> = 0.0<span class="sig-paren">)</span> = 0<a class="headerlink" href="#_CPPv4N8scenario4core4Link15applyWorldForceERKNSt5arrayIdXL3EEEEKd" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Apply a force to the CoM of the link.</p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>True for success, false otherwise. </p>
-</dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">force</span></code>: The force to apply expressed in world coordinates. </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">duration</span></code>: The duration of the application of the force. By default the force is applied for a single physics step. </p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt id="_CPPv4N8scenario4core4Link16applyWorldTorqueERKNSt5arrayIdXL3EEEEKd">
-<span id="_CPPv3N8scenario4core4Link16applyWorldTorqueERKNSt5arrayIdXL3EEEEKd"></span><span id="_CPPv2N8scenario4core4Link16applyWorldTorqueERKNSt5arrayIdX3EEEKd"></span><span id="scenario::core::Link::applyWorldTorque__std::array:double.3:CR.doubleC"></span><span class="target" id="classscenario_1_1core_1_1Link_1a1c7a46752fe7ee6617aa91f762fcd189"></span>bool <code class="sig-name descname">applyWorldTorque</code><span class="sig-paren">(</span><em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>torque</em>, <em class="property">const</em> double <em>duration</em> = 0.0<span class="sig-paren">)</span> = 0<a class="headerlink" href="#_CPPv4N8scenario4core4Link16applyWorldTorqueERKNSt5arrayIdXL3EEEEKd" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Apply a torque to the CoM of the link.</p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>True for success, false otherwise. </p>
-</dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">torque</span></code>: The torque to apply expressed in world coordinates. </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">duration</span></code>: The duration of the application of the torque. By default the torque is applied for a single physics step. </p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt id="_CPPv4N8scenario4core4Link16applyWorldWrenchERKNSt5arrayIdXL3EEEERKNSt5arrayIdXL3EEEEKd">
-<span id="_CPPv3N8scenario4core4Link16applyWorldWrenchERKNSt5arrayIdXL3EEEERKNSt5arrayIdXL3EEEEKd"></span><span id="_CPPv2N8scenario4core4Link16applyWorldWrenchERKNSt5arrayIdX3EEERKNSt5arrayIdX3EEEKd"></span><span id="scenario::core::Link::applyWorldWrench__std::array:double.3:CR.std::array:double.3:CR.doubleC"></span><span class="target" id="classscenario_1_1core_1_1Link_1ae47fc5b1f9f4e0f863ec17ac3d3dc84b"></span>bool <code class="sig-name descname">applyWorldWrench</code><span class="sig-paren">(</span><em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>force</em>, <em class="property">const</em> std::array&lt;double, 3&gt; &amp;<em>torque</em>, <em class="property">const</em> double <em>duration</em> = 0.0<span class="sig-paren">)</span> = 0<a class="headerlink" href="#_CPPv4N8scenario4core4Link16applyWorldWrenchERKNSt5arrayIdXL3EEEERKNSt5arrayIdXL3EEEEKd" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Apply a wrench to the CoM of the link.</p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>True for success, false otherwise. </p>
-</dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">force</span></code>: The force to apply expressed in world coordinates. </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">torque</span></code>: The torque to apply expressed in world coordinates. </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">duration</span></code>: The duration of the application of the wrench. By default the wrench is applied for a single physics step. </p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd></dl>
-
 </div>
 </dd></dl>
 
@@ -1553,6 +1534,32 @@
 </dd></dl>
 
 <dl class="cpp function">
+<dt id="_CPPv4NK8scenario4core5Joint15coulombFrictionEv">
+<span id="_CPPv3NK8scenario4core5Joint15coulombFrictionEv"></span><span id="_CPPv2NK8scenario4core5Joint15coulombFrictionEv"></span><span id="scenario::core::Joint::coulombFrictionC"></span><span class="target" id="classscenario_1_1core_1_1Joint_1ac0cf7a9b5505aa5291272a8d3cc43bb2"></span>double <code class="sig-name descname">coulombFriction</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK8scenario4core5Joint15coulombFrictionEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the Coulomb friction of the joint.</p>
+<p>If <span class="math notranslate nohighlight">\( K_c \)</span> is the Coulomb friction parameter, and <span class="math notranslate nohighlight">\( \dot{q} \)</span> the joint velocity, the corresponding torque is often modelled as:</p>
+<p><span class="math notranslate nohighlight">\( \tau_{static} = sign(\dot{q}) K_c \)</span></p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The Coulomb friction parameter of the joint. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario4core5Joint15viscousFrictionEv">
+<span id="_CPPv3NK8scenario4core5Joint15viscousFrictionEv"></span><span id="_CPPv2NK8scenario4core5Joint15viscousFrictionEv"></span><span id="scenario::core::Joint::viscousFrictionC"></span><span class="target" id="classscenario_1_1core_1_1Joint_1acd1edfd6e6577d19560923c51b72dd15"></span>double <code class="sig-name descname">viscousFriction</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK8scenario4core5Joint15viscousFrictionEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the viscous friction of the joint.</p>
+<p>If <span class="math notranslate nohighlight">\( K_v \)</span> is the viscous friction parameter, and <span class="math notranslate nohighlight">\( \dot{q} \)</span> the joint velocity, the corresponding torque is often modelled as:</p>
+<p><span class="math notranslate nohighlight">\( \tau_{static} = K_v \dot{q} \)</span></p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The viscous friction parameter of the joint. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
 <dt id="_CPPv4NK8scenario4core5Joint13positionLimitEK6size_t">
 <span id="_CPPv3NK8scenario4core5Joint13positionLimitEK6size_t"></span><span id="_CPPv2NK8scenario4core5Joint13positionLimitEK6size_t"></span><span id="scenario::core::Joint::positionLimit__sCC"></span><span class="target" id="classscenario_1_1core_1_1Joint_1a03589ade0f6c972d1c096c5c6c07f23f"></span>Limit <code class="sig-name descname">positionLimit</code><span class="sig-paren">(</span><em class="property">const</em> size_t <em>dof</em> = 0<span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK8scenario4core5Joint13positionLimitEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Get the position limits of a joint DOF.</p>
@@ -1632,6 +1639,44 @@
 <dd><p>Get the velocity of a joint DOF.</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>The velocity of the joint DOF. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dof</span></code>: The index of the DOF. </p></li>
+</ul>
+</dd>
+<dt><strong>Exceptions</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">std::runtime_error</span></code>: if the DOF is not valid. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario4core5Joint12accelerationEK6size_t">
+<span id="_CPPv3NK8scenario4core5Joint12accelerationEK6size_t"></span><span id="_CPPv2NK8scenario4core5Joint12accelerationEK6size_t"></span><span id="scenario::core::Joint::acceleration__sCC"></span><span class="target" id="classscenario_1_1core_1_1Joint_1a675a87e71dcb3d5b5cc65030da113e67"></span>double <code class="sig-name descname">acceleration</code><span class="sig-paren">(</span><em class="property">const</em> size_t <em>dof</em> = 0<span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK8scenario4core5Joint12accelerationEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the acceleration of a joint DOF.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The acceleration of the joint DOF. </p>
+</dd>
+<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">dof</span></code>: The index of the DOF. </p></li>
+</ul>
+</dd>
+<dt><strong>Exceptions</strong></dt><dd><ul class="breatheparameterlist simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">std::runtime_error</span></code>: if the DOF is not valid. </p></li>
+</ul>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario4core5Joint16generalizedForceEK6size_t">
+<span id="_CPPv3NK8scenario4core5Joint16generalizedForceEK6size_t"></span><span id="_CPPv2NK8scenario4core5Joint16generalizedForceEK6size_t"></span><span id="scenario::core::Joint::generalizedForce__sCC"></span><span class="target" id="classscenario_1_1core_1_1Joint_1aee767e26ad977ea50faa290e58e3f767"></span>double <code class="sig-name descname">generalizedForce</code><span class="sig-paren">(</span><em class="property">const</em> size_t <em>dof</em> = 0<span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK8scenario4core5Joint16generalizedForceEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the generalized force of a joint DOF.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The generalized force of the joint DOF. </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">dof</span></code>: The index of the DOF. </p></li>
@@ -1848,6 +1893,28 @@
 <dd><p>Get the velocity of the joint.</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>The velocity of the joint. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario4core5Joint17jointAccelerationEv">
+<span id="_CPPv3NK8scenario4core5Joint17jointAccelerationEv"></span><span id="_CPPv2NK8scenario4core5Joint17jointAccelerationEv"></span><span id="scenario::core::Joint::jointAccelerationC"></span><span class="target" id="classscenario_1_1core_1_1Joint_1a4fdea030b99fdc09b0ce08c33900694d"></span>std::vector&lt;double&gt; <code class="sig-name descname">jointAcceleration</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK8scenario4core5Joint17jointAccelerationEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the acceleration of the joint.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The acceleration of the joint. </p>
+</dd>
+</dl>
+</p>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario4core5Joint21jointGeneralizedForceEv">
+<span id="_CPPv3NK8scenario4core5Joint21jointGeneralizedForceEv"></span><span id="_CPPv2NK8scenario4core5Joint21jointGeneralizedForceEv"></span><span id="scenario::core::Joint::jointGeneralizedForceC"></span><span class="target" id="classscenario_1_1core_1_1Joint_1a67f5672086163bba182b6af0322b2db7"></span>std::vector&lt;double&gt; <code class="sig-name descname">jointGeneralizedForce</code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property">const</em> = 0<a class="headerlink" href="#_CPPv4NK8scenario4core5Joint21jointGeneralizedForceEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the generalized force of the joint.</p>
+<p><dl class="simple">
+<dt><strong>Return</strong></dt><dd><p>The generalized force of the joint. </p>
 </dd>
 </dl>
 </p>

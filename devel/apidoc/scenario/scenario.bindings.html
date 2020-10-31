@@ -448,6 +448,26 @@
 <em class="property">class </em><code class="sig-prename descclassname">scenario.bindings.core.</code><code class="sig-name descname">Joint</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
+<dt id="scenario.bindings.core.Joint.acceleration">
+<code class="sig-name descname">acceleration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dof</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.acceleration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the acceleration of a joint DOF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dof</strong> (<em>int</em>) – The index of the DOF.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>std::runtime_error if the DOF is not valid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The acceleration of the joint DOF.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.core.Joint.acceleration_target">
 <code class="sig-name descname">acceleration_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dof</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.acceleration_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the active acceleration target of the joint DOF.</p>
@@ -499,6 +519,23 @@ is active, infinity is returned.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.core.Joint.coulomb_friction">
+<code class="sig-name descname">coulomb_friction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.coulomb_friction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the Coulomb friction of the joint.</p>
+<p>If <span class="math notranslate nohighlight">\(K_c\)</span> is the Coulomb friction parameter, and <span class="math notranslate nohighlight">\(\dot{q}\)</span>
+the joint velocity, the corresponding torque is often modelled as:</p>
+<p><span class="math notranslate nohighlight">\(\tau_{static} = sign(\dot{q}) K_c\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Coulomb friction parameter of the joint.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.core.Joint.dofs">
 <code class="sig-name descname">dofs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.dofs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of degrees of freedom of the joint.</p>
@@ -528,6 +565,26 @@ is active, infinity is returned.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>True for success, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.core.Joint.generalized_force">
+<code class="sig-name descname">generalized_force</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dof</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.generalized_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the generalized force of a joint DOF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dof</strong> (<em>int</em>) – The index of the DOF.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>std::runtime_error if the DOF is not valid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The generalized force of the joint DOF.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -583,6 +640,20 @@ generalized force target was set.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.core.Joint.joint_acceleration">
+<code class="sig-name descname">joint_acceleration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.joint_acceleration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the acceleration of the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[float, ..]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The acceleration of the joint.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.core.Joint.joint_acceleration_target">
 <code class="sig-name descname">joint_acceleration_target</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.joint_acceleration_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the active acceleration target.</p>
@@ -592,6 +663,20 @@ generalized force target was set.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The acceleration target of the joint.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.core.Joint.joint_generalized_force">
+<code class="sig-name descname">joint_generalized_force</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.joint_generalized_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the generalized force of the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[float, ..]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The generalized force of the joint.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1133,6 +1218,23 @@ target was set.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="scenario.bindings.core.Joint.viscous_friction">
+<code class="sig-name descname">viscous_friction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.viscous_friction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the viscous friction of the joint.</p>
+<p>If <span class="math notranslate nohighlight">\(K_v\)</span> is the viscous friction parameter, and <span class="math notranslate nohighlight">\(\dot{q}\)</span>
+the joint velocity, the corresponding torque is often modelled as:</p>
+<p><span class="math notranslate nohighlight">\(\tau_{static} = K_v \dot{q}\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The viscous friction parameter of the joint.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -1183,70 +1285,6 @@ target was set.</p>
 <dt id="scenario.bindings.core.Link">
 <em class="property">class </em><code class="sig-prename descclassname">scenario.bindings.core.</code><code class="sig-name descname">Link</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Link" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
-<dl class="py method">
-<dt id="scenario.bindings.core.Link.apply_world_force">
-<code class="sig-name descname">apply_world_force</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span></em>, <em class="sig-param"><span class="n">duration</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Link.apply_world_force" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply a force to the CoM of the link.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>force</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The force to apply expressed in world coordinates.</p></li>
-<li><p><strong>duration</strong> (<em>float</em>) – The duration of the application of the force.
-By default the force is applied for a single physics step.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>boolean</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>True for success, false otherwise.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="scenario.bindings.core.Link.apply_world_torque">
-<code class="sig-name descname">apply_world_torque</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">torque</span></em>, <em class="sig-param"><span class="n">duration</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Link.apply_world_torque" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply a torque to the CoM of the link.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>torque</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The torque to apply expressed in world coordinates.</p></li>
-<li><p><strong>duration</strong> (<em>float</em>) – The duration of the application of the torque.
-By default the torque is applied for a single physics step.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>boolean</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>True for success, false otherwise.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="scenario.bindings.core.Link.apply_world_wrench">
-<code class="sig-name descname">apply_world_wrench</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span></em>, <em class="sig-param"><span class="n">torque</span></em>, <em class="sig-param"><span class="n">duration</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Link.apply_world_wrench" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply a wrench to the CoM of the link.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>force</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The force to apply expressed in world coordinates.</p></li>
-<li><p><strong>torque</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The torque to apply expressed in world coordinates.</p></li>
-<li><p><strong>duration</strong> (<em>float</em>) – The duration of the application of the wrench.
-By default the wrench is applied for a single physics step.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>boolean</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>True for success, false otherwise.</p>
-</dd>
-</dl>
-</dd></dl>
-
 <dl class="py method">
 <dt id="scenario.bindings.core.Link.body_angular_acceleration">
 <code class="sig-name descname">body_angular_acceleration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Link.body_angular_acceleration" title="Permalink to this definition">¶</a></dt>
@@ -1451,6 +1489,16 @@ defined in the model file, in world coordinates.</p>
 <dt id="scenario.bindings.core.Link.thisown">
 <em class="property">property </em><code class="sig-name descname">thisown</code><a class="headerlink" href="#scenario.bindings.core.Link.thisown" title="Permalink to this definition">¶</a></dt>
 <dd><p>The membership flag</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.core.Link.to_gazebo">
+<code class="sig-name descname">to_gazebo</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Link.to_gazebo" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference internal" href="#scenario.bindings.gazebo.Link" title="scenario.bindings.gazebo.Link"><code class="xref py py-class docutils literal notranslate"><span class="pre">Link</span></code></a>, <a class="reference internal" href="#scenario.bindings.core.Link" title="scenario.bindings.core.Link"><code class="xref py py-class docutils literal notranslate"><span class="pre">Link</span></code></a>]</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -1953,6 +2001,26 @@ used.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.core.Model.joint_accelerations">
+<code class="sig-name descname">joint_accelerations</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Model.joint_accelerations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the joint accelerations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
+used.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tuple[float, ..]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The serialization of joint accelerations. The vector has as many
+elements as DoFs of the considered joints.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.core.Model.joint_generalized_force_targets">
 <code class="sig-name descname">joint_generalized_force_targets</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Model.joint_generalized_force_targets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the generalized force targets of the joints.</p>
@@ -1966,6 +2034,26 @@ used.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The generalized force targets of the joints.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.core.Model.joint_generalized_forces">
+<code class="sig-name descname">joint_generalized_forces</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Model.joint_generalized_forces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the joint generalized forces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
+used.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tuple[float, ..]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The serialization of joint forces. The vector has as many
+elements as DoFs of the considered joints.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4246,6 +4334,26 @@ currently supported.</p>
 <em class="property">class </em><code class="sig-prename descclassname">scenario.bindings.gazebo.</code><code class="sig-name descname">Joint</code><a class="headerlink" href="#scenario.bindings.gazebo.Joint" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#scenario.bindings.core.Joint" title="scenario.bindings.core.Joint"><code class="xref py py-class docutils literal notranslate"><span class="pre">scenario.bindings.core.Joint</span></code></a>, <a class="reference internal" href="#scenario.bindings.gazebo.GazeboEntity" title="scenario.bindings.gazebo.GazeboEntity"><code class="xref py py-class docutils literal notranslate"><span class="pre">scenario.bindings.gazebo.GazeboEntity</span></code></a></p>
 <dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.acceleration">
+<code class="sig-name descname">acceleration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dof</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.acceleration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the acceleration of a joint DOF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dof</strong> (<em>int</em>) – The index of the DOF.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>std::runtime_error if the DOF is not valid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The acceleration of the joint DOF.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.gazebo.Joint.acceleration_target">
 <code class="sig-name descname">acceleration_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dof</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.acceleration_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the active acceleration target of the joint DOF.</p>
@@ -4297,6 +4405,23 @@ is active, infinity is returned.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.coulomb_friction">
+<code class="sig-name descname">coulomb_friction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.coulomb_friction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the Coulomb friction of the joint.</p>
+<p>If <span class="math notranslate nohighlight">\(K_c\)</span> is the Coulomb friction parameter, and <span class="math notranslate nohighlight">\(\dot{q}\)</span>
+the joint velocity, the corresponding torque is often modelled as:</p>
+<p><span class="math notranslate nohighlight">\(\tau_{static} = sign(\dot{q}) K_c\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The Coulomb friction parameter of the joint.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.gazebo.Joint.dofs">
 <code class="sig-name descname">dofs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.dofs" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the number of degrees of freedom of the joint.</p>
@@ -4326,6 +4451,26 @@ is active, infinity is returned.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>True for success, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.generalized_force">
+<code class="sig-name descname">generalized_force</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">dof</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.generalized_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the generalized force of a joint DOF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dof</strong> (<em>int</em>) – The index of the DOF.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>std::runtime_error if the DOF is not valid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The generalized force of the joint DOF.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4398,6 +4543,20 @@ numbering.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.joint_acceleration">
+<code class="sig-name descname">joint_acceleration</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.joint_acceleration" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the acceleration of the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[float, ..]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The acceleration of the joint.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.gazebo.Joint.joint_acceleration_target">
 <code class="sig-name descname">joint_acceleration_target</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.joint_acceleration_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the active acceleration target.</p>
@@ -4407,6 +4566,20 @@ numbering.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The acceleration target of the joint.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.joint_generalized_force">
+<code class="sig-name descname">joint_generalized_force</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.joint_generalized_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the generalized force of the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>Tuple[float, ..]</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The generalized force of the joint.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4782,6 +4955,25 @@ target was set.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.set_coulomb_friction">
+<code class="sig-name descname">set_coulomb_friction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.set_coulomb_friction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the Coulomb friction parameter of the joint.</p>
+<p>Notes: Friction can be changed only before the first simulated step
+after model insertion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>float</em>) – The new Coulomb friction value.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True for success, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.gazebo.Joint.set_generalized_force_target">
 <code class="sig-name descname">set_generalized_force_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span></em>, <em class="sig-param"><span class="n">dof</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.set_generalized_force_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the generalized force target of a joint DOF.</p>
@@ -4983,6 +5175,25 @@ controllers.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.set_viscous_friction">
+<code class="sig-name descname">set_viscous_friction</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.set_viscous_friction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the viscous friction parameter of the joint.</p>
+<p>Notes: Friction can be changed only before the first simulated step
+after model insertion.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>value</strong> (<em>float</em>) – The new viscous friction value.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True for success, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.gazebo.Joint.thisown">
 <em class="property">property </em><code class="sig-name descname">thisown</code><a class="headerlink" href="#scenario.bindings.gazebo.Joint.thisown" title="Permalink to this definition">¶</a></dt>
 <dd><p>The membership flag</p>
@@ -5057,6 +5268,23 @@ target was set.</p>
 </dl>
 </dd></dl>
 
+<dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.viscous_friction">
+<code class="sig-name descname">viscous_friction</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.viscous_friction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the viscous friction of the joint.</p>
+<p>If <span class="math notranslate nohighlight">\(K_v\)</span> is the viscous friction parameter, and <span class="math notranslate nohighlight">\(\dot{q}\)</span>
+the joint velocity, the corresponding torque is often modelled as:</p>
+<p><span class="math notranslate nohighlight">\(\tau_{static} = K_v \dot{q}\)</span></p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p>float</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The viscous friction parameter of the joint.</p>
+</dd>
+</dl>
+</dd></dl>
+
 </dd></dl>
 
 <dl class="py class">
@@ -5066,7 +5294,8 @@ target was set.</p>
 <dl class="py method">
 <dt id="scenario.bindings.gazebo.Link.apply_world_force">
 <code class="sig-name descname">apply_world_force</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span></em>, <em class="sig-param"><span class="n">duration</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Link.apply_world_force" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply a force to the CoM of the link.</p>
+<dd><p>Apply a force to the link.</p>
+<p>The force is applied to the origin of the link frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -5087,7 +5316,8 @@ By default the force is applied for a single physics step.</p></li>
 <dl class="py method">
 <dt id="scenario.bindings.gazebo.Link.apply_world_torque">
 <code class="sig-name descname">apply_world_torque</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">torque</span></em>, <em class="sig-param"><span class="n">duration</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Link.apply_world_torque" title="Permalink to this definition">¶</a></dt>
-<dd><p>Apply a torque to the CoM of the link.</p>
+<dd><p>Apply a torque to the link.</p>
+<p>The force is applied to the origin of the link frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -5108,7 +5338,35 @@ By default the torque is applied for a single physics step.</p></li>
 <dl class="py method">
 <dt id="scenario.bindings.gazebo.Link.apply_world_wrench">
 <code class="sig-name descname">apply_world_wrench</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span></em>, <em class="sig-param"><span class="n">torque</span></em>, <em class="sig-param"><span class="n">duration</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Link.apply_world_wrench" title="Permalink to this definition">¶</a></dt>
+<dd><p>Apply a wrench to the link.</p>
+<p>The force is applied to the origin of the link frame.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>force</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The force to apply expressed in world coordinates.</p></li>
+<li><p><strong>torque</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The torque to apply expressed in world coordinates.</p></li>
+<li><p><strong>duration</strong> (<em>float</em>) – The duration of the application of the wrench.
+By default the wrench is applied for a single physics step.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True for success, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.gazebo.Link.apply_world_wrench_to_co_m">
+<code class="sig-name descname">apply_world_wrench_to_co_m</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">force</span></em>, <em class="sig-param"><span class="n">torque</span></em>, <em class="sig-param"><span class="n">duration</span><span class="o">=</span><span class="default_value">0.0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Link.apply_world_wrench_to_co_m" title="Permalink to this definition">¶</a></dt>
 <dd><p>Apply a wrench to the CoM of the link.</p>
+<p>Notes: This method considers the CoM being positioned in the origin of
+the inertial frame as it is defined in the SDF description of the model.
+Note that if not explicitly specified, inertial and link frames match.
+In this case, <cite>applyWorldWrench</cite> and <cite>applyWorldWrenchToCoM</cite> effects
+will be the same.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
@@ -5888,6 +6146,26 @@ numbering.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.gazebo.Model.joint_accelerations">
+<code class="sig-name descname">joint_accelerations</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Model.joint_accelerations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the joint accelerations.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
+used.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tuple[float, ..]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The serialization of joint accelerations. The vector has as many
+elements as DoFs of the considered joints.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.gazebo.Model.joint_generalized_force_targets">
 <code class="sig-name descname">joint_generalized_force_targets</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Model.joint_generalized_force_targets" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the generalized force targets of the joints.</p>
@@ -5901,6 +6179,26 @@ numbering.</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The generalized force targets of the joints.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.gazebo.Model.joint_generalized_forces">
+<code class="sig-name descname">joint_generalized_forces</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Model.joint_generalized_forces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the joint generalized forces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
+used.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>Tuple[float, ..]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The serialization of joint forces. The vector has as many
+elements as DoFs of the considered joints.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -6672,6 +6970,11 @@ have as many elements as the considered joint DoFs.</p></li>
 <dl class="py function">
 <dt id="scenario.bindings.gazebo.ToGazeboJoint">
 <code class="sig-prename descclassname">scenario.bindings.gazebo.</code><code class="sig-name descname">ToGazeboJoint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.ToGazeboJoint" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt id="scenario.bindings.gazebo.ToGazeboLink">
+<code class="sig-prename descclassname">scenario.bindings.gazebo.</code><code class="sig-name descname">ToGazeboLink</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.ToGazeboLink" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
