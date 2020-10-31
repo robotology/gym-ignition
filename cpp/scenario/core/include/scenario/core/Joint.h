@@ -230,6 +230,15 @@ public:
     virtual double velocity(const size_t dof = 0) const = 0;
 
     /**
+     * Get the acceleration of a joint DOF.
+     *
+     * @param dof The index of the DOF.
+     * @throw std::runtime_error if the DOF is not valid.
+     * @return The acceleration of the joint DOF.
+     */
+    virtual double acceleration(const size_t dof = 0) const = 0;
+
+    /**
      * Set the position target of a joint DOF.
      *
      * The target is processed by a joint controller, if enabled.
@@ -363,6 +372,13 @@ public:
      * @return The velocity of the joint.
      */
     virtual std::vector<double> jointVelocity() const = 0;
+
+    /**
+     * Get the acceleration of the joint.
+     *
+     * @return The acceleration of the joint.
+     */
+    virtual std::vector<double> jointAcceleration() const = 0;
 
     /**
      * Set the position target of the joint.

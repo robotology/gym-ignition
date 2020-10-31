@@ -270,6 +270,18 @@ public:
         const std::vector<std::string>& jointNames = {}) const = 0;
 
     /**
+     * Get the joint accelerations.
+     *
+     * @param jointNames Optional vector of considered joints that also
+     * defines the joint serialization. By default, ``Model::jointNames`` is
+     * used.
+     * @return The serialization of joint accelerations. The vector has as many
+     * elements as DoFs of the considered joints.
+     */
+    virtual std::vector<double> jointAccelerations( //
+        const std::vector<std::string>& jointNames = {}) const = 0;
+
+    /**
      * Get the joint limits of the model.
      *
      * @param jointNames Optional vector of considered joints that also
