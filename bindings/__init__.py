@@ -67,7 +67,6 @@ def import_gazebo() -> None:
 
 
 def create_home_dot_folder() -> None:
-    from pathlib import Path
 
     # Make sure that the dot folder in the user's home exists
     Path("~/.ignition/gazebo").expanduser().mkdir(mode=0o755,
