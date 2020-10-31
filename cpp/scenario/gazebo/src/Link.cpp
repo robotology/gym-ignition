@@ -42,6 +42,7 @@
 #include <ignition/gazebo/components/Inertial.hh>
 #include <ignition/gazebo/components/LinearAcceleration.hh>
 #include <ignition/gazebo/components/LinearVelocity.hh>
+#include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/math/Inertial.hh>
@@ -521,17 +522,68 @@ bool Link::applyWorldWrench(const std::array<double, 3>& force,
                             const double duration)
 {
     // Adapted from ignition::gazebo::Link::AddWorld{Force,Wrench}
-    using namespace std::chrono;
-    using namespace ignition;
-    using namespace ignition::gazebo;
 
-    auto inertial =
-        utils::getExistingComponentData<components::Inertial>(m_ecm, m_entity);
+    // Initialize the force and the torque with the input data
+    const auto forceIgnitionMath = utils::toIgnitionVector3(force);
+    const auto torqueIgnitionMath = utils::toIgnitionVector3(torque);
 
-    auto worldPose =
-        utils::getExistingComponentData<components::WorldPose>(m_ecm, m_entity);
+    const auto entityWithSimTime = utils::getFirstParentEntityWithComponent<
+        ignition::gazebo::components::SimulatedTime>(m_ecm, m_entity);
+    assert(entityWithSimTime != ignition::gazebo::kNullEntity);
 
-    auto forceIgnitionMath = utils::toIgnitionVector3(force);
+    // Get the current simulated time
+    auto& now = utils::getExistingComponentData<
+        ignition::gazebo::components::SimulatedTime>(m_ecm, entityWithSimTime);
+
+    // Create a new wrench with duration
+    const utils::WrenchWithDuration wrench(
+        forceIgnitionMath,
+        torqueIgnitionMath,
+        utils::doubleToSteadyClockDuration(duration),
+        now);
+
+    utils::LinkWrenchCmd& linkWrenchCmd = utils::getComponentData<
+        ignition::gazebo::components::ExternalWorldWrenchCmdWithDuration>(
+        m_ecm, m_entity);
+
+    linkWrenchCmd.addWorldWrench(wrench);
+    return true;
+}
+
+bool Link::applyWorldWrenchToCoM(const std::array<double, 3>& force,
+                                 const std::array<double, 3>& torque,
+                                 const double duration)
+{
+    // Adapted from ignition::gazebo::Link::AddWorld{Force,Wrench}
+    ignition::math::Pose3d worldPose;
+
+    // TODO: make a helper and share it?
+    if (!Impl::IsCanonical(*this)) {
+        auto linkPoseOptional = pImpl->link.WorldPose(*m_ecm);
+
+        if (!linkPoseOptional.has_value()) {
+            throw exceptions::LinkError("Failed to get world position", name());
+        }
+
+        worldPose = linkPoseOptional.value();
+    }
+    else {
+        const auto parentModelEntity = utils::getFirstParentEntityWithComponent<
+            ignition::gazebo::components::Model>(m_ecm, m_entity);
+        assert(parentModelEntity != ignition::gazebo::kNullEntity);
+
+        auto W_H_M = utils::getExistingComponentData< //
+            ignition::gazebo::components::Pose>(m_ecm, parentModelEntity);
+
+        auto M_H_B = utils::getExistingComponentData< //
+            ignition::gazebo::components::Pose>(m_ecm, m_entity);
+
+        worldPose = W_H_M * M_H_B;
+    }
+
+    // Get the data of the inertial frame
+    auto inertial = utils::getExistingComponentData< //
+        ignition::gazebo::components::Inertial>(m_ecm, m_entity);
 
     // We want the force to be applied at the center of mass, but
     // ExternalWorldWrenchCmd applies the force at the link origin so we need to
@@ -541,29 +593,14 @@ bool Link::applyWorldWrench(const std::array<double, 3>& force,
     auto linkCOMInWorldCoordinates =
         worldPose.Rot().RotateVector(inertial.Pose().Pos());
 
-    // Initialize the torque with the argument
+    // Initialize the force and the torque with the input data
+    const auto forceIgnitionMath = utils::toIgnitionVector3(force);
     auto torqueIgnitionMath = utils::toIgnitionVector3(torque);
 
     // Sum the component given by the projection of the force to the link origin
     torqueIgnitionMath += linkCOMInWorldCoordinates.Cross(forceIgnitionMath);
 
-    // Get the current simulated time
-    auto& now = utils::getExistingComponentData<components::SimulatedTime>(
-        m_ecm,
-        utils::getFirstParentEntityWithComponent<components::SimulatedTime>(
-            m_ecm, m_entity));
-
-    // Create a new wrench with duration
-    utils::WrenchWithDuration wrench(
-        forceIgnitionMath,
-        torqueIgnitionMath,
-        utils::doubleToSteadyClockDuration(duration),
-        now);
-
-    utils::LinkWrenchCmd& linkWrenchCmd =
-        utils::getComponentData<components::ExternalWorldWrenchCmdWithDuration>(
-            m_ecm, m_entity);
-
-    linkWrenchCmd.addWorldWrench(wrench);
-    return true;
+    return this->applyWorldWrench(utils::fromIgnitionVector(forceIgnitionMath),
+                                  utils::fromIgnitionVector(torqueIgnitionMath),
+                                  duration);
 }
