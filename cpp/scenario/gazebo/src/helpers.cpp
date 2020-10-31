@@ -345,8 +345,7 @@ namespace scenario::gazebo::utils {
      * generated it.
      */
     std::string toExactStringNoLocale(const double in);
-}
-
+} // namespace scenario::gazebo::utils
 
 std::string utils::toExactStringNoLocale(const double in)
 {
@@ -355,7 +354,6 @@ std::string utils::toExactStringNoLocale(const double in)
     ss << std::setprecision(25) << in;
     return ss.str();
 }
-
 
 bool utils::updateSDFPhysics(sdf::Root& sdfRoot,
                              const double maxStepSize,
@@ -532,6 +530,11 @@ std::shared_ptr<World> utils::getParentWorld(const GazeboEntity& gazeboEntity)
         ignition::gazebo::components::World>(gazeboEntity.ecm(),
                                              gazeboEntity.entity());
 
+    if (worldEntity == ignition::gazebo::kNullEntity) {
+        sError << "Failed to find parent world entity" << std::endl;
+        return nullptr;
+    }
+
     auto world = std::make_shared<World>();
 
     if (!world->initialize(
@@ -553,6 +556,11 @@ std::shared_ptr<Model> utils::getParentModel(const GazeboEntity& gazeboEntity)
     auto modelEntity = getFirstParentEntityWithComponent< //
         ignition::gazebo::components::Model>(gazeboEntity.ecm(),
                                              gazeboEntity.entity());
+
+    if (modelEntity == ignition::gazebo::kNullEntity) {
+        sError << "Failed to find parent model entity" << std::endl;
+        return nullptr;
+    }
 
     auto model = std::make_shared<Model>();
 
