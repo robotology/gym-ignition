@@ -239,6 +239,15 @@ public:
     virtual double acceleration(const size_t dof = 0) const = 0;
 
     /**
+     * Get the generalized force of a joint DOF.
+     *
+     * @param dof The index of the DOF.
+     * @throw std::runtime_error if the DOF is not valid.
+     * @return The generalized force of the joint DOF.
+     */
+    virtual double generalizedForce(const size_t dof = 0) const = 0;
+
+    /**
      * Set the position target of a joint DOF.
      *
      * The target is processed by a joint controller, if enabled.
@@ -379,6 +388,13 @@ public:
      * @return The acceleration of the joint.
      */
     virtual std::vector<double> jointAcceleration() const = 0;
+
+    /**
+     * Get the generalized force of the joint.
+     *
+     * @return The generalized force of the joint.
+     */
+    virtual std::vector<double> jointGeneralizedForce() const = 0;
 
     /**
      * Set the position target of the joint.
