@@ -756,6 +756,16 @@ Model::jointVelocities(const std::vector<std::string>& jointNames) const
     return Impl::getJointDataSerialized(this, jointNames, lambda);
 }
 
+std::vector<double>
+Model::jointAccelerations(const std::vector<std::string>& jointNames) const
+{
+    auto lambda = [](core::JointPtr joint, const size_t dof) -> double {
+        return joint->acceleration(dof);
+    };
+
+    return Impl::getJointDataSerialized(this, jointNames, lambda);
+}
+
 scenario::core::JointLimit
 Model::jointLimits(const std::vector<std::string>& jointNames) const
 {

@@ -29,6 +29,7 @@
 #include "scenario/gazebo/Model.h"
 #include "scenario/gazebo/World.h"
 #include "scenario/gazebo/components/HistoryOfAppliedJointForces.h"
+#include "scenario/gazebo/components/JointAcceleration.h"
 #include "scenario/gazebo/components/JointAccelerationTarget.h"
 #include "scenario/gazebo/components/JointControlMode.h"
 #include "scenario/gazebo/components/JointController.h"
@@ -145,6 +146,7 @@ bool Joint::createECMResources()
     m_ecm->CreateComponent(m_entity, components::JointForce(zero));
     m_ecm->CreateComponent(m_entity, components::JointPosition(zero));
     m_ecm->CreateComponent(m_entity, components::JointVelocity(zero));
+    m_ecm->CreateComponent(m_entity, components::JointAcceleration(zero));
     m_ecm->CreateComponent(m_entity, components::JointPID(DefaultPID));
     m_ecm->CreateComponent(
         m_entity, components::JointControlMode(core::JointControlMode::Idle));
@@ -692,6 +694,16 @@ double Joint::velocity(const size_t dof) const
     return velocity[dof];
 }
 
+double Joint::acceleration(const size_t dof) const
+{
+    if (dof >= this->dofs()) {
+        throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
+    }
+
+    const std::vector<double>& acceleration = this->jointAcceleration();
+    return acceleration[dof];
+}
+
 bool Joint::setPositionTarget(const double position, const size_t dof)
 {
     const std::vector<core::JointControlMode> allowedControlModes = {
@@ -942,6 +954,20 @@ std::vector<double> Joint::jointVelocity() const
     }
 
     return jointVelocity;
+}
+
+std::vector<double> Joint::jointAcceleration() const
+{
+    const std::vector<double>& jointAcceleration =
+        utils::getExistingComponentData< //
+            ignition::gazebo::components::JointAcceleration>(m_ecm, m_entity);
+
+    if (jointAcceleration.size() != this->dofs()) {
+        throw exceptions::DOFMismatch(
+            this->dofs(), jointAcceleration.size(), this->name());
+    }
+
+    return jointAcceleration;
 }
 
 bool Joint::setJointPositionTarget(const std::vector<double>& position)
