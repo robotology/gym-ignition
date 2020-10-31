@@ -704,6 +704,16 @@ double Joint::acceleration(const size_t dof) const
     return acceleration[dof];
 }
 
+double Joint::generalizedForce(const size_t dof) const
+{
+    if (dof >= this->dofs()) {
+        throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
+    }
+
+    const std::vector<double>& force = this->jointGeneralizedForce();
+    return force[dof];
+}
+
 bool Joint::setPositionTarget(const double position, const size_t dof)
 {
     const std::vector<core::JointControlMode> allowedControlModes = {
@@ -968,6 +978,20 @@ std::vector<double> Joint::jointAcceleration() const
     }
 
     return jointAcceleration;
+}
+
+std::vector<double> Joint::jointGeneralizedForce() const
+{
+    const std::vector<double>& jointGeneralizedForce =
+        utils::getExistingComponentData<
+            ignition::gazebo::components::JointForce>(m_ecm, m_entity);
+
+    if (jointGeneralizedForce.size() != this->dofs()) {
+        throw exceptions::DOFMismatch(
+            this->dofs(), jointGeneralizedForce.size(), this->name());
+    }
+
+    return jointGeneralizedForce;
 }
 
 bool Joint::setJointPositionTarget(const std::vector<double>& position)

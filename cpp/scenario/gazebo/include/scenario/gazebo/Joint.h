@@ -204,6 +204,8 @@ public:
 
     double acceleration(const size_t dof = 0) const override;
 
+    double generalizedForce(const size_t dof = 0) const override;
+
     bool setPositionTarget(const double position,
                            const size_t dof = 0) override;
 
@@ -240,6 +242,8 @@ public:
     std::vector<double> jointVelocity() const override;
 
     std::vector<double> jointAcceleration() const override;
+
+    std::vector<double> jointGeneralizedForce() const override;
 
     bool setJointPositionTarget(const std::vector<double>& position) override;
 

@@ -235,6 +235,9 @@ public:
     std::vector<double> jointAccelerations( //
         const std::vector<std::string>& jointNames = {}) const override;
 
+    std::vector<double> jointGeneralizedForces( //
+        const std::vector<std::string>& jointNames = {}) const override;
+
     core::JointLimit jointLimits( //
         const std::vector<std::string>& jointNames = {}) const override;
 
