@@ -104,11 +104,12 @@ Model::~Model() = default;
 uint64_t Model::id() const
 {
     // Get the parent world
-    core::WorldPtr parentWorld = utils::getParentWorld(*this);
+    const core::WorldPtr parentWorld = utils::getParentWorld(*this);
     assert(parentWorld);
 
     // Build a unique string identifier of this model
-    std::string scopedModelName = parentWorld->name() + "::" + this->name();
+    const std::string scopedModelName =
+        parentWorld->name() + "::" + this->name();
 
     // Return the hashed string
     return std::hash<std::string>{}(scopedModelName);

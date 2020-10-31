@@ -79,16 +79,12 @@ Link::~Link() = default;
 uint64_t Link::id() const
 {
     // Get the parent world
-    core::WorldPtr parentWorld = utils::getParentWorld(*this);
+    const core::WorldPtr parentWorld = utils::getParentWorld(*this);
     assert(parentWorld);
 
-    // Get the parent model
-    core::ModelPtr parentModel = utils::getParentModel(*this);
-    assert(parentModel);
-
     // Build a unique string identifier of this joint
-    std::string scopedLinkName =
-        parentWorld->name() + "::" + parentModel->name() + "::" + this->name();
+    const std::string scopedLinkName =
+        parentWorld->name() + "::" + this->name(/*scoped=*/true);
 
     // Return the hashed string
     return std::hash<std::string>{}(scopedLinkName);
