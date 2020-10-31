@@ -30,6 +30,7 @@ namespace scenario::gazebo::utils {
 %template(ToGazeboWorld) scenario::gazebo::utils::ToGazebo<scenario::core::World, scenario::gazebo::World>;
 %template(ToGazeboModel) scenario::gazebo::utils::ToGazebo<scenario::core::Model, scenario::gazebo::Model>;
 %template(ToGazeboJoint) scenario::gazebo::utils::ToGazebo<scenario::core::Joint, scenario::gazebo::Joint>;
+%template(ToGazeboLink) scenario::gazebo::utils::ToGazebo<scenario::core::Link, scenario::gazebo::Link>;
 
 // STL classes
 %include <stdint.i>
