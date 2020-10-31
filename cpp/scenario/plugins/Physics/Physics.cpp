@@ -28,6 +28,7 @@
 #include <ignition/gazebo/Util.hh>
 #include <ignition/gazebo/components/AngularAcceleration.hh>
 #include <ignition/gazebo/components/AngularVelocity.hh>
+#include <ignition/gazebo/components/AngularVelocityCmd.hh>
 #include <ignition/gazebo/components/AxisAlignedBox.hh>
 #include <ignition/gazebo/components/BatterySoC.hh>
 #include <ignition/gazebo/components/CanonicalLink.hh>
@@ -51,6 +52,7 @@
 #include <ignition/gazebo/components/JointVelocityReset.hh>
 #include <ignition/gazebo/components/LinearAcceleration.hh>
 #include <ignition/gazebo/components/LinearVelocity.hh>
+#include <ignition/gazebo/components/LinearVelocityCmd.hh>
 #include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/Name.hh>
@@ -64,6 +66,7 @@
 #include <ignition/gazebo/components/ThreadPitch.hh>
 #include <ignition/gazebo/components/World.hh>
 #include <ignition/math/AxisAlignedBox.hh>
+#include <ignition/math/Vector3.hh>
 #include <ignition/math/eigen3/Conversions.hh>
 #include <ignition/msgs/Utility.hh>
 #include <ignition/msgs/contact.pb.h>
@@ -102,6 +105,7 @@
 #include <sdf/Link.hh>
 #include <sdf/Mesh.hh>
 #include <sdf/Model.hh>
+#include <sdf/Surface.hh>
 #include <sdf/World.hh>
 
 #include <deque>
@@ -363,6 +367,25 @@ public:
     std::unordered_map<Entity, WorldShapePtrType> entityWorldCollisionMap;
 
     //////////////////////////////////////////////////
+    // Collision filtering with bitmasks
+
+    /// \brief Feature list to filter collisions with bitmasks.
+    using CollisionMaskFeatureList = ignition::physics::FeatureList<
+        CollisionFeatureList,
+        ignition::physics::CollisionFilterMaskFeature>;
+
+    /// \brief Collision type with collision filtering features.
+    using ShapeFilterMaskPtrType =
+        ignition::physics::ShapePtr<ignition::physics::FeaturePolicy3d,
+                                    CollisionMaskFeatureList>;
+
+    /// \brief A map between collision entity ids in the ECM to Shape Entities
+    /// in ign-physics, with collision filtering feature. All links on this map
+    /// are also in `entityCollisionMap`. The difference is that here they've
+    /// been casted for `CollisionMaskFeatureList`.
+    std::unordered_map<Entity, ShapeFilterMaskPtrType> entityShapeMaskMap;
+
+    //////////////////////////////////////////////////
     // Link force
 
     /// \brief Feature list for applying forces to links.
@@ -418,6 +441,23 @@ public:
     /// that here they've been casted for `JointVelocityCommandFeatureList`.
     std::unordered_map<Entity, JointVelocityCommandPtrType>
         entityJointVelocityCommandMap;
+
+    //////////////////////////////////////////////////
+    // World velocity command
+    using WorldVelocityCommandFeatureList = ignition::physics::FeatureList<
+        ignition::physics::SetFreeGroupWorldVelocity>;
+
+    /// \brief Free group type with world velocity command.
+    using FreeGroupVelocityCmdPtrType =
+        ignition::physics::FreeGroupPtr<ignition::physics::FeaturePolicy3d,
+                                        WorldVelocityCommandFeatureList>;
+
+    /// \brief A map between free group entity ids in the ECM
+    /// to FreeGroup Entities in ign-physics, with velocity command feature.
+    /// All FreeGroup on this map are casted for
+    /// `WorldVelocityCommandFeatureList`.
+    std::unordered_map<Entity, FreeGroupVelocityCmdPtrType>
+        entityWorldVelocityCommandMap;
 
     //////////////////////////////////////////////////
     // Meshes
@@ -739,6 +779,7 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
         sdf::Collision collision = _collElement->Data();
         collision.SetRawPose(_pose->Data());
         collision.SetPoseRelativeTo("");
+        auto collideBitmask = collision.Surface()->Contact()->CollideBitmask();
 
         ShapePtrType collisionPtrPhys;
         if (_geom->Data().Type() == sdf::GeometryType::MESH) {
@@ -797,6 +838,23 @@ void Physics::Impl::CreatePhysicsEntities(const EntityComponentManager& _ecm)
 
             collisionPtrPhys =
                 linkCollisionFeature->ConstructCollision(collision);
+        }
+        // Check that the physics engine has a filter mask feature
+        // Set the collide_bitmask if it does
+        auto filterMaskFeature =
+            entityCast(_parent->Data(), collisionPtrPhys, entityShapeMaskMap);
+        if (filterMaskFeature) {
+            filterMaskFeature->SetCollisionFilterMask(collideBitmask);
+        }
+        else {
+            static bool informed{false};
+            if (!informed) {
+                igndbg
+                    << "Attempting to set collision bitmasks, but the physics "
+                    << "engine doesn't support feature [CollisionFilterMask]. "
+                    << "Collision bitmasks will be ignored." << std::endl;
+                informed = true;
+            }
         }
 
         this->entityCollisionMap.insert(
@@ -1357,6 +1415,7 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
             });
     }
 
+    // Update model pose
     _ecm.Each<components::Model, components::WorldPoseCmd>(
         [&](const Entity& _entity,
             const components::Model*,
@@ -1400,6 +1459,66 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
                     _ecm.SetChanged(_entity, components::Pose::typeId, state);
                 }
             }
+
+            return true;
+        });
+
+    // Update model angular velocity
+    _ecm.Each<components::Model, components::AngularVelocityCmd>(
+        [&](const Entity& _entity,
+            const components::Model*,
+            const components::AngularVelocityCmd* _angularVelocityCmd) {
+            auto modelIt = this->entityModelMap.find(_entity);
+            if (modelIt == this->entityModelMap.end())
+                return true;
+
+            auto freeGroup = modelIt->second->FindFreeGroup();
+            if (!freeGroup)
+                return true;
+
+            const components::Pose* poseComp =
+                _ecm.Component<components::Pose>(_entity);
+            math::Vector3d worldAngularVel =
+                poseComp->Data().Rot() * _angularVelocityCmd->Data();
+
+            auto worldAngularVelFeature = entityCast(
+                _entity, freeGroup, this->entityWorldVelocityCommandMap);
+            if (!worldAngularVelFeature) {
+                return true;
+            }
+
+            worldAngularVelFeature->SetWorldAngularVelocity(
+                math::eigen3::convert(worldAngularVel));
+
+            return true;
+        });
+
+    // Update model linear velocity
+    _ecm.Each<components::Model, components::LinearVelocityCmd>(
+        [&](const Entity& _entity,
+            const components::Model*,
+            const components::LinearVelocityCmd* _linearVelocityCmd) {
+            auto modelIt = this->entityModelMap.find(_entity);
+            if (modelIt == this->entityModelMap.end())
+                return true;
+
+            auto freeGroup = modelIt->second->FindFreeGroup();
+            if (!freeGroup)
+                return true;
+
+            const components::Pose* poseComp =
+                _ecm.Component<components::Pose>(_entity);
+            math::Vector3d worldLinearVel =
+                poseComp->Data().Rot() * _linearVelocityCmd->Data();
+
+            auto worldLinearVelFeature = entityCast(
+                _entity, freeGroup, this->entityWorldVelocityCommandMap);
+            if (!worldLinearVelFeature) {
+                return true;
+            }
+
+            worldLinearVelFeature->SetWorldLinearVelocity(
+                math::eigen3::convert(worldLinearVel));
 
             return true;
         });
