@@ -131,6 +131,28 @@ public:
     bool resetJoint(const std::vector<double>& position,
                     const std::vector<double>& velocity);
 
+    /**
+     * Set the Coulomb friction parameter of the joint.
+     *
+     * @note Friction can be changed only before the first simulated step
+     * after model insertion.
+     *
+     * @param value The new Coulomb friction value.
+     * @return True for success, false otherwise.
+     */
+    bool setCoulombFriction(const double value);
+
+    /**
+     * Set the viscous friction parameter of the joint.
+     *
+     * @note Friction can be changed only before the first simulated step
+     * after model insertion.
+     *
+     * @param value The new viscous friction value.
+     * @return True for success, false otherwise.
+     */
+    bool setViscousFriction(const double value);
+
     // ==========
     // Joint Core
     // ==========

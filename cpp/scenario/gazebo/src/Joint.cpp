@@ -37,6 +37,7 @@
 #include "scenario/gazebo/components/JointPositionTarget.h"
 #include "scenario/gazebo/components/JointVelocityTarget.h"
 #include "scenario/gazebo/components/MaxJointForce.h"
+#include "scenario/gazebo/components/Timestamp.h"
 #include "scenario/gazebo/exceptions.h"
 #include "scenario/gazebo/helpers.h"
 
@@ -63,6 +64,24 @@ const ignition::math::PID DefaultPID(1, 0.1, 0.01, 1, -1, 10000, -10000);
 class Joint::Impl
 {
 public:
+    static bool ModelJustCreated(const Joint& joint)
+    {
+        // Get the parent world and model
+        const auto& world = utils::getParentWorld(joint);
+        const auto& parentModel = utils::getParentModel(joint);
+        assert(world);
+        assert(parentModel);
+
+        // Get the time the model was inserted
+        const auto& simTimeAtModelCreation = utils::getExistingComponentData<
+            ignition::gazebo::components::Timestamp>(joint.ecm(),
+                                                     parentModel->entity());
+
+        const double simTimeAtModelCreationInSeconds =
+            utils::steadyClockDurationToDouble(simTimeAtModelCreation);
+
+        return world->time() == simTimeAtModelCreationInSeconds;
+    }
 };
 
 Joint::Joint()
@@ -263,6 +282,60 @@ bool Joint::resetJoint(const std::vector<double>& position,
     }
 
     return true;
+}
+
+bool Joint::setCoulombFriction(const double value)
+{
+    if (!Impl::ModelJustCreated(*this)) {
+        sError << "The model has been already processed and its"
+               << "parameters cannot be modified" << std::endl;
+        return false;
+    }
+
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic:
+        case core::JointType::Ball: {
+            sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            axis.SetFriction(value);
+            return true;
+        }
+        case core::JointType::Fixed:
+        case core::JointType::Invalid:
+            sWarning << "Fixed and Invalid joints have no friction defined."
+                     << std::endl;
+            return false;
+    }
+
+    return false;
+}
+
+bool Joint::setViscousFriction(const double value)
+{
+    if (!Impl::ModelJustCreated(*this)) {
+        sError << "The model has been already processed and its"
+               << "parameters cannot be modified" << std::endl;
+        return false;
+    }
+
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic:
+        case core::JointType::Ball: {
+            sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            axis.SetDamping(value);
+            return true;
+        }
+        case core::JointType::Fixed:
+        case core::JointType::Invalid:
+            sWarning << "Fixed and Invalid joints have no friction defined."
+                     << std::endl;
+            return false;
+    }
+
+    return false;
 }
 
 bool Joint::valid() const
