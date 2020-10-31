@@ -359,7 +359,16 @@ bool World::insertModel(const std::string& modelFile,
 
     // Create the model
     auto model = std::make_shared<scenario::gazebo::Model>();
-    model->initialize(modelEntity, m_ecm, m_eventManager);
+
+    // Initialize the model
+    if (!model->initialize(modelEntity, m_ecm, m_eventManager)) {
+        sError << "Failed to initialize the model" << std::endl;
+        if (!this->removeModel(finalModelEntityName)) {
+            sError << "Failed to remove temporary model after failure"
+                   << std::endl;
+        }
+        return false;
+    }
 
     // Create required model resources. This call prepares all the necessary
     // components in the ECM to make our bindings work.
