@@ -23,3 +23,10 @@ import scenario.bindings.gazebo
         return scenario.bindings.gazebo.ToGazeboJoint(self)
   %}
 }
+
+%extend scenario::core::Link {
+  %pythoncode %{
+    def to_gazebo(self) -> Union["scenario.bindings.gazebo.Link", "scenario.bindings.core.Link"]:
+        return scenario.bindings.gazebo.ToGazeboLink(self)
+  %}
+}

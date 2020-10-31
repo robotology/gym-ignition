@@ -105,15 +105,69 @@ public:
 
     std::array<double, 6> contactWrench() const override;
 
+    // ===========
+    // Gazebo Link
+    // ===========
+
+    /**
+     * Apply a force to the link.
+     *
+     * The force is applied to the origin of the link frame.
+     *
+     * @param force The force to apply expressed in world coordinates.
+     * @param duration The duration of the application of the force.
+     * By default the force is applied for a single physics step.
+     * @return True for success, false otherwise.
+     */
     bool applyWorldForce(const std::array<double, 3>& force,
-                         const double duration = 0.0) override;
+                         const double duration = 0.0);
 
+    /**
+     * Apply a torque to the link.
+     *
+     * The force is applied to the origin of the link frame.
+     *
+     * @param torque The torque to apply expressed in world coordinates.
+     * @param duration The duration of the application of the torque.
+     * By default the torque is applied for a single physics step.
+     * @return True for success, false otherwise.
+     */
     bool applyWorldTorque(const std::array<double, 3>& torque,
-                          const double duration = 0.0) override;
+                          const double duration = 0.0);
 
+    /**
+     * Apply a wrench to the link.
+     *
+     * The force is applied to the origin of the link frame.
+     *
+     * @param force The force to apply expressed in world coordinates.
+     * @param torque The torque to apply expressed in world coordinates.
+     * @param duration The duration of the application of the wrench.
+     * By default the wrench is applied for a single physics step.
+     * @return True for success, false otherwise.
+     */
     bool applyWorldWrench(const std::array<double, 3>& force,
                           const std::array<double, 3>& torque,
-                          const double duration = 0.0) override;
+                          const double duration = 0.0);
+
+    /**
+     * Apply a wrench to the CoM of the link.
+     *
+     * @note This method considers the CoM being positioned in the origin of
+     * the inertial frame as it is defined in the SDF description of the model.
+     * Note that if not explicitly specified, inertial and link frames match.
+     * In this case, `applyWorldWrench` and `applyWorldWrenchToCoM` effects
+     * will be the same.
+     *
+     * @param force The force to apply expressed in world coordinates.
+     * @param torque The torque to apply expressed in world coordinates.
+     * @param duration The duration of the application of the wrench.
+     * By default the wrench is applied for a single physics step.
+     * @return True for success, false otherwise.
+     */
+    bool applyWorldWrenchToCoM(const std::array<double, 3>& force,
+                               const std::array<double, 3>& torque,
+                               const double duration = 0.0);
 
 private:
     class Impl;

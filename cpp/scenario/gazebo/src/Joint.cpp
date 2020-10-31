@@ -29,6 +29,7 @@
 #include "scenario/gazebo/Model.h"
 #include "scenario/gazebo/World.h"
 #include "scenario/gazebo/components/HistoryOfAppliedJointForces.h"
+#include "scenario/gazebo/components/JointAcceleration.h"
 #include "scenario/gazebo/components/JointAccelerationTarget.h"
 #include "scenario/gazebo/components/JointControlMode.h"
 #include "scenario/gazebo/components/JointController.h"
@@ -37,6 +38,7 @@
 #include "scenario/gazebo/components/JointPositionTarget.h"
 #include "scenario/gazebo/components/JointVelocityTarget.h"
 #include "scenario/gazebo/components/MaxJointForce.h"
+#include "scenario/gazebo/components/Timestamp.h"
 #include "scenario/gazebo/exceptions.h"
 #include "scenario/gazebo/helpers.h"
 
@@ -63,6 +65,24 @@ const ignition::math::PID DefaultPID(1, 0.1, 0.01, 1, -1, 10000, -10000);
 class Joint::Impl
 {
 public:
+    static bool ModelJustCreated(const Joint& joint)
+    {
+        // Get the parent world and model
+        const auto& world = utils::getParentWorld(joint);
+        const auto& parentModel = utils::getParentModel(joint);
+        assert(world);
+        assert(parentModel);
+
+        // Get the time the model was inserted
+        const auto& simTimeAtModelCreation = utils::getExistingComponentData<
+            ignition::gazebo::components::Timestamp>(joint.ecm(),
+                                                     parentModel->entity());
+
+        const double simTimeAtModelCreationInSeconds =
+            utils::steadyClockDurationToDouble(simTimeAtModelCreation);
+
+        return world->time() == simTimeAtModelCreationInSeconds;
+    }
 };
 
 Joint::Joint()
@@ -126,6 +146,7 @@ bool Joint::createECMResources()
     m_ecm->CreateComponent(m_entity, components::JointForce(zero));
     m_ecm->CreateComponent(m_entity, components::JointPosition(zero));
     m_ecm->CreateComponent(m_entity, components::JointVelocity(zero));
+    m_ecm->CreateComponent(m_entity, components::JointAcceleration(zero));
     m_ecm->CreateComponent(m_entity, components::JointPID(DefaultPID));
     m_ecm->CreateComponent(
         m_entity, components::JointControlMode(core::JointControlMode::Idle));
@@ -263,6 +284,60 @@ bool Joint::resetJoint(const std::vector<double>& position,
     }
 
     return true;
+}
+
+bool Joint::setCoulombFriction(const double value)
+{
+    if (!Impl::ModelJustCreated(*this)) {
+        sError << "The model has been already processed and its"
+               << "parameters cannot be modified" << std::endl;
+        return false;
+    }
+
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic:
+        case core::JointType::Ball: {
+            sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            axis.SetFriction(value);
+            return true;
+        }
+        case core::JointType::Fixed:
+        case core::JointType::Invalid:
+            sWarning << "Fixed and Invalid joints have no friction defined."
+                     << std::endl;
+            return false;
+    }
+
+    return false;
+}
+
+bool Joint::setViscousFriction(const double value)
+{
+    if (!Impl::ModelJustCreated(*this)) {
+        sError << "The model has been already processed and its"
+               << "parameters cannot be modified" << std::endl;
+        return false;
+    }
+
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic:
+        case core::JointType::Ball: {
+            sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            axis.SetDamping(value);
+            return true;
+        }
+        case core::JointType::Fixed:
+        case core::JointType::Invalid:
+            sWarning << "Fixed and Invalid joints have no friction defined."
+                     << std::endl;
+            return false;
+    }
+
+    return false;
 }
 
 bool Joint::valid() const
@@ -514,6 +589,48 @@ std::vector<double> Joint::historyOfAppliedJointForces() const
     return fixedSizeQueue.toStdVector();
 }
 
+double Joint::coulombFriction() const
+{
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic:
+        case core::JointType::Ball: {
+            const sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            return axis.Friction();
+        }
+        case core::JointType::Fixed:
+        case core::JointType::Invalid:
+            sWarning << "Fixed and Invalid joints have no friction defined."
+                     << std::endl;
+            return 0.0;
+    }
+
+    assert(false);
+    return 0.0;
+}
+
+double Joint::viscousFriction() const
+{
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic:
+        case core::JointType::Ball: {
+            const sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            return axis.Damping();
+        }
+        case core::JointType::Fixed:
+        case core::JointType::Invalid:
+            sWarning << "Fixed and Invalid joints have no friction defined."
+                     << std::endl;
+            return 0.0;
+    }
+
+    assert(false);
+    return 0.0;
+}
+
 scenario::core::Limit Joint::positionLimit(const size_t dof) const
 {
     if (dof >= this->dofs()) {
@@ -575,6 +692,26 @@ double Joint::velocity(const size_t dof) const
 
     std::vector<double> velocity = this->jointVelocity();
     return velocity[dof];
+}
+
+double Joint::acceleration(const size_t dof) const
+{
+    if (dof >= this->dofs()) {
+        throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
+    }
+
+    const std::vector<double>& acceleration = this->jointAcceleration();
+    return acceleration[dof];
+}
+
+double Joint::generalizedForce(const size_t dof) const
+{
+    if (dof >= this->dofs()) {
+        throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
+    }
+
+    const std::vector<double>& force = this->jointGeneralizedForce();
+    return force[dof];
 }
 
 bool Joint::setPositionTarget(const double position, const size_t dof)
@@ -827,6 +964,34 @@ std::vector<double> Joint::jointVelocity() const
     }
 
     return jointVelocity;
+}
+
+std::vector<double> Joint::jointAcceleration() const
+{
+    const std::vector<double>& jointAcceleration =
+        utils::getExistingComponentData< //
+            ignition::gazebo::components::JointAcceleration>(m_ecm, m_entity);
+
+    if (jointAcceleration.size() != this->dofs()) {
+        throw exceptions::DOFMismatch(
+            this->dofs(), jointAcceleration.size(), this->name());
+    }
+
+    return jointAcceleration;
+}
+
+std::vector<double> Joint::jointGeneralizedForce() const
+{
+    const std::vector<double>& jointGeneralizedForce =
+        utils::getExistingComponentData<
+            ignition::gazebo::components::JointForce>(m_ecm, m_entity);
+
+    if (jointGeneralizedForce.size() != this->dofs()) {
+        throw exceptions::DOFMismatch(
+            this->dofs(), jointGeneralizedForce.size(), this->name());
+    }
+
+    return jointGeneralizedForce;
 }
 
 bool Joint::setJointPositionTarget(const std::vector<double>& position)

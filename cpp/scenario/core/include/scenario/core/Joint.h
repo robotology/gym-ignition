@@ -151,6 +151,30 @@ public:
      */
     virtual std::vector<double> historyOfAppliedJointForces() const = 0;
 
+    /**
+     * Get the Coulomb friction of the joint.
+     *
+     * If \f$ K_c \f$ is the Coulomb friction parameter, and \f$ \dot{q} \f$
+     * the joint velocity, the corresponding torque is often modelled as:
+     *
+     * \f$ \tau_{static} = sign(\dot{q}) K_c \f$
+     *
+     * @return The Coulomb friction parameter of the joint.
+     */
+    virtual double coulombFriction() const = 0;
+
+    /**
+     * Get the viscous friction of the joint.
+     *
+     * If \f$ K_v \f$ is the viscous friction parameter, and \f$ \dot{q} \f$
+     * the joint velocity, the corresponding torque is often modelled as:
+     *
+     * \f$ \tau_{static} = K_v \dot{q} \f$
+     *
+     * @return The viscous friction parameter of the joint.
+     */
+    virtual double viscousFriction() const = 0;
+
     // ==================
     // Single DOF methods
     // ==================
@@ -204,6 +228,24 @@ public:
      * @return The velocity of the joint DOF.
      */
     virtual double velocity(const size_t dof = 0) const = 0;
+
+    /**
+     * Get the acceleration of a joint DOF.
+     *
+     * @param dof The index of the DOF.
+     * @throw std::runtime_error if the DOF is not valid.
+     * @return The acceleration of the joint DOF.
+     */
+    virtual double acceleration(const size_t dof = 0) const = 0;
+
+    /**
+     * Get the generalized force of a joint DOF.
+     *
+     * @param dof The index of the DOF.
+     * @throw std::runtime_error if the DOF is not valid.
+     * @return The generalized force of the joint DOF.
+     */
+    virtual double generalizedForce(const size_t dof = 0) const = 0;
 
     /**
      * Set the position target of a joint DOF.
@@ -339,6 +381,20 @@ public:
      * @return The velocity of the joint.
      */
     virtual std::vector<double> jointVelocity() const = 0;
+
+    /**
+     * Get the acceleration of the joint.
+     *
+     * @return The acceleration of the joint.
+     */
+    virtual std::vector<double> jointAcceleration() const = 0;
+
+    /**
+     * Get the generalized force of the joint.
+     *
+     * @return The generalized force of the joint.
+     */
+    virtual std::vector<double> jointGeneralizedForce() const = 0;
 
     /**
      * Set the position target of the joint.

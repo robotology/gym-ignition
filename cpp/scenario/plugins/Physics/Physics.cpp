@@ -18,6 +18,7 @@
 #include "Physics.h"
 #include "scenario/gazebo/components/ExternalWorldWrenchCmdWithDuration.h"
 #include "scenario/gazebo/components/HistoryOfAppliedJointForces.h"
+#include "scenario/gazebo/components/JointAcceleration.h"
 #include "scenario/gazebo/components/SimulatedTime.h"
 #include "scenario/gazebo/components/WorldVelocityCmd.h"
 #include "scenario/gazebo/helpers.h"
@@ -1847,29 +1848,16 @@ void Physics::Impl::UpdateSim(const ignition::gazebo::UpdateInfo& _info,
         return true;
     });
 
-    // joint force
+    // history of applied joint forces (commands)
     _ecm.Each<components::Joint,
               components::Name,
-              components::JointForce,
               components::JointForceCmd>([&](const Entity& _entity,
                                              components::Joint* /*_joint*/,
-                                             components::Name* _name,
-                                             components::JointForce* _force,
+                                             components::Name* /*_name*/,
                                              components::JointForceCmd*
                                                  _forceCmd) -> bool {
         // Get the data from the components
-        auto& jointForceData = _force->Data();
         auto jointForceCmdData = _forceCmd->Data();
-
-        if (jointForceData.size() != jointForceCmdData.size()) {
-            ignwarn << "There is a mismatch in the degrees of freedom in"
-                    << " Joint [" << _name->Data() << "(Entity=" << _entity
-                    << ")] between its JointForce and JointForceCmd components."
-                    << std::endl;
-        }
-
-        // Copy the force cmd
-        jointForceData = jointForceCmdData;
 
         // If the history is enabled, append the force command also there
         auto historyComponent = _ecm.Component<
@@ -1882,8 +1870,8 @@ void Physics::Impl::UpdateSim(const ignition::gazebo::UpdateInfo& _info,
                 ignition::gazebo::components::HistoryOfAppliedJointForces>(
                 &_ecm, _entity);
 
-            for (const auto& jointForce : jointForceData) {
-                history.push(jointForce);
+            for (const auto& jointForceCmd : jointForceCmdData) {
+                history.push(jointForceCmd);
             }
         }
 
@@ -2076,6 +2064,42 @@ void Physics::Impl::UpdateSim(const ignition::gazebo::UpdateInfo& _info,
                      i < jointIt->second->GetDegreesOfFreedom();
                      ++i) {
                     _jointVel->Data()[i] = jointIt->second->GetVelocity(i);
+                }
+            }
+            return true;
+        });
+
+    // Update joint acceleration
+    _ecm.Each<components::Joint, components::JointAcceleration>(
+        [&](const Entity& _entity,
+            components::Joint*,
+            components::JointAcceleration* _jointAcc) -> bool {
+            auto jointIt = this->entityJointMap.find(_entity);
+            if (jointIt != this->entityJointMap.end()) {
+                _jointAcc->Data().resize(
+                    jointIt->second->GetDegreesOfFreedom());
+                for (std::size_t i = 0;
+                     i < jointIt->second->GetDegreesOfFreedom();
+                     ++i) {
+                    _jointAcc->Data()[i] = jointIt->second->GetAcceleration(i);
+                }
+            }
+            return true;
+        });
+
+    // Update joint forces
+    _ecm.Each<components::Joint, components::JointForce>(
+        [&](const Entity& _entity,
+            components::Joint*,
+            components::JointForce* _jointForce) -> bool {
+            auto jointIt = this->entityJointMap.find(_entity);
+            if (jointIt != this->entityJointMap.end()) {
+                _jointForce->Data().resize(
+                    jointIt->second->GetDegreesOfFreedom());
+                for (std::size_t i = 0;
+                     i < jointIt->second->GetDegreesOfFreedom();
+                     ++i) {
+                    _jointForce->Data()[i] = jointIt->second->GetForce(i);
                 }
             }
             return true;

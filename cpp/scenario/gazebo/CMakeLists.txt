@@ -42,7 +42,9 @@ set(EXTRA_COMPONENTS_PUBLIC_HEADERS
     include/scenario/gazebo/components/HistoryOfAppliedJointForces.h
     include/scenario/gazebo/components/ExternalWorldWrenchCmdWithDuration.h
     include/scenario/gazebo/components/Timestamp.h
-    include/scenario/gazebo/components/JointControllerPeriod.h)
+    include/scenario/gazebo/components/JointControllerPeriod.h
+    include/scenario/gazebo/components/JointAcceleration.h
+    )
 
 add_library(ExtraComponents INTERFACE)
 add_library(ScenarioGazebo::ExtraComponents ALIAS ExtraComponents)

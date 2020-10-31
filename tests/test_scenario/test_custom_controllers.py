@@ -97,7 +97,7 @@ def test_computed_torque_fixed_base(gazebo: scenario.GazeboSimulator):
                                                      abs=0.05)
 
     # Apply an external force
-    assert panda.get_link("panda_link4").apply_world_force([100.0, 0, 0], 0.5)
+    assert panda.get_link("panda_link4").to_gazebo().apply_world_force([100.0, 0, 0], 0.5)
 
     for _ in range(4000):
         assert gazebo.run()
