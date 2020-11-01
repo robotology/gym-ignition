@@ -168,9 +168,9 @@ bool Joint::resetPosition(const double position, size_t dof)
     }
 
     // Reset the PID
-    auto JointPIDComponent = utils::getExistingComponent< //
+    auto& pid = utils::getExistingComponentData< //
         ignition::gazebo::components::JointPID>(m_ecm, m_entity);
-    JointPIDComponent->Data().Reset();
+    pid.Reset();
 
     jointPositionReset[dof] = position;
     return true;
@@ -193,9 +193,9 @@ bool Joint::resetVelocity(const double velocity, const size_t dof)
     }
 
     // Reset the PID
-    auto JointPIDComponent = utils::getExistingComponent< //
+    auto& pid = utils::getExistingComponentData< //
         ignition::gazebo::components::JointPID>(m_ecm, m_entity);
-    JointPIDComponent->Data().Reset();
+    pid.Reset();
 
     jointVelocityReset[dof] = velocity;
     return true;
@@ -232,11 +232,9 @@ bool Joint::resetJointPosition(const std::vector<double>& position)
     // Update the position
     jointPositionReset = position;
 
-    // Get the PID
-    ignition::math::PID& pid = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
-
     // Reset the PID
+    auto& pid = utils::getExistingComponentData< //
+        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
     pid.Reset();
 
     return true;
@@ -256,11 +254,9 @@ bool Joint::resetJointVelocity(const std::vector<double>& velocity)
     // Update the velocity
     jointVelocityReset = velocity;
 
-    // Get the PID
-    ignition::math::PID& pid = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
-
     // Reset the PID
+    auto& pid = utils::getExistingComponentData< //
+        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
     pid.Reset();
 
     return true;
@@ -404,11 +400,6 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
     if (mode == core::JointControlMode::Position
         || mode == core::JointControlMode::Velocity) {
 
-        // Get the parent model entity
-        auto parentModelEntity = m_ecm->Component< //
-            ignition::gazebo::components::ParentEntity>(m_entity);
-        assert(parentModelEntity);
-
         // Get the parent model
         const auto parentModel = utils::getParentModel(*this);
 
@@ -421,7 +412,7 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
 
         // Insert the plugin if the model does not have it already
         if (!m_ecm->EntityHasComponentType(
-                parentModelEntity->Data(),
+                parentModel->entity(),
                 ignition::gazebo::components::JointController().TypeId())) {
 
             sDebug << "Loading JointController plugin for model '"
@@ -453,16 +444,14 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
     switch (mode) {
         case core::JointControlMode::Position:
         case core::JointControlMode::PositionInterpolated:
-            m_ecm->CreateComponent(
-                m_entity,
-                ignition::gazebo::components::JointPositionTarget(
-                    this->jointPosition()));
+            utils::setComponentData<
+                ignition::gazebo::components::JointPositionTarget>(
+                m_ecm, m_entity, this->jointPosition());
             break;
         case core::JointControlMode::Velocity:
-            m_ecm->CreateComponent(
-                m_entity,
-                ignition::gazebo::components::JointVelocityTarget(
-                    this->jointVelocity()));
+            utils::setComponentData<
+                ignition::gazebo::components::JointVelocityTarget>(
+                m_ecm, m_entity, this->jointVelocity());
             break;
         case core::JointControlMode::Idle:
         case core::JointControlMode::Force:
@@ -472,11 +461,9 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
             return false;
     }
 
-    // Get the PID
-    ignition::math::PID& pid = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
-
     // Reset the PID
+    auto& pid = utils::getExistingComponentData< //
+        ignition::gazebo::components::JointPID>(m_ecm, m_entity);
     pid.Reset();
 
     return true;

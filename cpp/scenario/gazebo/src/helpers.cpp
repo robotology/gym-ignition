@@ -165,10 +165,8 @@ utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
 {
     auto getEntityName =
         [&](const ignition::gazebo::Entity entity) -> std::string {
-        auto nameComponent =
-            ecm->Component<ignition::gazebo::components::Name>(entity);
-        assert(nameComponent);
-        return nameComponent->Data();
+        return utils::getExistingComponentData<
+            ignition::gazebo::components::Name>(ecm, entity);
     };
 
     // Get the names of the links in contact following:
