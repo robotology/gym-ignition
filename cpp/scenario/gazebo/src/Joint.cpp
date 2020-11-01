@@ -375,21 +375,21 @@ std::string Joint::name(const bool scoped) const
 scenario::core::JointType Joint::type() const
 {
     // Get the joint type
-    sdf::JointType sdfType = utils::getExistingComponentData< //
+    const sdf::JointType sdfType = utils::getExistingComponentData< //
         ignition::gazebo::components::JointType>(m_ecm, m_entity);
 
     // Convert the joint type
-    core::JointType type = utils::fromSdf(sdfType);
+    const core::JointType type = utils::fromSdf(sdfType);
 
     return type;
 }
 
 scenario::core::JointControlMode Joint::controlMode() const
 {
-    core::JointControlMode jointControlMode = utils::getExistingComponentData<
+    const core::JointControlMode mode = utils::getExistingComponentData<
         ignition::gazebo::components::JointControlMode>(m_ecm, m_entity);
 
-    return jointControlMode;
+    return mode;
 }
 
 bool Joint::setControlMode(const scenario::core::JointControlMode mode)
@@ -410,7 +410,7 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
         assert(parentModelEntity);
 
         // Get the parent model
-        auto parentModel = utils::getParentModel(*this);
+        const auto parentModel = utils::getParentModel(*this);
 
         if (!parentModel) {
             sError << "Failed to get the parent model of joint '"
@@ -504,7 +504,7 @@ bool Joint::setPID(const scenario::core::PID& pid)
     auto eqOp = [](const ignition::math::PID& a,
                    const ignition::math::PID& b) -> bool {
         bool equal = true;
-        double epsilon = std::numeric_limits<double>::epsilon();
+        const double epsilon = std::numeric_limits<double>::epsilon();
 
         equal = equal && std::abs(a.PGain() - b.PGain()) > epsilon;
         equal = equal && std::abs(a.IGain() - b.IGain()) > epsilon;
@@ -524,8 +524,8 @@ bool Joint::setPID(const scenario::core::PID& pid)
     }
 
     scenario::core::PID pidParams = pid;
-    auto minForce = -this->maxGeneralizedForce(0);
-    auto maxForce = this->maxGeneralizedForce(0);
+    const auto minForce = -this->maxGeneralizedForce(0);
+    const auto maxForce = this->maxGeneralizedForce(0);
 
     if (pidParams.cmdMin < minForce || pidParams.cmdMax > maxForce) {
         sWarning << "The output limits of the PID are less limiting than "
@@ -536,7 +536,8 @@ bool Joint::setPID(const scenario::core::PID& pid)
     }
 
     // Create the new PID
-    ignition::math::PID pidIgnitionMath = utils::toIgnitionPID(pidParams);
+    const ignition::math::PID& pidIgnitionMath =
+        utils::toIgnitionPID(pidParams);
 
     // Store the new PID in the ECM
     utils::setExistingComponentData<ignition::gazebo::components::JointPID,
@@ -578,7 +579,7 @@ std::vector<double> Joint::historyOfAppliedJointForces() const
         return {};
     }
 
-    auto fixedSizeQueue = utils::getExistingComponentData<
+    const auto& fixedSizeQueue = utils::getExistingComponentData<
         ignition::gazebo::components::HistoryOfAppliedJointForces>(m_ecm,
                                                                    m_entity);
 
@@ -633,7 +634,7 @@ scenario::core::Limit Joint::positionLimit(const size_t dof) const
         throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
     }
 
-    auto jointLimit = this->jointPositionLimit();
+    const auto& jointLimit = this->jointPositionLimit();
     assert(dof < jointLimit.min.size());
     assert(dof < jointLimit.max.size());
 
@@ -646,7 +647,7 @@ double Joint::maxGeneralizedForce(const size_t dof) const
         throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
     }
 
-    std::vector<double> maxForce = this->jointMaxGeneralizedForce();
+    const std::vector<double>& maxForce = this->jointMaxGeneralizedForce();
     return maxForce[dof];
 }
 
@@ -676,7 +677,7 @@ double Joint::position(const size_t dof) const
         throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
     }
 
-    std::vector<double> position = this->jointPosition();
+    const std::vector<double>& position = this->jointPosition();
     return position[dof];
 }
 
@@ -686,7 +687,7 @@ double Joint::velocity(const size_t dof) const
         throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
     }
 
-    std::vector<double> velocity = this->jointVelocity();
+    const std::vector<double>& velocity = this->jointVelocity();
     return velocity[dof];
 }
 
@@ -852,7 +853,7 @@ double Joint::positionTarget(const size_t dof) const
         throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
     }
 
-    std::vector<double> positionTarget = this->jointPositionTarget();
+    const std::vector<double>& positionTarget = this->jointPositionTarget();
     return positionTarget[dof];
 }
 
@@ -862,7 +863,7 @@ double Joint::velocityTarget(const size_t dof) const
         throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
     }
 
-    std::vector<double> velocityTarget = this->jointVelocityTarget();
+    const std::vector<double>& velocityTarget = this->jointVelocityTarget();
     return velocityTarget[dof];
 }
 
@@ -872,7 +873,8 @@ double Joint::accelerationTarget(const size_t dof) const
         throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
     }
 
-    std::vector<double> accelerationTarget = this->jointAccelerationTarget();
+    const std::vector<double>& accelerationTarget =
+        this->jointAccelerationTarget();
     return accelerationTarget[dof];
 }
 
@@ -882,7 +884,7 @@ double Joint::generalizedForceTarget(const size_t dof) const
         throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
     }
 
-    std::vector<double> force = this->jointGeneralizedForceTarget();
+    const std::vector<double>& force = this->jointGeneralizedForceTarget();
     return force[dof];
 }
 
@@ -938,7 +940,7 @@ bool Joint::setJointMaxGeneralizedForce(const std::vector<double>& maxForce)
 
 std::vector<double> Joint::jointPosition() const
 {
-    std::vector<double>& jointPosition = utils::getExistingComponentData< //
+    const std::vector<double>& jointPosition = utils::getExistingComponentData<
         ignition::gazebo::components::JointPosition>(m_ecm, m_entity);
 
     if (jointPosition.size() != this->dofs()) {
@@ -951,7 +953,7 @@ std::vector<double> Joint::jointPosition() const
 
 std::vector<double> Joint::jointVelocity() const
 {
-    std::vector<double>& jointVelocity = utils::getExistingComponentData< //
+    const std::vector<double>& jointVelocity = utils::getExistingComponentData<
         ignition::gazebo::components::JointVelocity>(m_ecm, m_entity);
 
     if (jointVelocity.size() != this->dofs()) {
@@ -1046,8 +1048,8 @@ bool Joint::setJointGeneralizedForceTarget(const std::vector<double>& force)
     auto& jointForceTarget = utils::getComponentData< //
         ignition::gazebo::components::JointForceCmd>(m_ecm, m_entity);
 
-    std::vector<double> clippedForce = std::move(force);
-    const std::vector<double> maxForce = this->jointMaxGeneralizedForce();
+    std::vector<double> clippedForce = force;
+    const std::vector<double>& maxForce = this->jointMaxGeneralizedForce();
 
     for (size_t dof = 0; dof < this->dofs(); ++dof) {
         clippedForce[dof] = std::min(clippedForce[dof], maxForce[dof]);
@@ -1060,52 +1062,52 @@ bool Joint::setJointGeneralizedForceTarget(const std::vector<double>& force)
 
 std::vector<double> Joint::jointPositionTarget() const
 {
-    std::vector<double>& jointPositionTarget = utils::getExistingComponentData<
+    const std::vector<double>& target = utils::getExistingComponentData<
         ignition::gazebo::components::JointPositionTarget>(m_ecm, m_entity);
 
-    if (jointPositionTarget.size() != this->dofs()) {
+    if (target.size() != this->dofs()) {
         throw exceptions::DOFMismatch(
-            this->dofs(), jointPositionTarget.size(), this->name());
+            this->dofs(), target.size(), this->name());
     }
 
-    return jointPositionTarget;
+    return target;
 }
 
 std::vector<double> Joint::jointVelocityTarget() const
 {
-    std::vector<double>& jointVelocityTarget = utils::getExistingComponentData<
+    const std::vector<double>& target = utils::getExistingComponentData<
         ignition::gazebo::components::JointVelocityTarget>(m_ecm, m_entity);
 
-    if (jointVelocityTarget.size() != this->dofs()) {
+    if (target.size() != this->dofs()) {
         throw exceptions::DOFMismatch(
-            this->dofs(), jointVelocityTarget.size(), this->name());
+            this->dofs(), target.size(), this->name());
     }
 
-    return jointVelocityTarget;
+    return target;
 }
 
 std::vector<double> Joint::jointAccelerationTarget() const
 {
-    std::vector<double>& jointAccelTarget = utils::getExistingComponentData<
+    const std::vector<double>& target = utils::getExistingComponentData<
         ignition::gazebo::components::JointAccelerationTarget>(m_ecm, m_entity);
 
-    if (jointAccelTarget.size() != this->dofs()) {
+    if (target.size() != this->dofs()) {
         throw exceptions::DOFMismatch(
-            this->dofs(), jointAccelTarget.size(), this->name());
+            this->dofs(), target.size(), this->name());
     }
 
-    return jointAccelTarget;
+    return target;
 }
 
 std::vector<double> Joint::jointGeneralizedForceTarget() const
 {
-    std::vector<double>& jointForceTarget = utils::getExistingComponentData< //
+    const std::vector<double>& target = utils::getExistingComponentData< //
         ignition::gazebo::components::JointForce>(m_ecm, m_entity);
 
-    if (jointForceTarget.size() != this->dofs()) {
+    if (target.size() != this->dofs()) {
         throw exceptions::DOFMismatch(
-            this->dofs(), jointForceTarget.size(), this->name());
+            this->dofs(), target.size(), this->name());
     }
 
-    return jointForceTarget;
+    return target;
 }

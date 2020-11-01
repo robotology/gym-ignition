@@ -255,7 +255,7 @@ bool GazeboSimulator::gui(const int verbosity)
         return true;
     }
 
-    std::vector<std::string> worldNames = this->worldNames();
+    const std::vector<std::string>& worldNames = this->worldNames();
 
     if (worldNames.empty()) {
         sError << "Failed to find any world in the simulator" << std::endl;
@@ -263,7 +263,7 @@ bool GazeboSimulator::gui(const int verbosity)
     }
 
     // NOTE: we connect to the first world
-    std::string worldName = worldNames[0];
+    const std::string& worldName = worldNames[0];
 
     if (!pImpl->sceneBroadcasterActive(worldName)) {
         sDebug << "Starting the SceneBroadcaster plugin" << std::endl;
@@ -359,7 +359,7 @@ bool GazeboSimulator::pause()
         return true;
     }
 
-    size_t numOfWorlds = this->worldNames().size();
+    const size_t numOfWorlds = this->worldNames().size();
 
     for (unsigned worldIdx = 0; worldIdx < numOfWorlds; ++worldIdx) {
         pImpl->getServer()->SetPaused(true, worldIdx);
@@ -538,7 +538,7 @@ GazeboSimulator::getWorld(const std::string& worldName) const
     auto* eventManager = ecmSingleton.getEventManager(returnedWorldName);
 
     // Get the world entity
-    auto worldEntity = ecm->EntityByComponents(
+    const auto worldEntity = ecm->EntityByComponents(
         ignition::gazebo::components::World(),
         ignition::gazebo::components::Name(returnedWorldName));
 
@@ -564,7 +564,7 @@ bool GazeboSimulator::Impl::insertWorld(const sdf::World& world)
     }
     else {
         // Check that there are no worlds with the same name already stored
-        auto root = utils::getSdfRootFromString(sdfElement->ToString(""));
+        const auto root = utils::getSdfRootFromString(sdfElement->ToString(""));
 
         if (!root) {
             return false;

@@ -134,7 +134,7 @@ bool World::insertWorldPlugin(const std::string& libName,
 
     // The plugin element must be wrapped in another element, otherwise
     // who receives it does not get the additional context
-    auto wrapped = sdf::SDF::WrapInRoot(pluginElement);
+    const auto wrapped = sdf::SDF::WrapInRoot(pluginElement);
 
     // Trigger the plugin loading
     m_eventManager->Emit<ignition::gazebo::events::LoadPlugins>(m_entity,
@@ -165,7 +165,7 @@ bool World::setPhysicsEngine(const PhysicsEngine engine)
 
 std::array<double, 3> World::gravity() const
 {
-    auto gravity = utils::getExistingComponentData< //
+    const auto& gravity = utils::getExistingComponentData< //
         ignition::gazebo::components::Gravity>(m_ecm, m_entity);
 
     return utils::fromIgnitionVector(gravity);
@@ -173,7 +173,7 @@ std::array<double, 3> World::gravity() const
 
 bool World::setGravity(const std::array<double, 3>& gravity)
 {
-    auto& simTimeAtWorldCreation = utils::getExistingComponentData<
+    const auto& simTimeAtWorldCreation = utils::getExistingComponentData<
         ignition::gazebo::components::Timestamp>(m_ecm, m_entity);
 
     const double simTimeAtWorldCreationInSeconds =
@@ -198,7 +198,7 @@ bool World::valid() const
 
 double World::time() const
 {
-    auto simTime = utils::getExistingComponentData< //
+    const auto& simTime = utils::getExistingComponentData<
         ignition::gazebo::components::SimulatedTime>(m_ecm, m_entity);
 
     return utils::steadyClockDurationToDouble(simTime);
@@ -206,7 +206,7 @@ double World::time() const
 
 std::string World::name() const
 {
-    std::string worldName = utils::getExistingComponentData< //
+    const std::string& worldName = utils::getExistingComponentData< //
         ignition::gazebo::components::Name>(m_ecm, m_entity);
 
     return worldName;
@@ -247,7 +247,7 @@ scenario::core::ModelPtr World::getModel(const std::string& modelName) const
     }
 
     // Find the model entity
-    auto modelEntity = m_ecm->EntityByComponents(
+    const auto modelEntity = m_ecm->EntityByComponents(
         ignition::gazebo::components::Name(modelName),
         ignition::gazebo::components::Model(),
         ignition::gazebo::components::ParentEntity(m_entity));
@@ -268,7 +268,7 @@ bool World::insertModel(const std::string& modelFile,
                         const core::Pose& pose,
                         const std::string& overrideModelName)
 {
-    std::shared_ptr<sdf::Root> modelSdfRoot =
+    const std::shared_ptr<sdf::Root> modelSdfRoot =
         utils::getSdfRootFromFile(modelFile);
 
     if (!modelSdfRoot) {
@@ -296,7 +296,7 @@ bool World::insertModel(const std::string& modelFile,
     }
 
     // Check for model name clash
-    const std::vector<std::string> modelNames = this->modelNames();
+    const std::vector<std::string>& modelNames = this->modelNames();
     if (std::find(modelNames.begin(), modelNames.end(), finalModelEntityName)
         != modelNames.end()) {
         sError << "Failed to insert model '" << finalModelEntityName
@@ -350,7 +350,7 @@ bool World::insertModel(const std::string& modelFile,
     }
 
     // Get the current time
-    auto time = utils::getExistingComponentData<
+    const auto& time = utils::getExistingComponentData<
         ignition::gazebo::components::Timestamp>(m_ecm, m_entity);
 
     // Insert the time of creation of the model
@@ -382,7 +382,7 @@ bool World::insertModel(const std::string& modelFile,
 
 bool World::removeModel(const std::string& modelName)
 {
-    auto modelEntity = m_ecm->EntityByComponents(
+    const auto modelEntity = m_ecm->EntityByComponents(
         ignition::gazebo::components::Name(modelName),
         ignition::gazebo::components::Model(),
         ignition::gazebo::components::ParentEntity(m_entity));
