@@ -60,7 +60,7 @@
 #include <utility>
 
 using namespace scenario::gazebo;
-const ignition::math::PID DefaultPID(1, 0.1, 0.01, 1, -1, 10000, -10000);
+const ignition::math::PID DefaultPID(1, 0.1, 0.01, -1, 0, -1, 0, 0);
 
 class Joint::Impl
 {
