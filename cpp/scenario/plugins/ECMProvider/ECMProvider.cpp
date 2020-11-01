@@ -59,7 +59,7 @@ void ECMProvider::Configure(const ignition::gazebo::Entity& entity,
                             ignition::gazebo::EventManager& eventMgr)
 {
     if (!ecm.EntityHasComponentType(
-            entity, ignition::gazebo::components::World().TypeId())) {
+            entity, ignition::gazebo::components::World::typeId)) {
         sError << "The ECMProvider plugin was not inserted "
                << "in a world element" << std::endl;
         return;

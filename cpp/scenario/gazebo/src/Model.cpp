@@ -293,7 +293,7 @@ bool Model::resetBaseWorldLinearVelocity(const std::array<double, 3>& linear)
     // otherwise the previous target would get overridden
     if (!this->m_ecm->EntityHasComponentType(
             this->m_entity,
-            ignition::gazebo::components::WorldVelocityCmd().TypeId())) {
+            ignition::gazebo::components::WorldVelocityCmd::typeId)) {
 
         return this->resetBaseWorldVelocity(linear,
                                             this->baseWorldAngularVelocity());
@@ -314,7 +314,7 @@ bool Model::resetBaseWorldAngularVelocity(const std::array<double, 3>& angular)
     // otherwise the previous target would get overridden
     if (!this->m_ecm->EntityHasComponentType(
             this->m_entity,
-            ignition::gazebo::components::WorldVelocityCmd().TypeId())) {
+            ignition::gazebo::components::WorldVelocityCmd::typeId)) {
 
         return this->resetBaseWorldVelocity(this->baseWorldLinearVelocity(),
                                             angular);

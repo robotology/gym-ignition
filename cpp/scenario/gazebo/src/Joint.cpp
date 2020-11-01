@@ -413,7 +413,7 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
         // Insert the plugin if the model does not have it already
         if (!m_ecm->EntityHasComponentType(
                 parentModel->entity(),
-                ignition::gazebo::components::JointController().TypeId())) {
+                ignition::gazebo::components::JointController::typeId)) {
 
             sDebug << "Loading JointController plugin for model '"
                    << parentModel->name() << "'" << std::endl;
@@ -436,9 +436,9 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
     sDebug << "Deleting existing position and velocity targets after "
            << "changing control mode" << std::endl;
     m_ecm->RemoveComponent(
-        m_entity, ignition::gazebo::components::JointPositionTarget().TypeId());
+        m_entity, ignition::gazebo::components::JointPositionTarget::typeId);
     m_ecm->RemoveComponent(
-        m_entity, ignition::gazebo::components::JointVelocityTarget().TypeId());
+        m_entity, ignition::gazebo::components::JointVelocityTarget::typeId);
 
     // Initialize the target as the current position / velocity
     switch (mode) {
@@ -538,7 +538,7 @@ bool Joint::historyOfAppliedJointForcesEnabled() const
 {
     return m_ecm->EntityHasComponentType(
         m_entity,
-        ignition::gazebo::components::HistoryOfAppliedJointForces().TypeId());
+        ignition::gazebo::components::HistoryOfAppliedJointForces::typeId);
 }
 
 bool Joint::enableHistoryOfAppliedJointForces(const bool enable,
@@ -553,8 +553,7 @@ bool Joint::enableHistoryOfAppliedJointForces(const bool enable,
     else {
         m_ecm->RemoveComponent(
             m_entity,
-            ignition::gazebo::components::HistoryOfAppliedJointForces()
-                .TypeId());
+            ignition::gazebo::components::HistoryOfAppliedJointForces::typeId);
     }
 
     return true;

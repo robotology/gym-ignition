@@ -65,8 +65,7 @@ public:
     static bool IsCanonical(const Link& link)
     {
         return link.ecm()->EntityHasComponentType(
-            link.entity(),
-            ignition::gazebo::components::CanonicalLink().TypeId());
+            link.entity(), ignition::gazebo::components::CanonicalLink::typeId);
     }
 };
 
@@ -328,7 +327,7 @@ bool Link::contactsEnabled() const
     for (const auto collisionEntity : collisionEntities) {
         const bool hasContactSensorData = m_ecm->EntityHasComponentType(
             collisionEntity,
-            ignition::gazebo::components::ContactSensorData().TypeId());
+            ignition::gazebo::components::ContactSensorData::typeId);
         enabled = enabled && hasContactSensorData;
     }
 
