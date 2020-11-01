@@ -188,7 +188,7 @@ namespace scenario::gazebo::utils {
 
         auto hasComponent = [&]() -> bool {
             return ecm->EntityHasComponentType(candidateEntity,
-                                               ComponentType().TypeId());
+                                               ComponentType::typeId);
         };
 
         auto isNull = [&]() -> bool {

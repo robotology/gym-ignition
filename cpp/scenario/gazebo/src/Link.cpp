@@ -65,8 +65,41 @@ public:
     static bool IsCanonical(const Link& link)
     {
         return link.ecm()->EntityHasComponentType(
-            link.entity(),
-            ignition::gazebo::components::CanonicalLink().TypeId());
+            link.entity(), ignition::gazebo::components::CanonicalLink::typeId);
+    }
+
+    static ignition::math::Pose3d GetWorldPose(const Link& link,
+                                               const Link::Impl& impl)
+    {
+        if (!Impl::IsCanonical(link)) {
+            const auto& linkPoseOptional = impl.link.WorldPose(*link.ecm());
+
+            if (!linkPoseOptional.has_value()) {
+                throw exceptions::LinkError("Failed to get world position",
+                                            link.name());
+            }
+
+            return linkPoseOptional.value();
+        }
+        else {
+            const auto& parentModelOptional =
+                impl.link.ParentModel(*link.ecm());
+            assert(parentModelOptional.has_value());
+
+            const ignition::gazebo::Model& parentModel =
+                parentModelOptional.value();
+            const ignition::gazebo::Entity parentModelEntity =
+                parentModel.Entity();
+
+            auto W_H_M = utils::getExistingComponentData<
+                ignition::gazebo::components::Pose>(link.ecm(),
+                                                    parentModelEntity);
+
+            auto M_H_B = utils::getExistingComponentData<
+                ignition::gazebo::components::Pose>(link.ecm(), link.entity());
+
+            return W_H_M * M_H_B;
+        }
     }
 };
 
@@ -79,16 +112,12 @@ Link::~Link() = default;
 uint64_t Link::id() const
 {
     // Get the parent world
-    core::WorldPtr parentWorld = utils::getParentWorld(*this);
+    const core::WorldPtr parentWorld = utils::getParentWorld(*this);
     assert(parentWorld);
 
-    // Get the parent model
-    core::ModelPtr parentModel = utils::getParentModel(*this);
-    assert(parentModel);
-
     // Build a unique string identifier of this joint
-    std::string scopedLinkName =
-        parentWorld->name() + "::" + parentModel->name() + "::" + this->name();
+    const std::string scopedLinkName =
+        parentWorld->name() + "::" + this->name(/*scoped=*/true);
 
     // Return the hashed string
     return std::hash<std::string>{}(scopedLinkName);
@@ -151,7 +180,7 @@ bool Link::valid() const
 
 std::string Link::name(const bool scoped) const
 {
-    auto linkNameOptional = pImpl->link.Name(*m_ecm);
+    const auto& linkNameOptional = pImpl->link.Name(*m_ecm);
 
     if (!linkNameOptional) {
         throw exceptions::LinkError("Failed to get link name");
@@ -168,7 +197,7 @@ std::string Link::name(const bool scoped) const
 
 double Link::mass() const
 {
-    auto inertial = utils::getExistingComponentData< //
+    const auto& inertial = utils::getExistingComponentData< //
         ignition::gazebo::components::Inertial>(m_ecm, m_entity);
 
     return inertial.MassMatrix().Mass();
@@ -176,71 +205,19 @@ double Link::mass() const
 
 std::array<double, 3> Link::position() const
 {
-    ignition::math::Pose3d linkPose;
-
-    if (!Impl::IsCanonical(*this)) {
-        auto linkPoseOptional = pImpl->link.WorldPose(*m_ecm);
-
-        if (!linkPoseOptional.has_value()) {
-            throw exceptions::LinkError("Failed to get world position", name());
-        }
-
-        linkPose = linkPoseOptional.value();
-    }
-    else {
-        auto parentModelOptional = pImpl->link.ParentModel(*m_ecm);
-        assert(parentModelOptional.has_value());
-
-        ignition::gazebo::Model parentModel = parentModelOptional.value();
-        ignition::gazebo::Entity parentModelEntity = parentModel.Entity();
-
-        auto W_H_M = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, parentModelEntity);
-
-        auto M_H_B = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, m_entity);
-
-        linkPose = W_H_M * M_H_B;
-    }
-
+    const ignition::math::Pose3d& linkPose = Impl::GetWorldPose(*this, *pImpl);
     return utils::fromIgnitionPose(linkPose).position;
 }
 
 std::array<double, 4> Link::orientation() const
 {
-    ignition::math::Pose3d linkPose;
-
-    if (!Impl::IsCanonical(*this)) {
-        auto linkPoseOptional = pImpl->link.WorldPose(*m_ecm);
-
-        if (!linkPoseOptional.has_value()) {
-            throw exceptions::LinkError("Failed to get world position", name());
-        }
-
-        linkPose = linkPoseOptional.value();
-    }
-    else {
-        auto parentModelOptional = pImpl->link.ParentModel(*m_ecm);
-        assert(parentModelOptional.has_value());
-
-        ignition::gazebo::Model parentModel = parentModelOptional.value();
-        ignition::gazebo::Entity parentModelEntity = parentModel.Entity();
-
-        auto W_H_M = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, parentModelEntity);
-
-        auto M_H_B = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, m_entity);
-
-        linkPose = W_H_M * M_H_B;
-    }
-
+    const ignition::math::Pose3d& linkPose = Impl::GetWorldPose(*this, *pImpl);
     return utils::fromIgnitionPose(linkPose).orientation;
 }
 
 std::array<double, 3> Link::worldLinearVelocity() const
 {
-    auto linkLinearVelocity = pImpl->link.WorldLinearVelocity(*m_ecm);
+    const auto& linkLinearVelocity = pImpl->link.WorldLinearVelocity(*m_ecm);
 
     if (!linkLinearVelocity) {
         throw exceptions::LinkError("Failed to get linear velocity",
@@ -252,7 +229,7 @@ std::array<double, 3> Link::worldLinearVelocity() const
 
 std::array<double, 3> Link::worldAngularVelocity() const
 {
-    auto linkAngularVelocity = pImpl->link.WorldAngularVelocity(*m_ecm);
+    const auto& linkAngularVelocity = pImpl->link.WorldAngularVelocity(*m_ecm);
 
     if (!linkAngularVelocity) {
         throw exceptions::LinkError("Failed to get angular velocity",
@@ -264,7 +241,7 @@ std::array<double, 3> Link::worldAngularVelocity() const
 
 std::array<double, 3> Link::bodyLinearVelocity() const
 {
-    auto linkBodyLinVel = utils::getComponentData< //
+    const auto& linkBodyLinVel = utils::getComponentData< //
         ignition::gazebo::components::LinearVelocity>(m_ecm, m_entity);
 
     return utils::fromIgnitionVector(linkBodyLinVel);
@@ -272,7 +249,7 @@ std::array<double, 3> Link::bodyLinearVelocity() const
 
 std::array<double, 3> Link::bodyAngularVelocity() const
 {
-    auto linkBodyAngVel = utils::getComponentData< //
+    const auto& linkBodyAngVel = utils::getComponentData< //
         ignition::gazebo::components::AngularVelocity>(m_ecm, m_entity);
 
     return utils::fromIgnitionVector(linkBodyAngVel);
@@ -280,7 +257,8 @@ std::array<double, 3> Link::bodyAngularVelocity() const
 
 std::array<double, 3> Link::worldLinearAcceleration() const
 {
-    auto linkLinearAcceleration = pImpl->link.WorldLinearAcceleration(*m_ecm);
+    const auto& linkLinearAcceleration =
+        pImpl->link.WorldLinearAcceleration(*m_ecm);
 
     if (!linkLinearAcceleration) {
         throw exceptions::LinkError("Failed to get linear acceleration",
@@ -292,7 +270,7 @@ std::array<double, 3> Link::worldLinearAcceleration() const
 
 std::array<double, 3> Link::worldAngularAcceleration() const
 {
-    auto linkWorldAngAcc = utils::getComponentData< //
+    const auto& linkWorldAngAcc = utils::getComponentData<
         ignition::gazebo::components::WorldAngularAcceleration>(m_ecm,
                                                                 m_entity);
 
@@ -301,7 +279,7 @@ std::array<double, 3> Link::worldAngularAcceleration() const
 
 std::array<double, 3> Link::bodyLinearAcceleration() const
 {
-    auto linkBodyLinAcc = utils::getComponentData< //
+    const auto& linkBodyLinAcc = utils::getComponentData<
         ignition::gazebo::components::LinearAcceleration>(m_ecm, m_entity);
 
     return utils::fromIgnitionVector(linkBodyLinAcc);
@@ -309,7 +287,7 @@ std::array<double, 3> Link::bodyLinearAcceleration() const
 
 std::array<double, 3> Link::bodyAngularAcceleration() const
 {
-    auto linkBodyAngAcc = utils::getComponentData< //
+    const auto& linkBodyAngAcc = utils::getComponentData<
         ignition::gazebo::components::AngularAcceleration>(m_ecm, m_entity);
 
     return utils::fromIgnitionVector(linkBodyAngAcc);
@@ -321,7 +299,7 @@ bool Link::contactsEnabled() const
     // link's collision elements;
     bool enabled = true;
 
-    auto collisionEntities = m_ecm->ChildrenByComponents(
+    const auto& collisionEntities = m_ecm->ChildrenByComponents(
         m_entity,
         ignition::gazebo::components::Collision(),
         ignition::gazebo::components::ParentEntity(m_entity));
@@ -329,9 +307,9 @@ bool Link::contactsEnabled() const
     // Create the contact sensor data component that enables the Physics
     // system to extract contact information from the physics engine
     for (const auto collisionEntity : collisionEntities) {
-        bool hasContactSensorData = m_ecm->EntityHasComponentType(
+        const bool hasContactSensorData = m_ecm->EntityHasComponentType(
             collisionEntity,
-            ignition::gazebo::components::ContactSensorData().TypeId());
+            ignition::gazebo::components::ContactSensorData::typeId);
         enabled = enabled && hasContactSensorData;
     }
 
@@ -342,7 +320,7 @@ bool Link::enableContactDetection(const bool enable)
 {
     if (enable && !this->contactsEnabled()) {
         // Get all the collision entities of this link
-        auto collisionEntities = m_ecm->ChildrenByComponents(
+        const auto& collisionEntities = m_ecm->ChildrenByComponents(
             m_entity,
             ignition::gazebo::components::Collision(),
             ignition::gazebo::components::ParentEntity(m_entity));
@@ -360,7 +338,7 @@ bool Link::enableContactDetection(const bool enable)
 
     if (!enable && this->contactsEnabled()) {
         // Get all the collision entities of this link
-        auto collisionEntities = m_ecm->ChildrenByComponents(
+        const auto& collisionEntities = m_ecm->ChildrenByComponents(
             m_entity,
             ignition::gazebo::components::Collision(),
             ignition::gazebo::components::ParentEntity(m_entity));
@@ -385,25 +363,10 @@ bool Link::inContact() const
 
 std::vector<scenario::core::Contact> Link::contacts() const
 {
-    std::vector<ignition::gazebo::Entity> collisionEntities;
-
-    // Get all the collision entities associated with this link
-    m_ecm->Each<ignition::gazebo::components::Collision,
-                ignition::gazebo::components::ContactSensorData,
-                ignition::gazebo::components::ParentEntity>(
-        [&](const ignition::gazebo::Entity& collisionEntity,
-            ignition::gazebo::components::Collision*,
-            ignition::gazebo::components::ContactSensorData*,
-            ignition::gazebo::components::ParentEntity* parentEntityComponent)
-            -> bool {
-            // Keep only the collisions of this link
-            if (parentEntityComponent->Data() != m_entity) {
-                return true;
-            }
-
-            collisionEntities.push_back(collisionEntity);
-            return true;
-        });
+    // Get the collisions of this link
+    const auto& collisionEntities = m_ecm->EntitiesByComponents(
+        ignition::gazebo::components::ParentEntity(m_entity),
+        ignition::gazebo::components::Collision());
 
     if (collisionEntities.empty()) {
         return {};
@@ -416,42 +379,54 @@ std::vector<scenario::core::Contact> Link::contacts() const
 
     for (const auto collisionEntity : collisionEntities) {
 
+        // Skip collisions entities without contact sensor
+        if (!m_ecm->EntityHasComponentType(
+                collisionEntity,
+                ignition::gazebo::components::ContactSensorData::typeId)) {
+            continue;
+        }
+
         // Get the contact data for the selected collision entity
         const ignition::msgs::Contacts& contactSensorData =
-            utils::getExistingComponentData< //
+            utils::getExistingComponentData<
                 ignition::gazebo::components::ContactSensorData>(
                 m_ecm, collisionEntity);
 
         // Convert the ignition msg
-        std::vector<core::Contact> collisionContacts =
+        const std::vector<core::Contact>& collisionContacts =
             utils::fromIgnitionContactsMsgs(m_ecm, contactSensorData);
-        //        assert(collisionContacts.size() <= 1);
 
         for (const auto& contact : collisionContacts) {
-
             assert(!contact.bodyA.empty());
             assert(!contact.bodyB.empty());
 
-            auto key = std::make_pair(contact.bodyA, contact.bodyB);
+            // Create the key that collects the entry containing the
+            // Contact object of the pair of bodies
+            const auto key = std::make_pair(contact.bodyA, contact.bodyB);
 
             if (contactsMap.find(key) != contactsMap.end()) {
-                contactsMap.at(key).points.insert(
-                    contactsMap.at(key).points.end(),
-                    contact.points.begin(),
-                    contact.points.end());
+                // Get the existing contact object
+                auto& thisContact = contactsMap.at(key);
+
+                // Insert the new points
+                thisContact.points.insert(thisContact.points.end(),
+                                          contact.points.begin(),
+                                          contact.points.end());
             }
             else {
+                // Create a new Contact
                 contactsMap[key] = contact;
             }
         }
     }
 
-    // Move data from the map to the output vector
+    // Copy data from the map to the output vector
+    // TODO: any trick to move values from the map to the vector?
     std::vector<core::Contact> allContacts;
     allContacts.reserve(contactsMap.size());
 
-    for (auto& [_, contact] : contactsMap) {
-        allContacts.push_back(std::move(contact));
+    for (const auto& [_, contact] : contactsMap) {
+        allContacts.push_back(contact);
     }
 
     return allContacts;
@@ -487,7 +462,7 @@ std::array<double, 6> Link::contactWrench() const
             // with the orientation of the world frame. This simplifies the
             // conversion since we have to take into account only the
             // displacement.
-            auto force = utils::toIgnitionVector3(contactPoint.force);
+            const auto& force = utils::toIgnitionVector3(contactPoint.force);
 
             // The force does not have to be changed
             totalForce += force;
@@ -524,8 +499,8 @@ bool Link::applyWorldWrench(const std::array<double, 3>& force,
     // Adapted from ignition::gazebo::Link::AddWorld{Force,Wrench}
 
     // Initialize the force and the torque with the input data
-    const auto forceIgnitionMath = utils::toIgnitionVector3(force);
-    const auto torqueIgnitionMath = utils::toIgnitionVector3(torque);
+    const auto& forceIgnitionMath = utils::toIgnitionVector3(force);
+    const auto& torqueIgnitionMath = utils::toIgnitionVector3(torque);
 
     const auto entityWithSimTime = utils::getFirstParentEntityWithComponent<
         ignition::gazebo::components::SimulatedTime>(m_ecm, m_entity);
@@ -554,32 +529,7 @@ bool Link::applyWorldWrenchToCoM(const std::array<double, 3>& force,
                                  const std::array<double, 3>& torque,
                                  const double duration)
 {
-    // Adapted from ignition::gazebo::Link::AddWorld{Force,Wrench}
-    ignition::math::Pose3d worldPose;
-
-    // TODO: make a helper and share it?
-    if (!Impl::IsCanonical(*this)) {
-        auto linkPoseOptional = pImpl->link.WorldPose(*m_ecm);
-
-        if (!linkPoseOptional.has_value()) {
-            throw exceptions::LinkError("Failed to get world position", name());
-        }
-
-        worldPose = linkPoseOptional.value();
-    }
-    else {
-        const auto parentModelEntity = utils::getFirstParentEntityWithComponent<
-            ignition::gazebo::components::Model>(m_ecm, m_entity);
-        assert(parentModelEntity != ignition::gazebo::kNullEntity);
-
-        auto W_H_M = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, parentModelEntity);
-
-        auto M_H_B = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, m_entity);
-
-        worldPose = W_H_M * M_H_B;
-    }
+    const ignition::math::Pose3d& worldPose = Impl::GetWorldPose(*this, *pImpl);
 
     // Get the data of the inertial frame
     auto inertial = utils::getExistingComponentData< //

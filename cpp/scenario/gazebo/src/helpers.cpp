@@ -165,30 +165,28 @@ utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
 {
     auto getEntityName =
         [&](const ignition::gazebo::Entity entity) -> std::string {
-        auto nameComponent =
-            ecm->Component<ignition::gazebo::components::Name>(entity);
-        assert(nameComponent);
-        return nameComponent->Data();
+        return utils::getExistingComponentData<
+            ignition::gazebo::components::Name>(ecm, entity);
     };
 
     // Get the names of the links in contact following:
     // collision entity -> collision link -> link name
-    auto collisionEntityA = contactMsg.collision1().id();
-    auto collisionEntityB = contactMsg.collision2().id();
+    const auto collisionEntityA = contactMsg.collision1().id();
+    const auto collisionEntityB = contactMsg.collision2().id();
 
-    auto linkEntityA = ecm->ParentEntity(collisionEntityA);
-    auto linkEntityB = ecm->ParentEntity(collisionEntityB);
-    std::string linkNameA = getEntityName(linkEntityA);
-    std::string linkNameB = getEntityName(linkEntityB);
+    const auto linkEntityA = ecm->ParentEntity(collisionEntityA);
+    const auto linkEntityB = ecm->ParentEntity(collisionEntityB);
+    const std::string linkNameA = getEntityName(linkEntityA);
+    const std::string linkNameB = getEntityName(linkEntityB);
 
     // Return the link names scoped with the model name
-    auto modelEntityA = ecm->ParentEntity(linkEntityA);
-    auto modelEntityB = ecm->ParentEntity(linkEntityB);
-    std::string modelNameA = getEntityName(modelEntityA);
-    std::string modelNameB = getEntityName(modelEntityB);
+    const auto modelEntityA = ecm->ParentEntity(linkEntityA);
+    const auto modelEntityB = ecm->ParentEntity(linkEntityB);
+    const std::string modelNameA = getEntityName(modelEntityA);
+    const std::string modelNameB = getEntityName(modelEntityB);
 
-    std::string scopedBodyA = modelNameA + "::" + linkNameA;
-    std::string scopedBodyB = modelNameB + "::" + linkNameB;
+    const std::string scopedBodyA = modelNameA + "::" + linkNameA;
+    const std::string scopedBodyB = modelNameB + "::" + linkNameB;
 
     // Returned data structure
     scenario::core::Contact contact;
@@ -196,10 +194,10 @@ utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
     contact.bodyB = scopedBodyB;
 
     // Dimensions of contact points data must match
-    auto numOfDepths = contactMsg.depth_size();
-    auto numOfNormals = contactMsg.normal_size();
-    auto numOfWrenches = contactMsg.wrench_size();
-    auto numOfPositions = contactMsg.position_size();
+    const auto numOfDepths = contactMsg.depth_size();
+    const auto numOfNormals = contactMsg.normal_size();
+    const auto numOfWrenches = contactMsg.wrench_size();
+    const auto numOfPositions = contactMsg.position_size();
 
     int numOfPoints = numOfDepths;
     assert(numOfPoints == numOfNormals);
@@ -345,8 +343,7 @@ namespace scenario::gazebo::utils {
      * generated it.
      */
     std::string toExactStringNoLocale(const double in);
-}
-
+} // namespace scenario::gazebo::utils
 
 std::string utils::toExactStringNoLocale(const double in)
 {
@@ -355,7 +352,6 @@ std::string utils::toExactStringNoLocale(const double in)
     ss << std::setprecision(25) << in;
     return ss.str();
 }
-
 
 bool utils::updateSDFPhysics(sdf::Root& sdfRoot,
                              const double maxStepSize,
@@ -532,6 +528,11 @@ std::shared_ptr<World> utils::getParentWorld(const GazeboEntity& gazeboEntity)
         ignition::gazebo::components::World>(gazeboEntity.ecm(),
                                              gazeboEntity.entity());
 
+    if (worldEntity == ignition::gazebo::kNullEntity) {
+        sError << "Failed to find parent world entity" << std::endl;
+        return nullptr;
+    }
+
     auto world = std::make_shared<World>();
 
     if (!world->initialize(
@@ -553,6 +554,11 @@ std::shared_ptr<Model> utils::getParentModel(const GazeboEntity& gazeboEntity)
     auto modelEntity = getFirstParentEntityWithComponent< //
         ignition::gazebo::components::Model>(gazeboEntity.ecm(),
                                              gazeboEntity.entity());
+
+    if (modelEntity == ignition::gazebo::kNullEntity) {
+        sError << "Failed to find parent model entity" << std::endl;
+        return nullptr;
+    }
 
     auto model = std::make_shared<Model>();
 

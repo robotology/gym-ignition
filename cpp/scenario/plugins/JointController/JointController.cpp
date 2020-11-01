@@ -82,7 +82,7 @@ void JointController::Configure(
 {
     // Check if the model already has a JointController plugin
     if (ecm.EntityHasComponentType(
-            entity, ignition::gazebo::components::JointController().TypeId())) {
+            entity, ignition::gazebo::components::JointController::typeId)) {
         sError << "The model already has a JointController plugin" << std::endl;
         return;
     }
