@@ -226,6 +226,8 @@ def test_model_references(gazebo: scenario.GazeboSimulator):
     model = get_model(gazebo, gym_ignition_model_name)
     assert gym_ignition_model_name in gazebo.get_world().model_names()
 
+    assert model.set_joint_control_mode(core.JointControlMode_force)
+
     assert model.set_joint_position_targets([0.5, -3])
     assert model.joint_position_targets() == pytest.approx([0.5, -3])
     assert model.joint_position_targets(["pivot"]) == pytest.approx([-3])
