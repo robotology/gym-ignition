@@ -363,25 +363,10 @@ bool Link::inContact() const
 
 std::vector<scenario::core::Contact> Link::contacts() const
 {
-    std::vector<ignition::gazebo::Entity> collisionEntities;
-
-    // Get all the collision entities associated with this link
-    m_ecm->Each<ignition::gazebo::components::Collision,
-                ignition::gazebo::components::ContactSensorData,
-                ignition::gazebo::components::ParentEntity>(
-        [&](const ignition::gazebo::Entity& collisionEntity,
-            ignition::gazebo::components::Collision*,
-            ignition::gazebo::components::ContactSensorData*,
-            ignition::gazebo::components::ParentEntity* parentEntityComponent)
-            -> bool {
-            // Keep only the collisions of this link
-            if (parentEntityComponent->Data() != m_entity) {
-                return true;
-            }
-
-            collisionEntities.push_back(collisionEntity);
-            return true;
-        });
+    // Get the collisions of this link
+    const auto& collisionEntities = m_ecm->EntitiesByComponents(
+        ignition::gazebo::components::ParentEntity(m_entity),
+        ignition::gazebo::components::Collision());
 
     if (collisionEntities.empty()) {
         return {};
@@ -394,42 +379,54 @@ std::vector<scenario::core::Contact> Link::contacts() const
 
     for (const auto collisionEntity : collisionEntities) {
 
+        // Skip collisions entities without contact sensor
+        if (!m_ecm->EntityHasComponentType(
+                collisionEntity,
+                ignition::gazebo::components::ContactSensorData::typeId)) {
+            continue;
+        }
+
         // Get the contact data for the selected collision entity
         const ignition::msgs::Contacts& contactSensorData =
-            utils::getExistingComponentData< //
+            utils::getExistingComponentData<
                 ignition::gazebo::components::ContactSensorData>(
                 m_ecm, collisionEntity);
 
         // Convert the ignition msg
         const std::vector<core::Contact>& collisionContacts =
             utils::fromIgnitionContactsMsgs(m_ecm, contactSensorData);
-        //        assert(collisionContacts.size() <= 1);
 
         for (const auto& contact : collisionContacts) {
-
             assert(!contact.bodyA.empty());
             assert(!contact.bodyB.empty());
 
-            auto key = std::make_pair(contact.bodyA, contact.bodyB);
+            // Create the key that collects the entry containing the
+            // Contact object of the pair of bodies
+            const auto key = std::make_pair(contact.bodyA, contact.bodyB);
 
             if (contactsMap.find(key) != contactsMap.end()) {
-                contactsMap.at(key).points.insert(
-                    contactsMap.at(key).points.end(),
-                    contact.points.begin(),
-                    contact.points.end());
+                // Get the existing contact object
+                auto& thisContact = contactsMap.at(key);
+
+                // Insert the new points
+                thisContact.points.insert(thisContact.points.end(),
+                                          contact.points.begin(),
+                                          contact.points.end());
             }
             else {
+                // Create a new Contact
                 contactsMap[key] = contact;
             }
         }
     }
 
-    // Move data from the map to the output vector
+    // Copy data from the map to the output vector
+    // TODO: any trick to move values from the map to the vector?
     std::vector<core::Contact> allContacts;
     allContacts.reserve(contactsMap.size());
 
-    for (auto& [_, contact] : contactsMap) {
-        allContacts.push_back(std::move(contact));
+    for (const auto& [_, contact] : contactsMap) {
+        allContacts.push_back(contact);
     }
 
     return allContacts;
