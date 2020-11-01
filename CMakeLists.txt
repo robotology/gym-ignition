@@ -121,10 +121,7 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
         "${Python3_SITELIB}/scenario/bindings")
 else()
     # Relative to the active Python site-package
-    # Example: $HOME/venv/lib/pythonX.Y/site-packages/{scenario,gympp}
-    set(GYMPP_INSTALL_BINDIR gympp/${CMAKE_INSTALL_BINDIR})
-    set(GYMPP_INSTALL_LIBDIR gympp/${CMAKE_INSTALL_LIBDIR})
-    set(GYMPP_INSTALL_INCLUDEDIR gympp/${CMAKE_INSTALL_INCLUDEDIR})
+    # Example: $HOME/venv/lib/pythonX.Y/site-packages/scenario
     set(SCENARIO_INSTALL_BINDIR scenario/${CMAKE_INSTALL_BINDIR})
     set(SCENARIO_INSTALL_LIBDIR scenario/${CMAKE_INSTALL_LIBDIR})
     set(SCENARIO_INSTALL_INCLUDEDIR scenario/${CMAKE_INSTALL_INCLUDEDIR})
@@ -206,24 +203,6 @@ option(GYMIGNITION_ENABLE_SCENARIO "Enable ScenarI/O library" ON)
 
 if(GYMIGNITION_ENABLE_SCENARIO)
     add_subdirectory(cpp/scenario)
-endif()
-
-# =====
-# GYMPP
-# =====
-
-option(GYMIGNITION_ENABLE_GYMPP "Enable Gympp library" OFF)
-mark_as_advanced(GYMIGNITION_ENABLE_GYMPP)
-
-if(GYMIGNITION_ENABLE_GYMPP)
-
-    if(NOT GYMIGNITION_USE_IGNITION)
-        message(FATAL_ERROR "Required Ignition Gazebo libraries not found")
-    endif()
-
-    add_subdirectory(cpp/gympp)
-    add_subdirectory(examples/cpp)
-
 endif()
 
 # ========
