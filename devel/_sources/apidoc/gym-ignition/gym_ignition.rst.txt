@@ -12,7 +12,6 @@ gym\_ignition
 
    gym_ignition.base
    gym_ignition.controllers
-   gym_ignition.experimental
    gym_ignition.randomizers
    gym_ignition.runtimes
    gym_ignition.scenario
