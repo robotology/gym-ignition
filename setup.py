@@ -61,7 +61,7 @@ setup(
     packages=find_packages("python"),
     package_dir={'': "python"},
     ext_modules=[CMakeExtension(name='InstallAllTargets',
-                                install_prefix="",
+                                install_prefix="scenario",
                                 cmake_build_type='PyPI',
                                 cmake_depends_on=["idyntree"],
                                 disable_editable=True)],

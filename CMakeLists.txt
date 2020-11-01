@@ -109,22 +109,17 @@ set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTU
 find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
 message(STATUS "Using Python: ${Python3_EXECUTABLE}")
 
-# Select the appropriate install prefix used throughout the project
+# Select the appropriate install prefix used throughout the project.
+set(SCENARIO_INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR})
+set(SCENARIO_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
+set(SCENARIO_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
+
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    # Regular prefix (default /usr/local)
-    set(SCENARIO_INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR})
-    set(SCENARIO_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
-    set(SCENARIO_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
     # Add the libraries installed in the Python site-package folder
     set(EXTRA_RPATH_DIRS
         "${Python3_SITELIB}"
         "${Python3_SITELIB}/scenario/bindings")
 else()
-    # Relative to the active Python site-package
-    # Example: $HOME/venv/lib/pythonX.Y/site-packages/scenario
-    set(SCENARIO_INSTALL_BINDIR scenario/${CMAKE_INSTALL_BINDIR})
-    set(SCENARIO_INSTALL_LIBDIR scenario/${CMAKE_INSTALL_LIBDIR})
-    set(SCENARIO_INSTALL_INCLUDEDIR scenario/${CMAKE_INSTALL_INCLUDEDIR})
     # Add the libraries installed in the Python site-package folder
     # (that in this case is CMAKE_INSTALL_PREFIX)
     set(EXTRA_RPATH_DIRS
