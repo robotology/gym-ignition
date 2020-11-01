@@ -67,6 +67,40 @@ public:
         return link.ecm()->EntityHasComponentType(
             link.entity(), ignition::gazebo::components::CanonicalLink::typeId);
     }
+
+    static ignition::math::Pose3d GetWorldPose(const Link& link,
+                                               const Link::Impl& impl)
+    {
+        if (!Impl::IsCanonical(link)) {
+            const auto& linkPoseOptional = impl.link.WorldPose(*link.ecm());
+
+            if (!linkPoseOptional.has_value()) {
+                throw exceptions::LinkError("Failed to get world position",
+                                            link.name());
+            }
+
+            return linkPoseOptional.value();
+        }
+        else {
+            const auto& parentModelOptional =
+                impl.link.ParentModel(*link.ecm());
+            assert(parentModelOptional.has_value());
+
+            const ignition::gazebo::Model& parentModel =
+                parentModelOptional.value();
+            const ignition::gazebo::Entity parentModelEntity =
+                parentModel.Entity();
+
+            auto W_H_M = utils::getExistingComponentData<
+                ignition::gazebo::components::Pose>(link.ecm(),
+                                                    parentModelEntity);
+
+            auto M_H_B = utils::getExistingComponentData<
+                ignition::gazebo::components::Pose>(link.ecm(), link.entity());
+
+            return W_H_M * M_H_B;
+        }
+    }
 };
 
 Link::Link()
@@ -171,65 +205,13 @@ double Link::mass() const
 
 std::array<double, 3> Link::position() const
 {
-    ignition::math::Pose3d linkPose;
-
-    if (!Impl::IsCanonical(*this)) {
-        auto linkPoseOptional = pImpl->link.WorldPose(*m_ecm);
-
-        if (!linkPoseOptional.has_value()) {
-            throw exceptions::LinkError("Failed to get world position", name());
-        }
-
-        linkPose = linkPoseOptional.value();
-    }
-    else {
-        auto parentModelOptional = pImpl->link.ParentModel(*m_ecm);
-        assert(parentModelOptional.has_value());
-
-        ignition::gazebo::Model parentModel = parentModelOptional.value();
-        ignition::gazebo::Entity parentModelEntity = parentModel.Entity();
-
-        auto W_H_M = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, parentModelEntity);
-
-        auto M_H_B = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, m_entity);
-
-        linkPose = W_H_M * M_H_B;
-    }
-
+    const ignition::math::Pose3d& linkPose = Impl::GetWorldPose(*this, *pImpl);
     return utils::fromIgnitionPose(linkPose).position;
 }
 
 std::array<double, 4> Link::orientation() const
 {
-    ignition::math::Pose3d linkPose;
-
-    if (!Impl::IsCanonical(*this)) {
-        auto linkPoseOptional = pImpl->link.WorldPose(*m_ecm);
-
-        if (!linkPoseOptional.has_value()) {
-            throw exceptions::LinkError("Failed to get world position", name());
-        }
-
-        linkPose = linkPoseOptional.value();
-    }
-    else {
-        auto parentModelOptional = pImpl->link.ParentModel(*m_ecm);
-        assert(parentModelOptional.has_value());
-
-        ignition::gazebo::Model parentModel = parentModelOptional.value();
-        ignition::gazebo::Entity parentModelEntity = parentModel.Entity();
-
-        auto W_H_M = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, parentModelEntity);
-
-        auto M_H_B = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, m_entity);
-
-        linkPose = W_H_M * M_H_B;
-    }
-
+    const ignition::math::Pose3d& linkPose = Impl::GetWorldPose(*this, *pImpl);
     return utils::fromIgnitionPose(linkPose).orientation;
 }
 
@@ -550,32 +532,7 @@ bool Link::applyWorldWrenchToCoM(const std::array<double, 3>& force,
                                  const std::array<double, 3>& torque,
                                  const double duration)
 {
-    // Adapted from ignition::gazebo::Link::AddWorld{Force,Wrench}
-    ignition::math::Pose3d worldPose;
-
-    // TODO: make a helper and share it?
-    if (!Impl::IsCanonical(*this)) {
-        auto linkPoseOptional = pImpl->link.WorldPose(*m_ecm);
-
-        if (!linkPoseOptional.has_value()) {
-            throw exceptions::LinkError("Failed to get world position", name());
-        }
-
-        worldPose = linkPoseOptional.value();
-    }
-    else {
-        const auto parentModelEntity = utils::getFirstParentEntityWithComponent<
-            ignition::gazebo::components::Model>(m_ecm, m_entity);
-        assert(parentModelEntity != ignition::gazebo::kNullEntity);
-
-        auto W_H_M = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, parentModelEntity);
-
-        auto M_H_B = utils::getExistingComponentData< //
-            ignition::gazebo::components::Pose>(m_ecm, m_entity);
-
-        worldPose = W_H_M * M_H_B;
-    }
+    const ignition::math::Pose3d& worldPose = Impl::GetWorldPose(*this, *pImpl);
 
     // Get the data of the inertial frame
     auto inertial = utils::getExistingComponentData< //
