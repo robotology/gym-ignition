@@ -433,8 +433,8 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
         ignition::gazebo::components::JointControlMode>(m_ecm, m_entity, mode);
 
     // Delete the existing targets if they exist
-    sDebug << "Deleting existing position and velocity targets after "
-           << "changing control mode" << std::endl;
+    sDebug << "Deleting existing targets after changing control mode"
+           << std::endl;
     m_ecm->RemoveComponent(
         m_entity, ignition::gazebo::components::JointPositionTarget::typeId);
     m_ecm->RemoveComponent(
@@ -710,9 +710,8 @@ bool Joint::setPositionTarget(const double position, const size_t dof)
                         this->controlMode());
 
     if (it == allowedControlModes.end()) {
-        sError
-            << "The active joint control mode does not accept a position target"
-            << std::endl;
+        sError << "The active joint control mode does not accept a "
+               << "position target" << std::endl;
         return false;
     }
 
@@ -739,9 +738,8 @@ bool Joint::setVelocityTarget(const double velocity, const size_t dof)
     if (!(this->controlMode() == core::JointControlMode::Velocity
           || this->controlMode() == core::JointControlMode::Idle
           || this->controlMode() == core::JointControlMode::Force)) {
-        sError
-            << "The active joint control mode does not accept a velocity target"
-            << std::endl;
+        sError << "The active joint control mode does not accept a "
+               << "velocity target" << std::endl;
         return false;
     }
 
@@ -767,9 +765,8 @@ bool Joint::setAccelerationTarget(const double acceleration, const size_t dof)
 {
     if (!(this->controlMode() == core::JointControlMode::Idle
           || this->controlMode() == core::JointControlMode::Force)) {
-        sError
-            << "The active joint control mode does not accept a velocity target"
-            << std::endl;
+        sError << "The active joint control mode does not accept an "
+               << "acceleration target" << std::endl;
         return false;
     }
 
@@ -804,8 +801,8 @@ bool Joint::setGeneralizedForceTarget(const double force, const size_t dof)
                         this->controlMode());
 
     if (it == allowedControlModes.end()) {
-        sError << "The active joint control mode does not accept a force target"
-               << std::endl;
+        sError << "The active joint control mode does not accept a force "
+               << "target" << std::endl;
         return false;
     }
 
