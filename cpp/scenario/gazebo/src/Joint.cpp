@@ -460,6 +460,9 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
             break;
         case core::JointControlMode::Idle:
         case core::JointControlMode::Force:
+            utils::setComponentData<
+                ignition::gazebo::components::JointForceCmd>(
+                m_ecm, m_entity, std::vector<double>(this->dofs(), 0.0));
             break;
         case core::JointControlMode::Invalid:
             sError << "You cannot set the Invalid control mode" << std::endl;
