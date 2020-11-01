@@ -37,7 +37,6 @@
 #include "scenario/gazebo/components/JointPID.h"
 #include "scenario/gazebo/components/JointPositionTarget.h"
 #include "scenario/gazebo/components/JointVelocityTarget.h"
-#include "scenario/gazebo/components/MaxJointForce.h"
 #include "scenario/gazebo/components/Timestamp.h"
 #include "scenario/gazebo/exceptions.h"
 #include "scenario/gazebo/helpers.h"
@@ -146,7 +145,6 @@ bool Joint::createECMResources()
     m_ecm->CreateComponent(m_entity, components::JointPID(DefaultPID));
     m_ecm->CreateComponent(
         m_entity, components::JointControlMode(core::JointControlMode::Idle));
-    m_ecm->CreateComponent(m_entity, components::MaxJointForce(infinity));
 
     return true;
 }
@@ -645,16 +643,9 @@ bool Joint::setMaxGeneralizedForce(const double maxForce, const size_t dof)
         return false;
     }
 
-    auto& maxJointForce = utils::getComponentData< //
-        ignition::gazebo::components::MaxJointForce>(m_ecm, m_entity);
-
-    if (maxJointForce.size() != this->dofs()) {
-        assert(maxJointForce.size() == 0);
-        maxJointForce = std::vector<double>(this->dofs(), 0.0);
-    }
-
-    maxJointForce[dof] = maxForce;
-    return true;
+    auto maxGeneralizedForce = this->jointMaxGeneralizedForce();
+    maxGeneralizedForce[dof] = maxForce;
+    return this->setJointMaxGeneralizedForce(maxGeneralizedForce);
 }
 
 double Joint::position(const size_t dof) const
@@ -820,13 +811,14 @@ bool Joint::setGeneralizedForceTarget(const double force, const size_t dof)
         jointForce = std::vector<double>(this->dofs(), 0.0);
     }
 
-    double forceClipped = force;
-    double maxForce = this->maxGeneralizedForce(dof);
+    if (std::abs(force) > this->maxGeneralizedForce(dof)) {
+        sWarning << "The force target is higher than the limit. "
+                 << "The physics engine might clip it." << std::endl;
+    }
 
-    forceClipped = std::min(forceClipped, maxForce);
-    forceClipped = std::max(forceClipped, -maxForce);
+    // Set the component data
+    jointForce[dof] = force;
 
-    jointForce[dof] = forceClipped;
     return true;
 }
 
@@ -900,25 +892,59 @@ scenario::core::JointLimit Joint::jointPositionLimit() const
 
 std::vector<double> Joint::jointMaxGeneralizedForce() const
 {
-    std::vector<double>& maxJointForce = utils::getExistingComponentData< //
-        ignition::gazebo::components::MaxJointForce>(m_ecm, m_entity);
+    std::vector<double> maxGeneralizedForce;
 
-    return maxJointForce;
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic: {
+            const sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            maxGeneralizedForce = {axis.Effort()};
+            break;
+        }
+        case core::JointType::Fixed:
+        case core::JointType::Invalid:
+        case core::JointType::Ball:
+            sWarning << "Type of Joint '" << this->name()
+                     << "' has no max effort defined" << std::endl;
+            break;
+    }
+
+    return maxGeneralizedForce;
 }
 
 bool Joint::setJointMaxGeneralizedForce(const std::vector<double>& maxForce)
 {
+    if (!Impl::ModelJustCreated(*this)) {
+        sError << "The model has been already processed and its"
+               << "parameters cannot be modified" << std::endl;
+        return false;
+    }
+
     if (maxForce.size() != this->dofs()) {
         sError << "Wrong number of elements (joint_dofs=" << this->dofs() << ")"
                << std::endl;
         return false;
     }
 
-    auto& maxJointForce = utils::getComponentData< //
-        ignition::gazebo::components::MaxJointForce>(m_ecm, m_entity);
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic:
+        case core::JointType::Ball: {
+            sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            assert(maxForce.size() == 1);
+            axis.SetEffort(maxForce[0]);
+            return true;
+        }
+        case core::JointType::Fixed:
+        case core::JointType::Invalid:
+            sWarning << "Fixed and Invalid joints have no maxim effort defined."
+                     << std::endl;
+            return false;
+    }
 
-    maxJointForce = maxForce;
-    return true;
+    return false;
 }
 
 std::vector<double> Joint::jointPosition() const
@@ -1031,15 +1057,17 @@ bool Joint::setJointGeneralizedForceTarget(const std::vector<double>& force)
     auto& jointForceTarget = utils::getComponentData< //
         ignition::gazebo::components::JointForceCmd>(m_ecm, m_entity);
 
-    std::vector<double> clippedForce = force;
     const std::vector<double>& maxForce = this->jointMaxGeneralizedForce();
 
     for (size_t dof = 0; dof < this->dofs(); ++dof) {
-        clippedForce[dof] = std::min(clippedForce[dof], maxForce[dof]);
-        clippedForce[dof] = std::max(clippedForce[dof], -maxForce[dof]);
+        if (std::abs(force[dof]) > maxForce[dof]) {
+            sWarning << "The force target is higher than the limit. "
+                     << "The physics engine might clip it." << std::endl;
+        }
     }
 
-    jointForceTarget = std::move(clippedForce);
+    // Set the component data
+    jointForceTarget = force;
     return true;
 }
 
