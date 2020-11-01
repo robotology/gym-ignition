@@ -206,9 +206,10 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
 
         const std::vector<double>& position = joint->jointPosition();
 
-        std::vector<double>& positionTarget = utils::getExistingComponentData<
-            ignition::gazebo::components::JointPositionTarget>(&ecm,
-                                                               jointEntity);
+        const std::vector<double>& positionTarget =
+            utils::getExistingComponentData<
+                ignition::gazebo::components::JointPositionTarget>(&ecm,
+                                                                   jointEntity);
 
         if (!Impl::runPIDController(*jointGazebo,
                                     computeNewForce,
@@ -239,9 +240,10 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
 
         const std::vector<double>& velocity = joint->jointVelocity();
 
-        std::vector<double>& velocityTarget = utils::getExistingComponentData<
-            ignition::gazebo::components::JointVelocityTarget>(&ecm,
-                                                               jointEntity);
+        const std::vector<double>& velocityTarget =
+            utils::getExistingComponentData<
+                ignition::gazebo::components::JointVelocityTarget>(&ecm,
+                                                                   jointEntity);
 
         if (!Impl::runPIDController(*jointGazebo,
                                     computeNewForce,
