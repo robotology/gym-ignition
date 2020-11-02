@@ -2,8 +2,8 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-cmake_minimum_required(VERSION 3.12)
-project(GymIgnition VERSION 0.1)
+cmake_minimum_required(VERSION 3.16)
+project(Scenario VERSION 0.1)
 
 # Add custom functions / macros
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -26,8 +26,8 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
         set(CMAKE_BUILD_TYPE "Release" CACHE STRING
             "Choose the type of build, recommended options are: Debug or Release" FORCE)
     endif()
-    set(GYMIGNITION_BUILD_TYPES "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${GYMIGNITION_BUILD_TYPES})
+    set(SCENARIO_BUILD_TYPES "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${SCENARIO_BUILD_TYPES})
 endif()
 
 # This new build mode configures the CMake project to be compatible with the pipeline to
@@ -36,19 +36,19 @@ include(AddNewBuildMode)
 add_new_build_mode(NAME "PyPI" TEMPLATE "Release")
 
 # Expose shared or static compilation
-set(GYMIGNITION_BUILD_SHARED_LIBRARY TRUE
+set(SCENARIO_BUILD_SHARED_LIBRARY TRUE
     CACHE BOOL "Compile libraries as shared libraries")
 
 if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "PyPI")
     # Apply the user choice
-    set(BUILD_SHARED_LIBS ${GYMIGNITION_BUILD_SHARED_LIBRARY})
+    set(BUILD_SHARED_LIBS ${SCENARIO_BUILD_SHARED_LIBRARY})
 else()
     # Check that is Linux
     if(NOT (UNIX AND NOT APPLE))
         message(FATAL_ERROR "PyPI packages can be only created for Linux at the moment")
     endif()
 
-    if(GYMIGNITION_BUILD_SHARED_LIBRARY)
+    if(SCENARIO_BUILD_SHARED_LIBRARY)
         message(WARNING "Enabling static compilation, required by the PyPI build mode")
     endif()
 
@@ -76,9 +76,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
 
 # Get include-what-you-use information when compiling
-option(GYMIGNITION_USE_IWYU "Get the output of include-what-you-use" OFF)
-mark_as_advanced(GYMIGNITION_USE_IWYU)
-if(GYMIGNITION_USE_IWYU)
+option(SCENARIO_USE_IWYU "Get the output of include-what-you-use" OFF)
+mark_as_advanced(SCENARIO_USE_IWYU)
+if(SCENARIO_USE_IWYU)
     find_program(IWYU_PATH NAMES include-what-you-use iwyu)
     if(IWYU_PATH)
         set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_PATH})
@@ -183,12 +183,12 @@ else()
     set(USE_IGNITION TRUE)
 endif()
 
-option(GYMIGNITION_USE_IGNITION
+option(SCENARIO_USE_IGNITION
        "Build C++ code depending on Ignition"
        ${USE_IGNITION})
 
 # Alias the targets
-if(${GYMIGNITION_USE_IGNITION})
+if(${SCENARIO_USE_IGNITION})
     include(ImportTargets${IGNITION_DISTRIBUTION})
 endif()
 
@@ -199,11 +199,7 @@ include(InstallBasicPackageFiles)
 # SCENARI/O
 # =========
 
-option(GYMIGNITION_ENABLE_SCENARIO "Enable ScenarI/O library" ON)
-
-if(GYMIGNITION_ENABLE_SCENARIO)
-    add_subdirectory(cpp/scenario)
-endif()
+add_subdirectory(cpp/scenario)
 
 # ========
 # BINDINGS
@@ -214,14 +210,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "PyPI" AND NOT USE_IGNITION)
     message(FATAL_ERROR "Found no Ignition distribution for PyPI package")
 endif()
 
-option(GYMIGNITION_ENABLE_BINDINGS "Enable SWIG bindings" ON)
+option(SCENARIO_ENABLE_BINDINGS "Enable SWIG bindings" ON)
 
-if(GYMIGNITION_ENABLE_BINDINGS)
-
-    if (NOT GYMIGNITION_ENABLE_SCENARIO)
-        message(FATAL_ERROR "The bindings require ScenarI/O to be enabled")
-    endif()
-
+if(SCENARIO_ENABLE_BINDINGS)
     add_subdirectory(bindings)
 endif()
 
