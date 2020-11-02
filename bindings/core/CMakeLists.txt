@@ -28,7 +28,7 @@ set_property(TARGET ${scenario_swig_name}
     PROPERTY SWIG_COMPILE_OPTIONS -doxygen)
 
 # Add the to_gazebo() helpers
-if(GYMIGNITION_USE_IGNITION)
+if(SCENARIO_USE_IGNITION)
     set_property(TARGET ${scenario_swig_name} PROPERTY
         SWIG_COMPILE_DEFINITIONS SCENARIO_HAS_GAZEBO)
     set_property(TARGET ${scenario_swig_name} PROPERTY
@@ -41,10 +41,10 @@ get_property(WRAPPER_PY_FILE TARGET ${scenario_swig_name} PROPERTY SWIG_SUPPORT_
 
 install(
     TARGETS ${scenario_swig_name}
-    LIBRARY DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings
-    ARCHIVE DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings
-    RUNTIME DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings)
+    LIBRARY DESTINATION ${BINDINGS_INSTALL_PREFIX}/bindings
+    ARCHIVE DESTINATION ${BINDINGS_INSTALL_PREFIX}/bindings
+    RUNTIME DESTINATION ${BINDINGS_INSTALL_PREFIX}/bindings)
 
 install(
     FILES ${WRAPPER_PY_FILE}
-    DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/bindings)
+    DESTINATION ${BINDINGS_INSTALL_PREFIX}/bindings)

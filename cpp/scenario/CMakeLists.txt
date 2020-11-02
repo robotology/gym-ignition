@@ -7,7 +7,7 @@ add_subdirectory(core)
 set(SCENARIO_COMPONENTS ScenarioCore)
 set(SCENARIO_PRIVATE_DEPENDENCIES "")
 
-if(GYMIGNITION_USE_IGNITION)
+if(SCENARIO_USE_IGNITION)
 
     add_subdirectory(gazebo)
     add_subdirectory(plugins)

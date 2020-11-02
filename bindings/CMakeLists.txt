@@ -39,8 +39,13 @@ include(${SWIG_USE_FILE})
 # Change the install prefix of the bindings targets depending on
 # the installation mode (User or Developer)
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    # Install in the python site-package directory
-    set(BINDINGS_INSTALL_PREFIX ${Python3_SITELIB})
+    if(NOT BINDINGS_INSTALL_PREFIX)
+        # Install in the python site-package directory
+        set(BINDINGS_INSTALL_PREFIX ${Python3_SITELIB}/scenario)
+    else()
+        set(BINDINGS_INSTALL_PREFIX "${BINDINGS_INSTALL_PREFIX}"
+            CACHE STRING "Custom location where to install the bindings")
+    endif()
 else()
     # Install in the root of the PyPI package directory that
     # will become the archive to install / publish.
@@ -63,4 +68,4 @@ file(TOUCH ${CMAKE_CURRENT_BINARY_DIR}/scenario/bindings/__init__.py)
 # Move main init.py file to package root of the install tree
 install(
     FILES ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
-    DESTINATION ${BINDINGS_INSTALL_PREFIX}/scenario/)
+    DESTINATION ${BINDINGS_INSTALL_PREFIX})
