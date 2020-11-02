@@ -48,6 +48,7 @@
 #include <ignition/gazebo/components/JointPositionReset.hh>
 #include <ignition/gazebo/components/JointType.hh>
 #include <ignition/gazebo/components/JointVelocity.hh>
+#include <ignition/gazebo/components/JointVelocityCmd.hh>
 #include <ignition/gazebo/components/JointVelocityReset.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
@@ -396,7 +397,8 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
     // Insert the JointController plugin to the model if the control
     // mode is either Position or Velocity
     if (mode == core::JointControlMode::Position
-        || mode == core::JointControlMode::Velocity) {
+        || mode == core::JointControlMode::Velocity
+        || mode == core::JointControlMode::VelocityFollowerDart) {
 
         // Get the parent model
         const auto parentModel = utils::getParentModel(*this);
@@ -437,6 +439,10 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
         m_entity, ignition::gazebo::components::JointPositionTarget::typeId);
     m_ecm->RemoveComponent(
         m_entity, ignition::gazebo::components::JointVelocityTarget::typeId);
+    m_ecm->RemoveComponent(
+        m_entity, ignition::gazebo::components::JointVelocityCmd::typeId);
+    m_ecm->RemoveComponent(m_entity,
+                           ignition::gazebo::components::JointForceCmd::typeId);
 
     // Initialize the target as the current position / velocity
     switch (mode) {
@@ -447,6 +453,7 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
                 m_ecm, m_entity, this->jointPosition());
             break;
         case core::JointControlMode::Velocity:
+        case core::JointControlMode::VelocityFollowerDart:
             utils::setComponentData<
                 ignition::gazebo::components::JointVelocityTarget>(
                 m_ecm, m_entity, this->jointVelocity());
@@ -727,7 +734,7 @@ bool Joint::setPositionTarget(const double position, const size_t dof)
 bool Joint::setVelocityTarget(const double velocity, const size_t dof)
 {
     if (!(this->controlMode() == core::JointControlMode::Velocity
-          || this->controlMode() == core::JointControlMode::Idle
+          || this->controlMode() == core::JointControlMode::VelocityFollowerDart
           || this->controlMode() == core::JointControlMode::Force)) {
         sError << "The active joint control mode does not accept a "
                << "velocity target" << std::endl;

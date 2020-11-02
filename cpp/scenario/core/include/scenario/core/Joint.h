@@ -40,6 +40,7 @@ namespace scenario::core {
         Idle,
         Force,
         Velocity,
+        VelocityFollowerDart,
         Position,
         PositionInterpolated,
     };
