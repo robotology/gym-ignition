@@ -103,7 +103,9 @@ target_link_libraries(ScenarioGazebo
     ${ignition-common.ignition-common}
     PRIVATE
     ScenarioCore::CoreUtils
-    ScenarioGazebo::ExtraComponents)
+    ScenarioGazebo::ExtraComponents
+    ${ignition-sensors.ignition-sensors-all}
+    ${ignition-rendering.ignition-rendering})
 
 set_target_properties(ScenarioGazebo PROPERTIES
     PUBLIC_HEADER "${SCENARIO_GAZEBO_PUBLIC_HDRS}")
