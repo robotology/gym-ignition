@@ -36,11 +36,41 @@ namespace scenario::core {
      */
     enum class JointControlMode
     {
+        /// Marks the joint to have an invalid control mode.
         Invalid,
+
+        /// Marks the joint to be IDLE. An IDLE joint is equivalent to a joint
+        /// controlled in Force with zero references. The joint shows only
+        /// passive behaviour.
         Idle,
+
+        /// Marks the joint to be controlled in force. A Force joint receives
+        /// generalized force references that are actuated by a force actuator.
+        /// Depending on the active backend, the presence of friction and other
+        /// loss components could be compensated.
         Force,
+
+        /// Marks the joint to be controlled in velocity. A Velocity joint
+        /// receives velocity references that are actuated using a PID
+        /// controller.
         Velocity,
+
+        /// Marks the joint to follow precisely a velocity trajectory. A
+        /// VelocityFollowerDart joint receives velocity references that
+        /// are processed by the physics engine, which computes instantaneously
+        /// the right force to apply to follow the desired trajectory.
+        /// It works only with the DART physics engine.
+        VelocityFollowerDart,
+
+        /// Marks the joint to be controlled in position. A Position joint
+        /// receives position references that are actuated using a PID
+        /// controller.
         Position,
+
+        /// Marks the joint to be controlled in position with trajectory
+        /// smoothing. A PositionInterpolated joint receives position references
+        /// that are filtered to get a smooth trajectory. The resulting
+        /// trajectory is then actuated using a position PID controller.
         PositionInterpolated,
     };
     class Joint;

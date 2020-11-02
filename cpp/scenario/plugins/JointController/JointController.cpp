@@ -37,6 +37,7 @@
 
 #include <ignition/gazebo/Entity.hh>
 #include <ignition/gazebo/components/Joint.hh>
+#include <ignition/gazebo/components/JointVelocityCmd.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/math/PID.hh>
@@ -167,23 +168,29 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
         computeNewForce = false;
     }
 
-    auto positionControlledJoints = ecm.EntitiesByComponents(
+    const auto positionControlledJoints = ecm.EntitiesByComponents(
         ignition::gazebo::components::Joint(),
         ignition::gazebo::components::ParentEntity(pImpl->modelEntity),
         ignition::gazebo::components::JointControlMode(
             core::JointControlMode::Position));
 
-    auto positionInterpolatedControlledJoints = ecm.EntitiesByComponents(
+    const auto positionInterpolatedControlledJoints = ecm.EntitiesByComponents(
         ignition::gazebo::components::Joint(),
         ignition::gazebo::components::ParentEntity(pImpl->modelEntity),
         ignition::gazebo::components::JointControlMode(
             core::JointControlMode::PositionInterpolated));
 
-    auto velocityControlledJoints = ecm.EntitiesByComponents(
+    const auto velocityControlledJoints = ecm.EntitiesByComponents(
         ignition::gazebo::components::Joint(),
         ignition::gazebo::components::ParentEntity(pImpl->modelEntity),
         ignition::gazebo::components::JointControlMode(
             core::JointControlMode::Velocity));
+
+    const auto velocityFollowerDartControlledJoints = ecm.EntitiesByComponents(
+        ignition::gazebo::components::Joint(),
+        ignition::gazebo::components::ParentEntity(pImpl->modelEntity),
+        ignition::gazebo::components::JointControlMode(
+            core::JointControlMode::VelocityFollowerDart));
 
     // Update PIDs for Revolute and Prismatic joints controlled in Position
     for (const auto jointEntity : positionControlledJoints) {
@@ -199,9 +206,10 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
 
         const std::vector<double>& position = joint->jointPosition();
 
-        std::vector<double>& positionTarget = utils::getExistingComponentData<
-            ignition::gazebo::components::JointPositionTarget>(&ecm,
-                                                               jointEntity);
+        const std::vector<double>& positionTarget =
+            utils::getExistingComponentData<
+                ignition::gazebo::components::JointPositionTarget>(&ecm,
+                                                                   jointEntity);
 
         if (!Impl::runPIDController(*jointGazebo,
                                     computeNewForce,
@@ -232,9 +240,10 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
 
         const std::vector<double>& velocity = joint->jointVelocity();
 
-        std::vector<double>& velocityTarget = utils::getExistingComponentData<
-            ignition::gazebo::components::JointVelocityTarget>(&ecm,
-                                                               jointEntity);
+        const std::vector<double>& velocityTarget =
+            utils::getExistingComponentData<
+                ignition::gazebo::components::JointVelocityTarget>(&ecm,
+                                                                   jointEntity);
 
         if (!Impl::runPIDController(*jointGazebo,
                                     computeNewForce,
@@ -245,6 +254,35 @@ void JointController::PreUpdate(const ignition::gazebo::UpdateInfo& info,
             sError << "Failed to run PID controller of joint " << joint->name()
                    << " [" << jointEntity << "]" << std::endl;
         }
+    }
+
+    // Set the velocity command for Revolute and Prismatic joints controlled in
+    // VelocityDirect. This control mode computes and applies the right force
+    // to get the desired velocity at the next step. It can be thought as an
+    // ideal velocity PID.
+    for (const auto jointEntity : velocityFollowerDartControlledJoints) {
+
+        const std::string& jointName =
+            utils::getExistingComponentData<ignition::gazebo::components::Name>(
+                &ecm, jointEntity);
+
+        const auto joint = pImpl->model->getJoint(jointName);
+
+        const std::vector<double>& velocityTarget =
+            utils::getExistingComponentData<
+                ignition::gazebo::components::JointVelocityTarget>(&ecm,
+                                                                   jointEntity);
+
+        auto& jointVelocityCmd = utils::getComponentData< //
+            ignition::gazebo::components::JointVelocityCmd>(&ecm, jointEntity);
+
+        if (jointVelocityCmd.size() != joint->dofs()) {
+            assert(jointVelocityCmd.size() == 0);
+            jointVelocityCmd = std::vector<double>(joint->dofs(), 0.0);
+        }
+
+        // Set the target
+        jointVelocityCmd = velocityTarget;
     }
 }
 
