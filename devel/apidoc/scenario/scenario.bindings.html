@@ -1237,6 +1237,48 @@ the joint velocity, the corresponding torque is often modelled as:</p>
 
 </dd></dl>
 
+<dl class="py data">
+<dt id="scenario.bindings.core.JointControlMode_force">
+<code class="sig-prename descclassname">scenario.bindings.core.</code><code class="sig-name descname">JointControlMode_force</code><em class="property"> = 2</em><a class="headerlink" href="#scenario.bindings.core.JointControlMode_force" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks the joint to be controlled in force. A Force joint receives generalized force references that are actuated by a force actuator. Depending on the active backend, the presence of friction and other loss components could be compensated.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="scenario.bindings.core.JointControlMode_idle">
+<code class="sig-prename descclassname">scenario.bindings.core.</code><code class="sig-name descname">JointControlMode_idle</code><em class="property"> = 1</em><a class="headerlink" href="#scenario.bindings.core.JointControlMode_idle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks the joint to be IDLE. An IDLE joint is equivalent to a joint controlled in Force with zero references. The joint shows only passive behaviour.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="scenario.bindings.core.JointControlMode_invalid">
+<code class="sig-prename descclassname">scenario.bindings.core.</code><code class="sig-name descname">JointControlMode_invalid</code><em class="property"> = 0</em><a class="headerlink" href="#scenario.bindings.core.JointControlMode_invalid" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks the joint to have an invalid control mode.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="scenario.bindings.core.JointControlMode_position">
+<code class="sig-prename descclassname">scenario.bindings.core.</code><code class="sig-name descname">JointControlMode_position</code><em class="property"> = 5</em><a class="headerlink" href="#scenario.bindings.core.JointControlMode_position" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks the joint to be controlled in position. A Position joint receives position references that are actuated using a PID controller.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="scenario.bindings.core.JointControlMode_position_interpolated">
+<code class="sig-prename descclassname">scenario.bindings.core.</code><code class="sig-name descname">JointControlMode_position_interpolated</code><em class="property"> = 6</em><a class="headerlink" href="#scenario.bindings.core.JointControlMode_position_interpolated" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks the joint to be controlled in position with trajectory smoothing. A PositionInterpolated joint receives position references that are filtered to get a smooth trajectory. The resulting trajectory is then actuated using a position PID controller.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="scenario.bindings.core.JointControlMode_velocity">
+<code class="sig-prename descclassname">scenario.bindings.core.</code><code class="sig-name descname">JointControlMode_velocity</code><em class="property"> = 3</em><a class="headerlink" href="#scenario.bindings.core.JointControlMode_velocity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks the joint to be controlled in velocity. A Velocity joint receives velocity references that are actuated using a PID controller.</p>
+</dd></dl>
+
+<dl class="py data">
+<dt id="scenario.bindings.core.JointControlMode_velocity_follower_dart">
+<code class="sig-prename descclassname">scenario.bindings.core.</code><code class="sig-name descname">JointControlMode_velocity_follower_dart</code><em class="property"> = 4</em><a class="headerlink" href="#scenario.bindings.core.JointControlMode_velocity_follower_dart" title="Permalink to this definition">¶</a></dt>
+<dd><p>Marks the joint to follow precisely a velocity trajectory. A VelocityFollowerDart joint receives velocity references that are processed by the physics engine, which computes instantaneously the right force to apply to follow the desired trajectory. It works only with the DART physics engine.</p>
+</dd></dl>
+
 <dl class="py class">
 <dt id="scenario.bindings.core.JointLimit">
 <em class="property">class </em><code class="sig-prename descclassname">scenario.bindings.core.</code><code class="sig-name descname">JointLimit</code><span class="sig-paren">(</span><em class="sig-param"><span class="o">*</span><span class="n">args</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.JointLimit" title="Permalink to this definition">¶</a></dt>
