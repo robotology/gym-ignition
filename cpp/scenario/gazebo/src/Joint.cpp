@@ -134,9 +134,6 @@ bool Joint::createECMResources()
     using namespace ignition::gazebo;
 
     const std::vector<double> zero(this->dofs(), 0.0);
-    const std::vector<double> infinity( //
-        this->dofs(),
-        std::numeric_limits<double>::infinity());
 
     // Create required components
     m_ecm->CreateComponent(m_entity, components::JointForce(zero));
