@@ -3,5 +3,6 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from . import icub
+from . import panda
 from . import cartpole
 from . import pendulum
