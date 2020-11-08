@@ -7,14 +7,6 @@ gym\_ignition.utils
    :show-inheritance:
 
 
-gym\_ignition.utils.inverse\_kinematics\_nlp
---------------------------------------------
-
-.. automodule:: gym_ignition.utils.inverse_kinematics_nlp
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 gym\_ignition.utils.logger
 --------------------------
 
