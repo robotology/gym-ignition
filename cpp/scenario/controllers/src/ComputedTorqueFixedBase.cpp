@@ -103,18 +103,24 @@ ComputedTorqueFixedBase::ComputedTorqueFixedBase(
     m_model = model;
     pImpl->urdfFile = urdfFile;
     m_controlledJoints = controlledJoints;
-    assert(m_model->dofs() == controlledJoints.size()
-           || controlledJoints.empty());
+
+    if (m_controlledJoints.size() == 0) {
+        sDebug << "No list of controlled joints found. "
+               << "Controlling all the robots joints." << std::endl;
+        // Note: the joint serialization is now given by the default
+        //       list of joint names provided by the model
+        m_controlledJoints = m_model->jointNames();
+    }
 
     pImpl->initialValues.gravity = gravity;
 
     pImpl->initialValues.kp = kp;
     pImpl->initialValues.kd = kd;
-    assert(m_model->dofs() == kp.size());
+    assert(m_controlledJoints.size() == kp.size());
     assert(kp.size() == kd.size());
 }
 
-ComputedTorqueFixedBase::~ComputedTorqueFixedBase() {}
+ComputedTorqueFixedBase::~ComputedTorqueFixedBase() = default;
 
 bool ComputedTorqueFixedBase::initialize()
 {
@@ -132,21 +138,15 @@ bool ComputedTorqueFixedBase::initialize()
         return false;
     }
 
-    if (m_controlledJoints.size() != m_model->dofs()
-        || m_controlledJoints.empty()) {
+    if (m_controlledJoints.empty()) {
         sError << "The list of controlled joints is not valid" << std::endl;
         return false;
     }
 
-    if (m_controlledJoints.empty()) {
-        sDebug << "No list of controlled joints. Controlling all the "
-                  "robots joints."
+    if (m_controlledJoints.size() != m_model->dofs()) {
+        sError << "Controlling only a subset of joints is not yet supported"
                << std::endl;
-
-        // Read the joint names from the robot object.
-        // This is useful to use the same joint serialization in the vectorized
-        // methods.
-        m_controlledJoints = m_model->jointNames();
+        return false;
     }
 
     for (auto& joint : m_model->joints(m_controlledJoints)) {
