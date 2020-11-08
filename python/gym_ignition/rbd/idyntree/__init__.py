@@ -5,3 +5,4 @@
 from . import numpy
 from . import helpers
 from . import kindyncomputations
+from . import inverse_kinematics_nlp
