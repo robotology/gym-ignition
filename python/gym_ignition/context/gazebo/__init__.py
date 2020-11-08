@@ -3,4 +3,6 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from . import plugin
+from . import shapes
+from . import sensors
 from . import controllers
