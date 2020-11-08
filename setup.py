@@ -47,6 +47,7 @@ setup(
         'numpy',
         'gym_ignition_models',
         'lxml',
+        'idyntree',
     ],
     extras_require=dict(
         website=[
