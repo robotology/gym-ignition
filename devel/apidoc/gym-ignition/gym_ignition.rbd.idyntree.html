@@ -1,0 +1,1017 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>gym_ignition.rbd.idyntree &mdash; gym-ignition  documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="gym_ignition.runtimes" href="gym_ignition.runtimes.html" />
+    <link rel="prev" title="gym_ignition.rbd" href="gym_ignition.rbd.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> gym-ignition
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Installation:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/intro.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/stable.html">Stable Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/nightly.html">Nightly Channel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../installation/optional_dependencies.html">Optional Dependencies</a></li>
+</ul>
+<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/core.html">Core</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../breathe/gazebo.html">Gazebo</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Python Packages</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../scenario/scenario.bindings.html">scenario.bindings</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="gym_ignition.html">gym_ignition</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.base.html">gym_ignition.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.context.html">gym_ignition.context</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.randomizers.html">gym_ignition.randomizers</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="gym_ignition.rbd.html">gym_ignition.rbd</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">gym_ignition.rbd.idyntree</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#module-gym_ignition.rbd.idyntree.helpers">gym_ignition.rbd.idyntree.helpers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-gym_ignition.rbd.idyntree.inverse_kinematics_nlp">gym_ignition.rbd.idyntree.inverse_kinematics_nlp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-gym_ignition.rbd.idyntree.kindyncomputations">gym_ignition.rbd.idyntree.kindyncomputations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#module-gym_ignition.rbd.idyntree.numpy">gym_ignition.rbd.idyntree.numpy</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="gym_ignition.rbd.html#module-gym_ignition.rbd.conversions">gym_ignition.rbd.conversions</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.runtimes.html">gym_ignition.runtimes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.scenario.html">gym_ignition.scenario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gym_ignition.utils.html">gym_ignition.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../gym-ignition-environments/gym_ignition_environments.html">gym_ignition_environments</a></li>
+</ul>
+<p class="caption"><span class="caption-text">Information</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../info/faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../info/limitations.html">Limitations</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">gym-ignition</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="gym_ignition.html">gym_ignition</a> &raquo;</li>
+        
+          <li><a href="gym_ignition.rbd.html">gym_ignition.rbd</a> &raquo;</li>
+        
+      <li>gym_ignition.rbd.idyntree</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/apidoc/gym-ignition/gym_ignition.rbd.idyntree.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-gym_ignition.rbd.idyntree">
+<span id="gym-ignition-rbd-idyntree"></span><h1>gym_ignition.rbd.idyntree<a class="headerlink" href="#module-gym_ignition.rbd.idyntree" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-gym_ignition.rbd.idyntree.helpers">
+<span id="gym-ignition-rbd-idyntree-helpers"></span><h2>gym_ignition.rbd.idyntree.helpers<a class="headerlink" href="#module-gym_ignition.rbd.idyntree.helpers" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.helpers.FrameVelocityRepresentation">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.helpers.</code><code class="sig-name descname">FrameVelocityRepresentation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.helpers.FrameVelocityRepresentation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.helpers.FrameVelocityRepresentation.BODY_FIXED_REPRESENTATION">
+<code class="sig-name descname">BODY_FIXED_REPRESENTATION</code><em class="property"> = 2</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.helpers.FrameVelocityRepresentation.BODY_FIXED_REPRESENTATION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.helpers.FrameVelocityRepresentation.INERTIAL_FIXED_REPRESENTATION">
+<code class="sig-name descname">INERTIAL_FIXED_REPRESENTATION</code><em class="property"> = 3</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.helpers.FrameVelocityRepresentation.INERTIAL_FIXED_REPRESENTATION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.helpers.FrameVelocityRepresentation.MIXED_REPRESENTATION">
+<code class="sig-name descname">MIXED_REPRESENTATION</code><em class="property"> = 1</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.helpers.FrameVelocityRepresentation.MIXED_REPRESENTATION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.helpers.FrameVelocityRepresentation.to_idyntree">
+<code class="sig-name descname">to_idyntree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.helpers.FrameVelocityRepresentation.to_idyntree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.helpers.iDynTreeHelpers">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.helpers.</code><code class="sig-name descname">iDynTreeHelpers</code><a class="headerlink" href="#gym_ignition.rbd.idyntree.helpers.iDynTreeHelpers" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.helpers.iDynTreeHelpers.get_kindyncomputations">
+<em class="property">static </em><code class="sig-name descname">get_kindyncomputations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model_file</span></em>, <em class="sig-param"><span class="n">considered_joints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">velocity_representation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.helpers.iDynTreeHelpers.get_kindyncomputations" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.helpers.iDynTreeHelpers.get_model_loader">
+<em class="property">static </em><code class="sig-name descname">get_model_loader</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model_file</span></em>, <em class="sig-param"><span class="n">considered_joints</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.helpers.iDynTreeHelpers.get_model_loader" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.rbd.idyntree.inverse_kinematics_nlp">
+<span id="gym-ignition-rbd-idyntree-inverse-kinematics-nlp"></span><h2>gym_ignition.rbd.idyntree.inverse_kinematics_nlp<a class="headerlink" href="#module-gym_ignition.rbd.idyntree.inverse_kinematics_nlp" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.inverse_kinematics_nlp.</code><code class="sig-name descname">IKSolution</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">joint_configuration</span></em>, <em class="sig-param"><span class="n">base_position</span><span class="o">=</span><span class="default_value">array([0., 0., 0.])</span></em>, <em class="sig-param"><span class="n">base_quaternion</span><span class="o">=</span><span class="default_value">array([1., 0., 0., 0.])</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution.base_position">
+<code class="sig-name descname">base_position</code><em class="property">: numpy.ndarray</em><em class="property"> = array([0., 0., 0.])</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution.base_position" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution.base_quaternion">
+<code class="sig-name descname">base_quaternion</code><em class="property">: numpy.ndarray</em><em class="property"> = array([1., 0., 0., 0.])</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution.base_quaternion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution.joint_configuration">
+<code class="sig-name descname">joint_configuration</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution.joint_configuration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.inverse_kinematics_nlp.</code><code class="sig-name descname">InverseKinematicsNLP</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">urdf_filename</span></em>, <em class="sig-param"><span class="n">considered_joints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">joint_serialization</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.add_com_target">
+<code class="sig-name descname">add_com_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">weight</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">as_constraint</span><span class="o">=</span><span class="default_value">False</span></em>, <em class="sig-param"><span class="n">constraint_tolerance</span><span class="o">=</span><span class="default_value">1e-08</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.add_com_target" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_position_constraint">
+<code class="sig-name descname">add_frame_position_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em>, <em class="sig-param"><span class="n">position</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_position_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_rotation_constraint">
+<code class="sig-name descname">add_frame_rotation_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em>, <em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_rotation_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_transform_constraint">
+<code class="sig-name descname">add_frame_transform_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em>, <em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.add_frame_transform_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.add_target">
+<code class="sig-name descname">add_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em>, <em class="sig-param"><span class="n">target_type</span></em>, <em class="sig-param"><span class="n">weight</span><span class="o">=</span><span class="default_value">1.0</span></em>, <em class="sig-param"><span class="n">as_constraint</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.add_target" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.deactivate_com_target">
+<code class="sig-name descname">deactivate_com_target</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.deactivate_com_target" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.deactivate_frame_constraint">
+<code class="sig-name descname">deactivate_frame_constraint</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.deactivate_frame_constraint" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_active_target_names">
+<code class="sig-name descname">get_active_target_names</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_type</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_active_target_names" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_available_target_names">
+<code class="sig-name descname">get_available_target_names</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_available_target_names" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_base_frame">
+<code class="sig-name descname">get_base_frame</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_base_frame" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_full_solution">
+<code class="sig-name descname">get_full_solution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_full_solution" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution" title="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution"><code class="xref py py-class docutils literal notranslate"><span class="pre">IKSolution</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_reduced_solution">
+<code class="sig-name descname">get_reduced_solution</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_reduced_solution" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution" title="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.IKSolution"><code class="xref py py-class docutils literal notranslate"><span class="pre">IKSolution</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_target_data">
+<code class="sig-name descname">get_target_data</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.get_target_data" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetData" title="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetData"><code class="xref py py-class docutils literal notranslate"><span class="pre">TargetData</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.initialize">
+<code class="sig-name descname">initialize</code><span class="sig-paren">(</span><em class="sig-param">rotation_parametrization=&lt;RotationParametrization.ROLL_PITCH_YAW: 2&gt;</em>, <em class="sig-param">target_mode=&lt;TargetResolutionMode.TARGET_AS_CONSTRAINT_NONE: 2&gt;</em>, <em class="sig-param">cost_tolerance=1e-08</em>, <em class="sig-param">constraints_tolerance=0.0001</em>, <em class="sig-param">max_iterations=1000</em>, <em class="sig-param">base_frame=None</em>, <em class="sig-param">floating_base=False</em>, <em class="sig-param">verbosity=1</em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.initialize" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.set_current_joint_configuration">
+<code class="sig-name descname">set_current_joint_configuration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">joint_name</span></em>, <em class="sig-param"><span class="n">configuration</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.set_current_joint_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.set_current_robot_configuration">
+<code class="sig-name descname">set_current_robot_configuration</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">base_position</span></em>, <em class="sig-param"><span class="n">base_quaternion</span></em>, <em class="sig-param"><span class="n">joint_configuration</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.set_current_robot_configuration" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.solve">
+<code class="sig-name descname">solve</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.solve" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.update_com_target">
+<code class="sig-name descname">update_com_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">position</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.update_com_target" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.update_position_target">
+<code class="sig-name descname">update_position_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_name</span></em>, <em class="sig-param"><span class="n">position</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.update_position_target" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.update_rotation_target">
+<code class="sig-name descname">update_rotation_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_name</span></em>, <em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.update_rotation_target" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.update_transform_target">
+<code class="sig-name descname">update_transform_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">target_name</span></em>, <em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.update_transform_target" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.warm_start_from">
+<code class="sig-name descname">warm_start_from</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">full_solution</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">reduced_solution</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP.warm_start_from" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.RotationParametrization">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.inverse_kinematics_nlp.</code><code class="sig-name descname">RotationParametrization</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.RotationParametrization" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.RotationParametrization.QUATERNION">
+<code class="sig-name descname">QUATERNION</code><em class="property"> = 1</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.RotationParametrization.QUATERNION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.RotationParametrization.ROLL_PITCH_YAW">
+<code class="sig-name descname">ROLL_PITCH_YAW</code><em class="property"> = 2</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.RotationParametrization.ROLL_PITCH_YAW" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.RotationParametrization.to_idyntree">
+<code class="sig-name descname">to_idyntree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.RotationParametrization.to_idyntree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetData">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.inverse_kinematics_nlp.</code><code class="sig-name descname">TargetData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">type</span></em>, <em class="sig-param"><span class="n">weight</span></em>, <em class="sig-param"><span class="n">data</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetData.data">
+<code class="sig-name descname">data</code><em class="property">: Union<span class="p">[</span>numpy.ndarray<span class="p">, </span><a class="reference internal" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TransformTargetData" title="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TransformTargetData">gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TransformTargetData</a><span class="p">]</span></em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetData.data" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetData.type">
+<code class="sig-name descname">type</code><em class="property">: <a class="reference internal" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetType" title="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetType">gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetType</a></em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetData.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetData.weight">
+<code class="sig-name descname">weight</code><em class="property">: float</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetData.weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.inverse_kinematics_nlp.</code><code class="sig-name descname">TargetResolutionMode</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_FULL">
+<code class="sig-name descname">TARGET_AS_CONSTRAINT_FULL</code><em class="property"> = 1</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_FULL" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_NONE">
+<code class="sig-name descname">TARGET_AS_CONSTRAINT_NONE</code><em class="property"> = 2</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_NONE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_POSITION">
+<code class="sig-name descname">TARGET_AS_CONSTRAINT_POSITION</code><em class="property"> = 3</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_POSITION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_ROTATION">
+<code class="sig-name descname">TARGET_AS_CONSTRAINT_ROTATION</code><em class="property"> = 4</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode.TARGET_AS_CONSTRAINT_ROTATION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode.to_idyntree">
+<code class="sig-name descname">to_idyntree</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetResolutionMode.to_idyntree" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetType">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.inverse_kinematics_nlp.</code><code class="sig-name descname">TargetType</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">value</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetType" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
+<p>An enumeration.</p>
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetType.POSE">
+<code class="sig-name descname">POSE</code><em class="property"> = 3</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetType.POSE" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetType.POSITION">
+<code class="sig-name descname">POSITION</code><em class="property"> = 1</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetType.POSITION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetType.ROTATION">
+<code class="sig-name descname">ROTATION</code><em class="property"> = 2</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TargetType.ROTATION" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TransformTargetData">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.inverse_kinematics_nlp.</code><code class="sig-name descname">TransformTargetData</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TransformTargetData" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TransformTargetData.position">
+<code class="sig-name descname">position</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TransformTargetData.position" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TransformTargetData.quaternion">
+<code class="sig-name descname">quaternion</code><em class="property">: numpy.ndarray</em><a class="headerlink" href="#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.TransformTargetData.quaternion" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.rbd.idyntree.kindyncomputations">
+<span id="gym-ignition-rbd-idyntree-kindyncomputations"></span><h2>gym_ignition.rbd.idyntree.kindyncomputations<a class="headerlink" href="#module-gym_ignition.rbd.idyntree.kindyncomputations" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.kindyncomputations.</code><code class="sig-name descname">KinDynComputations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model_file</span></em>, <em class="sig-param"><span class="n">considered_joints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">world_gravity</span><span class="o">=</span><span class="default_value">array([0., 0., - 9.806])</span></em>, <em class="sig-param"><span class="n">velocity_representation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_bias_forces">
+<code class="sig-name descname">get_bias_forces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_bias_forces" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_centroidal_momentum">
+<code class="sig-name descname">get_centroidal_momentum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_centroidal_momentum" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_centroidal_total_momentum_jacobian">
+<code class="sig-name descname">get_centroidal_total_momentum_jacobian</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_centroidal_total_momentum_jacobian" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_com_bias_acc">
+<code class="sig-name descname">get_com_bias_acc</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_com_bias_acc" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_com_position">
+<code class="sig-name descname">get_com_position</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_com_position" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_com_velocity">
+<code class="sig-name descname">get_com_velocity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_com_velocity" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_floating_base">
+<code class="sig-name descname">get_floating_base</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_floating_base" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_frame_bias_acc">
+<code class="sig-name descname">get_frame_bias_acc</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_frame_bias_acc" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_frame_jacobian">
+<code class="sig-name descname">get_frame_jacobian</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_frame_jacobian" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_joint_positions">
+<code class="sig-name descname">get_joint_positions</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_joint_positions" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_joint_velocities">
+<code class="sig-name descname">get_joint_velocities</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_joint_velocities" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_linear_angular_momentum_jacobian">
+<code class="sig-name descname">get_linear_angular_momentum_jacobian</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_linear_angular_momentum_jacobian" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_mass_matrix">
+<code class="sig-name descname">get_mass_matrix</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_mass_matrix" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_model_position">
+<code class="sig-name descname">get_model_position</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_model_position" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_model_velocity">
+<code class="sig-name descname">get_model_velocity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_model_velocity" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_momentum">
+<code class="sig-name descname">get_momentum</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_momentum" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_relative_adjoint_wrench_transform_explicit">
+<code class="sig-name descname">get_relative_adjoint_wrench_transform_explicit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ref_frame_origin</span></em>, <em class="sig-param"><span class="n">ref_frame_orientation</span></em>, <em class="sig-param"><span class="n">frame_origin</span></em>, <em class="sig-param"><span class="n">frame_orientation</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_relative_adjoint_wrench_transform_explicit" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_relative_transform">
+<code class="sig-name descname">get_relative_transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ref_frame_name</span></em>, <em class="sig-param"><span class="n">frame_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_relative_transform" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_relative_transform_explicit">
+<code class="sig-name descname">get_relative_transform_explicit</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">ref_frame_origin</span></em>, <em class="sig-param"><span class="n">ref_frame_orientation</span></em>, <em class="sig-param"><span class="n">frame_origin</span></em>, <em class="sig-param"><span class="n">frame_orientation</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_relative_transform_explicit" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_world_base_transform">
+<code class="sig-name descname">get_world_base_transform</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_world_base_transform" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_world_transform">
+<code class="sig-name descname">get_world_transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_world_transform" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.joint_serialization">
+<code class="sig-name descname">joint_serialization</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.joint_serialization" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.set_robot_state">
+<code class="sig-name descname">set_robot_state</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">s</span></em>, <em class="sig-param"><span class="n">ds</span></em>, <em class="sig-param"><span class="n">world_H_base</span><span class="o">=</span><span class="default_value">array([[1., 0., 0., 0.], [0., 1., 0., 0.], [0., 0., 1., 0.], [0., 0., 0., 1.]])</span></em>, <em class="sig-param"><span class="n">base_velocity</span><span class="o">=</span><span class="default_value">array([0., 0., 0., 0., 0., 0.])</span></em>, <em class="sig-param"><span class="n">world_gravity</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.set_robot_state" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.set_robot_state_from_model">
+<code class="sig-name descname">set_robot_state_from_model</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model</span></em>, <em class="sig-param"><span class="n">world_gravity</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.set_robot_state_from_model" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.rbd.idyntree.numpy">
+<span id="gym-ignition-rbd-idyntree-numpy"></span><h2>gym_ignition.rbd.idyntree.numpy<a class="headerlink" href="#module-gym_ignition.rbd.idyntree.numpy" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.numpy.FromNumPy">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.numpy.</code><code class="sig-name descname">FromNumPy</code><a class="headerlink" href="#gym_ignition.rbd.idyntree.numpy.FromNumPy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_dyn_vector">
+<em class="property">static </em><code class="sig-name descname">to_idyntree_dyn_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_dyn_vector" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">VectorDynSize</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_fixed_vector">
+<em class="property">static </em><code class="sig-name descname">to_idyntree_fixed_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">array</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_fixed_vector" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_position">
+<em class="property">static </em><code class="sig-name descname">to_idyntree_position</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">position</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_position" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Position</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_rotation">
+<em class="property">static </em><code class="sig-name descname">to_idyntree_rotation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_rotation" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Rotation</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_transform">
+<em class="property">static </em><code class="sig-name descname">to_idyntree_transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">quaternion</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">rotation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_transform" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Transform</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_twist">
+<em class="property">static </em><code class="sig-name descname">to_idyntree_twist</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">linear_velocity</span></em>, <em class="sig-param"><span class="n">angular_velocity</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.numpy.FromNumPy.to_idyntree_twist" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Twist</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt id="gym_ignition.rbd.idyntree.numpy.ToNumPy">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.numpy.</code><code class="sig-name descname">ToNumPy</code><a class="headerlink" href="#gym_ignition.rbd.idyntree.numpy.ToNumPy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.numpy.ToNumPy.from_idyntree_transform">
+<em class="property">static </em><code class="sig-name descname">from_idyntree_transform</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transform</span></em>, <em class="sig-param"><span class="n">split</span><span class="o">=</span><span class="default_value">False</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.numpy.ToNumPy.from_idyntree_transform" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>], <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.numpy.ToNumPy.from_idyntree_vector">
+<em class="property">static </em><code class="sig-name descname">from_idyntree_vector</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vector</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.numpy.ToNumPy.from_idyntree_vector" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="gym_ignition.runtimes.html" class="btn btn-neutral float-right" title="gym_ignition.runtimes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="gym_ignition.rbd.html" class="btn btn-neutral float-left" title="gym_ignition.rbd" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Istituto Italiano di Tecnologia
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    <span class="fa fa-book"> Other Versions</span>
+    v: devel
+    <span class="fa fa-caret-down"></span>
+  </span>
+  <div class="rst-other-versions">
+    <dl>
+      <dt>Branches</dt>
+      <dd><a href="gym_ignition.rbd.idyntree.html">devel</a></dd>
+    </dl>
+  </div>
+</div>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
