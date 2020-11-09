@@ -11,7 +11,7 @@ gym\_ignition
    :maxdepth: 4
 
    gym_ignition.base
-   gym_ignition.controllers
+   gym_ignition.context
    gym_ignition.randomizers
    gym_ignition.runtimes
    gym_ignition.scenario
