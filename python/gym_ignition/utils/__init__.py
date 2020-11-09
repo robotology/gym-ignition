@@ -8,4 +8,3 @@ from .typing import *
 from . import logger
 from . import scenario
 from . import resource_finder
-from . import inverse_kinematics_nlp
