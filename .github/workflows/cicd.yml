@@ -74,7 +74,7 @@ jobs:
           apt-get update
           apt-get install -y ccache
           echo "/usr/lib/ccache" >> $GITHUB_PATH
-          ccache --set-config=max_size=10.0G
+          ccache --set-config=max_size=5.0G
           ccache --set-config=sloppiness=file_macro,locale,time_macros
           ccache -p
           ccache -s

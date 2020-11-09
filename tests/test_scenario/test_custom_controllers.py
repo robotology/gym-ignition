@@ -10,8 +10,8 @@ from scenario import core
 import gym_ignition_models
 from ..common import utils
 from scenario import gazebo as scenario
+from gym_ignition.context.gazebo import controllers
 from ..common.utils import gazebo_fixture as gazebo
-from gym_ignition.controllers.gazebo import computed_torque_fixed_base as context
 
 # Set the verbosity
 scenario.set_verbosity(scenario.Verbosity_debug)
@@ -52,20 +52,14 @@ def test_computed_torque_fixed_base(gazebo: scenario.GazeboSimulator):
     # Set the controller period
     panda.set_controller_period(step_size)
 
-    # Create the controller context
-    controller_context = context.ComputedTorqueFixedBaseContext(
-        name="ComputedTorqueFixedBase",
+    # Insert the controller
+    assert panda.insert_model_plugin(*controllers.ComputedTorqueFixedBase(
         kp=[10.0] * panda.dofs(),
         ki=[0.0] * panda.dofs(),
         kd=[3.0] * panda.dofs(),
         urdf=panda_urdf,
         joints=panda.joint_names(),
-        gravity=[0, 0, -9.81])
-
-    # Insert the controller
-    assert panda.insert_model_plugin("libControllerRunner.so",
-                                     "scenario::plugins::gazebo::ControllerRunner",
-                                     controller_context.to_xml())
+    ).args())
 
     # Set the references
     assert panda.set_joint_position_targets([0.0] * panda.dofs())
