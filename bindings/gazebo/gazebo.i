@@ -9,6 +9,7 @@
 #include "scenario/gazebo/Model.h"
 #include "scenario/gazebo/utils.h"
 #include "scenario/gazebo/World.h"
+#include "scenario/gazebo/sensors/DepthCamera.h" // TODO
 #include "scenario/plugins/gazebo/ECMSingleton.h"
 #include <cstdint>
 %}
@@ -40,6 +41,9 @@ namespace scenario::gazebo::utils {
 %include <std_vector.i>
 %include <std_shared_ptr.i>
 
+// Sensors TODO
+%shared_ptr(scenario::gazebo::sensors::DepthCamera)
+
 // Import the module with core classes
 // From http://www.swig.org/Doc4.0/Modules.html
 %import "../core/core.i"
@@ -58,6 +62,7 @@ namespace scenario::gazebo::utils {
 %rename("") JointType;
 %rename("") Verbosity;
 %rename("") JointLimit;
+%rename("") DepthCamera;
 %rename("") ContactPoint;
 %rename("") ECMSingleton;
 %rename("") GazeboEntity;
@@ -74,6 +79,7 @@ namespace scenario::gazebo::utils {
 %shared_ptr(scenario::gazebo::Model)
 %shared_ptr(scenario::gazebo::World)
 %shared_ptr(scenario::gazebo::GazeboEntity)
+%shared_ptr(scenario::gazebo::sensors::DepthCamera)
 
 // Ignored methods
 %ignore scenario::gazebo::GazeboEntity::ecm;
@@ -98,6 +104,7 @@ namespace scenario::gazebo::utils {
 %include "scenario/gazebo/GazeboEntity.h"
 
 // ScenarI/O headers
+%include "scenario/gazebo/sensors/DepthCamera.h"
 %include "scenario/gazebo/Joint.h"
 %include "scenario/gazebo/Link.h"
 %include "scenario/gazebo/Model.h"

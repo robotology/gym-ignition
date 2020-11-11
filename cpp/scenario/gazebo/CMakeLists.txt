@@ -43,6 +43,8 @@ set(EXTRA_COMPONENTS_PUBLIC_HEADERS
     include/scenario/gazebo/components/Timestamp.h
     include/scenario/gazebo/components/JointControllerPeriod.h
     include/scenario/gazebo/components/JointAcceleration.h
+    include/scenario/gazebo/components/DepthCameraPtr.h
+    include/scenario/gazebo/components/SensorsPlugin.h
     )
 
 add_library(ExtraComponents INTERFACE)
@@ -76,7 +78,8 @@ set(SCENARIO_GAZEBO_PUBLIC_HDRS
     include/scenario/gazebo/Log.h
     include/scenario/gazebo/utils.h
     include/scenario/gazebo/helpers.h
-    include/scenario/gazebo/exceptions.h)
+    include/scenario/gazebo/exceptions.h
+    include/scenario/gazebo/sensors/DepthCamera.h)
 
 add_library(ScenarioGazebo
     ${SCENARIO_GAZEBO_PUBLIC_HDRS}
@@ -85,7 +88,8 @@ add_library(ScenarioGazebo
     src/Joint.cpp
     src/Link.cpp
     src/utils.cpp
-    src/helpers.cpp)
+    src/helpers.cpp
+    src/DepthCamera.cpp)
 add_library(ScenarioGazebo::ScenarioGazebo ALIAS ScenarioGazebo)
 
 target_include_directories(ScenarioGazebo PUBLIC
@@ -99,7 +103,9 @@ target_link_libraries(ScenarioGazebo
     ${ignition-common.ignition-common}
     PRIVATE
     ScenarioCore::CoreUtils
-    ScenarioGazebo::ExtraComponents)
+    ScenarioGazebo::ExtraComponents
+    ${ignition-sensors.ignition-sensors-all}
+    ${ignition-rendering.ignition-rendering})
 
 set_target_properties(ScenarioGazebo PROPERTIES
     PUBLIC_HEADER "${SCENARIO_GAZEBO_PUBLIC_HDRS}")

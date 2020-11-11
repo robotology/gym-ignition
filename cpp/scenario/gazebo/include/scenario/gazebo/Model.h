@@ -43,6 +43,10 @@ namespace scenario::gazebo {
     class Model;
 } // namespace scenario::gazebo
 
+namespace scenario::gazebo::sensors {
+    class DepthCamera;
+} // namespace scenario::gazebo::sensors
+
 class scenario::gazebo::Model final
     : public scenario::core::Model
     , public scenario::gazebo::GazeboEntity
@@ -342,6 +346,21 @@ public:
     std::array<double, 3> baseWorldLinearAccelerationTarget() const override;
 
     std::array<double, 3> baseWorldAngularAccelerationTarget() const override;
+
+    // =======
+    // Sensors
+    // =======
+
+    std::vector<std::string> sensorNames() const;
+
+    /**
+     * Return a depth camera belonging to this model.
+     *
+     * @param name The name of the depth camera sensor.
+     * @return The desired depth camera sensor.
+     */
+    std::shared_ptr<sensors::DepthCamera>
+    depthCamera(const std::string& name) const;
 
 private:
     class Impl;

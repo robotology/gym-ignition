@@ -32,17 +32,21 @@
 #include "scenario/gazebo/components/BasePoseTarget.h"
 #include "scenario/gazebo/components/BaseWorldAccelerationTarget.h"
 #include "scenario/gazebo/components/BaseWorldVelocityTarget.h"
+#include "scenario/gazebo/components/DepthCameraPtr.h"
 #include "scenario/gazebo/components/JointControllerPeriod.h"
 #include "scenario/gazebo/components/WorldVelocityCmd.h"
 #include "scenario/gazebo/exceptions.h"
 #include "scenario/gazebo/helpers.h"
+#include "scenario/gazebo/sensors/DepthCamera.h"
 
 #include <ignition/common/Event.hh>
 #include <ignition/gazebo/Events.hh>
 #include <ignition/gazebo/Model.hh>
 #include <ignition/gazebo/components/CanonicalLink.hh>
+#include <ignition/gazebo/components/DepthCamera.hh>
 #include <ignition/gazebo/components/Joint.hh>
 #include <ignition/gazebo/components/Link.hh>
+#include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/gazebo/components/Pose.hh>
@@ -50,6 +54,7 @@
 #include <ignition/gazebo/components/SelfCollide.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
+#include <ignition/sensors/DepthCameraSensor.hh>
 #include <sdf/Element.hh>
 #include <sdf/Root.hh>
 
@@ -953,6 +958,78 @@ std::string Model::baseFrame() const
         ignition::gazebo::components::Name>(m_ecm, candidateBaseLinks.front());
 
     return baseLinkName;
+}
+
+std::vector<std::string> Model::sensorNames() const
+{
+    std::vector<std::string> names;
+
+    m_ecm->Each<ignition::gazebo::components::Name,
+                ignition::gazebo::components::DepthCamera,
+                //                ignition::gazebo::components::DepthCameraPtr,
+                ignition::gazebo::components::ParentEntity>(
+        [&](const ignition::gazebo::Entity& /*entity*/,
+            ignition::gazebo::components::Name* nameComponent,
+            ignition::gazebo::components::DepthCamera* /*depthCameraComponent*/,
+            //            ignition::gazebo::components::
+            //                DepthCameraPtr* /*depthCameraPtrComponent*/,
+            ignition::gazebo::components::ParentEntity* parentEntityComponent)
+            -> bool {
+            assert(nameComponent);
+            assert(parentEntityComponent);
+
+            // Discard sensors not belonging to this model
+            if (parentEntityComponent->Data() != m_entity) {
+                return true;
+            }
+
+            // Append the sensor name
+            names.push_back(nameComponent->Data());
+            return true;
+        });
+
+    return names;
+}
+
+std::shared_ptr<sensors::DepthCamera>
+Model::depthCamera(const std::string& name) const
+{
+    auto depthCameraEntity = ignition::gazebo::kNullEntity;
+
+    m_ecm->Each<ignition::gazebo::components::Name,
+                ignition::gazebo::components::DepthCamera>(
+        [&](const ignition::gazebo::Entity& entity,
+            ignition::gazebo::components::Name* nameComponent,
+            ignition::gazebo::components::DepthCamera*) -> bool {
+            assert(nameComponent);
+
+            if (utils::getFirstParentEntityWithComponent<
+                    ignition::gazebo::components::Model>(m_ecm, entity)
+                != m_entity) {
+                return true;
+            }
+
+            if (nameComponent->Data() != name) {
+                return true;
+            }
+
+            depthCameraEntity = entity;
+            return true;
+        });
+
+    if (depthCameraEntity == ignition::gazebo::kNullEntity) {
+        throw std::runtime_error("Failed to find depth camera '" + name + "'");
+    }
+
+    // TODO: cache the object
+    auto depthCamera = std::make_shared<sensors::DepthCamera>();
+
+    if (!depthCamera->initialize(depthCameraEntity, m_ecm, m_eventManager)) {
+        throw std::runtime_error("Failed to initialize depth camera '" + name
+                                 + "'");
+    }
+
+    return depthCamera;
 }
 
 std::array<double, 3> Model::basePosition() const
