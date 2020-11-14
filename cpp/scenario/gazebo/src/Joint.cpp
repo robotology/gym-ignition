@@ -419,6 +419,9 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
     m_ecm->RemoveComponent(
         m_entity, ignition::gazebo::components::JointVelocityTarget::typeId);
     m_ecm->RemoveComponent(
+        m_entity,
+        ignition::gazebo::components::JointAccelerationTarget::typeId);
+    m_ecm->RemoveComponent(
         m_entity, ignition::gazebo::components::JointVelocityCmd::typeId);
     m_ecm->RemoveComponent(m_entity,
                            ignition::gazebo::components::JointForceCmd::typeId);
