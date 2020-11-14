@@ -3,17 +3,11 @@
 </p>
 
 <p align="center">
-<b><a href="https://github.com/robotology/gym-ignition#what">What</a></b>
-•
-<b><a href="https://github.com/robotology/gym-ignition#why">Why</a></b>
-•
-<b><a href="https://github.com/robotology/gym-ignition#how">How</a></b>
-•
-<b><a href="https://github.com/robotology/gym-ignition#demo">Demo</a></b>
+<b><a href="https://github.com/robotology/gym-ignition#description">Description</a></b>
 •
 <b><a href="https://github.com/robotology/gym-ignition#setup">Setup</a></b>
 •
-<b><a href="https://github.com/robotology/gym-ignition#Citation">Citation</a></b>
+<b><a href="https://github.com/robotology/gym-ignition#citation">Citation</a></b>
 </p>
 
 <div align="center">
@@ -73,90 +67,52 @@
 <p><br/></p>
 </div>
 
-## What
+## Description
 
-Gym-Ignition is a framework to create **reproducible robotics environments** for reinforcement learning research.
+**gym-ignition** is a framework to create **reproducible robotics environments** for reinforcement learning research.
 
-The project is composed of the following components:
+The project consists of the following components:
 
-| Component                   | Description                                                  |
-| --------------------------- | ------------------------------------------------------------ |
-| `ScenarI/O`                 | *Scene Interfaces for Robot Input / Output* is a set of C++ interfaces to abstract the interfacing with simulated and real robots. |
-| `Gazebo ScenarI/O`          | Ignition Gazebo bindings that expose the ScenarI/O interfaces. |
-| `gym-ignition`              | Python package that provides the tooling to create OpenAI Gym environments for robot learning. |
-| `gym-ignition-environments` | Demo environments created with `gym-ignition` and [gym-ignition-models](https://github.com/dic-iit/gym-ignition-models). |
-| `Gympp`                     | An _experimental_ C++ port of the OpenAI [Gym interfaces](https://github.com/openai/gym/tree/master/gym), used to create pure C++ environments. |
+- [**`ScenarI/O`**](cpp/scenario/core): 
+  *Scene Interfaces for Robot Input / Output* is a C++ abstraction layer to interact with simulated and real robots.
+- [**`Gazebo ScenarI/O`**](cpp/scenario/gazebo): 
+  Implementation of the ScenarI/O interfaces to interact with the [Ignition Gazebo](https://ignitionrobotics.org) simulator. 
+  We provide Python bindings with functionalities comparable to popular alternatives like 
+  [pybullet](https://github.com/bulletphysics/bullet3) and [mujoco-py](https://github.com/openai/mujoco-py).
+- [**`gym_ignition`**](python/gym_ignition): 
+  A Python package with the tooling to create OpenAI Gym environments for robot learning. 
+  It provides abstractions like `Task` and `Runtime` to help developing environments that can be executed transparently 
+  on all the ScenarI/O implementations (different simulators, real robots, ...).
+  The package also contains resources for inverse kinematics and multi-body dynamics supporting floating-based robots
+  based on the [iDynTree](https://github.com/robotology/idyntree) library.
+- [**`gym_ignition_environments`**](python/gym_ignition_environments):
+  Demo environments created with `gym_ignition` and [`gym-ignition-models`](https://github.com/dic-iit/gym-ignition-models) 
+  that show the recommended structure.
+  
+This project provides the complete implementation of ScenarI/O for the Ignition Gazebo simulator.
+We expose all the physics engines supported by Ignition Gazebo.
+Currently, the default and only physics engine is [DART](https://github.com/dartsim/dart).
 
-*Disclaimer: we do not provide support for experimental components.*
+We are currently working on backends based on robotic middleware to transparently execute the environments developed 
+with `gym_ignition` on real robots.
 
-## Why
-
-Refer to the [Citation](#citation) for the extended rationale behind this project.
-
-`TL;DR`
-
-We designed Gym-Ignition driven by the following reasons:
-
-- Advances in RL research are pushed by the development of more complex environments, and vice versa.
-- There's no standard framework in the robotics community for creating simulated robotic environments.
-- Environments that can be transferred from simulation to reality with minimal changes are yet to be seen.
-- Alternative solutions are not developed by roboticists for roboticist, and therefore they do not use familiar tools.
-- Existing robotics environments are typically difficult to adapt to run on different physics engines and different robots.
-- Only few solutions offer realistic rendering capabilities.
-
-## How
-
-This project interfaces with the new generation of the [Gazebo](http://gazebosim.org) simulator, called [Ignition Gazebo](https://ignitionrobotics.org/libs/gazebo).
-It is part of the new [Ignition Robotics](http://ignitionrobotics.org) suite developed by [Open Robotics](https://www.openrobotics.org/).
-
-Ignition Robotics is currently under heavy development.
-Though, it already offers enough functionalities that fit this project's aims:
-
-- Simulator-as-a-library
-- New modular architecture
-- C++ utilities developed with a robotic mindset
-- New abstractions of physics engines and rendering engines that exploit runtime plugins
-- Full support of [DART](https://github.com/dartsim/dart) and coming support of [bullet3](https://github.com/bulletphysics/bullet3)
-- Support of distributed simulations
-- Well maintained and packaged
-- [Ignition Fuel](https://app.ignitionrobotics.org/dashboard) database to download models and worlds
-
-Our **Gazebo ScenarI/O** component provides Python bindings of the simulator that are comparable 
-to other popular solutions like [pybullet](https://github.com/bulletphysics/bullet3) and [mujoco-py](https://github.com/openai/mujoco-py).
-
-### Features
-
-At the time of writing, Gym-Ignition offers the following features:
-
-- Environments compatible with [OpenAI Gym](https://github.com/openai/gym/)
-- Worlds and models are [SDF descriptions](http://sdformat.org)
-- Reproducibility guarantees
-- Accelerated and multiprocess execution
-- Environments are a combination of three elements:
-  - **Task**: the logic of the decision-making problem. It defines how to process the given action, how to calculate the reward, how to structure the observation, and how to reset the environment. Task objects are robot-independent and runtime-independent.
-  - **World**: unified interface to access world resources.
-  - **Runtime**: implements the actual step of the environment. Simulated runtimes step the simulator, real-time runtimes deal with real-time execution constraints. A Task object can be executed by any runtime without any change.
-- Experimental support to create C++ environments
-
-## Demo
-
-We provide a docker image that shows few rollouts executed by a random policy on a cartpole model:
-
-```sh
-docker pull diegoferigo/gym-ignition:latest
-pip3 install rocker
-
-# Intel GPU
-rocker --devices /dev/dri --x11 diegoferigo/gym-ignition /github/examples/python/launch_cartpole.py
-
-# Nvidia GPU
-rocker --x11 --nvidia diegoferigo/gym-ignition /github/examples/python/launch_cartpole.py
-```
+If you're interested to know the reasons why we started developing gym-ignition and why we selected Ignition Gazebo for
+our simulations, visit the _Motivations_ section of the [website](https://robotology.github.io/gym-ignition). 
 
 ## Setup
 
-Visit the [Installation](https://robotology.github.io/gym-ignition/devel/installation/intro.html) section of our website for updated installation instructions.
-Make sure to select the correct branch since the installation could differ depending on the branch you're interested.
+1. Install the Ignition suite following the [official instructions](https://ignitionrobotics.org/docs/dome).
+1. Execute `pip install gym-ignition`, preferably in a virtual environment.
+
+Then, for some simple examples, visit the _Getting Started_ section of the [website](https://robotology.github.io/gym-ignition).
+
+You can decide to install only the C++ resources if you are not interested in using Python.
+We also offer a constantly updated pre-release channel with the last development updates.
+You can find all the details about the different types of installations we support in the [website](https://robotology.github.io/gym-ignition).
+
+||||
+|:---:|:---:|:---:|
+| ![](https://user-images.githubusercontent.com/469199/98664559-cdaab180-234a-11eb-8c8a-9ebb172dd723.gif) | ![](https://user-images.githubusercontent.com/469199/98717254-1edb9500-238d-11eb-9e10-54fdd09dfda8.gif) | ![](https://user-images.githubusercontent.com/469199/98664612-df8c5480-234a-11eb-94b0-7cc19bc36ef6.gif) |
 
 ## Citation
 
