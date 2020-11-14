@@ -617,7 +617,7 @@ generalized force target was set.</p>
 <p>The vector is populated with #DoFs values at each physics step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The vector containing the history of joint forces.</p>
@@ -645,7 +645,7 @@ generalized force target was set.</p>
 <dd><p>Get the acceleration of the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The acceleration of the joint.</p>
@@ -659,7 +659,7 @@ generalized force target was set.</p>
 <dd><p>Get the active acceleration target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The acceleration target of the joint.</p>
@@ -673,7 +673,7 @@ generalized force target was set.</p>
 <dd><p>Get the generalized force of the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The generalized force of the joint.</p>
@@ -687,7 +687,7 @@ generalized force target was set.</p>
 <dd><p>Get the active generalized force target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The generalized force target of the joint.</p>
@@ -701,7 +701,7 @@ generalized force target was set.</p>
 <dd><p>Get the maximum generalized force that could be applied to the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The maximum generalized force of the joint.</p>
@@ -715,7 +715,7 @@ generalized force target was set.</p>
 <dd><p>Get the position of the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The position of the joint.</p>
@@ -743,7 +743,7 @@ generalized force target was set.</p>
 <dd><p>Get the active position target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The position target of the joint.</p>
@@ -757,7 +757,7 @@ generalized force target was set.</p>
 <dd><p>Get the velocity of the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The velocity of the joint.</p>
@@ -771,7 +771,7 @@ generalized force target was set.</p>
 <dd><p>Get the active velocity target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The velocity target of the joint.</p>
@@ -961,7 +961,7 @@ friction or other loss components, the real joint force will differ.</p>
 <p>The target is processed by a joint controller, if enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>acceleration</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – A vector with the acceleration targets of the
+<dd class="field-odd"><p><strong>acceleration</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – A vector with the acceleration targets of the
 joint DOFs.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -981,7 +981,7 @@ joint DOFs.</p>
 joint force will differ.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>force</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – A vector with the generalized force targets of the joint
+<dd class="field-odd"><p><strong>force</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – A vector with the generalized force targets of the joint
 DOFs.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -1001,7 +1001,7 @@ DOFs.</p>
 controllers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>maxForce</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – A vector with the maximum generalized forces of the
+<dd class="field-odd"><p><strong>maxForce</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – A vector with the maximum generalized forces of the
 joint DOFs.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -1020,7 +1020,7 @@ joint DOFs.</p>
 <p>The target is processed by a joint controller, if enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>position</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – A vector with the position targets of the joint DOFs.</p>
+<dd class="field-odd"><p><strong>position</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – A vector with the position targets of the joint DOFs.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -1038,7 +1038,7 @@ joint DOFs.</p>
 <p>The target is processed by a joint controller, if enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>velocity</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – A vector with the velocity targets of the joint DOFs.</p>
+<dd class="field-odd"><p><strong>velocity</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – A vector with the velocity targets of the joint DOFs.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -1334,7 +1334,7 @@ the joint velocity, the corresponding torque is often modelled as:</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular body acceleration of the link.</p>
@@ -1349,7 +1349,7 @@ the joint velocity, the corresponding torque is often modelled as:</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular body velocity of the link.</p>
@@ -1364,7 +1364,7 @@ the joint velocity, the corresponding torque is often modelled as:</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear body acceleration of the link.</p>
@@ -1379,7 +1379,7 @@ the joint velocity, the corresponding torque is often modelled as:</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear body velocity of the link.</p>
@@ -1396,7 +1396,7 @@ applied to the origin of the link frame and expressed in world
 coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float, float, float, float,]</p>
+<dd class="field-odd"><p>Iterable[float, float, float, float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The total wrench of the active contacts.</p>
@@ -1410,7 +1410,7 @@ coordinates.</p>
 <dd><p>Get the active contacts of the link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Contact" title="scenario.bindings.core.Contact">Contact</a>, ..]</p>
+<dd class="field-odd"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Contact" title="scenario.bindings.core.Contact">Contact</a>]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The vector of active contacts.</p>
@@ -1502,7 +1502,7 @@ coordinates.</p>
 rotation between the world frame and the link frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The wxyz quaternion defining the orientation if the link wrt the
@@ -1519,7 +1519,7 @@ world frame.</p>
 defined in the model file, in world coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The cartesian position of the link frame in world coordinates.</p>
@@ -1564,7 +1564,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular mixed acceleration of the link.</p>
@@ -1579,7 +1579,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular mixed velocity of the link.</p>
@@ -1594,7 +1594,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear mixed acceleration of the link.</p>
@@ -1609,7 +1609,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear mixed velocity of the link.</p>
@@ -1630,7 +1630,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular body velocity of the base link.</p>
@@ -1645,7 +1645,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear body velocity of the base link.</p>
@@ -1675,7 +1675,7 @@ the model.</p>
 <dd><p>Get the orientation of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The wxyz quaternion defining the orientation of the base link wrt
@@ -1690,7 +1690,7 @@ the world frame.</p>
 <dd><p>Get the orientation target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The quaternion defining the orientation target of the base link.</p>
@@ -1704,7 +1704,7 @@ the world frame.</p>
 <dd><p>Get the position of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The position of the base link in world coordinates.</p>
@@ -1718,7 +1718,7 @@ the world frame.</p>
 <dd><p>Get the position target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The position target of the base link.</p>
@@ -1732,7 +1732,7 @@ the world frame.</p>
 <dd><p>Get the mixed angular acceleration target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The mixed angular acceleration target of the base link.</p>
@@ -1747,7 +1747,7 @@ the world frame.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular mixed velocity of the base link.</p>
@@ -1761,7 +1761,7 @@ the world frame.</p>
 <dd><p>Get the mixed angular velocity target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The mixed angular velocity target of the base link.</p>
@@ -1775,7 +1775,7 @@ the world frame.</p>
 <dd><p>Get the mixed linear acceleration target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The mixed linear acceleration target of the base link.</p>
@@ -1790,7 +1790,7 @@ the world frame.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear mixed velocity of the base link.</p>
@@ -1804,7 +1804,7 @@ the world frame.</p>
 <dd><p>Get the mixed linear velocity target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The mixed linear velocity target of the base link.</p>
@@ -1818,10 +1818,10 @@ the world frame.</p>
 <dd><p>Get the active contacts of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>linkNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optionally restrict the considered links.</p>
+<dd class="field-odd"><p><strong>linkNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optionally restrict the considered links.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Contact" title="scenario.bindings.core.Contact">Contact</a>, ..]</p>
+<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Contact" title="scenario.bindings.core.Contact">Contact</a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A vector of contacts.</p>
@@ -1865,7 +1865,7 @@ otherwise.</p>
 <dd><p>Get the degrees of freedom of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optionally restrict the count to a subset of
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optionally restrict the count to a subset of
 joints.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -1908,29 +1908,10 @@ caller wants to extract the forces at a lower frequency.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>enable</strong> (<em>boolean</em>) – True to enable logging, false to disable.</p></li>
 <li><p><strong>maxHistorySizePerJoint</strong> (<em>int</em>) – Size of the logging window of each joint.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p></li>
 </ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>boolean</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>True for success, false otherwise.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt id="scenario.bindings.core.Model.enable_self_collisions">
-<code class="sig-name descname">enable_self_collisions</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">enable</span><span class="o">=</span><span class="default_value">True</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Model.enable_self_collisions" title="Permalink to this definition">¶</a></dt>
-<dd><p>Enable the detection of self-collisions.</p>
-<p>It will enable contact detection if it was disabled.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>enable</strong> (<em>boolean</em>) – True to enable the self-collision detection, false to
-disable.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -1987,12 +1968,12 @@ disable.</p>
 <dd><p>Get the log of applied joint forces.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The entire window of applied joint forces.</p>
@@ -2011,7 +1992,7 @@ the active joint serialization.</p>
 <dd><p>Check if logging the applied joint force is enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
@@ -2030,11 +2011,11 @@ used.</p>
 <dd><p>Get the acceleration targets of the joints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The acceleration targets of the joints.</p>
@@ -2048,12 +2029,12 @@ used.</p>
 <dd><p>Get the joint accelerations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The serialization of joint accelerations. The vector has as many
@@ -2068,11 +2049,11 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the generalized force targets of the joints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The generalized force targets of the joints.</p>
@@ -2086,12 +2067,12 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the joint generalized forces.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The serialization of joint forces. The vector has as many
@@ -2106,7 +2087,7 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the joint limits of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
@@ -2130,7 +2111,7 @@ object have as many elements as DoFs of the considered joints.</p>
 (e.g. <code class="docutils literal notranslate"><span class="pre">mymodel::joint1</span></code>).</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[string, ..]</p>
+<dd class="field-even"><p>Iterable[string]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The list of joint names.</p>
@@ -2144,11 +2125,11 @@ object have as many elements as DoFs of the considered joints.</p>
 <dd><p>Get the position targets of the joints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The position targets of the joints.</p>
@@ -2162,12 +2143,12 @@ object have as many elements as DoFs of the considered joints.</p>
 <dd><p>Get the joint positions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The serialization of joint positions. The vector has as many
@@ -2182,12 +2163,12 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the joint velocities.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The serialization of joint velocities. The vector has as many
@@ -2202,11 +2183,11 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the velocity targets of the joints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The velocity targets of the joints.</p>
@@ -2220,11 +2201,11 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the joints of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Joint" title="scenario.bindings.core.Joint">Joint</a>, ..]</p>
+<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Joint" title="scenario.bindings.core.Joint">Joint</a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A vector of pointers to the joint objects.</p>
@@ -2242,7 +2223,7 @@ elements as DoFs of the considered joints.</p>
 (e.g. <code class="docutils literal notranslate"><span class="pre">mymodel::link1</span></code>).</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[string, ..]</p>
+<dd class="field-even"><p>Iterable[string]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The list of link names.</p>
@@ -2256,11 +2237,11 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the links of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>linkNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered links. By default,
+<dd class="field-odd"><p><strong>linkNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered links. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::linkNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Link" title="scenario.bindings.core.Link">Link</a>, ..]</p>
+<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Link" title="scenario.bindings.core.Link">Link</a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A vector of pointers to the link objects.</p>
@@ -2274,7 +2255,7 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the vector of links with active contacts with other bodies.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[string, ..]</p>
+<dd class="field-odd"><p>Iterable[string]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The vector of links in contact.</p>
@@ -2325,27 +2306,12 @@ elements as DoFs of the considered joints.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="scenario.bindings.core.Model.self_collisions_enabled">
-<code class="sig-name descname">self_collisions_enabled</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Model.self_collisions_enabled" title="Permalink to this definition">¶</a></dt>
-<dd><p>Check if the detection of self-collisions is enabled.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>boolean</p>
-</dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>True if self-collisions detection is enabled, false
-otherwise.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
 <dt id="scenario.bindings.core.Model.set_base_orientation_target">
 <code class="sig-name descname">set_base_orientation_target</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">orientation</span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Model.set_base_orientation_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the orientation target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>orientation</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the orientation target of
+<dd class="field-odd"><p><strong>orientation</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the orientation target of
 the base link wrt the world frame.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -2364,9 +2330,9 @@ the base link wrt the world frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>position</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The position target of the base link in world
+<li><p><strong>position</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The position target of the base link in world
 coordinates.</p></li>
-<li><p><strong>orientation</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the orientation target of
+<li><p><strong>orientation</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the orientation target of
 the base link wrt the world frame.</p></li>
 </ul>
 </dd>
@@ -2385,7 +2351,7 @@ the base link wrt the world frame.</p></li>
 <dd><p>Set the position target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>position</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The position target of the base link in world
+<dd class="field-odd"><p><strong>position</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The position target of the base link in world
 coordinates.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -2403,7 +2369,7 @@ coordinates.</p>
 <dd><p>Set the mixed angular acceleration target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>angular</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular acceleration target of the base link.</p>
+<dd class="field-odd"><p><strong>angular</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular acceleration target of the base link.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -2420,7 +2386,7 @@ coordinates.</p>
 <dd><p>Set the mixed angular velocity target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>angular</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular velocity target of the base link.</p>
+<dd class="field-odd"><p><strong>angular</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular velocity target of the base link.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -2437,7 +2403,7 @@ coordinates.</p>
 <dd><p>Set the mixed linear acceleration target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>linear</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear acceleration target of the base link.</p>
+<dd class="field-odd"><p><strong>linear</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear acceleration target of the base link.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -2454,7 +2420,7 @@ coordinates.</p>
 <dd><p>Set the mixed linear velocity target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>linear</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear velocity target of the base link.</p>
+<dd class="field-odd"><p><strong>linear</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear velocity target of the base link.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -2472,8 +2438,8 @@ coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>linear</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear velocity target of the base link.</p></li>
-<li><p><strong>angular</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular velocity target of the base link.</p></li>
+<li><p><strong>linear</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear velocity target of the base link.</p></li>
+<li><p><strong>angular</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular velocity target of the base link.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -2511,9 +2477,9 @@ If it is smaller than the physics step, it is treated as 0.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>accelerations</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The vector with the joint acceleration targets.
+<li><p><strong>accelerations</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The vector with the joint acceleration targets.
 It must have as many elements as the considered joint DoFs.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p></li>
 </ul>
 </dd>
@@ -2534,7 +2500,7 @@ It must have as many elements as the considered joint DoFs.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mode</strong> (<em>int</em>) – The desired joint control mode.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p></li>
 </ul>
@@ -2555,9 +2521,9 @@ used.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>forces</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The vector with the joint generalized force targets. It
+<li><p><strong>forces</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The vector with the joint generalized force targets. It
 must have as many elements as the considered joint DoFs.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p></li>
 </ul>
 </dd>
@@ -2577,9 +2543,9 @@ must have as many elements as the considered joint DoFs.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>positions</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The vector with the joint position targets. It must
+<li><p><strong>positions</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The vector with the joint position targets. It must
 have as many elements as the considered joint DoFs.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p></li>
 </ul>
 </dd>
@@ -2599,9 +2565,9 @@ have as many elements as the considered joint DoFs.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>velocities</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The vector with the joint velocity targets. It must
+<li><p><strong>velocities</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The vector with the joint velocity targets. It must
 have as many elements as the considered joint DoFs.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p></li>
 </ul>
 </dd>
@@ -2636,7 +2602,7 @@ have as many elements as the considered joint DoFs.</p></li>
 <dd><p>Get the total mass of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>linkNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optionally restrict the count to a subset of links.</p>
+<dd class="field-odd"><p><strong>linkNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optionally restrict the count to a subset of links.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>float</p>
@@ -3949,7 +3915,7 @@ have as many elements as the considered joint DoFs.</p></li>
 <dt id="scenario.bindings.core.World.gravity">
 <code class="sig-name descname">gravity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.World.gravity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the gravity vector.
-:rtype: Tuple[float, float, float]
+:rtype: Iterable[float, float, float]
 :return: The gravity vector.</p>
 </dd></dl>
 
@@ -3959,7 +3925,7 @@ have as many elements as the considered joint DoFs.</p></li>
 <dd><p>Get the name of the models that are part of the world.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[string, ..]</p>
+<dd class="field-odd"><p>Iterable[string]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The list of model names.</p>
@@ -4241,7 +4207,7 @@ SDF world file.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>worldFile</strong> (<em>string</em>) – The path to the SDF world file.</p></li>
-<li><p><strong>worldNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optionally override the names of the worlds defined in
+<li><p><strong>worldNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optionally override the names of the worlds defined in
 the SDF world file.</p></li>
 </ul>
 </dd>
@@ -4361,7 +4327,7 @@ currently supported.</p>
 <dd><p>Get the list if the world names part of the simulation.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[string, ..]</p>
+<dd class="field-odd"><p>Iterable[string]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The world names.</p>
@@ -4545,7 +4511,7 @@ generalized force target was set.</p>
 <p>The vector is populated with #DoFs values at each physics step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The vector containing the history of joint forces.</p>
@@ -4590,7 +4556,7 @@ numbering.</p>
 <dd><p>Get the acceleration of the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The acceleration of the joint.</p>
@@ -4604,7 +4570,7 @@ numbering.</p>
 <dd><p>Get the active acceleration target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The acceleration target of the joint.</p>
@@ -4618,7 +4584,7 @@ numbering.</p>
 <dd><p>Get the generalized force of the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The generalized force of the joint.</p>
@@ -4632,7 +4598,7 @@ numbering.</p>
 <dd><p>Get the active generalized force target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The generalized force target of the joint.</p>
@@ -4646,7 +4612,7 @@ numbering.</p>
 <dd><p>Get the maximum generalized force that could be applied to the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The maximum generalized force of the joint.</p>
@@ -4660,7 +4626,7 @@ numbering.</p>
 <dd><p>Get the position of the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The position of the joint.</p>
@@ -4688,7 +4654,7 @@ numbering.</p>
 <dd><p>Get the active position target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The position target of the joint.</p>
@@ -4702,7 +4668,7 @@ numbering.</p>
 <dd><p>Get the velocity of the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The velocity of the joint.</p>
@@ -4716,7 +4682,7 @@ numbering.</p>
 <dd><p>Get the active velocity target.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The velocity target of the joint.</p>
@@ -4869,8 +4835,8 @@ target was set.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>position</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The desired position.</p></li>
-<li><p><strong>velocity</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The desired velocity.</p></li>
+<li><p><strong>position</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The desired position.</p></li>
+<li><p><strong>velocity</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The desired velocity.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -4889,7 +4855,7 @@ target was set.</p>
 <p>This method also resets the PID state of the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>position</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The desired position.</p>
+<dd class="field-odd"><p><strong>position</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The desired position.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -4907,7 +4873,7 @@ target was set.</p>
 <p>This method also resets the PID state of the joint.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>velocity</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The desired velocity.</p>
+<dd class="field-odd"><p><strong>velocity</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The desired velocity.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -5044,7 +5010,7 @@ friction or other loss components, the real joint force will differ.</p>
 <p>The target is processed by a joint controller, if enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>acceleration</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – A vector with the acceleration targets of the
+<dd class="field-odd"><p><strong>acceleration</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – A vector with the acceleration targets of the
 joint DOFs.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -5064,7 +5030,7 @@ joint DOFs.</p>
 joint force will differ.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>force</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – A vector with the generalized force targets of the joint
+<dd class="field-odd"><p><strong>force</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – A vector with the generalized force targets of the joint
 DOFs.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -5084,7 +5050,7 @@ DOFs.</p>
 controllers.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>maxForce</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – A vector with the maximum generalized forces of the
+<dd class="field-odd"><p><strong>maxForce</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – A vector with the maximum generalized forces of the
 joint DOFs.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -5103,7 +5069,7 @@ joint DOFs.</p>
 <p>The target is processed by a joint controller, if enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>position</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – A vector with the position targets of the joint DOFs.</p>
+<dd class="field-odd"><p><strong>position</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – A vector with the position targets of the joint DOFs.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -5121,7 +5087,7 @@ joint DOFs.</p>
 <p>The target is processed by a joint controller, if enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>velocity</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – A vector with the velocity targets of the joint DOFs.</p>
+<dd class="field-odd"><p><strong>velocity</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – A vector with the velocity targets of the joint DOFs.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -5341,7 +5307,7 @@ the joint velocity, the corresponding torque is often modelled as:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>force</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The force to apply expressed in world coordinates.</p></li>
+<li><p><strong>force</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The force to apply expressed in world coordinates.</p></li>
 <li><p><strong>duration</strong> (<em>float</em>) – The duration of the application of the force.
 By default the force is applied for a single physics step.</p></li>
 </ul>
@@ -5363,7 +5329,7 @@ By default the force is applied for a single physics step.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>torque</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The torque to apply expressed in world coordinates.</p></li>
+<li><p><strong>torque</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The torque to apply expressed in world coordinates.</p></li>
 <li><p><strong>duration</strong> (<em>float</em>) – The duration of the application of the torque.
 By default the torque is applied for a single physics step.</p></li>
 </ul>
@@ -5385,8 +5351,8 @@ By default the torque is applied for a single physics step.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>force</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The force to apply expressed in world coordinates.</p></li>
-<li><p><strong>torque</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The torque to apply expressed in world coordinates.</p></li>
+<li><p><strong>force</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The force to apply expressed in world coordinates.</p></li>
+<li><p><strong>torque</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The torque to apply expressed in world coordinates.</p></li>
 <li><p><strong>duration</strong> (<em>float</em>) – The duration of the application of the wrench.
 By default the wrench is applied for a single physics step.</p></li>
 </ul>
@@ -5412,8 +5378,8 @@ will be the same.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>force</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The force to apply expressed in world coordinates.</p></li>
-<li><p><strong>torque</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The torque to apply expressed in world coordinates.</p></li>
+<li><p><strong>force</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The force to apply expressed in world coordinates.</p></li>
+<li><p><strong>torque</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The torque to apply expressed in world coordinates.</p></li>
 <li><p><strong>duration</strong> (<em>float</em>) – The duration of the application of the wrench.
 By default the wrench is applied for a single physics step.</p></li>
 </ul>
@@ -5434,7 +5400,7 @@ By default the wrench is applied for a single physics step.</p></li>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular body acceleration of the link.</p>
@@ -5449,7 +5415,7 @@ By default the wrench is applied for a single physics step.</p></li>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular body velocity of the link.</p>
@@ -5464,7 +5430,7 @@ By default the wrench is applied for a single physics step.</p></li>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear body acceleration of the link.</p>
@@ -5479,7 +5445,7 @@ By default the wrench is applied for a single physics step.</p></li>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear body velocity of the link.</p>
@@ -5496,7 +5462,7 @@ applied to the origin of the link frame and expressed in world
 coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float, float, float, float,]</p>
+<dd class="field-odd"><p>Iterable[float, float, float, float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The total wrench of the active contacts.</p>
@@ -5510,7 +5476,7 @@ coordinates.</p>
 <dd><p>Get the active contacts of the link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Contact" title="scenario.bindings.core.Contact">Contact</a>, ..]</p>
+<dd class="field-odd"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Contact" title="scenario.bindings.core.Contact">Contact</a>]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The vector of active contacts.</p>
@@ -5619,7 +5585,7 @@ numbering.</p>
 rotation between the world frame and the link frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The wxyz quaternion defining the orientation if the link wrt the
@@ -5636,7 +5602,7 @@ world frame.</p>
 defined in the model file, in world coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The cartesian position of the link frame in world coordinates.</p>
@@ -5671,7 +5637,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular mixed acceleration of the link.</p>
@@ -5686,7 +5652,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular mixed velocity of the link.</p>
@@ -5701,7 +5667,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear mixed acceleration of the link.</p>
@@ -5716,7 +5682,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear mixed velocity of the link.</p>
@@ -5737,7 +5703,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular body velocity of the base link.</p>
@@ -5752,7 +5718,7 @@ defined in the model file, in world coordinates.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear body velocity of the base link.</p>
@@ -5782,7 +5748,7 @@ the model.</p>
 <dd><p>Get the orientation of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The wxyz quaternion defining the orientation of the base link wrt
@@ -5797,7 +5763,7 @@ the world frame.</p>
 <dd><p>Get the orientation target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The quaternion defining the orientation target of the base link.</p>
@@ -5811,7 +5777,7 @@ the world frame.</p>
 <dd><p>Get the position of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The position of the base link in world coordinates.</p>
@@ -5825,7 +5791,7 @@ the world frame.</p>
 <dd><p>Get the position target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The position target of the base link.</p>
@@ -5839,7 +5805,7 @@ the world frame.</p>
 <dd><p>Get the mixed angular acceleration target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The mixed angular acceleration target of the base link.</p>
@@ -5854,7 +5820,7 @@ the world frame.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The angular mixed velocity of the base link.</p>
@@ -5868,7 +5834,7 @@ the world frame.</p>
 <dd><p>Get the mixed angular velocity target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The mixed angular velocity target of the base link.</p>
@@ -5882,7 +5848,7 @@ the world frame.</p>
 <dd><p>Get the mixed linear acceleration target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The mixed linear acceleration target of the base link.</p>
@@ -5897,7 +5863,7 @@ the world frame.</p>
 <p>TODO: Add link to the velocity representation documentation page.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The linear mixed velocity of the base link.</p>
@@ -5911,7 +5877,7 @@ the world frame.</p>
 <dd><p>Get the mixed linear velocity target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, float, float]</p>
+<dd class="field-odd"><p>Iterable[float, float, float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The mixed linear velocity target of the base link.</p>
@@ -5925,10 +5891,10 @@ the world frame.</p>
 <dd><p>Get the active contacts of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>linkNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optionally restrict the considered links.</p>
+<dd class="field-odd"><p><strong>linkNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optionally restrict the considered links.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Contact" title="scenario.bindings.core.Contact">Contact</a>, ..]</p>
+<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Contact" title="scenario.bindings.core.Contact">Contact</a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A vector of contacts.</p>
@@ -5972,7 +5938,7 @@ otherwise.</p>
 <dd><p>Get the degrees of freedom of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optionally restrict the count to a subset of
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optionally restrict the count to a subset of
 joints.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -6015,7 +5981,7 @@ caller wants to extract the forces at a lower frequency.</p>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>enable</strong> (<em>boolean</em>) – True to enable logging, false to disable.</p></li>
 <li><p><strong>maxHistorySizePerJoint</strong> (<em>int</em>) – Size of the logging window of each joint.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p></li>
 </ul>
@@ -6094,12 +6060,12 @@ disable.</p>
 <dd><p>Get the log of applied joint forces.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The entire window of applied joint forces.</p>
@@ -6118,7 +6084,7 @@ the active joint serialization.</p>
 <dd><p>Check if logging the applied joint force is enabled.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
@@ -6175,11 +6141,11 @@ numbering.</p>
 <dd><p>Get the acceleration targets of the joints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The acceleration targets of the joints.</p>
@@ -6193,12 +6159,12 @@ numbering.</p>
 <dd><p>Get the joint accelerations.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The serialization of joint accelerations. The vector has as many
@@ -6213,11 +6179,11 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the generalized force targets of the joints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The generalized force targets of the joints.</p>
@@ -6231,12 +6197,12 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the joint generalized forces.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The serialization of joint forces. The vector has as many
@@ -6251,7 +6217,7 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the joint limits of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
@@ -6275,7 +6241,7 @@ object have as many elements as DoFs of the considered joints.</p>
 (e.g. <code class="docutils literal notranslate"><span class="pre">mymodel::joint1</span></code>).</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[string, ..]</p>
+<dd class="field-even"><p>Iterable[string]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The list of joint names.</p>
@@ -6289,11 +6255,11 @@ object have as many elements as DoFs of the considered joints.</p>
 <dd><p>Get the position targets of the joints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The position targets of the joints.</p>
@@ -6307,12 +6273,12 @@ object have as many elements as DoFs of the considered joints.</p>
 <dd><p>Get the joint positions.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The serialization of joint positions. The vector has as many
@@ -6327,12 +6293,12 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the joint velocities.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The serialization of joint velocities. The vector has as many
@@ -6347,11 +6313,11 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the velocity targets of the joints.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[float, ..]</p>
+<dd class="field-even"><p>Iterable[float]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The velocity targets of the joints.</p>
@@ -6365,11 +6331,11 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the joints of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<dd class="field-odd"><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Joint" title="scenario.bindings.core.Joint">Joint</a>, ..]</p>
+<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Joint" title="scenario.bindings.core.Joint">Joint</a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A vector of pointers to the joint objects.</p>
@@ -6387,7 +6353,7 @@ elements as DoFs of the considered joints.</p>
 (e.g. <code class="docutils literal notranslate"><span class="pre">mymodel::link1</span></code>).</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[string, ..]</p>
+<dd class="field-even"><p>Iterable[string]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The list of link names.</p>
@@ -6401,11 +6367,11 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the links of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>linkNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered links. By default,
+<dd class="field-odd"><p><strong>linkNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered links. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::linkNames</span></code> is used.</p>
 </dd>
 <dt class="field-even">Return type</dt>
-<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Link" title="scenario.bindings.core.Link">Link</a>, ..]</p>
+<dd class="field-even"><p>Tuple[<a class="reference internal" href="#scenario.bindings.core.Link" title="scenario.bindings.core.Link">Link</a>]</p>
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>A vector of pointers to the link objects.</p>
@@ -6419,7 +6385,7 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Get the vector of links with active contacts with other bodies.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[string, ..]</p>
+<dd class="field-odd"><p>Iterable[string]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The vector of links in contact.</p>
@@ -6475,7 +6441,7 @@ elements as DoFs of the considered joints.</p>
 <dd><p>Reset the orientation of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>orientation</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the desired orientation
+<dd class="field-odd"><p><strong>orientation</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the desired orientation
 of the base link wrt the world frame.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -6494,9 +6460,9 @@ of the base link wrt the world frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>position</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired position of the base link in world
+<li><p><strong>position</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired position of the base link in world
 coordinates.</p></li>
-<li><p><strong>orientation</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the desired orientation
+<li><p><strong>orientation</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the desired orientation
 of the base link wrt the world frame.</p></li>
 </ul>
 </dd>
@@ -6515,7 +6481,7 @@ of the base link wrt the world frame.</p></li>
 <dd><p>Reset the position of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>position</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired position of the base link in world
+<dd class="field-odd"><p><strong>position</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired position of the base link in world
 coordinates.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -6533,7 +6499,7 @@ coordinates.</p>
 <dd><p>Reset the angular mixed velocity of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>angular</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired angular mixed velocity of the base link.</p>
+<dd class="field-odd"><p><strong>angular</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired angular mixed velocity of the base link.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -6550,7 +6516,7 @@ coordinates.</p>
 <dd><p>Reset the linear mixed velocity of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>linear</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired linear mixed velocity of the base link.</p>
+<dd class="field-odd"><p><strong>linear</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired linear mixed velocity of the base link.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -6568,8 +6534,8 @@ coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>linear</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired linear mixed velocity of the base link.</p></li>
-<li><p><strong>angular</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired angular mixed velocity of the base link.</p></li>
+<li><p><strong>linear</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired linear mixed velocity of the base link.</p></li>
+<li><p><strong>angular</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired angular mixed velocity of the base link.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -6588,8 +6554,8 @@ coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>positions</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The desired new joint positions.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<li><p><strong>positions</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The desired new joint positions.</p></li>
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p></li>
 </ul>
 </dd>
@@ -6609,8 +6575,8 @@ coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>velocities</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The desired new velocities positions.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<li><p><strong>velocities</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The desired new velocities positions.</p></li>
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p></li>
 </ul>
 </dd>
@@ -6644,7 +6610,7 @@ otherwise.</p>
 <dd><p>Set the orientation target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>orientation</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the orientation target of
+<dd class="field-odd"><p><strong>orientation</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the orientation target of
 the base link wrt the world frame.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -6663,9 +6629,9 @@ the base link wrt the world frame.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>position</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The position target of the base link in world
+<li><p><strong>position</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The position target of the base link in world
 coordinates.</p></li>
-<li><p><strong>orientation</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the orientation target of
+<li><p><strong>orientation</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The wxyz quaternion defining the orientation target of
 the base link wrt the world frame.</p></li>
 </ul>
 </dd>
@@ -6684,7 +6650,7 @@ the base link wrt the world frame.</p></li>
 <dd><p>Set the position target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>position</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The position target of the base link in world
+<dd class="field-odd"><p><strong>position</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The position target of the base link in world
 coordinates.</p>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -6702,7 +6668,7 @@ coordinates.</p>
 <dd><p>Set the mixed angular acceleration target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>angular</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular acceleration target of the base link.</p>
+<dd class="field-odd"><p><strong>angular</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular acceleration target of the base link.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -6719,7 +6685,7 @@ coordinates.</p>
 <dd><p>Set the mixed angular velocity target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>angular</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular velocity target of the base link.</p>
+<dd class="field-odd"><p><strong>angular</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular velocity target of the base link.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -6736,7 +6702,7 @@ coordinates.</p>
 <dd><p>Set the mixed linear acceleration target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>linear</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear acceleration target of the base link.</p>
+<dd class="field-odd"><p><strong>linear</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear acceleration target of the base link.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -6753,7 +6719,7 @@ coordinates.</p>
 <dd><p>Set the mixed linear velocity target of the base link.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>linear</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear velocity target of the base link.</p>
+<dd class="field-odd"><p><strong>linear</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear velocity target of the base link.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -6771,8 +6737,8 @@ coordinates.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>linear</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear velocity target of the base link.</p></li>
-<li><p><strong>angular</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular velocity target of the base link.</p></li>
+<li><p><strong>linear</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed linear velocity target of the base link.</p></li>
+<li><p><strong>angular</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The mixed angular velocity target of the base link.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Return type</dt>
@@ -6810,9 +6776,9 @@ If it is smaller than the physics step, it is treated as 0.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>accelerations</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The vector with the joint acceleration targets.
+<li><p><strong>accelerations</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The vector with the joint acceleration targets.
 It must have as many elements as the considered joint DoFs.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p></li>
 </ul>
 </dd>
@@ -6833,7 +6799,7 @@ It must have as many elements as the considered joint DoFs.</p></li>
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>mode</strong> (<em>int</em>) – The desired joint control mode.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints that also
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints that also
 defines the joint serialization. By default, <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is
 used.</p></li>
 </ul>
@@ -6854,9 +6820,9 @@ used.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>forces</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The vector with the joint generalized force targets. It
+<li><p><strong>forces</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The vector with the joint generalized force targets. It
 must have as many elements as the considered joint DoFs.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p></li>
 </ul>
 </dd>
@@ -6876,9 +6842,9 @@ must have as many elements as the considered joint DoFs.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>positions</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The vector with the joint position targets. It must
+<li><p><strong>positions</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The vector with the joint position targets. It must
 have as many elements as the considered joint DoFs.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p></li>
 </ul>
 </dd>
@@ -6898,9 +6864,9 @@ have as many elements as the considered joint DoFs.</p></li>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>velocities</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The vector with the joint velocity targets. It must
+<li><p><strong>velocities</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The vector with the joint velocity targets. It must
 have as many elements as the considered joint DoFs.</p></li>
-<li><p><strong>jointNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optional vector of considered joints. By default,
+<li><p><strong>jointNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered joints. By default,
 <code class="docutils literal notranslate"><span class="pre">Model::jointNames</span></code> is used.</p></li>
 </ul>
 </dd>
@@ -6925,7 +6891,7 @@ have as many elements as the considered joint DoFs.</p></li>
 <dd><p>Get the total mass of the model.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>linkNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>, </em><em>..</em><em>]</em>) – Optionally restrict the count to a subset of links.</p>
+<dd class="field-odd"><p><strong>linkNames</strong> (<em>Iterable</em><em>[</em><em>string</em><em>]</em>) – Optionally restrict the count to a subset of links.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>float</p>
@@ -7054,7 +7020,7 @@ have as many elements as the considered joint DoFs.</p></li>
 <dt id="scenario.bindings.gazebo.World.gravity">
 <code class="sig-name descname">gravity</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.World.gravity" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the gravity vector.
-:rtype: Tuple[float, float, float]
+:rtype: Iterable[float, float, float]
 :return: The gravity vector.</p>
 </dd></dl>
 
@@ -7128,7 +7094,7 @@ be executed. It could either be a paused or unpaused step.</p>
 <dd><p>Get the name of the models that are part of the world.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[string, ..]</p>
+<dd class="field-odd"><p>Iterable[string]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The list of model names.</p>
@@ -7177,7 +7143,7 @@ be executed. It could either be a paused or unpaused step.</p>
 before performing any physics step.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>gravity</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired gravity vector.</p>
+<dd class="field-odd"><p><strong>gravity</strong> (<em>Iterable</em><em>[</em><em>float</em><em>, </em><em>float</em><em>, </em><em>float</em><em>]</em>) – The desired gravity vector.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>boolean</p>
@@ -7261,9 +7227,9 @@ size. Refer to the following for broadcasting definition:</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The input vector.</p></li>
-<li><p><strong>low</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The lower limit.</p></li>
-<li><p><strong>high</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The higher limit.</p></li>
+<li><p><strong>input</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The input vector.</p></li>
+<li><p><strong>low</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The lower limit.</p></li>
+<li><p><strong>high</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The higher limit.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -7271,7 +7237,7 @@ size. Refer to the following for broadcasting definition:</p>
 broadcasted.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The denormalized input.</p>
@@ -7437,9 +7403,9 @@ corresponding input value is not normalized.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>input</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The input vector.</p></li>
-<li><p><strong>low</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The lower limit.</p></li>
-<li><p><strong>high</strong> (<em>Tuple</em><em>[</em><em>float</em><em>, </em><em>..</em><em>]</em>) – The higher limit.</p></li>
+<li><p><strong>input</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The input vector.</p></li>
+<li><p><strong>low</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The lower limit.</p></li>
+<li><p><strong>high</strong> (<em>Iterable</em><em>[</em><em>float</em><em>]</em>) – The higher limit.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Raises</dt>
@@ -7447,7 +7413,7 @@ corresponding input value is not normalized.</p>
 broadcasted.</p>
 </dd>
 <dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p>Tuple[float, ..]</p>
+<dd class="field-odd"><p>Iterable[float]</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The normalized input.</p>
