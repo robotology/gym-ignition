@@ -20,7 +20,7 @@ If your aim is performing simulations for robot learning, we recommend running m
 each of them operating on a world containing a single robot.
 
 If your aim is simulating a big world where the controlled model can move inside the scene, exploiting a new feature
-of Ignition Gazebo called `levels <https://github.com/ignitionrobotics/ign-gazebo/blob/ign-gazebo4/tutorials/levels.md>`
+of Ignition Gazebo called `levels <https://github.com/ignitionrobotics/ign-gazebo/blob/ign-gazebo4/tutorials/levels.md>`_
 could be the proper solution. This feature is exploited by the big worlds of `subt <https://subtchallenge.com>`_.
 
 Instead, if your world has many models and the usage of levels does not apply to your use-case, you can try to switch

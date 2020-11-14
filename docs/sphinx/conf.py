@@ -66,7 +66,7 @@ html_theme = 'sphinx_book_theme'
 # further.  For a list of options available for each theme, see the
 # documentation.
 html_theme_options = {
-    "repository_url": "https://github.com/robotoogy/gym-ignition",
+    "repository_url": "https://github.com/robotology/gym-ignition",
     "use_repository_button": True,
     "use_issues_button": True,
     "use_edit_page_button": True,
