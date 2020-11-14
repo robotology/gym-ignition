@@ -1,177 +1,307 @@
 
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>Gazebo &mdash; gym-ignition  documentation</title>
-  
 
-  
-  <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-
-  
-  
-  
-  
-
-  
-  <!--[if lt IE 9]>
-    <script src="../_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gazebo &#8212; gym-ignition  documentation</title>
     
-      <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
-        <script src="../_static/jquery.js"></script>
-        <script src="../_static/underscore.js"></script>
-        <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
     
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.2d2078699c18a0efb88233928e1cf6ed.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.4.1/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.4.1/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="scenario.bindings" href="../apidoc/scenario/scenario.bindings.html" />
-    <link rel="prev" title="Core" href="core.html" /> 
-</head>
+    <link rel="prev" title="Core" href="core.html" />
 
-<body class="wy-body-for-nav">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
 
-   
-  <div class="wy-grid-for-nav">
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+
+    <div class="container-xl">
+      <div class="row">
           
-
-          
-            <a href="../index.html" class="icon icon-home" alt="Documentation Home"> gym-ignition
-          
-
-          
-          </a>
-
-          
-            
-            
-          
-
-          
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Installation:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../installation/intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation/stable.html">Stable Channel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation/nightly.html">Nightly Channel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../installation/optional_dependencies.html">Optional Dependencies</a></li>
-</ul>
-<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
-<ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="core.html">Core</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Gazebo</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Python Packages</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../apidoc/scenario/scenario.bindings.html">scenario.bindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.html">gym_ignition</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../apidoc/gym-ignition-environments/gym_ignition_environments.html">gym_ignition_environments</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Information</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="../info/faq.html">FAQ</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../info/limitations.html">Limitations</a></li>
-</ul>
-
-            
-          
-        </div>
-        
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="../index.html">gym-ignition</a>
-        
-      </nav>
-
-
-      <div class="wy-nav-content">
-        
-        <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
-  <ul class="wy-breadcrumbs">
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
     
-      <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
-        
-      <li>Gazebo</li>
-    
-    
-      <li class="wy-breadcrumbs-aside">
-        
-            
-            <a href="../_sources/breathe/gazebo.rst.txt" rel="nofollow"> View page source</a>
-          
-        
-      </li>
-    
-  </ul>
-
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../index.html">
   
-  <hr/>
+  
+  <h1 class="site-logo" id="site-title">gym-ignition  documentation</h1>
+  
+</a>
 </div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-            
+
+<form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../index.html">
+   What is gym-ignition?
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Motivations
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../motivations/why_gym_ignition.html">
+   Why ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../motivations/why_gym_ignition.html#why-ignition-gazebo">
+   Why Ignition Gazebo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../motivations/why_gym_ignition.html#why-gym-ignition">
+   Why gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/support_policy.html">
+   Support policy
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/stable.html">
+   Stable
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/nightly.html">
+   Nightly
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/developer.html">
+   Developer Installation
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../getting_started/scenario.html">
+   ScenarI/O
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../getting_started/manipulation.html">
+   Manipulation example
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../getting_started/gym-ignition.html">
+   gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  ScenarI/O C++ API:
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="core.html">
+   Core
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Gazebo
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Python Packages
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../apidoc/scenario/scenario.bindings.html">
+   scenario.bindings
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.html">
+   gym_ignition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../apidoc/gym-ignition-environments/gym_ignition_environments.html">
+   gym_ignition_environments
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Information
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../info/faq.html">
+   FAQ
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../info/limitations.html">
+   Limitations
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+ <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        <div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/breathe/gazebo.rst.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.rst</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+    
+</div>
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/robotoogy/gym-ignition"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/robotoogy/gym-ignition/issues/new?title=Issue%20on%20page%20%2Fbreathe/gazebo.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        <a class="edit-button" href="https://github.com/robotoogy/gym-ignition/edit/master/docs/sphinx/breathe/gazebo.rst"><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
   <div class="section" id="gazebo">
-<h1>Gazebo<a class="headerlink" href="#gazebo" title="Permalink to this headline">¶</a></h1>
+<span id="scenario-gazebo"></span><h1>Gazebo<a class="headerlink" href="#gazebo" title="Permalink to this headline">¶</a></h1>
 <dl class="cpp class">
 <dt id="_CPPv4N8scenario6gazebo15GazeboSimulatorE">
 <span id="_CPPv3N8scenario6gazebo15GazeboSimulatorE"></span><span id="_CPPv2N8scenario6gazebo15GazeboSimulatorE"></span><span id="scenario::gazebo::GazeboSimulator"></span><span class="target" id="classscenario_1_1gazebo_1_1GazeboSimulator"></span><em class="property">class </em><code class="sig-prename descclassname"><a class="reference internal" href="core.html#_CPPv48scenario" title="scenario">scenario</a>::<a class="reference internal" href="#_CPPv4N8scenario6gazeboE" title="scenario::gazebo">gazebo</a><code class="sig-prename descclassname">::</code></code><code class="sig-name descname">GazeboSimulator</code><a class="headerlink" href="#_CPPv4N8scenario6gazebo15GazeboSimulatorE" title="Permalink to this definition">¶</a><br /></dt>
@@ -3136,75 +3266,75 @@
 
 </dd></dl>
 
+<dl class="cpp class">
+<dt id="_CPPv4N8scenario11controllers10ControllerE">
+<span id="_CPPv3N8scenario11controllers10ControllerE"></span><span id="_CPPv2N8scenario11controllers10ControllerE"></span><span id="scenario::controllers::Controller"></span><span class="target" id="classscenario_1_1controllers_1_1Controller"></span><em class="property">class </em><code class="sig-name descname">Controller</code> : <em class="property">public</em> std::enable_shared_from_this&lt;<a class="reference internal" href="core.html#_CPPv48scenario" title="scenario">scenario</a>::controllers::<a class="reference internal" href="#_CPPv4N8scenario11controllers10ControllerE" title="scenario::controllers::Controller">Controller</a>&gt;<a class="headerlink" href="#_CPPv4N8scenario11controllers10ControllerE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Subclassed by <a class="reference internal" href="#classscenario_1_1controllers_1_1ComputedTorqueFixedBase"><span class="std std-ref">scenario::controllers::ComputedTorqueFixedBase</span></a></p>
+</dd></dl>
+
+<dl class="cpp class">
+<dt id="_CPPv4N8scenario11controllers16UseScenarioModelE">
+<span id="_CPPv3N8scenario11controllers16UseScenarioModelE"></span><span id="_CPPv2N8scenario11controllers16UseScenarioModelE"></span><span id="scenario::controllers::UseScenarioModel"></span><span class="target" id="classscenario_1_1controllers_1_1UseScenarioModel"></span><em class="property">class </em><code class="sig-name descname">UseScenarioModel</code><a class="headerlink" href="#_CPPv4N8scenario11controllers16UseScenarioModelE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Subclassed by <a class="reference internal" href="#classscenario_1_1controllers_1_1ComputedTorqueFixedBase"><span class="std std-ref">scenario::controllers::ComputedTorqueFixedBase</span></a></p>
+</dd></dl>
+
+<dl class="cpp class">
+<dt>
+<span class="target" id="classscenario_1_1controllers_1_1UseScenarioModel"></span><em class="property">class </em><code class="sig-name descname">UseScenarioModel</code><br /></dt>
+<dd><p>Subclassed by <a class="reference internal" href="#classscenario_1_1controllers_1_1ComputedTorqueFixedBase"><span class="std std-ref">scenario::controllers::ComputedTorqueFixedBase</span></a></p>
+</dd></dl>
+
+<dl class="cpp class">
+<dt id="_CPPv4N8scenario11controllers18SetJointReferencesE">
+<span id="_CPPv3N8scenario11controllers18SetJointReferencesE"></span><span id="_CPPv2N8scenario11controllers18SetJointReferencesE"></span><span id="scenario::controllers::SetJointReferences"></span><span class="target" id="classscenario_1_1controllers_1_1SetJointReferences"></span><em class="property">class </em><code class="sig-name descname">SetJointReferences</code><a class="headerlink" href="#_CPPv4N8scenario11controllers18SetJointReferencesE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Subclassed by <a class="reference internal" href="#classscenario_1_1controllers_1_1ComputedTorqueFixedBase"><span class="std std-ref">scenario::controllers::ComputedTorqueFixedBase</span></a></p>
+</dd></dl>
+
+<dl class="cpp class">
+<dt id="_CPPv4N8scenario11controllers17SetBaseReferencesE">
+<span id="_CPPv3N8scenario11controllers17SetBaseReferencesE"></span><span id="_CPPv2N8scenario11controllers17SetBaseReferencesE"></span><span id="scenario::controllers::SetBaseReferences"></span><span class="target" id="classscenario_1_1controllers_1_1SetBaseReferences"></span><em class="property">class </em><code class="sig-name descname">SetBaseReferences</code><a class="headerlink" href="#_CPPv4N8scenario11controllers17SetBaseReferencesE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
+<dl class="cpp class">
+<dt id="_CPPv4N8scenario11controllers23ComputedTorqueFixedBaseE">
+<span id="_CPPv3N8scenario11controllers23ComputedTorqueFixedBaseE"></span><span id="_CPPv2N8scenario11controllers23ComputedTorqueFixedBaseE"></span><span id="scenario::controllers::ComputedTorqueFixedBase"></span><span class="target" id="classscenario_1_1controllers_1_1ComputedTorqueFixedBase"></span><em class="property">class </em><code class="sig-name descname">ComputedTorqueFixedBase</code> : <em class="property">public</em> <a class="reference internal" href="core.html#_CPPv48scenario" title="scenario">scenario</a>::controllers::<a class="reference internal" href="#_CPPv4N8scenario11controllers10ControllerE" title="scenario::controllers::Controller">Controller</a>, <em class="property">public</em> <a class="reference internal" href="core.html#_CPPv48scenario" title="scenario">scenario</a>::controllers::<a class="reference internal" href="#_CPPv4N8scenario11controllers16UseScenarioModelE" title="scenario::controllers::UseScenarioModel">UseScenarioModel</a>, <em class="property">public</em> <a class="reference internal" href="core.html#_CPPv48scenario" title="scenario">scenario</a>::controllers::<a class="reference internal" href="#_CPPv4N8scenario11controllers18SetJointReferencesE" title="scenario::controllers::SetJointReferences">SetJointReferences</a><a class="headerlink" href="#_CPPv4N8scenario11controllers23ComputedTorqueFixedBaseE" title="Permalink to this definition">¶</a><br /></dt>
+<dd></dd></dl>
+
 </div>
 
 
-           </div>
-           
-          </div>
-          <footer>
-  
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="../apidoc/scenario/scenario.bindings.html" class="btn btn-neutral float-right" title="scenario.bindings" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
-        <a href="core.html" class="btn btn-neutral float-left" title="Core" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
-      
-    </div>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>
-        
-        &copy; Copyright 2020, Istituto Italiano di Tecnologia
-
-    </p>
-  </div>
-    
-    
-    
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
-
-</footer>
-
+              </div>
+              
         </div>
-      </div>
-
-    </section>
-
-  </div>
-  
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
-  <span class="rst-current-version" data-toggle="rst-current-version">
-    <span class="fa fa-book"> Other Versions</span>
-    v: devel
-    <span class="fa fa-caret-down"></span>
-  </span>
-  <div class="rst-other-versions">
-    <dl>
-      <dt>Branches</dt>
-      <dd><a href="gazebo.html">devel</a></dd>
-    </dl>
-  </div>
-</div>
-
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script>
-
-  
-  
+    </div>
     
-   
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="core.html" title="previous page">Core</a>
+    <a class='right-next' id="next-link" href="../apidoc/scenario/scenario.bindings.html" title="next page">scenario.bindings</a>
 
-</body>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Diego Ferigo<br/>
+        
+            &copy; Copyright 2020, Istituto Italiano di Tecnologia.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
 </html>

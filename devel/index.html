@@ -1,371 +1,403 @@
 
-
 <!DOCTYPE html>
-<html class="writer-html5" lang="en" >
-<head>
-  <meta charset="utf-8">
-  
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <title>gym-ignition &mdash; gym-ignition  documentation</title>
-  
 
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-
-  
-  
-  
-  
-
-  
-  <!--[if lt IE 9]>
-    <script src="_static/js/html5shiv.min.js"></script>
-  <![endif]-->
-  
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>What is gym-ignition? &#8212; gym-ignition  documentation</title>
     
-      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
-        <script src="_static/jquery.js"></script>
-        <script src="_static/underscore.js"></script>
-        <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
-        <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
-    
-    <script type="text/javascript" src="_static/js/theme.js"></script>
+  <link rel="stylesheet" href="_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
     
+  <link rel="stylesheet"
+    href="_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinx-book-theme.2d2078699c18a0efb88233928e1cf6ed.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/semantic-ui-2.4.1/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/semantic-ui-2.4.1/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.css" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx_tabs/tabs.css" />
+    
+  <link rel="preload" as="script" href="_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Introduction" href="installation/intro.html" /> 
-</head>
+    <link rel="next" title="Why ScenarIO" href="motivations/why_gym_ignition.html" />
 
-<body class="wy-body-for-nav">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
 
-   
-  <div class="wy-grid-for-nav">
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
     
-    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
-      <div class="wy-side-scroll">
-        <div class="wy-side-nav-search" >
+
+    <div class="container-xl">
+      <div class="row">
           
-
-          
-            <a href="#" class="icon icon-home" alt="Documentation Home"> gym-ignition
-          
-
-          
-          </a>
-
-          
-            
-            
-          
-
-          
-<div role="search">
-  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
-    <input type="text" name="q" placeholder="Search docs" />
-    <input type="hidden" name="check_keywords" value="yes" />
-    <input type="hidden" name="area" value="default" />
-  </form>
-</div>
-
-          
-        </div>
-
-        
-        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
-          
-            
-            
-              
-            
-            
-              <p class="caption"><span class="caption-text">Installation:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="installation/intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation/stable.html">Stable Channel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation/nightly.html">Nightly Channel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation/optional_dependencies.html">Optional Dependencies</a></li>
-</ul>
-<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="breathe/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="breathe/gazebo.html">Gazebo</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Python Packages</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="apidoc/scenario/scenario.bindings.html">scenario.bindings</a></li>
-<li class="toctree-l1"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.html">gym_ignition</a></li>
-<li class="toctree-l1"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.html">gym_ignition_environments</a></li>
-</ul>
-<p class="caption"><span class="caption-text">Information</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="info/faq.html">FAQ</a></li>
-<li class="toctree-l1"><a class="reference internal" href="info/limitations.html">Limitations</a></li>
-</ul>
-
-            
-          
-        </div>
-        
-      </div>
-    </nav>
-
-    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
-
-      
-      <nav class="wy-nav-top" aria-label="top navigation">
-        
-          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="#">gym-ignition</a>
-        
-      </nav>
-
-
-      <div class="wy-nav-content">
-        
-        <div class="rst-content">
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<div role="navigation" aria-label="breadcrumbs navigation">
-
-  <ul class="wy-breadcrumbs">
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
     
-      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
-        
-      <li>gym-ignition</li>
-    
-    
-      <li class="wy-breadcrumbs-aside">
-        
-            
-            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
-          
-        
-      </li>
-    
-  </ul>
-
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="#">
   
-  <hr/>
-</div>
-          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
-           <div itemprop="articleBody">
-            
-  <div class="section" id="gym-ignition">
-<h1>gym-ignition<a class="headerlink" href="#gym-ignition" title="Permalink to this headline">¶</a></h1>
-<p><strong>gym-ignition is a simple framework to create reproducible robotics environments for reinforcement learning research.</strong></p>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Installation:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="installation/intro.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation/stable.html">Stable Channel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation/nightly.html">Nightly Channel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation/optional_dependencies.html">Optional Dependencies</a></li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">ScenarI/O C++ API:</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="breathe/core.html">Core</a></li>
-<li class="toctree-l1"><a class="reference internal" href="breathe/gazebo.html">Gazebo</a></li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Python Packages</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="apidoc/scenario/scenario.bindings.html">scenario.bindings</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/scenario/scenario.bindings.html#module-scenario.bindings.core">scenario.bindings.core</a></li>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/scenario/scenario.bindings.html#module-scenario.bindings.gazebo">scenario.bindings.gazebo</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.html">gym_ignition</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.base.html">gym_ignition.base</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.base.html#module-gym_ignition.base.runtime">gym_ignition.base.runtime</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.base.html#module-gym_ignition.base.task">gym_ignition.base.task</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.context.html">gym_ignition.context</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.context.gazebo.html">gym_ignition.context.gazebo</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.context.gazebo.html#module-gym_ignition.context.gazebo.controllers">gym_ignition.context.gazebo.controllers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.context.gazebo.html#module-gym_ignition.context.gazebo.plugin">gym_ignition.context.gazebo.plugin</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.randomizers.html">gym_ignition.randomizers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.randomizers.base.html">gym_ignition.randomizers.base</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.randomizers.base.html#module-gym_ignition.randomizers.base.model">gym_ignition.randomizers.base.model</a></li>
-<li class="toctree-l4"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.randomizers.base.html#module-gym_ignition.randomizers.base.physics">gym_ignition.randomizers.base.physics</a></li>
-<li class="toctree-l4"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.randomizers.base.html#module-gym_ignition.randomizers.base.task">gym_ignition.randomizers.base.task</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.randomizers.model.html">gym_ignition.randomizers.model</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.randomizers.model.html#module-gym_ignition.randomizers.model.sdf">gym_ignition.randomizers.model.sdf</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.randomizers.physics.html">gym_ignition.randomizers.physics</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.randomizers.physics.html#module-gym_ignition.randomizers.physics.dart">gym_ignition.randomizers.physics.dart</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.randomizers.html#module-gym_ignition.randomizers.gazebo_env_randomizer">gym_ignition.randomizers.gazebo_env_randomizer</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.rbd.html">gym_ignition.rbd</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.rbd.idyntree.html">gym_ignition.rbd.idyntree</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.rbd.idyntree.html#module-gym_ignition.rbd.idyntree.helpers">gym_ignition.rbd.idyntree.helpers</a></li>
-<li class="toctree-l4"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.rbd.idyntree.html#module-gym_ignition.rbd.idyntree.inverse_kinematics_nlp">gym_ignition.rbd.idyntree.inverse_kinematics_nlp</a></li>
-<li class="toctree-l4"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.rbd.idyntree.html#module-gym_ignition.rbd.idyntree.kindyncomputations">gym_ignition.rbd.idyntree.kindyncomputations</a></li>
-<li class="toctree-l4"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.rbd.idyntree.html#module-gym_ignition.rbd.idyntree.numpy">gym_ignition.rbd.idyntree.numpy</a></li>
-</ul>
-</li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.rbd.html#module-gym_ignition.rbd.conversions">gym_ignition.rbd.conversions</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.runtimes.html">gym_ignition.runtimes</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.runtimes.html#module-gym_ignition.runtimes.gazebo_runtime">gym_ignition.runtimes.gazebo_runtime</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.runtimes.html#module-gym_ignition.runtimes.realtime_runtime">gym_ignition.runtimes.realtime_runtime</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.scenario.html">gym_ignition.scenario</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.scenario.html#module-gym_ignition.scenario.model_with_file">gym_ignition.scenario.model_with_file</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.scenario.html#module-gym_ignition.scenario.model_wrapper">gym_ignition.scenario.model_wrapper</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.utils.html">gym_ignition.utils</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.utils.html#module-gym_ignition.utils.logger">gym_ignition.utils.logger</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.utils.html#module-gym_ignition.utils.math">gym_ignition.utils.math</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.utils.html#module-gym_ignition.utils.misc">gym_ignition.utils.misc</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.utils.html#module-gym_ignition.utils.resource_finder">gym_ignition.utils.resource_finder</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.utils.html#module-gym_ignition.utils.scenario">gym_ignition.utils.scenario</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition/gym_ignition.utils.html#module-gym_ignition.utils.typing">gym_ignition.utils.typing</a></li>
-</ul>
-</li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.html">gym_ignition_environments</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.models.html">gym_ignition_environments.models</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.models.html#module-gym_ignition_environments.models.cartpole">gym_ignition_environments.models.cartpole</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.models.html#module-gym_ignition_environments.models.icub">gym_ignition_environments.models.icub</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.models.html#module-gym_ignition_environments.models.panda">gym_ignition_environments.models.panda</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.models.html#module-gym_ignition_environments.models.pendulum">gym_ignition_environments.models.pendulum</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.randomizers.html">gym_ignition_environments.randomizers</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.randomizers.html#module-gym_ignition_environments.randomizers.cartpole">gym_ignition_environments.randomizers.cartpole</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.randomizers.html#module-gym_ignition_environments.randomizers.cartpole_no_rand">gym_ignition_environments.randomizers.cartpole_no_rand</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.tasks.html">gym_ignition_environments.tasks</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.tasks.html#module-gym_ignition_environments.tasks.cartpole_continuous_balancing">gym_ignition_environments.tasks.cartpole_continuous_balancing</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.tasks.html#module-gym_ignition_environments.tasks.cartpole_continuous_swingup">gym_ignition_environments.tasks.cartpole_continuous_swingup</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.tasks.html#module-gym_ignition_environments.tasks.cartpole_discrete_balancing">gym_ignition_environments.tasks.cartpole_discrete_balancing</a></li>
-<li class="toctree-l3"><a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.tasks.html#module-gym_ignition_environments.tasks.pendulum_swingup">gym_ignition_environments.tasks.pendulum_swingup</a></li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-</div>
-<div class="toctree-wrapper compound">
-<p class="caption"><span class="caption-text">Information</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="info/faq.html">FAQ</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="info/faq.html#interaction-with-tensorflow">Interaction with Tensorflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="info/faq.html#ogre2-and-opengl">Ogre2 and OpenGL</a></li>
-<li class="toctree-l2"><a class="reference internal" href="info/faq.html#default-sdf-world">Default SDF world</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="info/limitations.html">Limitations</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="info/limitations.html#sensors-support">Sensors support</a></li>
-</ul>
-</li>
-</ul>
-</div>
-</div>
-
-
-           </div>
-           
-          </div>
-          <footer>
   
-    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
-      
-        <a href="installation/intro.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
-      
-      
+  <h1 class="site-logo" id="site-title">gym-ignition  documentation</h1>
+  
+</a>
+</div>
+
+<form class="bd-search d-flex align-items-center" action="search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="#">
+   What is gym-ignition?
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Motivations
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="motivations/why_gym_ignition.html">
+   Why ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="motivations/why_gym_ignition.html#why-ignition-gazebo">
+   Why Ignition Gazebo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="motivations/why_gym_ignition.html#why-gym-ignition">
+   Why gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="installation/support_policy.html">
+   Support policy
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="installation/stable.html">
+   Stable
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="installation/nightly.html">
+   Nightly
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="installation/developer.html">
+   Developer Installation
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="getting_started/scenario.html">
+   ScenarI/O
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="getting_started/manipulation.html">
+   Manipulation example
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="getting_started/gym-ignition.html">
+   gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  ScenarI/O C++ API:
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="breathe/core.html">
+   Core
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="breathe/gazebo.html">
+   Gazebo
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Python Packages
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="apidoc/scenario/scenario.bindings.html">
+   scenario.bindings
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="apidoc/gym-ignition/gym_ignition.html">
+   gym_ignition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="apidoc/gym-ignition-environments/gym_ignition_environments.html">
+   gym_ignition_environments
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Information
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="info/faq.html">
+   FAQ
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="info/limitations.html">
+   Limitations
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+ <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
     </div>
-  
-
-  <hr/>
-
-  <div role="contentinfo">
-    <p>
+    <div class="col pl-2 topbar-main">
         
-        &copy; Copyright 2020, Istituto Italiano di Tecnologia
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        <div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
 
-    </p>
-  </div>
     
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="_sources/index.rst.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.rst</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
     
-    
-    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
-    
-    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
-    
-    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+</div>
+        <!-- Source interaction buttons -->
 
-</footer>
-
-        </div>
-      </div>
-
-    </section>
-
-  </div>
-  
-<div class="rst-versions" data-toggle="rst-versions" role="note" aria-label="versions">
-  <span class="rst-current-version" data-toggle="rst-current-version">
-    <span class="fa fa-book"> Other Versions</span>
-    v: devel
-    <span class="fa fa-caret-down"></span>
-  </span>
-  <div class="rst-other-versions">
-    <dl>
-      <dt>Branches</dt>
-      <dd><a href="index.html">devel</a></dd>
-    </dl>
-  </div>
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/robotoogy/gym-ignition"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/robotoogy/gym-ignition/issues/new?title=Issue%20on%20page%20%2Findex.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        <a class="edit-button" href="https://github.com/robotoogy/gym-ignition/edit/master/docs/sphinx/index.rst"><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
+    </div>
 </div>
 
-  <script type="text/javascript">
-      jQuery(function () {
-          SphinxRtdTheme.Navigation.enable(true);
-      });
-  </script>
 
-  
-  
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="what-is-gym-ignition">
+<span id="id1"></span><h1>What is gym-ignition?<a class="headerlink" href="#what-is-gym-ignition" title="Permalink to this headline">¶</a></h1>
+<p><strong>gym-ignition is a framework to create reproducible robotics environments for reinforcement learning research.</strong></p>
+<p>The aims of the project are the following:</p>
+<ul class="simple">
+<li><p>Provide unified APIs for interfacing with both simulated and real robots.</p></li>
+<li><p>Implement the simulation backend interfacing with the Ignition Gazebo simulator.</p></li>
+<li><p>Enable a seamless switch of all the physics engines supported by Ignition Gazebo.</p></li>
+<li><p>Guarantee the reproducibility and the scalability of the simulations by using the simulator as a library, without
+relying on any network transport.</p></li>
+<li><p>Simplify the development of OpenAI Gym environments for robot learning research.</p></li>
+</ul>
+<p><strong>gym-ignition</strong> targets both <em>control</em> and <em>robot learning</em> research domains:</p>
+<ul class="simple">
+<li><p>Researchers in robotics and control can simulate their robots with familiar tools like Gazebo and URDF,
+without the need to rely on any middleware.</p></li>
+<li><p>Researchers in robot learning can quickly develop new robotic environments that can scale to hundreds of parallel instances.</p></li>
+</ul>
+<p>To know more about why we started developing gym-ignition, why we selected Ignition Gazebo for our simulations,
+and what are our long-term goals, visit the <a class="reference internal" href="motivations/why_gym_ignition.html#motivations"><span class="std std-ref">Motivations</span></a> page.</p>
+<table class="table">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><img alt="pendulum_swing" src="https://user-images.githubusercontent.com/469199/98664559-cdaab180-234a-11eb-8c8a-9ebb172dd723.gif" /></p></td>
+<td><p><img alt="panda_grasping" src="https://user-images.githubusercontent.com/469199/98717254-1edb9500-238d-11eb-9e10-54fdd09dfda8.gif" /></p></td>
+<td><p><img alt="icub_stepping" src="https://user-images.githubusercontent.com/469199/98664612-df8c5480-234a-11eb-94b0-7cc19bc36ef6.gif" /></p></td>
+</tr>
+</tbody>
+</table>
+<p>We are building an entire ecosystem around gym-ignition, if you’re interested have a look to the other projects:</p>
+<table class="table">
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>ScenarI/O and <code class="docutils literal notranslate"><span class="pre">gym_ignition</span></code></p></th>
+<th class="head"><p>Robot Models</p></th>
+<th class="head"><p>Ignition Plugins</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference external" href="https://github.com/robotology/gym-ignition">robotology/gym-ignition</a></p></td>
+<td><p><a class="reference external" href="https://github.com/robotology/gym-ignition-models">robotology/gym-ignition-models</a></p></td>
+<td><p><a class="reference external" href="https://github.com/dic-iit/gazebo-scenario-plugins">dic-iit/gazebo-scenario-plugins</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+
+
+              </div>
+              
+        </div>
+    </div>
     
-   
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='right-next' id="next-link" href="motivations/why_gym_ignition.html" title="next page">Why ScenarIO</a>
 
-</body>
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Diego Ferigo<br/>
+        
+            &copy; Copyright 2020, Istituto Italiano di Tecnologia.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
 </html>
