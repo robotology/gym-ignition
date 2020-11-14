@@ -1398,9 +1398,11 @@ void Physics::Impl::UpdatePhysics(const ignition::gazebo::UpdateInfo& _info,
                     return false;
                 }
 
-                auto totalWrench = _wrenchWithDurComp->Data().totalWrench();
-                math::Vector3 force = msgs::Convert(totalWrench.force());
-                math::Vector3 torque = msgs::Convert(totalWrench.torque());
+                const auto& totalWrench =
+                    _wrenchWithDurComp->Data().totalWrench();
+                const math::Vector3 force = msgs::Convert(totalWrench.force());
+                const math::Vector3 torque =
+                    msgs::Convert(totalWrench.torque());
 
                 linkForceFeature->AddExternalForce(
                     math::eigen3::convert(force));
