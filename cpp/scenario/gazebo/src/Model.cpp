@@ -33,6 +33,7 @@
 #include "scenario/gazebo/components/BaseWorldAccelerationTarget.h"
 #include "scenario/gazebo/components/BaseWorldVelocityTarget.h"
 #include "scenario/gazebo/components/JointControllerPeriod.h"
+#include "scenario/gazebo/components/Timestamp.h"
 #include "scenario/gazebo/components/WorldVelocityCmd.h"
 #include "scenario/gazebo/exceptions.h"
 #include "scenario/gazebo/helpers.h"
@@ -142,6 +143,16 @@ bool Model::initialize(const ignition::gazebo::Entity modelEntity,
 bool Model::createECMResources()
 {
     sMessage << "Model: [" << m_entity << "] " << this->name() << std::endl;
+
+    // When the model is inserted, store the time of creation
+    if (!m_ecm->EntityHasComponentType(
+            m_entity, ignition::gazebo::components::Timestamp::typeId)) {
+        const auto& parentWorld = utils::getParentWorld(*this);
+        utils::setComponentData<ignition::gazebo::components::Timestamp>(
+            m_ecm,
+            m_entity,
+            utils::doubleToSteadyClockDuration(parentWorld->time()));
+    }
 
     // Create required link resources
     sMessage << "Links:" << std::endl;
