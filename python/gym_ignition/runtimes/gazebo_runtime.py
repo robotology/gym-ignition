@@ -69,9 +69,6 @@ class GazeboRuntime(runtime.Runtime):
         # Trigger the initialization of the simulator and the world
         _ = self.gazebo
 
-        # Store the world in the task
-        self.task.world = self.world
-
         # Initialize the spaces
         self.action_space, self.observation_space = self.task.create_spaces()
 
@@ -260,6 +257,9 @@ class GazeboRuntime(runtime.Runtime):
 
             if not ok_ground:
                 raise RuntimeError("Failed to insert the ground plane")
+
+        # Set the world in the task
+        self.task.world = world
 
         # Load and randomize the physics
         self.physics_randomizer.randomize_physics(task=self.task)
