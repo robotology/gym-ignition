@@ -3,13 +3,12 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
-from scenario import gazebo as scenario
+import gym_ignition.base.task
 
 
 class PhysicsRandomizer(abc.ABC):
     """
-    Abstract class that provides the machinery for randomizing physics in a Ignition
-    Gazebo simulation.
+    Abstract class that provides the machinery for randomizing the physics of a Task.
 
     Args:
         randomize_after_rollouts_num: defines after many rollouts physics should be
@@ -22,9 +21,9 @@ class PhysicsRandomizer(abc.ABC):
         self.randomize_after_rollouts_num = randomize_after_rollouts_num
 
     @abc.abstractmethod
-    def randomize_physics(self, world: scenario.World) -> None:
+    def randomize_physics(self, task: gym_ignition.base.task.Task) -> None:
         """
-        Method that insert and configures the physics of a world.
+        Method that insert and configures the physics of a Task's world.
 
         By default this method loads a plugin that uses DART with no randomizations.
         Randomizing physics engine parameters or changing physics engine backend could be
@@ -32,7 +31,7 @@ class PhysicsRandomizer(abc.ABC):
         :py:class:`~gym_ignition.runtimes.gazebo_runtime.GazeboRuntime`.
 
         Args:
-            world: A world object without physics.
+            task: A task containing a world object without physics.
         """
         pass
 

@@ -5,6 +5,7 @@
 import abc
 import numpy as np
 from typing import Union
+import gym_ignition.base.task
 from gym_ignition import utils
 from gym_ignition.utils import misc
 from gym_ignition import randomizers
@@ -22,7 +23,7 @@ SupportedTasks = Union[tasks.cartpole_discrete_balancing.CartPoleDiscreteBalanci
 
 
 class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
-                               randomizers.base.model.ModelRandomizer,
+                               randomizers.base.model.ModelDescriptionRandomizer,
                                randomizers.base.physics.PhysicsRandomizer,
                                abc.ABC):
     """
@@ -62,15 +63,12 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
 
     def randomize_physics(self, world: scenario.World) -> None:
 
-        ok_physics = world.set_physics_engine(scenario.PhysicsEngine_dart)
-
-        if not ok_physics:
+        if not world.set_physics_engine(scenario.PhysicsEngine_dart):
             raise RuntimeError("Failed to insert the physics plugin")
 
         gravity_z = self.np_random_physics.normal(loc=-9.8, scale=0.2)
-        ok_gravity = world.set_gravity((0, 0, gravity_z))
 
-        if not ok_gravity:
+        if not world.set_gravity((0, 0, gravity_z)):
             raise RuntimeError("Failed to set the gravity")
 
     # ========================
@@ -102,8 +100,8 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
         if not ok_paused_run:
             raise RuntimeError("Failed to execute a paused Gazebo run")
 
-        # Generate a random model
-        random_model = self.randomize_model()
+        # Generate a random model description
+        random_model = self.randomize_model_description(task=task)
 
         # Insert a new model in the world
         self._populate_world(task=task, cartpole_model=random_model)
@@ -114,18 +112,18 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
         if not ok_paused_run:
             raise RuntimeError("Failed to execute a paused Gazebo run")
 
-    # =========================
-    # ModelRandomizer interface
-    # =========================
+    # ====================================
+    # ModelDescriptionRandomizer interface
+    # ====================================
 
-    def seed_model_randomizer(self, seed: int) -> None:
+    def seed_model_description_randomizer(self, seed: int) -> None:
 
         if seed == self._seed:
             return
 
         self._get_sdf_randomizer().seed(seed=self._seed)
 
-    def randomize_model(self) -> str:
+    def randomize_model_description(self, task: gym_ignition.base.task.Task) -> str:
 
         randomizer = self._get_sdf_randomizer()
         sdf = misc.string_to_file(randomizer.sample())
