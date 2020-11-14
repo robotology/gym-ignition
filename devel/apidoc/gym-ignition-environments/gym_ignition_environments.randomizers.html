@@ -372,7 +372,7 @@ cartpole environments.</p>
 
 <dl class="py method">
 <dt id="gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.randomize_physics">
-<code class="sig-name descname">randomize_physics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">world</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.randomize_physics" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">randomize_physics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">task</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.randomize_physics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method that insert and configures the physics of a Task’s world.</p>
 <p>By default this method loads a plugin that uses DART with no randomizations.
 Randomizing physics engine parameters or changing physics engine backend could be
@@ -380,7 +380,7 @@ done by redefining this method and passing it to
 <a class="reference internal" href="../gym-ignition/gym_ignition.runtimes.html#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime" title="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime"><code class="xref py py-class docutils literal notranslate"><span class="pre">GazeboRuntime</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>task</strong> – A task containing a world object without physics.</p>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../gym-ignition/gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – A task containing a world object without physics.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
