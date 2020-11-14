@@ -161,8 +161,8 @@ bool Model::createECMResources()
         }
     }
 
-    if (!this->enableSelfCollisions()) {
-        sError << "Failed to enable self collisions" << std::endl;
+    if (!this->enableSelfCollisions(false)) {
+        sError << "Failed to initialize disabled self collisions" << std::endl;
         return false;
     }
 
@@ -662,13 +662,14 @@ std::vector<double> Model::historyOfAppliedJointForces(
 
 bool Model::contactsEnabled() const
 {
-    bool enabled = true;
-
     for (auto& link : this->links()) {
-        enabled = enabled && link->contactsEnabled();
+        if (!link->contactsEnabled()) {
+            return false;
+        }
     }
 
-    return enabled;
+    // Return true only if all links have enabled contact detection
+    return true;
 }
 
 bool Model::enableContacts(const bool enable)
@@ -699,7 +700,7 @@ bool Model::enableSelfCollisions(const bool enable)
     }
 
     // Enable contact detection first
-    if (enable && !this->enableContacts()) {
+    if (enable && !this->enableContacts(true)) {
         sError << "Failed to enable contact detection" << std::endl;
         return false;
     }

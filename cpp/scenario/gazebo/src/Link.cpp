@@ -295,10 +295,6 @@ std::array<double, 3> Link::bodyAngularAcceleration() const
 
 bool Link::contactsEnabled() const
 {
-    // Here we return true only if contacts are enables on all
-    // link's collision elements;
-    bool enabled = true;
-
     const auto& collisionEntities = m_ecm->ChildrenByComponents(
         m_entity,
         ignition::gazebo::components::Collision(),
@@ -310,10 +306,15 @@ bool Link::contactsEnabled() const
         const bool hasContactSensorData = m_ecm->EntityHasComponentType(
             collisionEntity,
             ignition::gazebo::components::ContactSensorData::typeId);
-        enabled = enabled && hasContactSensorData;
+
+        // Return false if a collision does not have the contact data component
+        if (!hasContactSensorData) {
+            return false;
+        }
     }
 
-    return enabled;
+    // We return true only if contacts are enables on all collision entities
+    return true;
 }
 
 bool Link::enableContactDetection(const bool enable)
