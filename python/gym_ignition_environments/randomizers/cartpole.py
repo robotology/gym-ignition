@@ -61,14 +61,14 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
 
         self.np_random_physics = np.random.default_rng(seed=self._seed)
 
-    def randomize_physics(self, world: scenario.World) -> None:
+    def randomize_physics(self, task: gym_ignition.base.task.Task) -> None:
 
-        if not world.set_physics_engine(scenario.PhysicsEngine_dart):
+        if not task.world.to_gazebo().set_physics_engine(scenario.PhysicsEngine_dart):
             raise RuntimeError("Failed to insert the physics plugin")
 
         gravity_z = self.np_random_physics.normal(loc=-9.8, scale=0.2)
 
-        if not world.set_gravity((0, 0, gravity_z)):
+        if not task.world.to_gazebo().set_gravity((0, 0, gravity_z)):
             raise RuntimeError("Failed to set the gravity")
 
     # ========================

@@ -262,7 +262,7 @@ class GazeboRuntime(runtime.Runtime):
                 raise RuntimeError("Failed to insert the ground plane")
 
         # Load and randomize the physics
-        self.physics_randomizer.randomize_physics(world=world)
+        self.physics_randomizer.randomize_physics(task=self.task)
 
         # Store the world
         self._world = world
