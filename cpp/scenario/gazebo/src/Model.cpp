@@ -692,6 +692,12 @@ bool Model::selfCollisionsEnabled() const
 
 bool Model::enableSelfCollisions(const bool enable)
 {
+    if (!utils::parentModelJustCreated(*this)) {
+        sError << "The model has been already processed and its "
+               << "parameters cannot be modified" << std::endl;
+        return false;
+    }
+
     // Enable contact detection first
     if (enable && !this->enableContacts()) {
         sError << "Failed to enable contact detection" << std::endl;
