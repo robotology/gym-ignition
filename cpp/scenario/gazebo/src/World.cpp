@@ -100,6 +100,20 @@ bool World::initialize(const ignition::gazebo::Entity worldEntity,
 
 bool World::createECMResources()
 {
+    // Store the time of creation (big bang)
+    if (!m_ecm->EntityHasComponentType(
+            m_entity, ignition::gazebo::components::Timestamp::typeId)) {
+        utils::setComponentData<ignition::gazebo::components::Timestamp>(
+            m_ecm, m_entity, std::chrono::steady_clock::duration::zero());
+    }
+
+    // Initialize the simulated time at 0.0 (Physics will then update it)
+    if (!m_ecm->EntityHasComponentType(
+            m_entity, ignition::gazebo::components::SimulatedTime::typeId)) {
+        utils::setComponentData<ignition::gazebo::components::SimulatedTime>(
+            m_ecm, m_entity, std::chrono::steady_clock::duration::zero());
+    }
+
     return true;
 }
 
