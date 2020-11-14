@@ -42,12 +42,10 @@ def test_computed_torque_fixed_base(gazebo: scenario.GazeboSimulator):
     # import time
     # gazebo.gui()
     # time.sleep(3)
+    # gazebo.run(paused=True)
 
     # Get the model
-    panda: scenario.Model = world.get_model(model_name).to_gazebo()
-
-    # Disable self-collisions
-    panda.enable_self_collisions(False)
+    panda = world.get_model(model_name).to_gazebo()
 
     # Set the controller period
     panda.set_controller_period(step_size)

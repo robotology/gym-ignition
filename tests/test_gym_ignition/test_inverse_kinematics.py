@@ -26,7 +26,6 @@ def test_inverse_kinematics(default_world: Tuple[scenario_gazebo.GazeboSimulator
 
     # Get the robot
     panda = models.panda.Panda(world=world)
-    panda.enable_self_collisions(enable=False)
     gazebo.run(paused=True)
 
     # Control all the joints
