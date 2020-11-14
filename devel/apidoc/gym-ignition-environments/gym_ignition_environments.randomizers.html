@@ -195,19 +195,22 @@
 <dl class="py class">
 <dt id="gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin">
 <em class="property">class </em><code class="sig-prename descclassname">gym_ignition_environments.randomizers.cartpole.</code><code class="sig-name descname">CartpoleRandomizersMixin</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">randomize_physics_after_rollouts</span><span class="o">=</span><span class="default_value">0</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.randomizers.base.html#gym_ignition.randomizers.base.task.TaskRandomizer" title="gym_ignition.randomizers.base.task.TaskRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.randomizers.base.task.TaskRandomizer</span></code></a>, <a class="reference internal" href="../gym-ignition/gym_ignition.randomizers.base.html#gym_ignition.randomizers.base.model.ModelRandomizer" title="gym_ignition.randomizers.base.model.ModelRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.randomizers.base.model.ModelRandomizer</span></code></a>, <a class="reference internal" href="../gym-ignition/gym_ignition.randomizers.base.html#gym_ignition.randomizers.base.physics.PhysicsRandomizer" title="gym_ignition.randomizers.base.physics.PhysicsRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.randomizers.base.physics.PhysicsRandomizer</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.randomizers.base.html#gym_ignition.randomizers.base.task.TaskRandomizer" title="gym_ignition.randomizers.base.task.TaskRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.randomizers.base.task.TaskRandomizer</span></code></a>, <a class="reference internal" href="../gym-ignition/gym_ignition.randomizers.base.html#gym_ignition.randomizers.base.model.ModelDescriptionRandomizer" title="gym_ignition.randomizers.base.model.ModelDescriptionRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.randomizers.base.model.ModelDescriptionRandomizer</span></code></a>, <a class="reference internal" href="../gym-ignition/gym_ignition.randomizers.base.html#gym_ignition.randomizers.base.physics.PhysicsRandomizer" title="gym_ignition.randomizers.base.physics.PhysicsRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.randomizers.base.physics.PhysicsRandomizer</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Mixin that collects the implementation of task, model and physics randomizations for
 cartpole environments.</p>
 <dl class="py method">
-<dt id="gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.randomize_model">
-<code class="sig-name descname">randomize_model</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.randomize_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Randomize the model.</p>
+<dt id="gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.randomize_model_description">
+<code class="sig-name descname">randomize_model_description</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">task</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.randomize_model_description" title="Permalink to this definition">¶</a></dt>
+<dd><p>Randomize the model description.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Return type</dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>task</strong> (<a class="reference internal" href="../gym-ignition/gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – The task that operates on the model description to randomize.</p>
 </dd>
-<dt class="field-even">Returns</dt>
-<dd class="field-even"><p>A string with the randomized model.</p>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A string with the randomized model description.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -215,14 +218,14 @@ cartpole environments.</p>
 <dl class="py method">
 <dt id="gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.randomize_physics">
 <code class="sig-name descname">randomize_physics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">world</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.randomize_physics" title="Permalink to this definition">¶</a></dt>
-<dd><p>Method that insert and configures the physics of a world.</p>
+<dd><p>Method that insert and configures the physics of a Task’s world.</p>
 <p>By default this method loads a plugin that uses DART with no randomizations.
 Randomizing physics engine parameters or changing physics engine backend could be
 done by redefining this method and passing it to
 <a class="reference internal" href="../gym-ignition/gym_ignition.runtimes.html#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime" title="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime"><code class="xref py py-class docutils literal notranslate"><span class="pre">GazeboRuntime</span></code></a>.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>world</strong> (<a class="reference internal" href="../scenario/scenario.bindings.html#scenario.bindings.gazebo.World" title="scenario.bindings.gazebo.World"><code class="xref py py-class docutils literal notranslate"><span class="pre">World</span></code></a>) – A world object without physics.</p>
+<dd class="field-odd"><p><strong>task</strong> – A task containing a world object without physics.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -253,8 +256,8 @@ property that provides access to the simulated
 </dd></dl>
 
 <dl class="py method">
-<dt id="gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.seed_model_randomizer">
-<code class="sig-name descname">seed_model_randomizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.seed_model_randomizer" title="Permalink to this definition">¶</a></dt>
+<dt id="gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.seed_model_description_randomizer">
+<code class="sig-name descname">seed_model_description_randomizer</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.randomizers.cartpole.CartpoleRandomizersMixin.seed_model_description_randomizer" title="Permalink to this definition">¶</a></dt>
 <dd><p>Seed the randomizer to ensure reproducibility.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
