@@ -33,6 +33,7 @@
 #include "scenario/gazebo/components/BaseWorldAccelerationTarget.h"
 #include "scenario/gazebo/components/BaseWorldVelocityTarget.h"
 #include "scenario/gazebo/components/JointControllerPeriod.h"
+#include "scenario/gazebo/components/Timestamp.h"
 #include "scenario/gazebo/components/WorldVelocityCmd.h"
 #include "scenario/gazebo/exceptions.h"
 #include "scenario/gazebo/helpers.h"
@@ -143,6 +144,16 @@ bool Model::createECMResources()
 {
     sMessage << "Model: [" << m_entity << "] " << this->name() << std::endl;
 
+    // When the model is inserted, store the time of creation
+    if (!m_ecm->EntityHasComponentType(
+            m_entity, ignition::gazebo::components::Timestamp::typeId)) {
+        const auto& parentWorld = utils::getParentWorld(*this);
+        utils::setComponentData<ignition::gazebo::components::Timestamp>(
+            m_ecm,
+            m_entity,
+            utils::doubleToSteadyClockDuration(parentWorld->time()));
+    }
+
     // Create required link resources
     sMessage << "Links:" << std::endl;
     for (const auto& link : this->links()) {
@@ -161,8 +172,8 @@ bool Model::createECMResources()
         }
     }
 
-    if (!this->enableSelfCollisions()) {
-        sError << "Failed to enable self collisions" << std::endl;
+    if (!this->enableSelfCollisions(false)) {
+        sError << "Failed to initialize disabled self collisions" << std::endl;
         return false;
     }
 
@@ -662,13 +673,14 @@ std::vector<double> Model::historyOfAppliedJointForces(
 
 bool Model::contactsEnabled() const
 {
-    bool enabled = true;
-
     for (auto& link : this->links()) {
-        enabled = enabled && link->contactsEnabled();
+        if (!link->contactsEnabled()) {
+            return false;
+        }
     }
 
-    return enabled;
+    // Return true only if all links have enabled contact detection
+    return true;
 }
 
 bool Model::enableContacts(const bool enable)
@@ -692,8 +704,14 @@ bool Model::selfCollisionsEnabled() const
 
 bool Model::enableSelfCollisions(const bool enable)
 {
+    if (!utils::parentModelJustCreated(*this)) {
+        sError << "The model has been already processed and its "
+               << "parameters cannot be modified" << std::endl;
+        return false;
+    }
+
     // Enable contact detection first
-    if (enable && !this->enableContacts()) {
+    if (enable && !this->enableContacts(true)) {
         sError << "Failed to enable contact detection" << std::endl;
         return false;
     }

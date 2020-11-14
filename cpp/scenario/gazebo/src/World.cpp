@@ -100,6 +100,20 @@ bool World::initialize(const ignition::gazebo::Entity worldEntity,
 
 bool World::createECMResources()
 {
+    // Store the time of creation (big bang)
+    if (!m_ecm->EntityHasComponentType(
+            m_entity, ignition::gazebo::components::Timestamp::typeId)) {
+        utils::setComponentData<ignition::gazebo::components::Timestamp>(
+            m_ecm, m_entity, std::chrono::steady_clock::duration::zero());
+    }
+
+    // Initialize the simulated time at 0.0 (Physics will then update it)
+    if (!m_ecm->EntityHasComponentType(
+            m_entity, ignition::gazebo::components::SimulatedTime::typeId)) {
+        utils::setComponentData<ignition::gazebo::components::SimulatedTime>(
+            m_ecm, m_entity, std::chrono::steady_clock::duration::zero());
+    }
+
     return true;
 }
 
@@ -343,20 +357,6 @@ bool World::insertModel(const std::string& modelFile,
         assert(modelNameSDF == modelNameEntity);
     }
 
-    // Set the initial model pose
-    if (pose != core::Pose::Identity()) {
-        utils::setComponentData<ignition::gazebo::components::Pose>(
-            m_ecm, modelEntity, utils::toIgnitionPose(pose));
-    }
-
-    // Get the current time
-    const auto& time = utils::getExistingComponentData<
-        ignition::gazebo::components::Timestamp>(m_ecm, m_entity);
-
-    // Insert the time of creation of the model
-    m_ecm->CreateComponent(modelEntity,
-                           ignition::gazebo::components::Timestamp(time));
-
     // Create the model
     auto model = std::make_shared<scenario::gazebo::Model>();
 
@@ -375,6 +375,16 @@ bool World::insertModel(const std::string& modelFile,
     if (!model->createECMResources()) {
         sError << "Failed to initialize ECM model resources" << std::endl;
         return false;
+    }
+
+    // Set the initial model pose.
+    // We directly override the Pose component instead of using
+    // Model::resetBasePose because it would just store a pose command that
+    // needs to be processed by the Physics system. Overriding the component,
+    // instead, has direct effect.
+    if (pose != core::Pose::Identity()) {
+        utils::setComponentData<ignition::gazebo::components::Pose>(
+            m_ecm, modelEntity, utils::toIgnitionPose(pose));
     }
 
     return true;

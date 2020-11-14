@@ -51,18 +51,18 @@
 %template(VectorOfContactPoints) std::vector<scenario::core::ContactPoint>;
 
 // Doxygen typemaps
-%typemap(doctype) std::array<double, 3> "Tuple[float, float, float]";
-%typemap(doctype) std::array<double, 4> "Tuple[float, float, float, float]";
-%typemap(doctype) std::array<double, 6> "Tuple[float, float, float, float, float, float,]";
-%typemap(doctype) std::vector<double> "Tuple[float, ...]";
-%typemap(doctype) std::vector<std::string> "Tuple[string, ...]";
-%typemap(doctype) std::vector<scenario::core::LinkPtr> "Tuple[Link, ...]";
-%typemap(doctype) std::vector<scenario::core::JointPtr> "Tuple[Joint, ...]";
-%typemap(doctype) std::vector<scenario::core::Contact> "Tuple[Contact, ...]";
-%typemap(doctype) std::vector<scenario::core::ContactPoint> "Tuple[ContactPoint, ...]";
+%typemap(doctype) std::array<double, 3> "Iterable[float, float, float]";
+%typemap(doctype) std::array<double, 4> "Iterable[float, float, float, float]";
+%typemap(doctype) std::array<double, 6> "Iterable[float, float, float, float, float, float]";
+%typemap(doctype) std::vector<double> "Iterable[float]";
+%typemap(doctype) std::vector<std::string> "Iterable[string]";
+%typemap(doctype) std::vector<scenario::core::LinkPtr> "Tuple[Link]";
+%typemap(doctype) std::vector<scenario::core::JointPtr> "Tuple[Joint]";
+%typemap(doctype) std::vector<scenario::core::Contact> "Tuple[Contact]";
+%typemap(doctype) std::vector<scenario::core::ContactPoint> "Tuple[ContactPoint]";
 
 %pythonbegin %{
-from typing import Tuple
+from typing import Iterable, Tuple
 %}
 
 // NOTE: Keep all template instantiations above.

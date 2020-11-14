@@ -27,6 +27,7 @@
 #include "scenario/gazebo/helpers.h"
 #include "ignition/common/Util.hh"
 #include "scenario/gazebo/Log.h"
+#include "scenario/gazebo/components/Timestamp.h"
 
 #include <Eigen/Dense>
 #include <ignition/gazebo/components/Component.hh>
@@ -125,6 +126,34 @@ void utils::rowMajorToColumnMajor(std::vector<double>& input,
     Map<ColMajorMat> colMajorView(input.data(), rows, cols);
 
     colMajorView = rowMajorView.eval();
+}
+
+bool utils::parentModelJustCreated(const GazeboEntity& gazeboEntity)
+{
+    // Get the parent world
+    const auto& world = utils::getParentWorld(gazeboEntity);
+
+    // Get the entity of the parent model
+    const auto parentModelEntity = [&]() -> ignition::gazebo::Entity {
+        return gazeboEntity.ecm()->EntityHasComponentType(
+                   gazeboEntity.entity(),
+                   ignition::gazebo::components::Model::typeId)
+                   ? gazeboEntity.entity()
+                   : utils::getParentModel(gazeboEntity)->entity();
+    }();
+
+    assert(world);
+    assert(parentModelEntity != ignition::gazebo::kNullEntity);
+
+    // Get the time the model was inserted
+    const auto& simTimeAtModelCreation = utils::getExistingComponentData<
+        ignition::gazebo::components::Timestamp>(gazeboEntity.ecm(),
+                                                 parentModelEntity);
+
+    const double simTimeAtModelCreationInSeconds =
+        utils::steadyClockDurationToDouble(simTimeAtModelCreation);
+
+    return world->time() == simTimeAtModelCreationInSeconds;
 }
 
 scenario::core::Pose

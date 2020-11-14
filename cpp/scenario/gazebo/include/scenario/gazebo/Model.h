@@ -163,6 +163,25 @@ public:
         const std::array<double, 3>& linear = {0, 0, 0},
         const std::array<double, 3>& angular = {0, 0, 0});
 
+    /**
+     * Check if the detection of self-collisions is enabled.
+     *
+     * @return True if self-collisions detection is enabled, false
+     * otherwise.
+     */
+    bool selfCollisionsEnabled() const;
+
+    /**
+     * Enable the detection of self-collisions.
+     *
+     * It will enable contact detection if it was disabled.
+     *
+     * @param enable True to enable the self-collision detection, false to
+     * disable.
+     * @return True for success, false otherwise.
+     */
+    bool enableSelfCollisions(const bool enable = true);
+
     // ==========
     // Model Core
     // ==========
@@ -212,10 +231,6 @@ public:
     bool contactsEnabled() const override;
 
     bool enableContacts(const bool enable = true) override;
-
-    bool selfCollisionsEnabled() const override;
-
-    bool enableSelfCollisions(const bool enable = true) override;
 
     std::vector<std::string> linksInContact() const override;
 

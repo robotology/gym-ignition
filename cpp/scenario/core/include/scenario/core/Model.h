@@ -207,25 +207,6 @@ public:
     virtual bool enableContacts(const bool enable = true) = 0;
 
     /**
-     * Check if the detection of self-collisions is enabled.
-     *
-     * @return True if self-collisions detection is enabled, false
-     * otherwise.
-     */
-    virtual bool selfCollisionsEnabled() const = 0;
-
-    /**
-     * Enable the detection of self-collisions.
-     *
-     * It will enable contact detection if it was disabled.
-     *
-     * @param enable True to enable the self-collision detection, false to
-     * disable.
-     * @return True for success, false otherwise.
-     */
-    virtual bool enableSelfCollisions(const bool enable = true) = 0;
-
-    /**
      * Get the vector of links with active contacts with other bodies.
      *
      * @return The vector of links in contact.

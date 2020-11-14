@@ -65,24 +65,6 @@ const ignition::math::PID DefaultPID(1, 0.1, 0.01, -1, 0, -1, 0, 0);
 class Joint::Impl
 {
 public:
-    static bool ModelJustCreated(const Joint& joint)
-    {
-        // Get the parent world and model
-        const auto& world = utils::getParentWorld(joint);
-        const auto& parentModel = utils::getParentModel(joint);
-        assert(world);
-        assert(parentModel);
-
-        // Get the time the model was inserted
-        const auto& simTimeAtModelCreation = utils::getExistingComponentData<
-            ignition::gazebo::components::Timestamp>(joint.ecm(),
-                                                     parentModel->entity());
-
-        const double simTimeAtModelCreationInSeconds =
-            utils::steadyClockDurationToDouble(simTimeAtModelCreation);
-
-        return world->time() == simTimeAtModelCreationInSeconds;
-    }
 };
 
 Joint::Joint()
@@ -276,8 +258,8 @@ bool Joint::resetJoint(const std::vector<double>& position,
 
 bool Joint::setCoulombFriction(const double value)
 {
-    if (!Impl::ModelJustCreated(*this)) {
-        sError << "The model has been already processed and its"
+    if (!utils::parentModelJustCreated(*this)) {
+        sError << "The model has been already processed and its "
                << "parameters cannot be modified" << std::endl;
         return false;
     }
@@ -303,8 +285,8 @@ bool Joint::setCoulombFriction(const double value)
 
 bool Joint::setViscousFriction(const double value)
 {
-    if (!Impl::ModelJustCreated(*this)) {
-        sError << "The model has been already processed and its"
+    if (!utils::parentModelJustCreated(*this)) {
+        sError << "The model has been already processed and its "
                << "parameters cannot be modified" << std::endl;
         return false;
     }
@@ -436,6 +418,9 @@ bool Joint::setControlMode(const scenario::core::JointControlMode mode)
         m_entity, ignition::gazebo::components::JointPositionTarget::typeId);
     m_ecm->RemoveComponent(
         m_entity, ignition::gazebo::components::JointVelocityTarget::typeId);
+    m_ecm->RemoveComponent(
+        m_entity,
+        ignition::gazebo::components::JointAccelerationTarget::typeId);
     m_ecm->RemoveComponent(
         m_entity, ignition::gazebo::components::JointVelocityCmd::typeId);
     m_ecm->RemoveComponent(m_entity,
@@ -922,8 +907,8 @@ std::vector<double> Joint::jointMaxGeneralizedForce() const
 
 bool Joint::setJointMaxGeneralizedForce(const std::vector<double>& maxForce)
 {
-    if (!Impl::ModelJustCreated(*this)) {
-        sError << "The model has been already processed and its"
+    if (!utils::parentModelJustCreated(*this)) {
+        sError << "The model has been already processed and its "
                << "parameters cannot be modified" << std::endl;
         return false;
     }

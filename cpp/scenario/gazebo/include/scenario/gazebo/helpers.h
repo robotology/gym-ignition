@@ -79,6 +79,8 @@ namespace scenario::gazebo::utils {
                                const long rows,
                                const long cols);
 
+    bool parentModelJustCreated(const GazeboEntity& gazeboEntity);
+
     class FixedSizeQueue
     {
     public:
