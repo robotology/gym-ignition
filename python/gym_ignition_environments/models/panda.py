@@ -38,6 +38,11 @@ class Panda(model_wrapper.ModelWrapper,
         # Get the model
         model = world.get_model(model_name)
 
+        # Initial joint configuration
+        model.to_gazebo().reset_joint_positions(
+            [0, -0.785,0, -2.356, 0, 1.571, 0.785],
+            [name for name in model.joint_names() if "panda_joint" in name])
+
         # From:
         # https://github.com/mkrizmancic/franka_gazebo/blob/master/config/default.yaml
         pid_gains_1000hz = {
