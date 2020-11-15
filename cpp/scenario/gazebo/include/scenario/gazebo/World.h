@@ -41,8 +41,14 @@
 
 namespace scenario::gazebo {
     class World;
+
+    /**
+     * Supported physics engines.
+     */
     enum class PhysicsEngine
     {
+        /// The physics engine included in the Dynamic Animation and Robotics
+        /// Toolkit.
         Dart,
     };
 } // namespace scenario::gazebo
