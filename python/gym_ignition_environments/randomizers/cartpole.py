@@ -21,8 +21,8 @@ SupportedTasks = Union[tasks.cartpole_discrete_balancing.CartPoleDiscreteBalanci
 
 
 class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
-                               randomizers.base.model.ModelDescriptionRandomizer,
                                randomizers.base.physics.PhysicsRandomizer,
+                               randomizers.base.model.ModelDescriptionRandomizer,
                                abc.ABC):
     """
     Mixin that collects the implementation of task, model and physics randomizations for
@@ -31,8 +31,11 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
 
     def __init__(self, randomize_physics_after_rollouts: int = 0):
 
-        # Initialize the randomizers
-        super().__init__(randomize_after_rollouts_num=randomize_physics_after_rollouts)
+        # Initialize base classes
+        randomizers.base.task.TaskRandomizer.__init__(self)
+        randomizers.base.physics.PhysicsRandomizer.__init__(
+            self, randomize_after_rollouts_num=randomize_physics_after_rollouts)
+        randomizers.base.model.ModelDescriptionRandomizer.__init__(self)
 
         # SDF randomizer
         self._sdf_randomizer = None
@@ -41,10 +44,11 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
     # PhysicsRandomizer interface
     # ===========================
 
-    def randomize_physics(self, task: SupportedTasks) -> None:
+    def get_engine(self):
 
-        if not task.world.to_gazebo().set_physics_engine(scenario.PhysicsEngine_dart):
-            raise RuntimeError("Failed to insert the physics plugin")
+        return scenario.PhysicsEngine_dart
+
+    def randomize_physics(self, task: SupportedTasks) -> None:
 
         gravity_z = task.np_random.normal(loc=-9.8, scale=0.2)
 
