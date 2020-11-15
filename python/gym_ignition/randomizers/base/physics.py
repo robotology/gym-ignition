@@ -12,7 +12,7 @@ class PhysicsRandomizer(abc.ABC):
 
     Args:
         randomize_after_rollouts_num: defines after many rollouts physics should be
-        randomized (i.e. the amount of times :py:meth:`gym.Env.reset` is called).
+            randomized (i.e. the amount of times :py:meth:`gym.Env.reset` is called).
     """
 
     def __init__(self, randomize_after_rollouts_num: int = 0):
@@ -33,6 +33,23 @@ class PhysicsRandomizer(abc.ABC):
         Args:
             task: A task containing a world object without physics.
         """
+        pass
+
+    @abc.abstractmethod
+    def get_engine(self):
+        """
+        Return the physics engine to use for the rollout.
+
+        Note:
+
+            Supported physics engines:
+
+            - :py:const:`scenario.bindings.gazebo.PhysicsEngine_dart`
+
+        Return:
+            The desired physics engine to set in the world.
+        """
+
         pass
 
     def increase_rollout_counter(self) -> None:

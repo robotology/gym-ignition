@@ -8,8 +8,6 @@ from gym_ignition.base import runtime
 from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
 from scenario import gazebo as scenario
-from gym_ignition.randomizers.base import physics
-from gym_ignition.randomizers.physics import dart
 
 
 class GazeboRuntime(runtime.Runtime):
@@ -22,15 +20,14 @@ class GazeboRuntime(runtime.Runtime):
         agent_rate: The rate at which the environment is called.
         physics_rate: The rate of the physics engine.
         real_time_factor: The desired RTF of the simulation.
-        physics_randomizer: *(optional)* The physics randomizer.
-        world: *(optional)* The path to an SDF world file. The world should not contain any
-            physics plugin.
+        physics_engine: *(optional)* The physics engine to use.
+        world: *(optional)* The path to an SDF world file. The world should not contain
+            any physics plugin.
 
     Note:
         Physics randomization is still experimental and it could change in the future.
         Physics is loaded only once, when the simulator starts. In order to change the
-        physics, a new simulator should be created. This operation is quite demanding
-        and doing it every rollout is not recommended.
+        physics, a new simulator should be created.
     """
 
     metadata = {'render.modes': ['human']}
@@ -40,7 +37,7 @@ class GazeboRuntime(runtime.Runtime):
                  agent_rate: float,
                  physics_rate: float,
                  real_time_factor: float,
-                 physics_randomizer: physics.PhysicsRandomizer = dart.DART(),
+                 physics_engine = scenario.PhysicsEngine_dart,
                  world: str = None,
                  **kwargs):
 
@@ -49,8 +46,8 @@ class GazeboRuntime(runtime.Runtime):
         self._physics_rate = physics_rate
         self._real_time_factor = real_time_factor
 
-        # Store the randomizer
-        self.physics_randomizer = physics_randomizer
+        # Store the desired physics engine
+        self._physics_engine = physics_engine
 
         # World attributes
         self._world = None
@@ -261,8 +258,8 @@ class GazeboRuntime(runtime.Runtime):
         # Set the world in the task
         self.task.world = world
 
-        # Load and randomize the physics
-        self.physics_randomizer.randomize_physics(task=self.task)
+        # Select the physics engine
+        world.set_physics_engine(engine=self._physics_engine)
 
         # Store the world
         self._world = world

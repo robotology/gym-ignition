@@ -21,6 +21,6 @@ class TaskRandomizer(abc.ABC):
         Note:
             Note that each task has a :py:attr:`~gym_ignition.base.task.Task.world`
             property that provides access to the simulated
-            :py:class:`scenario.core.World`.
+            :py:class:`scenario.bindings.core.World`.
         """
         pass

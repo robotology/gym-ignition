@@ -19,8 +19,10 @@ class DART(physics.PhysicsRandomizer):
 
         super().__init__()
 
+    def get_engine(self):
+
+        return scenario.PhysicsEngine_dart
+
     def randomize_physics(self, task: gym_ignition.base.task.Task) -> None:
 
-        # Set Gazebo to use the DART physics engine
-        if not task.world.to_gazebo().set_physics_engine(scenario.PhysicsEngine_dart):
-            raise RuntimeError("Failed to insert the physics plugin")
+        pass
