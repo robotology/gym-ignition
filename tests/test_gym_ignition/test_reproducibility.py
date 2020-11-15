@@ -14,6 +14,7 @@ set_level(gym.logger.DEBUG)
 
 
 def make_env(**kwargs) -> gym.Env:
+
     import gym
     import gym_ignition_environments
     return gym.make("CartPoleDiscreteBalancing-Gazebo-v0", **kwargs)
@@ -21,8 +22,8 @@ def make_env(**kwargs) -> gym.Env:
 
 def test_reproducibility():
 
-    env1 = randomizers.cartpole.CartpoleEnvRandomizer(env=make_env, seed=42)
-    env2 = randomizers.cartpole.CartpoleEnvRandomizer(env=make_env, seed=42)
+    env1 = randomizers.cartpole.CartpoleEnvRandomizer(env=make_env)
+    env2 = randomizers.cartpole.CartpoleEnvRandomizer(env=make_env)
     assert env1 != env2
 
     # Seed the environment
