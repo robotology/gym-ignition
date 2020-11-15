@@ -3,9 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
-import numpy as np
 from typing import Union
-import gym_ignition.base.task
 from gym_ignition import utils
 from gym_ignition.utils import misc
 from gym_ignition import randomizers
@@ -31,8 +29,7 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
     cartpole environments.
     """
 
-    def __init__(self,
-                 randomize_physics_after_rollouts: int = 0):
+    def __init__(self, randomize_physics_after_rollouts: int = 0):
 
         # Initialize the randomizers
         super().__init__(randomize_after_rollouts_num=randomize_physics_after_rollouts)
@@ -44,7 +41,7 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
     # PhysicsRandomizer interface
     # ===========================
 
-    def randomize_physics(self, task: gym_ignition.base.task.Task) -> None:
+    def randomize_physics(self, task: SupportedTasks) -> None:
 
         if not task.world.to_gazebo().set_physics_engine(scenario.PhysicsEngine_dart):
             raise RuntimeError("Failed to insert the physics plugin")
@@ -58,9 +55,7 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
     # TaskRandomizer interface
     # ========================
 
-    def randomize_task(self,
-                       task: SupportedTasks,
-                       **kwargs) -> None:
+    def randomize_task(self, task: SupportedTasks, **kwargs) -> None:
 
         # Remove the model from the world
         self._clean_world(task=task)
@@ -71,9 +66,7 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
         gazebo = kwargs["gazebo"]
 
         # Execute a paused run to process model removal
-        ok_paused_run = gazebo.run(paused=True)
-
-        if not ok_paused_run:
+        if not gazebo.run(paused=True):
             raise RuntimeError("Failed to execute a paused Gazebo run")
 
         # Generate a random model description
@@ -83,16 +76,14 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
         self._populate_world(task=task, cartpole_model=random_model)
 
         # Execute a paused run to process model insertion
-        ok_paused_run = gazebo.run(paused=True)
-
-        if not ok_paused_run:
+        if not gazebo.run(paused=True):
             raise RuntimeError("Failed to execute a paused Gazebo run")
 
     # ====================================
     # ModelDescriptionRandomizer interface
     # ====================================
 
-    def randomize_model_description(self, task: gym_ignition.base.task.Task) -> str:
+    def randomize_model_description(self, task: SupportedTasks) -> str:
 
         randomizer = self._get_sdf_randomizer(task=task)
         sdf = misc.string_to_file(randomizer.sample())
@@ -140,14 +131,12 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
         return self._sdf_randomizer
 
     @staticmethod
-    def _clean_world(task: SupportedTasks):
+    def _clean_world(task: SupportedTasks) -> None:
 
         # Remove the model from the simulation
         if task.model_name is not None and task.model_name in task.world.model_names():
 
-            ok_removed = task.world.to_gazebo().remove_model(task.model_name)
-
-            if not ok_removed:
+            if not task.world.to_gazebo().remove_model(task.model_name):
                 raise RuntimeError("Failed to remove the cartpole from the world")
 
     @staticmethod
