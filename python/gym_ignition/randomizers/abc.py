@@ -42,7 +42,7 @@ class PhysicsRandomizer(abc.ABC):
         self.randomize_after_rollouts_num = randomize_after_rollouts_num
 
     @abc.abstractmethod
-    def randomize_physics(self, task: gym_ignition.base.task.Task) -> None:
+    def randomize_physics(self, task: gym_ignition.base.task.Task, **kwargs) -> None:
         """
         Method that insert and configures the physics of a Task's world.
 
@@ -103,7 +103,8 @@ class PhysicsRandomizer(abc.ABC):
 class ModelRandomizer(abc.ABC):
 
     @abc.abstractmethod
-    def randomize_model(self, task: gym_ignition.base.task.Task) -> scenario_core.Model:
+    def randomize_model(self, task: gym_ignition.base.task.Task, **kwargs) \
+            -> scenario_core.Model:
         """
         Randomize the model.
 
@@ -119,7 +120,8 @@ class ModelRandomizer(abc.ABC):
 class ModelDescriptionRandomizer(abc.ABC):
 
     @abc.abstractmethod
-    def randomize_model_description(self, task: gym_ignition.base.task.Task) -> str:
+    def randomize_model_description(self, task: gym_ignition.base.task.Task, **kwargs) \
+            -> str:
         """
         Randomize the model description.
 
