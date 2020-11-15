@@ -8,15 +8,13 @@ from typing import cast
 from gym_ignition import randomizers
 from gym_ignition.utils import logger, typing
 from gym_ignition.runtimes import gazebo_runtime
-from gym_ignition.randomizers.base import physics
-from gym_ignition.randomizers.physics import dart
 from typing import Callable, Dict, Optional, Union
 
 MakeEnvCallable = Callable[[Optional[Dict]],gym.Env]
 
 
 class GazeboEnvRandomizer(gym.Wrapper,
-                          randomizers.base.task.TaskRandomizer,
+                          randomizers.abc.TaskRandomizer,
                           abc.ABC):
     """
     Base class to implement an environment randomizer for Ignition Gazebo.
@@ -32,7 +30,7 @@ class GazeboEnvRandomizer(gym.Wrapper,
     More complex environments may require to randomize one or more simulated entities.
     Concrete classes that implement a randomizer could use
     :py:class:`~gym_ignition.randomizers.model.sdf.SDFRandomizer` to randomize the model
-    and :py:class:`~gym_ignition.randomizers.base.physics.PhysicsRandomizer` to randomize
+    and :py:class:`~gym_ignition.randomizers.abc.PhysicsRandomizer` to randomize
     the physics.
 
     Args:
@@ -50,7 +48,8 @@ class GazeboEnvRandomizer(gym.Wrapper,
 
     def __init__(self,
                  env: Union[str, MakeEnvCallable],
-                 physics_randomizer: physics.PhysicsRandomizer = dart.DART(),
+                 physics_randomizer: randomizers.abc.PhysicsRandomizer =
+                 randomizers.physics.dart.DART(),
                  **kwargs):
 
         # Store the options

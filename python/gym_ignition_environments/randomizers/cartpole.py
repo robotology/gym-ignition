@@ -20,9 +20,9 @@ SupportedTasks = Union[tasks.cartpole_discrete_balancing.CartPoleDiscreteBalanci
                        tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing]
 
 
-class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
-                               randomizers.base.physics.PhysicsRandomizer,
-                               randomizers.base.model.ModelDescriptionRandomizer,
+class CartpoleRandomizersMixin(randomizers.abc.TaskRandomizer,
+                               randomizers.abc.PhysicsRandomizer,
+                               randomizers.abc.ModelDescriptionRandomizer,
                                abc.ABC):
     """
     Mixin that collects the implementation of task, model and physics randomizations for
@@ -32,10 +32,10 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
     def __init__(self, randomize_physics_after_rollouts: int = 0):
 
         # Initialize base classes
-        randomizers.base.task.TaskRandomizer.__init__(self)
-        randomizers.base.physics.PhysicsRandomizer.__init__(
+        randomizers.abc.TaskRandomizer.__init__(self)
+        randomizers.abc.PhysicsRandomizer.__init__(
             self, randomize_after_rollouts_num=randomize_physics_after_rollouts)
-        randomizers.base.model.ModelDescriptionRandomizer.__init__(self)
+        randomizers.abc.ModelDescriptionRandomizer.__init__(self)
 
         # SDF randomizer
         self._sdf_randomizer = None

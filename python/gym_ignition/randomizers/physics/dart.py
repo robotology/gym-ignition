@@ -3,11 +3,11 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym_ignition.base.task
+from gym_ignition import randomizers
 from scenario import gazebo as scenario
-from gym_ignition.randomizers.base import physics
 
 
-class DART(physics.PhysicsRandomizer):
+class DART(randomizers.abc.PhysicsRandomizer):
     """
     Class that configures the Gazebo World of a Task to use the DART physics engine.
 

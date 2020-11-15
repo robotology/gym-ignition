@@ -4,6 +4,27 @@
 
 import abc
 import gym_ignition.base.task
+from scenario import core as scenario_core
+
+
+class TaskRandomizer(abc.ABC):
+
+    @abc.abstractmethod
+    def randomize_task(self,
+                       task: gym_ignition.base.task.Task,
+                       **kwargs) -> None:
+        """
+        Randomize a :py:class:`~gym_ignition.base.task.Task` instance.
+
+        Args:
+            task: the task to randomize.
+
+        Note:
+            Note that each task has a :py:attr:`~gym_ignition.base.task.Task.world`
+            property that provides access to the simulated
+            :py:class:`scenario.bindings.core.World`.
+        """
+        pass
 
 
 class PhysicsRandomizer(abc.ABC):
@@ -77,3 +98,35 @@ class PhysicsRandomizer(abc.ABC):
             return True
 
         return False
+
+
+class ModelRandomizer(abc.ABC):
+
+    @abc.abstractmethod
+    def randomize_model(self, task: gym_ignition.base.task.Task) -> scenario_core.Model:
+        """
+        Randomize the model.
+
+        Args:
+            task: The task that operates on the model to randomize.
+
+        Return:
+            The randomized model.
+        """
+        pass
+
+
+class ModelDescriptionRandomizer(abc.ABC):
+
+    @abc.abstractmethod
+    def randomize_model_description(self, task: gym_ignition.base.task.Task) -> str:
+        """
+        Randomize the model description.
+
+        Args:
+            task: The task that operates on the model description to randomize.
+
+        Return:
+            A string with the randomized model description.
+        """
+        pass
