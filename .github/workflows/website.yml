@@ -22,9 +22,9 @@ jobs:
 
       - name: Setup Environment
         run: |
-          echo "::set-env name=CC::gcc"
-          echo "::set-env name=CXX::g++"
-          echo "::set-env name=PYTHON_VERSION::3.8"
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=3.8" >> $GITHUB_ENV
           env
 
       - name: Inspect Environment
