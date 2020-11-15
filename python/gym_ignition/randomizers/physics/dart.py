@@ -15,12 +15,9 @@ class DART(physics.PhysicsRandomizer):
         This class does not apply any physics randomization.
     """
 
-    def __init__(self, seed: int = None):
+    def __init__(self):
 
         super().__init__()
-
-        if seed is not None:
-            self.seed_physics_randomizer(seed=seed)
 
     def randomize_physics(self, task: gym_ignition.base.task.Task) -> None:
 

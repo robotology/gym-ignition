@@ -35,15 +35,6 @@ class PhysicsRandomizer(abc.ABC):
         """
         pass
 
-    def seed_physics_randomizer(self, seed: int) -> None:
-        """
-        Seed the randomizer to ensure reproducibility.
-
-        Args:
-            seed: The seed number.
-        """
-        pass
-
     def increase_rollout_counter(self) -> None:
         """
         Increase the rollouts counter.

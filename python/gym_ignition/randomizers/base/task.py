@@ -24,12 +24,3 @@ class TaskRandomizer(abc.ABC):
             :py:class:`scenario.core.World`.
         """
         pass
-
-    def seed_task_randomizer(self, seed: int) -> None:
-        """
-        Seed the randomizer to ensure reproducibility.
-
-        Args:
-            seed: The seed number.
-        """
-        pass

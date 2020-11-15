@@ -22,15 +22,6 @@ class ModelRandomizer(abc.ABC):
         """
         pass
 
-    def seed_model_randomizer(self, seed: int) -> None:
-        """
-        Seed the randomizer to ensure reproducibility.
-
-        Args:
-            seed: The seed number.
-        """
-        pass
-
 
 class ModelDescriptionRandomizer(abc.ABC):
 
@@ -44,14 +35,5 @@ class ModelDescriptionRandomizer(abc.ABC):
 
         Return:
             A string with the randomized model description.
-        """
-        pass
-
-    def seed_model_description_randomizer(self, seed: int) -> None:
-        """
-        Seed the randomizer to ensure reproducibility.
-
-        Args:
-            seed: The seed number.
         """
         pass
