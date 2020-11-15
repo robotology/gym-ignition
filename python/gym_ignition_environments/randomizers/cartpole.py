@@ -32,7 +32,6 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
     """
 
     def __init__(self,
-                 seed: int = None,
                  randomize_physics_after_rollouts: int = 0):
 
         # Initialize the randomizers
@@ -41,32 +40,16 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
         # SDF randomizer
         self._sdf_randomizer = None
 
-        # Seed the RNG
-        np_random = np.random.default_rng(seed=seed)
-
-        # Store the seed and use the same RNG for all the randomizers
-        self._seed = seed
-        self.np_random_task = np_random  # Unused
-        self.np_random_physics = np_random
-        self._get_sdf_randomizer().seed(seed=self._seed)
-
     # ===========================
     # PhysicsRandomizer interface
     # ===========================
-
-    def seed_physics_randomizer(self, seed: int) -> None:
-
-        if seed == self._seed:
-            return
-
-        self.np_random_physics = np.random.default_rng(seed=self._seed)
 
     def randomize_physics(self, task: gym_ignition.base.task.Task) -> None:
 
         if not task.world.to_gazebo().set_physics_engine(scenario.PhysicsEngine_dart):
             raise RuntimeError("Failed to insert the physics plugin")
 
-        gravity_z = self.np_random_physics.normal(loc=-9.8, scale=0.2)
+        gravity_z = task.np_random.normal(loc=-9.8, scale=0.2)
 
         if not task.world.to_gazebo().set_gravity((0, 0, gravity_z)):
             raise RuntimeError("Failed to set the gravity")
@@ -74,13 +57,6 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
     # ========================
     # TaskRandomizer interface
     # ========================
-
-    def seed_task_randomizer(self, seed: int) -> None:
-
-        if seed == self._seed:
-            return
-
-        self.np_random_task = np.random.default_rng(seed=self._seed)
 
     def randomize_task(self,
                        task: SupportedTasks,
@@ -116,16 +92,9 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
     # ModelDescriptionRandomizer interface
     # ====================================
 
-    def seed_model_description_randomizer(self, seed: int) -> None:
-
-        if seed == self._seed:
-            return
-
-        self._get_sdf_randomizer().seed(seed=self._seed)
-
     def randomize_model_description(self, task: gym_ignition.base.task.Task) -> str:
 
-        randomizer = self._get_sdf_randomizer()
+        randomizer = self._get_sdf_randomizer(task=task)
         sdf = misc.string_to_file(randomizer.sample())
         return sdf
 
@@ -133,7 +102,8 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
     # Private Methods
     # ===============
 
-    def _get_sdf_randomizer(self) -> randomizers.model.sdf.SDFRandomizer:
+    def _get_sdf_randomizer(self, task: SupportedTasks) -> \
+            randomizers.model.sdf.SDFRandomizer:
 
         if self._sdf_randomizer is not None:
             return self._sdf_randomizer
@@ -150,8 +120,8 @@ class CartpoleRandomizersMixin(randomizers.base.task.TaskRandomizer,
         # Create and initialize the randomizer
         sdf_randomizer = randomizers.model.sdf.SDFRandomizer(sdf_model=sdf_model)
 
-        # Seed the randomizer
-        sdf_randomizer.seed(self._seed)
+        # Use the RNG of the task
+        sdf_randomizer.rng = task.np_random
 
         # Randomize the mass of all links
         sdf_randomizer.new_randomization() \
@@ -200,12 +170,11 @@ class CartpoleEnvRandomizer(gazebo_env_randomizer.GazeboEnvRandomizer,
 
     def __init__(self,
                  env: MakeEnvCallable,
-                 seed: int = None,
                  num_physics_rollouts: int = 0):
 
         # Initialize the mixin
         CartpoleRandomizersMixin.__init__(
-            self, seed=seed, randomize_physics_after_rollouts=num_physics_rollouts)
+            self, randomize_physics_after_rollouts=num_physics_rollouts)
 
         # Initialize the environment randomizer
         gazebo_env_randomizer.GazeboEnvRandomizer.__init__(

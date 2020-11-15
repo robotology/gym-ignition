@@ -66,6 +66,3 @@ class CartpoleEnvNoRandomizations(gazebo_env_randomizer.GazeboEnvRandomizer):
 
         if not ok_paused_run:
             raise RuntimeError("Failed to execute a paused Gazebo run")
-
-    def seed_task_randomizer(self, seed: int) -> None:
-        pass
