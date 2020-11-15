@@ -26,9 +26,7 @@ class CartpoleEnvNoRandomizations(gazebo_env_randomizer.GazeboEnvRandomizer):
 
         super().__init__(env=env)
 
-    def randomize_task(self,
-                       task: SupportedTasks,
-                       **kwargs) -> None:
+    def randomize_task(self, task: SupportedTasks, **kwargs) -> None:
         """
         Prepare the scene for cartpole tasks. It simply removes the cartpole of the
         previous rollout and inserts a new one in the default state. Then, the active
@@ -44,15 +42,11 @@ class CartpoleEnvNoRandomizations(gazebo_env_randomizer.GazeboEnvRandomizer):
         # Remove the model from the simulation
         if task.model_name is not None and task.model_name in task.world.model_names():
 
-            ok_removed = task.world.to_gazebo().remove_model(task.model_name)
-
-            if not ok_removed:
+            if not task.world.to_gazebo().remove_model(task.model_name):
                 raise RuntimeError("Failed to remove the cartpole from the world")
 
         # Execute a paused run to process model removal
-        ok_paused_run = gazebo.run(paused=True)
-
-        if not ok_paused_run:
+        if not gazebo.run(paused=True):
             raise RuntimeError("Failed to execute a paused Gazebo run")
 
         # Insert a new cartpole model
@@ -62,10 +56,5 @@ class CartpoleEnvNoRandomizations(gazebo_env_randomizer.GazeboEnvRandomizer):
         task.model_name = model.name()
 
         # Execute a paused run to process model insertion
-        ok_paused_run = gazebo.run(paused=True)
-
-        if not ok_paused_run:
+        if not gazebo.run(paused=True):
             raise RuntimeError("Failed to execute a paused Gazebo run")
-
-    def seed_task_randomizer(self, seed: int) -> None:
-        pass

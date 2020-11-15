@@ -71,6 +71,12 @@ jobs:
         shell: docker exec -i ci bash -i -e {0}
         run: sphinx-multiversion --dump-metadata docs/sphinx/ build/
 
+      # This is necessary because otherwise the check for uncommitted apidoc
+      # only detects additions, not removals.
+      - name: Remove apidoc folder
+        shell: docker exec -i ci bash -i -e {0}
+        run: rm -r docs/sphinx/apidoc
+
       - name: Build sphinx website
         shell: docker exec -i ci bash -i -e {0}
         run: |

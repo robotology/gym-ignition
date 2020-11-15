@@ -18,6 +18,8 @@ Gazebo
 .. doxygenclass:: scenario::gazebo::Joint
    :members:
 
+.. doxygenenum:: scenario::gazebo::PhysicsEngine
+
 .. doxygenfile:: gazebo/utils.h
    :project: scenario
 

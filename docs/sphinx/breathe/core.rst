@@ -15,5 +15,7 @@ Core
 .. doxygenclass:: scenario::core::Joint
    :members:
 
+.. doxygenenum:: scenario::core::JointControlMode
+
 .. doxygenfile:: core/utils/utils.h
    :project: scenario

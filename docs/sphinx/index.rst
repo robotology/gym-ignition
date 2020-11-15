@@ -82,7 +82,7 @@ We are building an entire ecosystem around gym-ignition, if you're interested ha
 
 .. toctree::
    :hidden:
-   :maxdepth: 4
+   :maxdepth: 2
    :caption: Python Packages
 
    apidoc/scenario/scenario.bindings

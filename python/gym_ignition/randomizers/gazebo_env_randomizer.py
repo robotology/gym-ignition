@@ -8,15 +8,13 @@ from typing import cast
 from gym_ignition import randomizers
 from gym_ignition.utils import logger, typing
 from gym_ignition.runtimes import gazebo_runtime
-from gym_ignition.randomizers.base import physics
-from gym_ignition.randomizers.physics import dart
 from typing import Callable, Dict, Optional, Union
 
 MakeEnvCallable = Callable[[Optional[Dict]],gym.Env]
 
 
 class GazeboEnvRandomizer(gym.Wrapper,
-                          randomizers.base.task.TaskRandomizer,
+                          randomizers.abc.TaskRandomizer,
                           abc.ABC):
     """
     Base class to implement an environment randomizer for Ignition Gazebo.
@@ -32,7 +30,7 @@ class GazeboEnvRandomizer(gym.Wrapper,
     More complex environments may require to randomize one or more simulated entities.
     Concrete classes that implement a randomizer could use
     :py:class:`~gym_ignition.randomizers.model.sdf.SDFRandomizer` to randomize the model
-    and :py:class:`~gym_ignition.randomizers.base.physics.PhysicsRandomizer` to randomize
+    and :py:class:`~gym_ignition.randomizers.abc.PhysicsRandomizer` to randomize
     the physics.
 
     Args:
@@ -46,25 +44,26 @@ class GazeboEnvRandomizer(gym.Wrapper,
         In order to randomize physics, the handled
         :py:class:`scenario.gazebo.GazeboSimulator` is destroyed and created again.
         This operation is demanding, consider randomizing physics at a low rate.
-
-    Todo:
-        Allow resetting the physics by removing and inserting the world.
     """
 
     def __init__(self,
                  env: Union[str, MakeEnvCallable],
-                 physics_randomizer: physics.PhysicsRandomizer = dart.DART(),
+                 physics_randomizer: randomizers.abc.PhysicsRandomizer =
+                 randomizers.physics.dart.DART(),
                  **kwargs):
 
         # Store the options
         self._env_option = env
-        self._kwargs = dict(**kwargs, physics_randomizer=physics_randomizer)
+        self._kwargs = dict(**kwargs, physics_engine=physics_randomizer.get_engine())
 
         # Create the environment
         env_to_wrap = self._create_environment(env=self._env_option, **self._kwargs)
 
         # Initialize the wrapper
         gym.Wrapper.__init__(self, env=env_to_wrap)
+
+        # Store the physics randomizer
+        self._physics_randomizer = physics_randomizer
 
     # ===============
     # gym.Env methods
@@ -73,7 +72,7 @@ class GazeboEnvRandomizer(gym.Wrapper,
     def reset(self, **kwargs) -> typing.Observation:
 
         # Reset the physics
-        if self.env.physics_randomizer.physics_expired():
+        if self._physics_randomizer.physics_expired():
 
             # Get the random components of the task
             seed = self.env.task.seed
@@ -90,7 +89,7 @@ class GazeboEnvRandomizer(gym.Wrapper,
             self.env.task.np_random = np_random
 
         # Mark the beginning of a new rollout
-        self.env.physics_randomizer.increase_rollout_counter()
+        self._physics_randomizer.increase_rollout_counter()
 
         # Reset the task through the TaskRandomizer
         self.randomize_task(task=self.env.task, gazebo=self.env.gazebo, **kwargs)
