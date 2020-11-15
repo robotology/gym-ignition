@@ -209,11 +209,6 @@
     </a>
     <ul class="current">
      <li class="toctree-l3">
-      <a class="reference internal" href="gym_ignition.randomizers.base.html">
-       gym_ignition.randomizers.base
-      </a>
-     </li>
-     <li class="toctree-l3">
       <a class="reference internal" href="gym_ignition.randomizers.model.html">
        gym_ignition.randomizers.model
       </a>
@@ -388,13 +383,31 @@
 <span id="gym-ignition-randomizers-physics-dart"></span><h2>gym_ignition.randomizers.physics.dart<a class="headerlink" href="#module-gym_ignition.randomizers.physics.dart" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="gym_ignition.randomizers.physics.dart.DART">
-<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.randomizers.physics.dart.</code><code class="sig-name descname">DART</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.physics.dart.DART" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="gym_ignition.randomizers.base.html#gym_ignition.randomizers.base.physics.PhysicsRandomizer" title="gym_ignition.randomizers.base.physics.PhysicsRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.randomizers.base.physics.PhysicsRandomizer</span></code></a></p>
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.randomizers.physics.dart.</code><code class="sig-name descname">DART</code><a class="headerlink" href="#gym_ignition.randomizers.physics.dart.DART" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="gym_ignition.randomizers.html#gym_ignition.randomizers.abc.PhysicsRandomizer" title="gym_ignition.randomizers.abc.PhysicsRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.randomizers.abc.PhysicsRandomizer</span></code></a></p>
 <p>Class that configures the Gazebo World of a Task to use the DART physics engine.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This class does not apply any physics randomization.</p>
 </div>
+<dl class="py method">
+<dt id="gym_ignition.randomizers.physics.dart.DART.get_engine">
+<code class="sig-name descname">get_engine</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.physics.dart.DART.get_engine" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the physics engine to use for the rollout.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Supported physics engines:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../scenario/scenario.bindings.html#scenario.bindings.gazebo.PhysicsEngine_dart" title="scenario.bindings.gazebo.PhysicsEngine_dart"><code class="xref py py-const docutils literal notranslate"><span class="pre">scenario.bindings.gazebo.PhysicsEngine_dart</span></code></a></p></li>
+</ul>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The desired physics engine to set in the world.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py method">
 <dt id="gym_ignition.randomizers.physics.dart.DART.randomize_physics">
 <code class="sig-name descname">randomize_physics</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">task</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.physics.dart.DART.randomize_physics" title="Permalink to this definition">¶</a></dt>

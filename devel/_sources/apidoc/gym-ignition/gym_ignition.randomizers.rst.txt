@@ -10,10 +10,17 @@ gym\_ignition.randomizers
 .. toctree::
    :maxdepth: 4
 
-   gym_ignition.randomizers.base
    gym_ignition.randomizers.model
    gym_ignition.randomizers.physics
 
+
+gym\_ignition.randomizers.abc
+-----------------------------
+
+.. automodule:: gym_ignition.randomizers.abc
+   :members:
+   :undoc-members:
+   :show-inheritance:
 
 gym\_ignition.randomizers.gazebo\_env\_randomizer
 -------------------------------------------------

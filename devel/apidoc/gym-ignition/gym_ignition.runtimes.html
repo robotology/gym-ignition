@@ -209,11 +209,6 @@
     </a>
     <ul>
      <li class="toctree-l3">
-      <a class="reference internal" href="gym_ignition.randomizers.base.html">
-       gym_ignition.randomizers.base
-      </a>
-     </li>
-     <li class="toctree-l3">
       <a class="reference internal" href="gym_ignition.randomizers.model.html">
        gym_ignition.randomizers.model
       </a>
@@ -393,7 +388,7 @@
 <span id="gym-ignition-runtimes-gazebo-runtime"></span><h2>gym_ignition.runtimes.gazebo_runtime<a class="headerlink" href="#module-gym_ignition.runtimes.gazebo_runtime" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime">
-<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.runtimes.gazebo_runtime.</code><code class="sig-name descname">GazeboRuntime</code><span class="sig-paren">(</span><em class="sig-param">task_cls</em>, <em class="sig-param">agent_rate</em>, <em class="sig-param">physics_rate</em>, <em class="sig-param">real_time_factor</em>, <em class="sig-param">physics_randomizer=&lt;gym_ignition.randomizers.physics.dart.DART object&gt;</em>, <em class="sig-param">world=None</em>, <em class="sig-param">**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime" title="Permalink to this definition">¶</a></dt>
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.runtimes.gazebo_runtime.</code><code class="sig-name descname">GazeboRuntime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">task_cls</span></em>, <em class="sig-param"><span class="n">agent_rate</span></em>, <em class="sig-param"><span class="n">physics_rate</span></em>, <em class="sig-param"><span class="n">real_time_factor</span></em>, <em class="sig-param"><span class="n">physics_engine</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">world</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="gym_ignition.base.html#gym_ignition.base.runtime.Runtime" title="gym_ignition.base.runtime.Runtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.base.runtime.Runtime</span></code></a></p>
 <p>Implementation of <a class="reference internal" href="gym_ignition.base.html#gym_ignition.base.runtime.Runtime" title="gym_ignition.base.runtime.Runtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runtime</span></code></a> for the Ignition
 Gazebo simulator.</p>
@@ -404,9 +399,9 @@ Gazebo simulator.</p>
 <li><p><strong>agent_rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The rate at which the environment is called.</p></li>
 <li><p><strong>physics_rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The rate of the physics engine.</p></li>
 <li><p><strong>real_time_factor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The desired RTF of the simulation.</p></li>
-<li><p><strong>physics_randomizer</strong> (<a class="reference internal" href="gym_ignition.randomizers.base.html#gym_ignition.randomizers.base.physics.PhysicsRandomizer" title="gym_ignition.randomizers.base.physics.PhysicsRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhysicsRandomizer</span></code></a>) – <em>(optional)</em> The physics randomizer.</p></li>
-<li><p><strong>world</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – <em>(optional)</em> The path to an SDF world file. The world should not contain any
-physics plugin.</p></li>
+<li><p><strong>physics_engine</strong> – <em>(optional)</em> The physics engine to use.</p></li>
+<li><p><strong>world</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – <em>(optional)</em> The path to an SDF world file. The world should not contain
+any physics plugin.</p></li>
 </ul>
 </dd>
 </dl>
@@ -414,8 +409,7 @@ physics plugin.</p></li>
 <p class="admonition-title">Note</p>
 <p>Physics randomization is still experimental and it could change in the future.
 Physics is loaded only once, when the simulator starts. In order to change the
-physics, a new simulator should be created. This operation is quite demanding
-and doing it every rollout is not recommended.</p>
+physics, a new simulator should be created.</p>
 </div>
 <dl class="py method">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.close">
