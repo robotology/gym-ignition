@@ -112,7 +112,7 @@ You can find all the details about the different types of installations we suppo
 
 ||||
 |:---:|:---:|:---:|
-| ![](https://user-images.githubusercontent.com/469199/98664559-cdaab180-234a-11eb-8c8a-9ebb172dd723.gif) | ![](https://user-images.githubusercontent.com/469199/98717254-1edb9500-238d-11eb-9e10-54fdd09dfda8.gif) | ![](https://user-images.githubusercontent.com/469199/98664612-df8c5480-234a-11eb-94b0-7cc19bc36ef6.gif) |
+| ![](https://user-images.githubusercontent.com/469199/99262383-321fb200-281e-11eb-89cc-cc31f590daa3.png) | ![](https://user-images.githubusercontent.com/469199/99263111-0cdf7380-281f-11eb-9cfe-338b2aae0503.png) | ![](https://user-images.githubusercontent.com/469199/99262746-9e021a80-281e-11eb-9df1-d70134b0801a.png) |
 
 ## Citation
 
