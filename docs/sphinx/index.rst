@@ -23,16 +23,6 @@ The aims of the project are the following:
 To know more about why we started developing gym-ignition, why we selected Ignition Gazebo for our simulations,
 and what are our long-term goals, visit the :ref:`Motivations <motivations>` page.
 
-.. list-table::
-
-   * - |pendulum_swing|
-     - |panda_grasping|
-     - |icub_stepping|
-
-.. |icub_stepping| image:: https://user-images.githubusercontent.com/469199/98664612-df8c5480-234a-11eb-94b0-7cc19bc36ef6.gif
-.. |panda_grasping| image:: https://user-images.githubusercontent.com/469199/98717254-1edb9500-238d-11eb-9e10-54fdd09dfda8.gif
-.. |pendulum_swing| image:: https://user-images.githubusercontent.com/469199/98664559-cdaab180-234a-11eb-8c8a-9ebb172dd723.gif
-
 We are building an entire ecosystem around gym-ignition, if you're interested have a look to the other projects:
 
 .. list-table::
@@ -45,6 +35,16 @@ We are building an entire ecosystem around gym-ignition, if you're interested ha
     * - `robotology/gym-ignition <https://github.com/robotology/gym-ignition>`_
       - `robotology/gym-ignition-models <https://github.com/robotology/gym-ignition-models>`_
       - `dic-iit/gazebo-scenario-plugins <https://github.com/dic-iit/gazebo-scenario-plugins>`_
+
+.. list-table::
+
+   * - |pendulum_swing|
+     - |panda_grasping|
+     - |icub_stepping|
+
+.. |icub_stepping| image:: https://user-images.githubusercontent.com/469199/99262746-9e021a80-281e-11eb-9df1-d70134b0801a.png
+.. |panda_grasping| image:: https://user-images.githubusercontent.com/469199/99263111-0cdf7380-281f-11eb-9cfe-338b2aae0503.png
+.. |pendulum_swing| image:: https://user-images.githubusercontent.com/469199/99262383-321fb200-281e-11eb-89cc-cc31f590daa3.png
 
 .. toctree::
    :hidden:
