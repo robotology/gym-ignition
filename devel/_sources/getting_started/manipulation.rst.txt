@@ -16,7 +16,7 @@ It shows the following functionalities:
 - Detect contacts and read contact wrenches.
 - Integrate with :py:class:`~gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP`.
 
-.. figure:: https://user-images.githubusercontent.com/469199/98717231-197e4a80-238d-11eb-9a77-aec55e7217d5.gif
+.. figure:: https://user-images.githubusercontent.com/469199/99263406-6f387400-281f-11eb-9a7d-3d6f58681499.png
    :align: center
 
 .. tip::

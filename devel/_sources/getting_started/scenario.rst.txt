@@ -9,7 +9,7 @@ We will use the models of the ground plane and the pendulum stored in the reposi
 
 The final outcome of this section is shown in the following GIF:
 
-.. figure:: https://user-images.githubusercontent.com/469199/98664583-d69b8300-234a-11eb-8af0-97588e1eca24.gif
+.. figure:: https://user-images.githubusercontent.com/469199/99263551-a9097a80-281f-11eb-98de-714c69385b06.png
    :align: center
 
 .. tip::
