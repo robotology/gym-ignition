@@ -9,11 +9,16 @@ include(FetchContent)
 # ===
 
 find_package(YCM QUIET)
+
 option(SCENARIO_USE_SYSTEM_YCM
     "Use system-installed YCM, rather than a private copy"
     ${YCM_FOUND})
 
-if(NOT ${YCM_FOUND} AND NOT ${SCENARIO_USE_SYSTEM_YCM})
+if(SCENARIO_USE_SYSTEM_YCM AND NOT ${YCM_FOUND})
+    message(FATAL_ERROR "Failed to find system YCM")
+endif()
+
+if(NOT ${SCENARIO_USE_SYSTEM_YCM})
 
     FetchContent_Declare(
         ycm
@@ -41,11 +46,16 @@ endif()
 # ====================
 
 find_package(tiny-process-library QUIET)
+
 option(SCENARIO_USE_SYSTEM_TPL
     "Use system-installed tiny-process-library, rather than a private copy"
     ${tiny-process-library_FOUND})
 
-if(NOT ${tiny-process-library_FOUND} AND NOT ${SCENARIO_USE_SYSTEM_TPL})
+if(SCENARIO_USE_SYSTEM_TPL AND NOT ${tiny-process-library_FOUND})
+    message(FATAL_ERROR "Failed to find system tiny-process-library")
+endif()
+
+if(NOT ${SCENARIO_USE_SYSTEM_TPL})
 
     FetchContent_Declare(
         tinyprocesslibrary
@@ -59,14 +69,6 @@ if(NOT ${tiny-process-library_FOUND} AND NOT ${SCENARIO_USE_SYSTEM_TPL})
         # We don't want to install this library in the system, we instead
         # compile it as an OBJECT library and embed in either the shared or
         # static libraries that need it.
-        # From https://gitlab.kitware.com/cmake/cmake/-/issues/18935 it seems
-        # that OBJECT libraries that are not installed become INTERFACE when
-        # part of an EXPORT set.
-        # This behaviour allows setting transitively tiny-process-library infos
-        # to the consuming targets while not breaking the EXPORT process. In fact,
-        # the conversion to INTERFACE allows to add tiny-process-library to the
-        # targets of the EXPORT that contains targets linking against it.
-        # See also https://cmake.org/pipermail/cmake/2018-September/068250.html.
 
         if(WIN32)
             add_library(tiny-process-library OBJECT
@@ -92,8 +94,11 @@ if(NOT ${tiny-process-library_FOUND} AND NOT ${SCENARIO_USE_SYSTEM_TPL})
 
         target_link_libraries(tiny-process-library PRIVATE
             ${CMAKE_THREAD_LIBS_INIT})
+
         target_include_directories(tiny-process-library PUBLIC
             $<BUILD_INTERFACE:${tinyprocesslibrary_SOURCE_DIR}>)
+
+        add_library(tiny-process-library::tiny-process-library ALIAS tiny-process-library)
 
     endif()
 endif()
