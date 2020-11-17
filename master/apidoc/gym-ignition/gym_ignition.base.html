@@ -1,0 +1,754 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>gym_ignition.base &#8212; gym-ignition  documentation</title>
+    
+  <link rel="stylesheet" href="../../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/sphinx-book-theme.2d2078699c18a0efb88233928e1cf6ed.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.4.1/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.4.1/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx_tabs/tabs.css" />
+    
+  <link rel="preload" as="script" href="../../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="gym_ignition.context" href="gym_ignition.context.html" />
+    <link rel="prev" title="gym_ignition" href="gym_ignition.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../../index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">gym-ignition  documentation</h1>
+  
+</a>
+</div>
+
+<form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../index.html">
+   What is gym-ignition?
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Motivations
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../motivations/why_gym_ignition.html">
+   Why ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../motivations/why_gym_ignition.html#why-ignition-gazebo">
+   Why Ignition Gazebo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../motivations/why_gym_ignition.html#why-gym-ignition">
+   Why gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../installation/support_policy.html">
+   Support policy
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../installation/stable.html">
+   Stable
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../installation/nightly.html">
+   Nightly
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../installation/developer.html">
+   Developer Installation
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../getting_started/scenario.html">
+   ScenarI/O
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../getting_started/manipulation.html">
+   Manipulation example
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../getting_started/gym-ignition.html">
+   gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  ScenarI/O C++ API:
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../breathe/core.html">
+   Core
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../breathe/gazebo.html">
+   Gazebo
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Python Packages
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../scenario/scenario.bindings.html">
+   scenario.bindings
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="reference internal" href="gym_ignition.html">
+   gym_ignition
+  </a>
+  <ul class="current">
+   <li class="toctree-l2 current active">
+    <a class="current reference internal" href="#">
+     gym_ignition.base
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="gym_ignition.context.html">
+     gym_ignition.context
+    </a>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="gym_ignition.context.gazebo.html">
+       gym_ignition.context.gazebo
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="gym_ignition.randomizers.html">
+     gym_ignition.randomizers
+    </a>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="gym_ignition.randomizers.model.html">
+       gym_ignition.randomizers.model
+      </a>
+     </li>
+     <li class="toctree-l3">
+      <a class="reference internal" href="gym_ignition.randomizers.physics.html">
+       gym_ignition.randomizers.physics
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="gym_ignition.rbd.html">
+     gym_ignition.rbd
+    </a>
+    <ul>
+     <li class="toctree-l3">
+      <a class="reference internal" href="gym_ignition.rbd.idyntree.html">
+       gym_ignition.rbd.idyntree
+      </a>
+     </li>
+    </ul>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="gym_ignition.runtimes.html">
+     gym_ignition.runtimes
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="gym_ignition.scenario.html">
+     gym_ignition.scenario
+    </a>
+   </li>
+   <li class="toctree-l2">
+    <a class="reference internal" href="gym_ignition.utils.html">
+     gym_ignition.utils
+    </a>
+   </li>
+  </ul>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../gym-ignition-environments/gym_ignition_environments.html">
+   gym_ignition_environments
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Information
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../info/faq.html">
+   FAQ
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../../info/limitations.html">
+   Limitations
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+ <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        <div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../../_sources/apidoc/gym-ignition/gym_ignition.base.rst.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.rst</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+    
+</div>
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/robotology/gym-ignition"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/robotology/gym-ignition/issues/new?title=Issue%20on%20page%20%2Fapidoc/gym-ignition/gym_ignition.base.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        <a class="edit-button" href="https://github.com/robotology/gym-ignition/edit/master/docs/sphinx/apidoc/gym-ignition/gym_ignition.base.rst"><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+        <div class="tocsection onthispage pt-5 pb-3">
+            <i class="fas fa-list"></i> Contents
+        </div>
+        <nav id="bd-toc-nav">
+            <ul class="nav section-nav flex-column">
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-gym_ignition.base.runtime">
+   gym_ignition.base.runtime
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-gym_ignition.base.task">
+   gym_ignition.base.task
+  </a>
+ </li>
+</ul>
+
+        </nav>
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="module-gym_ignition.base">
+<span id="gym-ignition-base"></span><h1>gym_ignition.base<a class="headerlink" href="#module-gym_ignition.base" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="module-gym_ignition.base.runtime">
+<span id="gym-ignition-base-runtime"></span><h2>gym_ignition.base.runtime<a class="headerlink" href="#module-gym_ignition.base.runtime" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition.base.runtime.Runtime">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.base.runtime.</code><code class="sig-name descname">Runtime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">task</span></em>, <em class="sig-param"><span class="n">agent_rate</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.runtime.Runtime" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.core.Env</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Base class for defining executors of <a class="reference internal" href="#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a> objects.</p>
+<p><a class="reference internal" href="#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a> classes are supposed to be generic and are
+not tied to any specific runtime. Implementations of a runtime class contain all the
+logic to define how to execute the task, allowing to run the same
+<a class="reference internal" href="#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a> class on different simulators or in a
+real-time setting.</p>
+<p>Runtimes are the real <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.Env</span></code> objects returned to the users when they call
+the <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.make</span></code> factory method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>task</strong> (<a class="reference internal" href="#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>) – the <a class="reference internal" href="#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a> object to handle.</p></li>
+<li><p><strong>agent_rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – the rate at which the environment will be called. Sometimes tasks need
+to know this information.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<p>Here is minimal example of how the <a class="reference internal" href="#gym_ignition.base.runtime.Runtime" title="gym_ignition.base.runtime.Runtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runtime</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.Env</span></code> and
+<a class="reference internal" href="#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a> could be integrated:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">FooRuntime</span><span class="p">(</span><span class="n">Runtime</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">task</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">task</span><span class="o">=</span><span class="n">task</span><span class="p">,</span> <span class="n">agent_rate</span><span class="o">=</span><span class="n">agent_rate</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">action_space</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">observation_space</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">create_spaces</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">reset_task</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_observation</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">action</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">set_action</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+
+        <span class="c1"># [...] code that performs the real step [...]</span>
+
+        <span class="n">done</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">is_done</span><span class="p">()</span>
+        <span class="n">reward</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_reward</span><span class="p">()</span>
+        <span class="n">observation</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">task</span><span class="o">.</span><span class="n">get_observation</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">observation</span><span class="p">,</span> <span class="n">reward</span><span class="p">,</span> <span class="n">done</span><span class="p">,</span> <span class="p">{}</span>
+
+    <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Runtimes can handle only one <a class="reference internal" href="#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a> object.</p>
+</div>
+<dl class="py attribute">
+<dt id="gym_ignition.base.runtime.Runtime.agent_rate">
+<code class="sig-name descname">agent_rate</code><a class="headerlink" href="#gym_ignition.base.runtime.Runtime.agent_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rate of environment execution.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.base.runtime.Runtime.task">
+<code class="sig-name descname">task</code><em class="property">: base.task.Task</em><a class="headerlink" href="#gym_ignition.base.runtime.Runtime.task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Task handled by the runtime.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.base.runtime.Runtime.timestamp">
+<em class="property">abstract </em><code class="sig-name descname">timestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.runtime.Runtime.timestamp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the timestamp associated to the execution of the environment.</p>
+<p>In real-time environments, the timestamp is the time read from the host system.
+In simulated environments, the timestamp is the simulated time, which might not
+match the real-time in the case of a real-time factor different than 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The current environment timestamp.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.base.task">
+<span id="gym-ignition-base-task"></span><h2>gym_ignition.base.task<a class="headerlink" href="#module-gym_ignition.base.task" title="Permalink to this headline">¶</a></h2>
+<dl class="py class">
+<dt id="gym_ignition.base.task.Task">
+<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.base.task.</code><code class="sig-name descname">Task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agent_rate</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.task.Task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
+<p>Interface to define a decision-making task.</p>
+<p>The Task is the central interface of each environment implementation.
+It defines the logic of the environment in a format that is agnostic of both the
+runtime (either simulated or real-time) and the models it operates on.</p>
+<p><a class="reference internal" href="#gym_ignition.base.runtime.Runtime" title="gym_ignition.base.runtime.Runtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runtime</span></code></a> instances are the real objects returned
+to the users when they call <code class="xref py py-class docutils literal notranslate"><span class="pre">gym.make</span></code>. Depending on the type of the
+runtime, it could contain one or more <a class="reference internal" href="#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a> objects.
+The <a class="reference internal" href="#gym_ignition.base.runtime.Runtime" title="gym_ignition.base.runtime.Runtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runtime</span></code></a> is a relay class that calls the
+logic of the <a class="reference internal" href="#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a> from its interface methods and implements the real
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code>.
+Simulated runtimes step the physics engine, instead, real-time
+runtimes, enforce real-time execution.</p>
+<p>A <a class="reference internal" href="#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a> object is meant to be:</p>
+<ul class="simple">
+<li><p>Independent from the selected <a class="reference internal" href="#gym_ignition.base.runtime.Runtime" title="gym_ignition.base.runtime.Runtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runtime</span></code></a>.
+In fact, it defines only the decision making logic;</p></li>
+<li><p>Independent from the <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code> objects it operates on.
+This is achieved thanks to the model abstraction provided by
+<a class="reference internal" href="../../breathe/core.html#_CPPv4N8scenario4core5ModelE" title="scenario::core::Model"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">scenario::core::Model</span></code></a>.</p></li>
+</ul>
+<p>The population of the world where the task operates is demanded to a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">gym.Wrapper</span></code> object, that acts as an environment randomizer.</p>
+<dl class="py attribute">
+<dt id="gym_ignition.base.task.Task.action_space">
+<code class="sig-name descname">action_space</code><em class="property">: gym.spaces.space.Space</em><em class="property"> = None</em><a class="headerlink" href="#gym_ignition.base.task.Task.action_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.base.task.Task.agent_rate">
+<code class="sig-name descname">agent_rate</code><a class="headerlink" href="#gym_ignition.base.task.Task.agent_rate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Rate of the agent.
+It matches the rate at which the <code class="xref py py-class docutils literal notranslate"><span class="pre">Gym.Env</span></code> methods are called.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.base.task.Task.create_spaces">
+<em class="property">abstract </em><code class="sig-name descname">create_spaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.task.Task.create_spaces" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create the action and observations spaces.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This method does not currently have access to the Models part of the
+environment. If the Task is meant to work on different models, we recommend
+using their URDF / SDF model to extract the information you need
+(e.g. number of DoFs, joint position limits, etc). Since actions and
+observations are often normalized, in many cases there’s no need to extract
+a lot of information from the model file.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">ActionSpace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code>), <code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">ObservationSpace</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">Space</span></code>)]</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A tuple containing the action and observation spaces.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.base.task.Task.get_info">
+<code class="sig-name descname">get_info</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.task.Task.get_info" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the info dictionary.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A <code class="docutils literal notranslate"><span class="pre">dict</span></code> with extra information of the task.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.base.task.Task.get_observation">
+<em class="property">abstract </em><code class="sig-name descname">get_observation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.task.Task.get_observation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task observation.</p>
+<p>This method contains the logic for constructing the environment observation.
+It is called in the end of both <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> and
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> methods.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Observation</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>)</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The task observation.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.base.task.Task.get_reward">
+<em class="property">abstract </em><code class="sig-name descname">get_reward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.task.Task.get_reward" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task reward.</p>
+<p>This method contains the logic for computing the environment reward.
+It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Reward</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>)</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The scalar reward.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.base.task.Task.has_world">
+<code class="sig-name descname">has_world</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.task.Task.has_world" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check if the world was stored.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the task has a valid world, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.base.task.Task.is_done">
+<em class="property">abstract </em><code class="sig-name descname">is_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.task.Task.is_done" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return the task termination flag.</p>
+<p>This method contains the logic for defining when the environment has terminated.
+Subsequent calls to <a class="reference internal" href="#gym_ignition.base.task.Task.set_action" title="gym_ignition.base.task.Task.set_action"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.set_action()</span></code></a> should be preceded by a task
+reset through <a class="reference internal" href="#gym_ignition.base.task.Task.reset_task" title="gym_ignition.base.task.Task.reset_task"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.reset_task()</span></code></a>.</p>
+<p>It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the environment terminated, False otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.base.task.Task.np_random">
+<code class="sig-name descname">np_random</code><em class="property">: np.random.RandomState</em><a class="headerlink" href="#gym_ignition.base.task.Task.np_random" title="Permalink to this definition">¶</a></dt>
+<dd><p>RNG available to the object to ensure reproducibility.
+Use it for all the random resources.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.base.task.Task.observation_space">
+<code class="sig-name descname">observation_space</code><em class="property">: gym.spaces.space.Space</em><em class="property"> = None</em><a class="headerlink" href="#gym_ignition.base.task.Task.observation_space" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.base.task.Task.reset_task">
+<em class="property">abstract </em><code class="sig-name descname">reset_task</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.task.Task.reset_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the task.</p>
+<p>This method contains the logic for resetting the task.
+It is called in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> method of the corresponding
+environment.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Raises</dt>
+<dd class="field-odd"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt id="gym_ignition.base.task.Task.seed">
+<code class="sig-name descname">seed</code><em class="property">: int</em><a class="headerlink" href="#gym_ignition.base.task.Task.seed" title="Permalink to this definition">¶</a></dt>
+<dd><p>The seed of the task</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.base.task.Task.seed_task">
+<code class="sig-name descname">seed_task</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.task.Task.seed_task" title="Permalink to this definition">¶</a></dt>
+<dd><p>Seed the task.</p>
+<p>This method configures the <a class="reference internal" href="#gym_ignition.base.task.Task.np_random" title="gym_ignition.base.task.Task.np_random"><code class="xref py py-attr docutils literal notranslate"><span class="pre">Task.np_random</span></code></a> RNG.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>seed</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – The seed number.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">SeedList</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>])</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The list of seeds used by the task.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.base.task.Task.set_action">
+<em class="property">abstract </em><code class="sig-name descname">set_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.base.task.Task.set_action" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the task action.</p>
+<p>This method contains the logic for setting the environment action.
+It is called in the beginning of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>action</strong> (<code class="xref py py-func docutils literal notranslate"><span class="pre">NewType()</span></code>(<code class="xref py py-data docutils literal notranslate"><span class="pre">Action</span></code>, <code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">number</span></code>])) – The action to set.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p><strong>RuntimeError</strong> – In case of failure.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.base.task.Task.world">
+<em class="property">property </em><code class="sig-name descname">world</code><a class="headerlink" href="#gym_ignition.base.task.Task.world" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the world where the task is operating.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="../scenario/scenario.bindings.html#scenario.bindings.core.World" title="scenario.bindings.core.World"><code class="xref py py-class docutils literal notranslate"><span class="pre">World</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The world object.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="gym_ignition.html" title="previous page">gym_ignition</a>
+    <a class='right-next' id="next-link" href="gym_ignition.context.html" title="next page">gym_ignition.context</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Diego Ferigo<br/>
+        
+            &copy; Copyright 2020, Istituto Italiano di Tecnologia.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>

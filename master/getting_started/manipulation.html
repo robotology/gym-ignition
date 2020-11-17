@@ -1,0 +1,700 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manipulation example &#8212; gym-ignition  documentation</title>
+    
+  <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
+
+    
+  <link rel="stylesheet"
+    href="../_static/vendor/fontawesome/5.13.0/css/all.min.css">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-solid-900.woff2">
+  <link rel="preload" as="font" type="font/woff2" crossorigin
+    href="../_static/vendor/fontawesome/5.13.0/webfonts/fa-brands-400.woff2">
+
+    
+      
+  <link rel="stylesheet"
+    href="../_static/vendor/open-sans_all/1.44.1/index.css">
+  <link rel="stylesheet"
+    href="../_static/vendor/lato_latin-ext/1.44.1/index.css">
+
+    
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.2d2078699c18a0efb88233928e1cf6ed.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.4.1/segment.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.4.1/menu.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/semantic-ui-2.4.1/tab.min.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx_tabs/tabs.css" />
+    
+  <link rel="preload" as="script" href="../_static/js/index.3da636dd464baa7582d2.js">
+
+    <script id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script src="../_static/jquery.js"></script>
+    <script src="../_static/underscore.js"></script>
+    <script src="../_static/doctools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="gym-ignition" href="gym-ignition.html" />
+    <link rel="prev" title="ScenarI/O" href="scenario.html" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="docsearch:language" content="en" />
+
+
+
+  </head>
+  <body data-spy="scroll" data-target="#bd-toc-nav" data-offset="80">
+    
+
+    <div class="container-xl">
+      <div class="row">
+          
+<div class="col-12 col-md-3 bd-sidebar site-navigation show" id="site-navigation">
+    
+        <div class="navbar-brand-box">
+<a class="navbar-brand text-wrap" href="../index.html">
+  
+  
+  <h1 class="site-logo" id="site-title">gym-ignition  documentation</h1>
+  
+</a>
+</div>
+
+<form class="bd-search d-flex align-items-center" action="../search.html" method="get">
+  <i class="icon fas fa-search"></i>
+  <input type="search" class="form-control" name="q" id="search-input" placeholder="Search the docs ..." aria-label="Search the docs ..." autocomplete="off" >
+</form>
+
+<nav class="bd-links" id="bd-docs-nav" aria-label="Main navigation">
+  <ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../index.html">
+   What is gym-ignition?
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Motivations
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../motivations/why_gym_ignition.html">
+   Why ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../motivations/why_gym_ignition.html#why-ignition-gazebo">
+   Why Ignition Gazebo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../motivations/why_gym_ignition.html#why-gym-ignition">
+   Why gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Installation
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/support_policy.html">
+   Support policy
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/stable.html">
+   Stable
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/nightly.html">
+   Nightly
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../installation/developer.html">
+   Developer Installation
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Getting Started
+ </span>
+</p>
+<ul class="current nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="scenario.html">
+   ScenarI/O
+  </a>
+ </li>
+ <li class="toctree-l1 current active">
+  <a class="current reference internal" href="#">
+   Manipulation example
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="gym-ignition.html">
+   gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  ScenarI/O C++ API:
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../breathe/core.html">
+   Core
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../breathe/gazebo.html">
+   Gazebo
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Python Packages
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../apidoc/scenario/scenario.bindings.html">
+   scenario.bindings
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.html">
+   gym_ignition
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../apidoc/gym-ignition-environments/gym_ignition_environments.html">
+   gym_ignition_environments
+  </a>
+ </li>
+</ul>
+<p class="caption">
+ <span class="caption-text">
+  Information
+ </span>
+</p>
+<ul class="nav sidenav_l1">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../info/faq.html">
+   FAQ
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../info/limitations.html">
+   Limitations
+  </a>
+ </li>
+</ul>
+
+</nav>
+
+ <!-- To handle the deprecated key -->
+
+<div class="navbar_extra_footer">
+  Theme by the <a href="https://ebp.jupyterbook.org">Executable Book Project</a>
+</div>
+
+</div>
+
+
+          
+
+
+          
+<main class="col py-md-3 pl-md-4 bd-content overflow-auto" role="main">
+    
+    <div class="row topbar fixed-top container-xl">
+    <div class="col-12 col-md-3 bd-topbar-whitespace site-navigation show">
+    </div>
+    <div class="col pl-2 topbar-main">
+        
+        <button id="navbar-toggler" class="navbar-toggler ml-0" type="button" data-toggle="collapse"
+            data-toggle="tooltip" data-placement="bottom" data-target=".site-navigation" aria-controls="navbar-menu"
+            aria-expanded="true" aria-label="Toggle navigation" aria-controls="site-navigation"
+            title="Toggle navigation" data-toggle="tooltip" data-placement="left">
+            <i class="fas fa-bars"></i>
+            <i class="fas fa-arrow-left"></i>
+            <i class="fas fa-arrow-up"></i>
+        </button>
+        
+        <div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn" aria-label="Download this page"><i
+            class="fas fa-download"></i></button>
+
+    
+    <div class="dropdown-buttons">
+        <!-- ipynb file if we had a myst markdown file -->
+        
+        <!-- Download raw file -->
+        <a class="dropdown-buttons" href="../_sources/getting_started/manipulation.rst.txt"><button type="button"
+                class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
+                data-placement="left">.rst</button></a>
+        <!-- Download PDF via print -->
+        <button type="button" id="download-print" class="btn btn-secondary topbarbtn" title="Print to PDF"
+            onClick="window.print()" data-toggle="tooltip" data-placement="left">.pdf</button>
+    </div>
+    
+</div>
+        <!-- Source interaction buttons -->
+
+<div class="dropdown-buttons-trigger">
+    <button id="dropdown-buttons-trigger" class="btn btn-secondary topbarbtn"
+        aria-label="Connect with source repository"><i class="fab fa-github"></i></button>
+    <div class="dropdown-buttons sourcebuttons">
+        <a class="repository-button"
+            href="https://github.com/robotology/gym-ignition"><button type="button" class="btn btn-secondary topbarbtn"
+                data-toggle="tooltip" data-placement="left" title="Source repository"><i
+                    class="fab fa-github"></i>repository</button></a>
+        <a class="issues-button"
+            href="https://github.com/robotology/gym-ignition/issues/new?title=Issue%20on%20page%20%2Fgetting_started/manipulation.html&body=Your%20issue%20content%20here."><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
+        <a class="edit-button" href="https://github.com/robotology/gym-ignition/edit/master/docs/sphinx/getting_started/manipulation.rst"><button
+                type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
+                title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
+    </div>
+</div>
+
+
+        <!-- Full screen (wrap in <a> to have style consistency -->
+        <a class="full-screen-button"><button type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip"
+                data-placement="bottom" onclick="toggleFullScreen()" aria-label="Fullscreen mode"
+                title="Fullscreen mode"><i
+                    class="fas fa-expand"></i></button></a>
+
+        <!-- Launch buttons -->
+
+    </div>
+
+    <!-- Table of contents -->
+    <div class="d-none d-md-block col-md-2 bd-toc show">
+        
+    </div>
+</div>
+    <div id="main-content" class="row">
+        <div class="col-12 col-md-9 pl-md-3 pr-md-0">
+        
+              <div>
+                
+  <div class="section" id="manipulation-example">
+<span id="getting-started-manipulation"></span><h1>Manipulation example<a class="headerlink" href="#manipulation-example" title="Permalink to this headline">¶</a></h1>
+<p>This example provides a wider overview of the functionalities currently implemented in gym-ignition.</p>
+<p>The code reported below is taken from the example
+<a class="reference external" href="https://github.com/robotology/gym-ignition/blob/master/examples/panda_pick_and_place.py">panda_pick_and_place.py</a>.
+It shows the following functionalities:</p>
+<ul class="simple">
+<li><p>Download models from <a class="reference external" href="https://app.ignitionrobotics.org/dashboard">Ignition Fuel</a>.</p></li>
+<li><p>Insert models during runtime.</p></li>
+<li><p>Exploit the high-level <a class="reference internal" href="../apidoc/gym-ignition-environments/gym_ignition_environments.models.html#gym_ignition_environments.models.panda.Panda" title="gym_ignition_environments.models.panda.Panda"><code class="xref py py-class docutils literal notranslate"><span class="pre">Panda</span></code></a> helper class to insert the manipulator.</p></li>
+<li><p>Enable custom C++ controllers (<a class="reference internal" href="../breathe/gazebo.html#_CPPv4N8scenario11controllers23ComputedTorqueFixedBaseE" title="scenario::controllers::ComputedTorqueFixedBase"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">scenario::controllers::ComputedTorqueFixedBase</span></code></a>).</p></li>
+<li><p>Detect contacts and read contact wrenches.</p></li>
+<li><p>Integrate with <a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.rbd.idyntree.html#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP" title="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP"><code class="xref py py-class docutils literal notranslate"><span class="pre">InverseKinematicsNLP</span></code></a>.</p></li>
+</ul>
+<div class="figure align-center">
+<img alt="https://user-images.githubusercontent.com/469199/99263406-6f387400-281f-11eb-9a7d-3d6f58681499.png" src="https://user-images.githubusercontent.com/469199/99263406-6f387400-281f-11eb-9a7d-3d6f58681499.png" />
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>This example can be the starting point to develop manipulation environments for robot learning.
+Visit the <a class="reference internal" href="gym-ignition.html#getting-started-gym-ignition"><span class="std std-ref">gym-ignition</span></a> page for more information about how to wrap this code in the resources provided by <code class="docutils literal notranslate"><span class="pre">gym_ignition</span></code>.</p>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">enum</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">gym_ignition</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">gym_ignition_environments</span>
+<span class="kn">from</span> <span class="nn">gym_ignition.rbd</span> <span class="kn">import</span> <span class="n">conversions</span>
+<span class="kn">from</span> <span class="nn">scenario</span> <span class="kn">import</span> <span class="n">core</span> <span class="k">as</span> <span class="n">scenario_core</span>
+<span class="kn">from</span> <span class="nn">scenario</span> <span class="kn">import</span> <span class="n">gazebo</span> <span class="k">as</span> <span class="n">scenario_gazebo</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.transform</span> <span class="kn">import</span> <span class="n">Rotation</span> <span class="k">as</span> <span class="n">R</span>
+<span class="kn">from</span> <span class="nn">gym_ignition.context.gazebo</span> <span class="kn">import</span> <span class="n">controllers</span>
+<span class="kn">from</span> <span class="nn">gym_ignition.rbd.idyntree</span> <span class="kn">import</span> <span class="n">inverse_kinematics_nlp</span>
+
+<span class="c1"># Configure verbosity</span>
+<span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">Verbosity_error</span><span class="p">)</span>
+
+<span class="c1"># Configure numpy output</span>
+<span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">add_panda_controller</span><span class="p">(</span><span class="n">panda</span><span class="p">:</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">,</span>
+                         <span class="n">controller_period</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="c1"># Set the controller period</span>
+    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_controller_period</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="n">controller_period</span><span class="p">)</span>
+
+    <span class="c1"># Increase the max effort of the fingers</span>
+    <span class="n">panda</span><span class="o">.</span><span class="n">get_joint</span><span class="p">(</span><span class="n">joint_name</span><span class="o">=</span><span class="s2">&quot;panda_finger_joint1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span> \
+        <span class="n">set_max_generalized_force</span><span class="p">(</span><span class="n">max_force</span><span class="o">=</span><span class="mf">500.0</span><span class="p">)</span>
+    <span class="n">panda</span><span class="o">.</span><span class="n">get_joint</span><span class="p">(</span><span class="n">joint_name</span><span class="o">=</span><span class="s2">&quot;panda_finger_joint2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span> \
+        <span class="n">set_max_generalized_force</span><span class="p">(</span><span class="n">max_force</span><span class="o">=</span><span class="mf">500.0</span><span class="p">)</span>
+
+    <span class="c1"># Insert the ComputedTorqueFixedBase controller</span>
+    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span><span class="n">insert_model_plugin</span><span class="p">(</span><span class="o">*</span><span class="n">controllers</span><span class="o">.</span><span class="n">ComputedTorqueFixedBase</span><span class="p">(</span>
+        <span class="n">kp</span><span class="o">=</span><span class="p">[</span><span class="mf">50.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">dofs</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mf">10000.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">ki</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">panda</span><span class="o">.</span><span class="n">dofs</span><span class="p">(),</span>
+        <span class="n">kd</span><span class="o">=</span><span class="p">[</span><span class="mf">12.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">dofs</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">urdf</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">get_model_file</span><span class="p">(),</span>
+        <span class="n">joints</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_names</span><span class="p">(),</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">args</span><span class="p">())</span>
+
+    <span class="c1"># Initialize the controller to the current state</span>
+    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_position_targets</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_positions</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_velocity_targets</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_velocities</span><span class="p">())</span>
+    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_acceleration_targets</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_accelerations</span><span class="p">())</span>
+
+
+<span class="k">def</span> <span class="nf">get_panda_ik</span><span class="p">(</span><span class="n">panda</span><span class="p">:</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">,</span>
+                 <span class="n">optimized_joints</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> \
+    <span class="n">inverse_kinematics_nlp</span><span class="o">.</span><span class="n">InverseKinematicsNLP</span><span class="p">:</span>
+
+    <span class="c1"># Create IK</span>
+    <span class="n">ik</span> <span class="o">=</span> <span class="n">inverse_kinematics_nlp</span><span class="o">.</span><span class="n">InverseKinematicsNLP</span><span class="p">(</span>
+        <span class="n">urdf_filename</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">get_model_file</span><span class="p">(),</span>
+        <span class="n">considered_joints</span><span class="o">=</span><span class="n">optimized_joints</span><span class="p">,</span>
+        <span class="n">joint_serialization</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_names</span><span class="p">())</span>
+
+    <span class="c1"># Initialize IK</span>
+    <span class="n">ik</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="n">floating_base</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">cost_tolerance</span><span class="o">=</span><span class="mf">1E-8</span><span class="p">,</span>
+                  <span class="n">constraints_tolerance</span><span class="o">=</span><span class="mf">1E-8</span><span class="p">,</span>
+                  <span class="n">base_frame</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">base_frame</span><span class="p">())</span>
+
+    <span class="c1"># Set the current configuration</span>
+    <span class="n">ik</span><span class="o">.</span><span class="n">set_current_robot_configuration</span><span class="p">(</span>
+        <span class="n">base_position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">base_position</span><span class="p">()),</span>
+        <span class="n">base_quaternion</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">base_orientation</span><span class="p">()),</span>
+        <span class="n">joint_configuration</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_positions</span><span class="p">()))</span>
+
+    <span class="c1"># Add the cartesian target of the end effector</span>
+    <span class="n">end_effector</span> <span class="o">=</span> <span class="s2">&quot;end_effector_frame&quot;</span>
+    <span class="n">ik</span><span class="o">.</span><span class="n">add_target</span><span class="p">(</span><span class="n">frame_name</span><span class="o">=</span><span class="n">end_effector</span><span class="p">,</span>
+                  <span class="n">target_type</span><span class="o">=</span><span class="n">inverse_kinematics_nlp</span><span class="o">.</span><span class="n">TargetType</span><span class="o">.</span><span class="n">POSE</span><span class="p">,</span>
+                  <span class="n">as_constraint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ik</span>
+
+
+<span class="k">def</span> <span class="nf">insert_bucket</span><span class="p">(</span><span class="n">world</span><span class="p">:</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">World</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">Model</span><span class="p">:</span>
+
+    <span class="c1"># Insert objects from Fuel</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">org</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;https://fuel.ignitionrobotics.org/</span><span class="si">{</span><span class="n">org</span><span class="si">}</span><span class="s2">/models/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Download the cube SDF file</span>
+    <span class="n">bucket_sdf</span> <span class="o">=</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">get_model_file_from_fuel</span><span class="p">(</span>
+        <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s2">&quot;GoogleResearch&quot;</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Threshold_Basket_Natural_Finish_Fabric_Liner_Small&quot;</span><span class="p">),</span>
+        <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Assign a custom name to the model</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;bucket&quot;</span>
+
+    <span class="c1"># Insert the model</span>
+    <span class="k">assert</span> <span class="n">world</span><span class="o">.</span><span class="n">insert_model</span><span class="p">(</span><span class="n">bucket_sdf</span><span class="p">,</span>
+                              <span class="n">scenario_core</span><span class="o">.</span><span class="n">Pose</span><span class="p">([</span><span class="mf">0.3</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+                              <span class="n">model_name</span><span class="p">)</span>
+
+    <span class="c1"># Return the model</span>
+    <span class="k">return</span> <span class="n">world</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">insert_cube_in_operating_area</span><span class="p">(</span><span class="n">world</span><span class="p">:</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">World</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">Model</span><span class="p">:</span>
+
+    <span class="c1"># Insert objects from Fuel</span>
+    <span class="n">uri</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">org</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;https://fuel.ignitionrobotics.org/</span><span class="si">{</span><span class="n">org</span><span class="si">}</span><span class="s2">/models/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+    <span class="c1"># Download the cube SDF file</span>
+    <span class="n">cube_sdf</span> <span class="o">=</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">get_model_file_from_fuel</span><span class="p">(</span>
+        <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s2">&quot;openrobotics&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;wood cube 5cm&quot;</span><span class="p">),</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># Build a random position</span>
+    <span class="n">position_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">position_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">0.7</span><span class="p">)</span>
+    <span class="n">random_position</span> <span class="o">=</span> <span class="p">[</span><span class="n">position_x</span><span class="p">,</span> <span class="n">position_y</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>
+
+    <span class="c1"># Get a unique name</span>
+    <span class="n">model_name</span> <span class="o">=</span> <span class="n">gym_ignition</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">get_unique_model_name</span><span class="p">(</span>
+        <span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;cube&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Insert the model</span>
+    <span class="k">assert</span> <span class="n">world</span><span class="o">.</span><span class="n">insert_model</span><span class="p">(</span>
+        <span class="n">cube_sdf</span><span class="p">,</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">Pose</span><span class="p">(</span><span class="n">random_position</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">model_name</span><span class="p">)</span>
+
+    <span class="c1"># Return the model</span>
+    <span class="k">return</span> <span class="n">world</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">solve_ik</span><span class="p">(</span><span class="n">target_position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+             <span class="n">target_orientation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+             <span class="n">ik</span><span class="p">:</span> <span class="n">inverse_kinematics_nlp</span><span class="o">.</span><span class="n">InverseKinematicsNLP</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+    <span class="n">quat_xyzw</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span><span class="n">seq</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">as_quat</span><span class="p">()</span>
+
+    <span class="n">ik</span><span class="o">.</span><span class="n">update_transform_target</span><span class="p">(</span>
+        <span class="n">target_name</span><span class="o">=</span><span class="n">ik</span><span class="o">.</span><span class="n">get_active_target_names</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span>
+        <span class="n">position</span><span class="o">=</span><span class="n">target_position</span><span class="p">,</span>
+        <span class="n">quaternion</span><span class="o">=</span><span class="n">conversions</span><span class="o">.</span><span class="n">Quaternion</span><span class="o">.</span><span class="n">to_wxyz</span><span class="p">(</span><span class="n">xyzw</span><span class="o">=</span><span class="n">quat_xyzw</span><span class="p">))</span>
+
+    <span class="c1"># Run the IK</span>
+    <span class="n">ik</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">ik</span><span class="o">.</span><span class="n">get_reduced_solution</span><span class="p">()</span><span class="o">.</span><span class="n">joint_configuration</span>
+
+
+<span class="k">def</span> <span class="nf">end_effector_reached</span><span class="p">(</span><span class="n">position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+                         <span class="n">end_effector_link</span><span class="p">:</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">Link</span><span class="p">,</span>
+                         <span class="n">max_error</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                         <span class="n">mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]))</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+
+    <span class="n">masked_target</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">*</span> <span class="n">position</span>
+    <span class="n">masked_current</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">end_effector_link</span><span class="o">.</span><span class="n">position</span><span class="p">())</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">masked_current</span> <span class="o">-</span> <span class="n">masked_target</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">max_error</span>
+
+
+<span class="k">def</span> <span class="nf">get_unload_position</span><span class="p">(</span><span class="n">bucket</span><span class="p">:</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+
+    <span class="k">return</span> <span class="n">bucket</span><span class="o">.</span><span class="n">base_position</span><span class="p">()</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">])</span>
+
+
+<span class="k">class</span> <span class="nc">FingersAction</span><span class="p">(</span><span class="n">enum</span><span class="o">.</span><span class="n">Enum</span><span class="p">):</span>
+
+    <span class="n">OPEN</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
+    <span class="n">CLOSE</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">move_fingers</span><span class="p">(</span><span class="n">panda</span><span class="p">:</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">,</span>
+                 <span class="n">action</span><span class="p">:</span> <span class="n">FingersAction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+
+    <span class="c1"># Get the joints of the fingers</span>
+    <span class="n">finger1</span> <span class="o">=</span> <span class="n">panda</span><span class="o">.</span><span class="n">get_joint</span><span class="p">(</span><span class="n">joint_name</span><span class="o">=</span><span class="s2">&quot;panda_finger_joint1&quot;</span><span class="p">)</span>
+    <span class="n">finger2</span> <span class="o">=</span> <span class="n">panda</span><span class="o">.</span><span class="n">get_joint</span><span class="p">(</span><span class="n">joint_name</span><span class="o">=</span><span class="s2">&quot;panda_finger_joint2&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="n">FingersAction</span><span class="o">.</span><span class="n">OPEN</span><span class="p">:</span>
+        <span class="n">finger1</span><span class="o">.</span><span class="n">set_position_target</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">finger1</span><span class="o">.</span><span class="n">position_limit</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+        <span class="n">finger2</span><span class="o">.</span><span class="n">set_position_target</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">finger2</span><span class="o">.</span><span class="n">position_limit</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">action</span> <span class="ow">is</span> <span class="n">FingersAction</span><span class="o">.</span><span class="n">CLOSE</span><span class="p">:</span>
+        <span class="n">finger1</span><span class="o">.</span><span class="n">set_position_target</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">finger1</span><span class="o">.</span><span class="n">position_limit</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+        <span class="n">finger2</span><span class="o">.</span><span class="n">set_position_target</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">finger2</span><span class="o">.</span><span class="n">position_limit</span><span class="p">()</span><span class="o">.</span><span class="n">min</span><span class="p">)</span>
+
+
+<span class="c1"># ====================</span>
+<span class="c1"># INITIALIZE THE WORLD</span>
+<span class="c1"># ====================</span>
+
+<span class="c1"># Get the simulator and the world</span>
+<span class="n">gazebo</span><span class="p">,</span> <span class="n">world</span> <span class="o">=</span> <span class="n">gym_ignition</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">init_gazebo_sim</span><span class="p">(</span>
+    <span class="n">step_size</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">real_time_factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">steps_per_run</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Open the GUI</span>
+<span class="n">gazebo</span><span class="o">.</span><span class="n">gui</span><span class="p">()</span>
+<span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">paused</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Insert the Panda manipulator</span>
+<span class="n">panda</span> <span class="o">=</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">(</span><span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="p">)</span>
+<span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">paused</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Monkey patch the class with finger helpers</span>
+<span class="n">panda</span><span class="o">.</span><span class="n">open_fingers</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">move_fingers</span><span class="p">,</span> <span class="n">panda</span><span class="o">=</span><span class="n">panda</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">FingersAction</span><span class="o">.</span><span class="n">OPEN</span><span class="p">)</span>
+<span class="n">panda</span><span class="o">.</span><span class="n">close_fingers</span> <span class="o">=</span> <span class="n">partial</span><span class="p">(</span><span class="n">move_fingers</span><span class="p">,</span> <span class="n">panda</span><span class="o">=</span><span class="n">panda</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="n">FingersAction</span><span class="o">.</span><span class="n">CLOSE</span><span class="p">)</span>
+
+<span class="c1"># Add a custom joint controller to the panda</span>
+<span class="n">add_panda_controller</span><span class="p">(</span><span class="n">panda</span><span class="o">=</span><span class="n">panda</span><span class="p">,</span> <span class="n">controller_period</span><span class="o">=</span><span class="n">gazebo</span><span class="o">.</span><span class="n">step_size</span><span class="p">())</span>
+
+<span class="c1"># Insert the bucket</span>
+<span class="n">bucket</span> <span class="o">=</span> <span class="n">insert_bucket</span><span class="p">(</span><span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="p">)</span>
+<span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">paused</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Create and configure IK for the panda</span>
+<span class="n">ik_joints</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">panda</span><span class="o">.</span><span class="n">joints</span><span class="p">()</span> <span class="k">if</span> <span class="n">j</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">JointType_fixed</span> <span class="p">]</span>
+<span class="n">ik</span> <span class="o">=</span> <span class="n">get_panda_ik</span><span class="p">(</span><span class="n">panda</span><span class="o">=</span><span class="n">panda</span><span class="p">,</span> <span class="n">optimized_joints</span><span class="o">=</span><span class="n">ik_joints</span><span class="p">)</span>
+
+<span class="c1"># Get some manipulator links</span>
+<span class="n">finger_left</span> <span class="o">=</span> <span class="n">panda</span><span class="o">.</span><span class="n">get_link</span><span class="p">(</span><span class="n">link_name</span><span class="o">=</span><span class="s2">&quot;panda_leftfinger&quot;</span><span class="p">)</span>
+<span class="n">finger_right</span> <span class="o">=</span> <span class="n">panda</span><span class="o">.</span><span class="n">get_link</span><span class="p">(</span><span class="n">link_name</span><span class="o">=</span><span class="s2">&quot;panda_rightfinger&quot;</span><span class="p">)</span>
+<span class="n">end_effector_frame</span> <span class="o">=</span> <span class="n">panda</span><span class="o">.</span><span class="n">get_link</span><span class="p">(</span><span class="n">link_name</span><span class="o">=</span><span class="s2">&quot;end_effector_frame&quot;</span><span class="p">)</span>
+
+<span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+
+    <span class="c1"># Insert a new cube</span>
+    <span class="n">cube</span> <span class="o">=</span> <span class="n">insert_cube_in_operating_area</span><span class="p">(</span><span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="p">)</span>
+    <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">paused</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="c1"># =========================</span>
+    <span class="c1"># PHASE 1: Go over the cube</span>
+    <span class="c1"># =========================</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hovering&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Position over the cube</span>
+    <span class="n">position_over_cube</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">base_position</span><span class="p">())</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">])</span>
+
+    <span class="c1"># Get the joint configuration that brings the EE over the cube</span>
+    <span class="n">over_joint_configuration</span> <span class="o">=</span> <span class="n">solve_ik</span><span class="p">(</span>
+        <span class="n">target_position</span><span class="o">=</span><span class="n">position_over_cube</span><span class="p">,</span>
+        <span class="n">target_orientation</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">base_orientation</span><span class="p">()),</span>
+        <span class="n">ik</span><span class="o">=</span><span class="n">ik</span><span class="p">)</span>
+
+    <span class="c1"># Set the joint references</span>
+    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_position_targets</span><span class="p">(</span><span class="n">over_joint_configuration</span><span class="p">,</span> <span class="n">ik_joints</span><span class="p">)</span>
+
+    <span class="c1"># Open the fingers</span>
+    <span class="n">panda</span><span class="o">.</span><span class="n">open_fingers</span><span class="p">()</span>
+
+    <span class="c1"># Run the simulation until the EE reached the desired position</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">end_effector_reached</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">position_over_cube</span><span class="p">,</span>
+                                   <span class="n">end_effector_link</span><span class="o">=</span><span class="n">end_effector_frame</span><span class="p">,</span>
+                                   <span class="n">max_error</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+        <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="c1"># Wait a bit more</span>
+    <span class="p">[</span><span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">)]</span>
+
+    <span class="c1"># =======================</span>
+    <span class="c1"># PHASE 2: Reach the cube</span>
+    <span class="c1"># =======================</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Reaching&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get the joint configuration that brings the EE to the cube</span>
+    <span class="n">over_joint_configuration</span> <span class="o">=</span> <span class="n">solve_ik</span><span class="p">(</span>
+        <span class="n">target_position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">base_position</span><span class="p">())</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">]),</span>
+        <span class="n">target_orientation</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">base_orientation</span><span class="p">()),</span>
+        <span class="n">ik</span><span class="o">=</span><span class="n">ik</span><span class="p">)</span>
+
+    <span class="c1"># Set the joint references</span>
+    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_position_targets</span><span class="p">(</span><span class="n">over_joint_configuration</span><span class="p">,</span> <span class="n">ik_joints</span><span class="p">)</span>
+    <span class="n">panda</span><span class="o">.</span><span class="n">open_fingers</span><span class="p">()</span>
+
+    <span class="c1"># Run the simulation until the EE reached the desired position</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">end_effector_reached</span><span class="p">(</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">base_position</span><span class="p">())</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">]),</span>
+            <span class="n">end_effector_link</span><span class="o">=</span><span class="n">end_effector_frame</span><span class="p">):</span>
+
+        <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="c1"># Wait a bit more</span>
+    <span class="p">[</span><span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">)]</span>
+
+    <span class="c1"># =======================</span>
+    <span class="c1"># PHASE 4: Grasp the cube</span>
+    <span class="c1"># =======================</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Grasping&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Close the fingers</span>
+    <span class="n">panda</span><span class="o">.</span><span class="n">close_fingers</span><span class="p">()</span>
+
+    <span class="c1"># Detect a graps reading the contact wrenches of the finger links</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">finger_left</span><span class="o">.</span><span class="n">contact_wrench</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="mf">30.0</span> <span class="ow">and</span>
+               <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">finger_right</span><span class="o">.</span><span class="n">contact_wrench</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="mf">30.0</span><span class="p">):</span>
+        <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="c1"># =====================================</span>
+    <span class="c1"># PHASE 5: Place the cube in the bucket</span>
+    <span class="c1"># =====================================</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Dropping&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Get the joint configuration that brings the EE over the bucket</span>
+    <span class="n">unload_joint_configuration</span> <span class="o">=</span> <span class="n">solve_ik</span><span class="p">(</span>
+        <span class="n">target_position</span><span class="o">=</span><span class="n">get_unload_position</span><span class="p">(</span><span class="n">bucket</span><span class="o">=</span><span class="n">bucket</span><span class="p">),</span>
+        <span class="n">target_orientation</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
+        <span class="n">ik</span><span class="o">=</span><span class="n">ik</span><span class="p">)</span>
+
+    <span class="c1"># Set the joint references</span>
+    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_position_targets</span><span class="p">(</span><span class="n">unload_joint_configuration</span><span class="p">,</span>
+                                            <span class="n">ik_joints</span><span class="p">)</span>
+
+    <span class="c1"># Run the simulation until the EE reached the desired position</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">end_effector_reached</span><span class="p">(</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">get_unload_position</span><span class="p">(</span><span class="n">bucket</span><span class="o">=</span><span class="n">bucket</span><span class="p">)</span> <span class="o">+</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">end_effector_link</span><span class="o">=</span><span class="n">end_effector_frame</span><span class="p">,</span>
+            <span class="n">max_error</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+            <span class="n">mask</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])):</span>
+
+        <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="c1"># Open the fingers</span>
+    <span class="n">panda</span><span class="o">.</span><span class="n">open_fingers</span><span class="p">()</span>
+
+    <span class="c1"># Wait that both fingers are in not contact (with the cube)</span>
+    <span class="k">while</span> <span class="n">finger_left</span><span class="o">.</span><span class="n">in_contact</span><span class="p">()</span> <span class="ow">or</span> <span class="n">finger_right</span><span class="o">.</span><span class="n">in_contact</span><span class="p">():</span>
+        <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+    <span class="c1"># Wait a bit more</span>
+    <span class="p">[</span><span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">500</span><span class="p">)]</span>
+
+<span class="c1"># It is always a good practice to close the simulator.</span>
+<span class="c1"># In this case it is not required since above there is an infinite loop.</span>
+<span class="c1"># gazebo.close()</span>
+</pre></div>
+</div>
+</div>
+
+
+              </div>
+              
+        </div>
+    </div>
+    
+    
+    <div class='prev-next-bottom'>
+        
+    <a class='left-prev' id="prev-link" href="scenario.html" title="previous page">ScenarI/O</a>
+    <a class='right-next' id="next-link" href="gym-ignition.html" title="next page">gym-ignition</a>
+
+    </div>
+    <footer class="footer mt-5 mt-md-0">
+    <div class="container">
+      <p>
+        
+          By Diego Ferigo<br/>
+        
+            &copy; Copyright 2020, Istituto Italiano di Tecnologia.<br/>
+      </p>
+    </div>
+  </footer>
+</main>
+
+
+      </div>
+    </div>
+
+    
+  <script src="../_static/js/index.3da636dd464baa7582d2.js"></script>
+
+
+    
+  </body>
+</html>
