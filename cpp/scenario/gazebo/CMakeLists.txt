@@ -135,9 +135,19 @@ set_target_properties(GazeboSimulator PROPERTIES
 # Install the targets
 # ===================
 
+get_property(TPL_IS_IMPORTED
+    TARGET tiny-process-library::tiny-process-library
+    PROPERTY IMPORTED)
+
+if(TPL_IS_IMPORTED)
+    set(EXPORT_TPL_TARGET)
+else()
+    set(EXPORT_TPL_TARGET tiny-process-library)
+endif()
+
 install(
     TARGETS
-    ExtraComponents
+    ExtraComponents ${EXPORT_TPL_TARGET}
     EXPORT ScenarioGazeboExport
     LIBRARY DESTINATION ${SCENARIO_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${SCENARIO_INSTALL_LIBDIR}
