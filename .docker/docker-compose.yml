@@ -2,62 +2,79 @@ version: '3.0'
 
 services:
 
-  latest:
+  base:
     build:
       args:
-        branch: master
-        ignition_codename: citadel
-        pypi_package: gym-ignition
+        from: ubuntu:focal
       context: .
-      dockerfile: Dockerfile.latest
-    image: diegoferigo/gym-ignition:latest
+      dockerfile: base.Dockerfile
+    image: diegoferigo/gym-ignition:base
 
-  nightly:
-    build:
-      args:
-        branch: devel
-        ignition_codename: citadel
-        pypi_package: gym-ignition-nightly
-      context: .
-      dockerfile: Dockerfile.nightly
-    image: diegoferigo/gym-ignition:nightly
+  # ======
+  # MASTER
+  # ======
 
   ci-master:
     build:
       args:
-        from: ubuntu:bionic
-        BUILD_SHARED_LIBS: "ON"
-        CMAKE_BUILD_TYPE: Debug
+        from: diegoferigo/gym-ignition:base
+        ignition_codename: dome
       context: .
-      dockerfile: Dockerfile.cicd-master
+      dockerfile: cicd-master.Dockerfile
     image: diegoferigo/gym-ignition:ci-master
 
   pypi-master:
     build:
       args:
-        from: ubuntu:bionic
-        BUILD_SHARED_LIBS: "OFF"
-        CMAKE_BUILD_TYPE: Release
+        from: diegoferigo/gym-ignition:base
+        ignition_codename: dome
       context: .
-      dockerfile: Dockerfile.cicd-master
+      dockerfile: cicd-master.Dockerfile
     image: diegoferigo/gym-ignition:pypi-master
+
+  # =====
+  # DEVEL
+  # =====
 
   ci-devel:
     build:
       args:
-        from: ubuntu:bionic
-        BUILD_SHARED_LIBS: "ON"
+        from: diegoferigo/gym-ignition:base
+        ignition_codename: dome
         CMAKE_BUILD_TYPE: Debug
       context: .
-      dockerfile: Dockerfile.cicd-devel
+      dockerfile: cicd-devel.Dockerfile
     image: diegoferigo/gym-ignition:ci-devel
 
   pypi-devel:
     build:
       args:
-        from: ubuntu:bionic
-        BUILD_SHARED_LIBS: "OFF"
+        from: diegoferigo/gym-ignition:base
+        ignition_codename: dome
         CMAKE_BUILD_TYPE: Release
       context: .
-      dockerfile: Dockerfile.cicd-devel
+      dockerfile: cicd-devel.Dockerfile
     image: diegoferigo/gym-ignition:pypi-devel
+
+  # ====
+  # DEMO
+  # ====
+
+  latest:
+    build:
+      args:
+        from: diegoferigo/gym-ignition:pypi-master
+        branch: master
+      context: .
+      dockerfile: Dockerfile
+    image: diegoferigo/gym-ignition:latest
+
+  nightly:
+    build:
+      args:
+        from: diegoferigo/gym-ignition:ci-devel
+        branch: devel
+        pip_options: --pre
+      context: .
+      dockerfile: Dockerfile
+    image: diegoferigo/gym-ignition:nightly

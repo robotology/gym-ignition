@@ -1,0 +1,50 @@
+# Copyright (C) 2020 Istituto Italiano di Tecnologia (IIT). All rights reserved.
+# This software may be modified and distributed under the terms of the
+# GNU Lesser General Public License v2.1 or any later version.
+
+set(scenario_swig_name "core")
+set_source_files_properties(${scenario_swig_name}.i PROPERTIES CPLUSPLUS ON)
+
+# The bindings shared library is stored in the Python package of the build tree
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../scenario/bindings)
+
+swig_add_library(${scenario_swig_name}
+    TYPE SHARED
+    LANGUAGE python
+    OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/../scenario/bindings
+    OUTFILE_DIR ${CMAKE_CURRENT_BINARY_DIR}/..
+    SOURCES ${scenario_swig_name}.i)
+add_library(ScenarioSwig::Core ALIAS core)
+
+target_link_libraries(${scenario_swig_name} PUBLIC
+    ScenarioCore::ScenarioABC
+    ScenarioCore::CoreUtils
+    Python3::Python)
+
+set_property(TARGET ${scenario_swig_name} PROPERTY
+    SWIG_USE_TARGET_INCLUDE_DIRECTORIES TRUE)
+
+set_property(TARGET ${scenario_swig_name}
+    PROPERTY SWIG_COMPILE_OPTIONS -doxygen)
+
+# Add the to_gazebo() helpers
+if(SCENARIO_USE_IGNITION)
+    set_property(TARGET ${scenario_swig_name} PROPERTY
+        SWIG_COMPILE_DEFINITIONS SCENARIO_HAS_GAZEBO)
+    set_property(TARGET ${scenario_swig_name} PROPERTY
+        SWIG_DEPENDS "../gazebo/to_gazebo.i")
+    target_link_libraries(${scenario_swig_name} PUBLIC ScenarioGazebo)
+endif()
+
+# Get the core.py wrapper file
+get_property(WRAPPER_PY_FILE TARGET ${scenario_swig_name} PROPERTY SWIG_SUPPORT_FILES)
+
+install(
+    TARGETS ${scenario_swig_name}
+    LIBRARY DESTINATION ${BINDINGS_INSTALL_PREFIX}/bindings
+    ARCHIVE DESTINATION ${BINDINGS_INSTALL_PREFIX}/bindings
+    RUNTIME DESTINATION ${BINDINGS_INSTALL_PREFIX}/bindings)
+
+install(
+    FILES ${WRAPPER_PY_FILE}
+    DESTINATION ${BINDINGS_INSTALL_PREFIX}/bindings)

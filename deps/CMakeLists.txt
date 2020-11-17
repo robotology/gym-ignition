@@ -4,37 +4,102 @@
 
 include(FetchContent)
 
+# ===
+# YCM
+# ===
+
+find_package(YCM QUIET)
+
+option(SCENARIO_USE_SYSTEM_YCM
+    "Use system-installed YCM, rather than a private copy"
+    ${YCM_FOUND})
+
+if(SCENARIO_USE_SYSTEM_YCM AND NOT ${YCM_FOUND})
+    message(FATAL_ERROR "Failed to find system YCM")
+endif()
+
+if(NOT ${SCENARIO_USE_SYSTEM_YCM})
+
+    FetchContent_Declare(
+        ycm
+        GIT_REPOSITORY https://github.com/robotology/ycm.git)
+
+    FetchContent_GetProperties(ycm)
+
+    if(NOT ycm_POPULATED)
+        FetchContent_Populate(ycm)
+
+        add_subdirectory(${ycm_SOURCE_DIR}
+                         ${ycm_BINARY_DIR}
+                         EXCLUDE_FROM_ALL)
+    endif()
+
+    set(CMAKE_MODULE_PATH
+        "${CMAKE_MODULE_PATH};${ycm_SOURCE_DIR}/modules" PARENT_SCOPE)
+else()
+    set(CMAKE_MODULE_PATH
+        "${CMAKE_MODULE_PATH};${YCM_MODULE_PATH}" PARENT_SCOPE)
+endif()
+
 # ====================
 # TINY-PROCESS-LIBRARY
 # ====================
 
 find_package(tiny-process-library QUIET)
 
-if(NOT ${tiny-process-library_FOUND})
-    message(STATUS "Bootstrapping Tiny Process Library")
+option(SCENARIO_USE_SYSTEM_TPL
+    "Use system-installed tiny-process-library, rather than a private copy"
+    ${tiny-process-library_FOUND})
+
+if(SCENARIO_USE_SYSTEM_TPL AND NOT ${tiny-process-library_FOUND})
+    message(FATAL_ERROR "Failed to find system tiny-process-library")
+endif()
+
+if(NOT ${SCENARIO_USE_SYSTEM_TPL})
 
     FetchContent_Declare(
-        TinyProcessLibrary
+        tinyprocesslibrary
         GIT_REPOSITORY https://gitlab.com/eidheim/tiny-process-library.git)
 
-    FetchContent_GetProperties(TinyProcessLibrary)
-    if(NOT TinyProcessLibrary_POPULATED)
-        FetchContent_Populate(TinyProcessLibrary)
-        add_subdirectory(${tinyprocesslibrary_SOURCE_DIR} ${tinyprocesslibrary_BINARY_DIR})
+    FetchContent_GetProperties(tinyprocesslibrary)
 
-        set_target_properties(tiny-process-library PROPERTIES
-            PUBLIC_HEADER ${tinyprocesslibrary_SOURCE_DIR}/process.hpp
-            POSITION_INDEPENDENT_CODE ON)
+    if(NOT tinyprocesslibrary_POPULATED)
+        FetchContent_Populate(tinyprocesslibrary)
 
-        if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-            # Install the target
-            install(
-                TARGETS tiny-process-library
-                LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-                RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-                PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+        # We don't want to install this library in the system, we instead
+        # compile it as an OBJECT library and embed in either the shared or
+        # static libraries that need it.
+
+        if(WIN32)
+            add_library(tiny-process-library OBJECT
+                ${tinyprocesslibrary_SOURCE_DIR}/process.cpp
+                ${tinyprocesslibrary_SOURCE_DIR}/process_win.cpp)
+            #If compiled using MSYS2, use sh to run commands
+            if(MSYS)
+                target_compile_definitions(tiny-process-library
+                    PUBLIC MSYS_PROCESS_USE_SH)
+            endif()
+        else()
+            add_library(tiny-process-library OBJECT
+                ${tinyprocesslibrary_SOURCE_DIR}/process.cpp
+                ${tinyprocesslibrary_SOURCE_DIR}/process_unix.cpp)
         endif()
+
+        if(MSVC)
+            target_compile_definitions(tiny-process-library
+                PRIVATE /D_CRT_SECURE_NO_WARNINGS)
+        endif()
+
+        find_package(Threads REQUIRED)
+
+        target_link_libraries(tiny-process-library PRIVATE
+            ${CMAKE_THREAD_LIBS_INIT})
+
+        target_include_directories(tiny-process-library PUBLIC
+            $<BUILD_INTERFACE:${tinyprocesslibrary_SOURCE_DIR}>)
+
+        add_library(tiny-process-library::tiny-process-library ALIAS tiny-process-library)
+
     endif()
 endif()
 

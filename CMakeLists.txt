@@ -2,11 +2,19 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-cmake_minimum_required(VERSION 3.12)
-project(GymIgnition VERSION 0.1)
+cmake_minimum_required(VERSION 3.16)
+project(Scenario VERSION 0.1)
+
+# Add custom functions / macros
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+if(BUILD_DOCS)
+    add_subdirectory(docs)
+endif()
 
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # Include useful features
@@ -18,29 +26,29 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
         set(CMAKE_BUILD_TYPE "Release" CACHE STRING
             "Choose the type of build, recommended options are: Debug or Release" FORCE)
     endif()
-    set(GYMIGNITION_BUILD_TYPES "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${GYMIGNITION_BUILD_TYPES})
+    set(SCENARIO_BUILD_TYPES "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
+    set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${SCENARIO_BUILD_TYPES})
 endif()
 
 # This new build mode configures the CMake project to be compatible with the pipeline to
 # create the PyPI linux wheel
-include(cmake/AddNewBuildMode.cmake)
+include(AddNewBuildMode)
 add_new_build_mode(NAME "PyPI" TEMPLATE "Release")
 
 # Expose shared or static compilation
-set(GYMIGNITION_BUILD_SHARED_LIBRARY TRUE
+set(SCENARIO_BUILD_SHARED_LIBRARY TRUE
     CACHE BOOL "Compile libraries as shared libraries")
 
 if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "PyPI")
     # Apply the user choice
-    set(BUILD_SHARED_LIBS ${GYMIGNITION_BUILD_SHARED_LIBRARY})
+    set(BUILD_SHARED_LIBS ${SCENARIO_BUILD_SHARED_LIBRARY})
 else()
     # Check that is Linux
     if(NOT (UNIX AND NOT APPLE))
         message(FATAL_ERROR "PyPI packages can be only created for Linux at the moment")
     endif()
 
-    if(${GYMIGNITION_BUILD_SHARED_LIBRARY})
+    if(SCENARIO_BUILD_SHARED_LIBRARY)
         message(WARNING "Enabling static compilation, required by the PyPI build mode")
     endif()
 
@@ -68,8 +76,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}"
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}")
 
 # Get include-what-you-use information when compiling
-option(GYMIGNITION_USE_IWYU "Get the output of include-what-you-use" OFF)
-if(GYMIGNITION_USE_IWYU)
+option(SCENARIO_USE_IWYU "Get the output of include-what-you-use" OFF)
+mark_as_advanced(SCENARIO_USE_IWYU)
+if(SCENARIO_USE_IWYU)
     find_program(IWYU_PATH NAMES include-what-you-use iwyu)
     if(IWYU_PATH)
         set(CMAKE_CXX_INCLUDE_WHAT_YOU_USE ${IWYU_PATH})
@@ -82,55 +91,124 @@ if(NOT MSVC)
     mark_as_advanced(ENABLE_RPATH)
 endif()
 
-# Add custom functions / macros
-list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+# Dependencies
+add_subdirectory(deps)
 
-# Find YCM
-find_package(YCM QUIET)
+if(${CMAKE_VERSION} VERSION_GREATER 3.15)
+    cmake_policy(SET CMP0094 NEW)
+endif()
 
-# Bootstrap YCM if not found
-if(NOT ${YCM_FOUND})
-    include(BootstrapYCM)
+# Find virtualenv's before system's interpreters
+set(Python3_FIND_VIRTUALENV "FIRST" CACHE STRING
+    "Configure the detection of virtual environments")
+set(Python3_FIND_VIRTUALENV_TYPES "FIRST" "ONLY" "STANDARD")
+mark_as_advanced(Python3_FIND_VIRTUALENV)
+set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTUALENV_TYPES})
+
+# Find Python3
+find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+message(STATUS "Using Python: ${Python3_EXECUTABLE}")
+
+# Select the appropriate install prefix used throughout the project.
+set(SCENARIO_INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR})
+set(SCENARIO_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
+set(SCENARIO_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+    # Add the libraries installed in the Python site-package folder
+    set(EXTRA_RPATH_DIRS
+        "${Python3_SITELIB}"
+        "${Python3_SITELIB}/scenario/bindings")
+else()
+    # Add the libraries installed in the Python site-package folder
+    # (that in this case is CMAKE_INSTALL_PREFIX)
+    set(EXTRA_RPATH_DIRS
+        "${CMAKE_INSTALL_PREFIX}"
+        "${CMAKE_INSTALL_PREFIX}/scenario/bindings")
 endif()
 
 # Configure RPATH
 include(AddInstallRPATHSupport)
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    add_install_rpath_support(BIN_DIRS "${CMAKE_INSTALL_FULL_BINDIR}"
-                              LIB_DIRS "${CMAKE_INSTALL_FULL_LIBDIR}"
-                                       "${CMAKE_INSTALL_FULL_LIBDIR}/lib"
-                              INSTALL_NAME_DIR "${CMAKE_INSTALL_FULL_LIBDIR}"
-                              DEPENDS ENABLE_RPATH
-                              USE_LINK_PATH)
+add_install_rpath_support(
+    BIN_DIRS
+    "${CMAKE_INSTALL_PREFIX}/${GYMPP_INSTALL_BINDIR}"
+    "${CMAKE_INSTALL_PREFIX}/${SCENARIO_INSTALL_BINDIR}"
+    LIB_DIRS
+    "${CMAKE_INSTALL_PREFIX}/${SCENARIO_INSTALL_LIBDIR}"
+    "${CMAKE_INSTALL_PREFIX}/${SCENARIO_INSTALL_LIBDIR}/scenario/plugins"
+    "${EXTRA_RPATH_DIRS}"
+    INSTALL_NAME_DIR
+    "${CMAKE_INSTALL_PREFIX}/${SCENARIO_INSTALL_LIBDIR}"
+    DEPENDS ENABLE_RPATH
+    USE_LINK_PATH)
+
+# Find a supported Ignition distribution
+if(NOT IGNITION_DISTRIBUTION)
+
+    include(FindIgnitionDistribution)
+    set(SUPPORTED_IGNITION_DISTRIBUTIONS "Dome" "Citadel")
+
+    foreach(distribution IN LISTS SUPPORTED_IGNITION_DISTRIBUTIONS)
+
+        find_ignition_distribution(
+            CODENAME ${distribution}
+            PACKAGES
+            ignition-gazebo
+            REQUIRED FALSE)
+
+        if(${${distribution}_FOUND})
+            message(STATUS "Found Ignition ${distribution}")
+
+            # Select Ignition distribution
+            set(IGNITION_DISTRIBUTION "${distribution}" CACHE
+                STRING "The Ignition distribution found in the system")
+            set_property(CACHE IGNITION_DISTRIBUTION PROPERTY
+                STRINGS ${SUPPORTED_IGNITION_DISTRIBUTIONS})
+
+            break()
+        endif()
+
+    endforeach()
+
 endif()
 
-# Dependencies
-add_subdirectory(deps)
-
-# Add the C++ sources subdirectory
-add_subdirectory(gympp)
-
-# ========
-# IGNITION
-# ========
-
-find_package(ignition-gazebo3 COMPONENTS all)
-option(GYMIGNITION_USE_IGNITION
-       "Build C++ code depending on Ignition Robotics" ${ignition-gazebo3_FOUND})
-
-# Add the targets depending on Ignition Robotics
-if(${GYMIGNITION_USE_IGNITION})
-    add_subdirectory(ignition)
-    add_subdirectory(plugins)
-    add_subdirectory(gym_ignition_data)
-    add_subdirectory(examples/cpp)
-
-    option(ENABLE_BINDINGS "Enable swig bindings" ON)
-    if(ENABLE_BINDINGS)
-        add_subdirectory(bindings)
-    endif()
+if(NOT IGNITION_DISTRIBUTION)
+    set(USE_IGNITION FALSE)
 else()
-    message(STATUS "Ignition Gazebo not found. Enabled only the gympp interface and classes.")
+    set(USE_IGNITION TRUE)
+endif()
+
+option(SCENARIO_USE_IGNITION
+       "Build C++ code depending on Ignition"
+       ${USE_IGNITION})
+
+# Alias the targets
+if(${SCENARIO_USE_IGNITION})
+    include(ImportTargets${IGNITION_DISTRIBUTION})
+endif()
+
+# Helper for exporting targets
+include(InstallBasicPackageFiles)
+
+# =========
+# SCENARI/O
+# =========
+
+add_subdirectory(cpp/scenario)
+
+# ========
+# BINDINGS
+# ========
+
+# Require to find Ignition libraries when packaging for PyPI
+if(CMAKE_BUILD_TYPE STREQUAL "PyPI" AND NOT USE_IGNITION)
+    message(FATAL_ERROR "Found no Ignition distribution for PyPI package")
+endif()
+
+option(SCENARIO_ENABLE_BINDINGS "Enable SWIG bindings" ON)
+
+if(SCENARIO_ENABLE_BINDINGS)
+    add_subdirectory(bindings)
 endif()
 
 # Add unistall target

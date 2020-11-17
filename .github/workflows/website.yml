@@ -1,0 +1,107 @@
+name: Website
+
+on:
+  push:
+  pull_request:
+    branches:
+      - master
+      - devel
+
+jobs:
+  website:
+    name: Build and Deploy
+    runs-on: ubuntu-20.04
+
+    steps:
+
+      - uses: actions/checkout@master
+        with:
+          persist-credentials: false
+
+      - run: git fetch --prune --unshallow
+
+      - name: Setup Environment
+        run: |
+          echo "CC=gcc" >> $GITHUB_ENV
+          echo "CXX=g++" >> $GITHUB_ENV
+          echo "PYTHON_VERSION=3.8" >> $GITHUB_ENV
+          env
+
+      - name: Inspect Environment
+        run: |
+          env | grep ^GITHUB
+          cat ${GITHUB_EVENT_PATH}
+
+      - name: Setup docker image [master]
+        if: |
+          (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master')
+        run: |
+          docker run -d -i --name ci -v $(pwd):/github -w /github \
+            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
+            -e PYTHON_VERSION=$PYTHON_VERSION -e CC=$CC -e CXX=$CXX \
+            diegoferigo/gym-ignition:ci-master bash
+
+      - name: Setup docker image [devel]
+        if: |
+          (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'devel')
+        run: |
+          docker run -d -i --name ci -v $(pwd):/github -w /github \
+            -v /home/runner/work/_temp/:/home/runner/work/_temp/:rw \
+            -e PYTHON_VERSION=$PYTHON_VERSION -e CC=$CC -e CXX=$CXX \
+            diegoferigo/gym-ignition:ci-devel bash
+
+      - name: Wait entrypoint
+        run: |
+          sleep 30
+          docker logs ci
+
+      - name: Install packages
+        shell: docker exec -i ci bash -i -e {0}
+        run: |
+          apt-get update
+          apt-get install -y doxygen texlive-font-utils
+
+      - name: Install website dependecies
+        shell: docker exec -i ci bash -i -e {0}
+        run: pip3 install -e .[website]
+
+      - name: Inspect metadata
+        shell: docker exec -i ci bash -i -e {0}
+        run: sphinx-multiversion --dump-metadata docs/sphinx/ build/
+
+      # This is necessary because otherwise the check for uncommitted apidoc
+      # only detects additions, not removals.
+      - name: Remove apidoc folder
+        shell: docker exec -i ci bash -i -e {0}
+        run: rm -r docs/sphinx/apidoc
+
+      - name: Build sphinx website
+        shell: docker exec -i ci bash -i -e {0}
+        run: |
+          mkdir build && cd build
+          cmake .. -GNinja -DCMAKE_BUILD_TYPE=Debug -DBUILD_DOCS:BOOL=ON
+          cmake --build . --target sphinx
+
+      - name: Check new uncommitted apidoc
+        run: test $(git status --porcelain | wc -l) -eq 0
+
+      - name: git status
+        if: ${{ failure() }}
+        run: |
+          git status
+          git diff
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        if: |
+          github.event_name == 'push' &&
+          github.repository == 'robotology/gym-ignition' &&
+          (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/devel')
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: build/html
+          CLEAN: true
+          CLEAN_EXCLUDE: '[".gitignore", ".nojekyll"]'
