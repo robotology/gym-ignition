@@ -48,7 +48,7 @@ class CartpoleRandomizersMixin(randomizers.abc.TaskRandomizer,
 
         return scenario.PhysicsEngine_dart
 
-    def randomize_physics(self, task: SupportedTasks) -> None:
+    def randomize_physics(self, task: SupportedTasks, **kwargs) -> None:
 
         gravity_z = task.np_random.normal(loc=-9.8, scale=0.2)
 
@@ -87,7 +87,7 @@ class CartpoleRandomizersMixin(randomizers.abc.TaskRandomizer,
     # ModelDescriptionRandomizer interface
     # ====================================
 
-    def randomize_model_description(self, task: SupportedTasks) -> str:
+    def randomize_model_description(self, task: SupportedTasks, **kwargs) -> str:
 
         randomizer = self._get_sdf_randomizer(task=task)
         sdf = misc.string_to_file(randomizer.sample())

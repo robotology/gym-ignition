@@ -23,6 +23,6 @@ class DART(randomizers.abc.PhysicsRandomizer):
 
         return scenario.PhysicsEngine_dart
 
-    def randomize_physics(self, task: gym_ignition.base.task.Task) -> None:
+    def randomize_physics(self, task: gym_ignition.base.task.Task, **kwargs) -> None:
 
         pass
