@@ -121,7 +121,7 @@ target_link_libraries(GazeboSimulator
     PUBLIC
     ScenarioCore::ScenarioABC
     PRIVATE
-    tiny-process-library
+    tiny-process-library::tiny-process-library
     ${ignition-gazebo.core}
     ScenarioCore::CoreUtils
     ScenarioGazebo::ScenarioGazebo
@@ -145,12 +145,9 @@ install(
     PUBLIC_HEADER DESTINATION
     ${SCENARIO_INSTALL_INCLUDEDIR}/scenario/gazebo/components)
 
-# Note that while tiny-process-library is in the EXPORT, being an OBJECT library
-# it then becomes an INTERFACE target when imported downstream.
-# Refer to the CMakeLists of the deps/ folder for further information.
 install(
     TARGETS
-    ScenarioGazebo GazeboSimulator tiny-process-library
+    ScenarioGazebo GazeboSimulator
     EXPORT ScenarioGazeboExport
     LIBRARY DESTINATION ${SCENARIO_INSTALL_LIBDIR}
     ARCHIVE DESTINATION ${SCENARIO_INSTALL_LIBDIR}
