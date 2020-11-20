@@ -260,9 +260,10 @@ jobs:
       - name: Publish package to PyPI
         if: |
           github.repository == 'robotology/gym-ignition' && matrix.type == 'User' &&
-          (github.event_name == 'release' && matrix.ignition == 'dome' ||
-           github.event_name == 'push' && matrix.ignition == 'dome' && github.ref == 'refs/heads/devel')
+          ((github.event_name == 'release' && github.event.action == 'published' && matrix.ignition == 'dome') ||
+           (github.event_name == 'push' && matrix.ignition == 'dome' && github.ref == 'refs/heads/devel'))
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
           password: ${{ secrets.PYPI_TOKEN }}
+          skip_existing: true
