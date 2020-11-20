@@ -59,6 +59,11 @@ setup(
             'sphinx-tabs',
             "breathe",
         ],
+        test=[
+            "pytest",
+            "pytest-xvfb",
+            "pytest-icdiff",
+        ]
     ),
     packages=find_packages("python"),
     package_dir={'': "python"},
