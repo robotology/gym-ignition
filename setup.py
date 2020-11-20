@@ -24,7 +24,7 @@ setup(
     license="LGPL",
     platforms='any',
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Operating System :: POSIX :: Linux",
         "Topic :: Games/Entertainment :: Simulation",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
