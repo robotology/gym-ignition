@@ -90,6 +90,7 @@ class InverseKinematicsNLP:
                  considered_joints: List[str] = None,
                  joint_serialization: List[str] = None) -> None:
 
+        self._floating_base: bool = False
         self._base_frame: Optional[str] = None
         self._urdf_filename: str = urdf_filename
         self._targets_data: Dict[str, TargetData] = dict()
@@ -162,10 +163,14 @@ class InverseKinematicsNLP:
         else:
             self._base_frame = model.getLinkName(model.getDefaultBaseLink())
 
-        if not floating_base:
+        # Store whether the IK optimize a fixed or floating base robot
+        self._floating_base = floating_base
+
+        if not self._floating_base:
+
             # Add a frame constraint for the base
             self.add_frame_transform_constraint(frame_name=self._base_frame,
-                                                position=np.array([0.0, 0, 0]),
+                                                position=np.array([0.0, 0, 0.0]),
                                                 quaternion=np.array([1.0, 0, 0, 0]))
 
     def set_current_robot_configuration(self,
@@ -185,6 +190,12 @@ class InverseKinematicsNLP:
         if not self._ik.setCurrentRobotConfiguration(baseConfiguration=H,
                                                      jointConfiguration=q):
             raise RuntimeError("Failed to set the current robot configuration")
+
+        if not self._floating_base:
+
+            self.update_frame_transform_constraint(frame_name=self._base_frame,
+                                                   position=base_position,
+                                                   quaternion=base_quaternion)
 
     def set_current_joint_configuration(self,
                                         joint_name: str,
@@ -417,6 +428,21 @@ class InverseKinematicsNLP:
         # Add the constraint
         if not self._ik.addFrameRotationConstraint(frame_name, R):
             raise RuntimeError(f"Failed to add constraint on frame '{frame_name}'")
+
+    def update_frame_transform_constraint(self,
+                                          frame_name: str,
+                                          position: np.ndarray,
+                                          quaternion: np.ndarray) -> None:
+
+        if not self._ik.isFrameConstraintActive(frame_name):
+            raise RuntimeError(f"Constraint on frame '{frame_name}' not active")
+
+        # Create the transform
+        H = rbd.idyntree.numpy.FromNumPy.to_idyntree_transform(position=position,
+                                                               quaternion=quaternion)
+
+        if not self._ik.activateFrameConstraint(frame_name, H):
+            raise RuntimeError(f"Failed to update constraint on frame '{frame_name}'")
 
     def deactivate_frame_constraint(self, frame_name: str) -> None:
 
