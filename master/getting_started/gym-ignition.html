@@ -307,11 +307,11 @@ The <a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.html
 for reinforcement learning research compatible with OpenAI Gym.</p>
 <p>Beyond the abstractions provided by ScenarIO, gym-ignition introduces the following:</p>
 <ul class="simple">
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Runtime</span></code>: Base class to abstract the runtime of an environment.
+<li><p><a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.base.html#gym_ignition.base.runtime.Runtime" title="gym_ignition.base.runtime.Runtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runtime</span></code></a>: Base class to abstract the runtime of an environment.
 It provides the code that steps the simulator for simulated environments or deals with real-time execution for
 environments running on real robots.
 The implementation for Ignition Gazebo is <a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.runtimes.html#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime" title="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime"><code class="xref py py-class docutils literal notranslate"><span class="pre">GazeboRuntime</span></code></a>.</p></li>
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code>: Base class providing the structure of the decision-making logic.
+<li><p><a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">Task</span></code></a>: Base class providing the structure of the decision-making logic.
 The code of the task must be independent from the runtime, and only the ScenarIO APIs should be used.
 The active runtime will then execute the task on either simulated or real worlds.</p></li>
 <li><p><a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.randomizers.html#module-gym_ignition.randomizers" title="gym_ignition.randomizers"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gym_ignition.randomizers</span></code></a>: Utilities to develop <code class="docutils literal notranslate"><span class="pre">gym.Wrapper</span></code> classes that randomize the environment

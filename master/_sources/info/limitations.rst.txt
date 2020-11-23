@@ -13,7 +13,7 @@ Performance
 -----------
 
 When operating on a single model, DART provides good enough performance and accuracy for most of the use-cases.
-However, we noticed that it does not perform well well when many models are inserted in the simulated world,
+However, we noticed that it does not perform well when many models are inserted in the simulated world,
 especially in contact-rich scenarios.
 
 If your aim is performing simulations for robot learning, we recommend running multiple instances of the simulator,
