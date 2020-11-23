@@ -10,19 +10,26 @@ The code reported below is taken from the example
 It shows the following functionalities:
 
 - Download models from `Ignition Fuel <https://app.ignitionrobotics.org/dashboard>`_.
-- Insert models during runtime.
+- Insert and remove models during runtime.
 - Exploit the high-level :py:class:`~gym_ignition_environments.models.panda.Panda` helper class to insert the manipulator.
 - Enable custom C++ controllers (:cpp:class:`scenario::controllers::ComputedTorqueFixedBase`).
 - Detect contacts and read contact wrenches.
-- Integrate with :py:class:`~gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP`.
+- Exploit :py:class:`~gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP`.
 
-.. figure:: https://user-images.githubusercontent.com/469199/99263406-6f387400-281f-11eb-9a7d-3d6f58681499.png
+.. figure:: https://user-images.githubusercontent.com/469199/99905096-f29a0f80-2cce-11eb-9f1c-002f6c887bc6.png
    :align: center
 
 .. tip::
 
    This example can be the starting point to develop manipulation environments for robot learning.
    Visit the :ref:`getting_started_gym_ignition` page for more information about how to wrap this code in the resources provided by ``gym_ignition``.
+
+.. note::
+
+   This is an illustrative example. A compliant joint controller is used to move the manipulator, it does not perform any
+   trajectory planning and it does not avoid self collisions, which are not enabled in the simulation by default.
+   There are cube positions where the joint configuration changes a lot from the previous, generating an abrupt movement
+   of the manipulator. When these situations occur, grasping might fail.
 
 .. code-block:: python
 
@@ -61,9 +68,9 @@ It shows the following functionalities:
 
         # Insert the ComputedTorqueFixedBase controller
         assert panda.to_gazebo().insert_model_plugin(*controllers.ComputedTorqueFixedBase(
-            kp=[50.0] * (panda.dofs() - 2) + [10000.0] * 2,
+            kp=[100.0] * (panda.dofs() - 2) + [10000.0] * 2,
             ki=[0.0] * panda.dofs(),
-            kd=[12.0] * (panda.dofs() - 2) + [100.0] * 2,
+            kd=[17.5] * (panda.dofs() - 2) + [100.0] * 2,
             urdf=panda.get_model_file(),
             joints=panda.joint_names(),
         ).args())
@@ -122,7 +129,30 @@ It shows the following functionalities:
 
         # Insert the model
         assert world.insert_model(bucket_sdf,
-                                  scenario_core.Pose([0.3, -0.4, 0.0], [1., 0, 0, 0]),
+                                  scenario_core.Pose([0.68, 0, 1.02], [1., 0, 0, 1]),
+                                  model_name)
+
+        # Return the model
+        return world.get_model(model_name=model_name)
+
+
+    def insert_table(world: scenario_gazebo.World) -> scenario_gazebo.Model:
+
+        # Insert objects from Fuel
+        uri = lambda org, name: f"https://fuel.ignitionrobotics.org/{org}/models/{name}"
+
+        # Download the cube SDF file
+        bucket_sdf = scenario_gazebo.get_model_file_from_fuel(
+            uri=uri(org="OpenRobotics",
+                    name="Table"),
+            use_cache=False)
+
+        # Assign a custom name to the model
+        model_name = "table"
+
+        # Insert the model
+        assert world.insert_model(bucket_sdf,
+                                  scenario_core.Pose_identity(),
                                   model_name)
 
         # Return the model
@@ -138,10 +168,8 @@ It shows the following functionalities:
         cube_sdf = scenario_gazebo.get_model_file_from_fuel(
             uri=uri(org="openrobotics", name="wood cube 5cm"), use_cache=False)
 
-        # Build a random position
-        position_x = np.random.uniform(low=-0.5, high=0.5)
-        position_y = np.random.uniform(low=0.3, high=0.7)
-        random_position = [position_x, position_y, 0.0]
+        # Sample a random position
+        random_position = np.random.uniform(low=[0.2, -0.3, 1.01], high=[0.4, 0.3, 1.01])
 
         # Get a unique name
         model_name = gym_ignition.utils.scenario.get_unique_model_name(
@@ -174,13 +202,15 @@ It shows the following functionalities:
 
     def end_effector_reached(position: np.array,
                              end_effector_link: scenario_core.Link,
-                             max_error: float = 0.01,
+                             max_error_pos: float = 0.01,
+                             max_error_vel: float = 0.5,
                              mask: np.ndarray = np.array([1., 1., 1.])) -> bool:
 
         masked_target = mask * position
         masked_current = mask * np.array(end_effector_link.position())
 
-        return np.linalg.norm(masked_current - masked_target) < max_error
+        return np.linalg.norm(masked_current - masked_target) < max_error_pos and \
+               np.linalg.norm(end_effector_link.world_linear_velocity()) < max_error_vel
 
 
     def get_unload_position(bucket: scenario_core.Model) -> np.ndarray:
@@ -224,7 +254,8 @@ It shows the following functionalities:
     gazebo.run(paused=True)
 
     # Insert the Panda manipulator
-    panda = gym_ignition_environments.models.panda.Panda(world=world)
+    panda = gym_ignition_environments.models.panda.Panda(
+        world=world, position=[-0.1, 0, 1.0])
     gazebo.run(paused=True)
 
     # Monkey patch the class with finger helpers
@@ -234,7 +265,8 @@ It shows the following functionalities:
     # Add a custom joint controller to the panda
     add_panda_controller(panda=panda, controller_period=gazebo.step_size())
 
-    # Insert the bucket
+    # Populate the world
+    table = insert_table(world=world)
     bucket = insert_bucket(world=world)
     gazebo.run(paused=True)
 
@@ -277,7 +309,8 @@ It shows the following functionalities:
         # Run the simulation until the EE reached the desired position
         while not end_effector_reached(position=position_over_cube,
                                        end_effector_link=end_effector_frame,
-                                       max_error=0.05):
+                                       max_error_pos=0.05,
+                                       max_error_vel=0.5):
             gazebo.run()
 
         # Wait a bit more
@@ -310,7 +343,7 @@ It shows the following functionalities:
         [gazebo.run() for _ in range(500)]
 
         # =======================
-        # PHASE 4: Grasp the cube
+        # PHASE 3: Grasp the cube
         # =======================
 
         print("Grasping")
@@ -319,9 +352,37 @@ It shows the following functionalities:
         panda.close_fingers()
 
         # Detect a graps reading the contact wrenches of the finger links
-        while not (np.linalg.norm(finger_left.contact_wrench()) >= 30.0 and
-                   np.linalg.norm(finger_right.contact_wrench()) >= 30.0):
+        while not (np.linalg.norm(finger_left.contact_wrench()) >= 50.0 and
+                   np.linalg.norm(finger_right.contact_wrench()) >= 50.0):
             gazebo.run()
+
+        # =============
+        # PHASE 4: Lift
+        # =============
+
+        print("Lifting")
+
+        # Position over the cube
+        position_over_cube = np.array(cube.base_position()) + np.array([0, 0, 0.4])
+
+        # Get the joint configuration that brings the EE over the cube
+        over_joint_configuration = solve_ik(
+            target_position=position_over_cube,
+            target_orientation=np.array(cube.base_orientation()),
+            ik=ik)
+
+        # Set the joint references
+        assert panda.set_joint_position_targets(over_joint_configuration, ik_joints)
+
+        # Run the simulation until the EE reached the desired position
+        while not end_effector_reached(position=position_over_cube,
+                                       end_effector_link=end_effector_frame,
+                                       max_error_pos=0.1,
+                                       max_error_vel=0.5):
+            gazebo.run()
+
+        # Wait a bit more
+        [gazebo.run() for _ in range(500)]
 
         # =====================================
         # PHASE 5: Place the cube in the bucket
@@ -344,7 +405,8 @@ It shows the following functionalities:
                 position=get_unload_position(bucket=bucket) +
                          np.random.uniform(low=-0.05, high=0.05, size=3),
                 end_effector_link=end_effector_frame,
-                max_error=0.01,
+                max_error_pos=0.01,
+                max_error_vel=0.1,
                 mask=np.array([1, 1, 0])):
 
             gazebo.run()
@@ -359,6 +421,10 @@ It shows the following functionalities:
         # Wait a bit more
         [gazebo.run() for _ in range(500)]
 
+        # Remove the cube
+        world.remove_model(model_name=cube.name())
+
     # It is always a good practice to close the simulator.
     # In this case it is not required since above there is an infinite loop.
     # gazebo.close()
+
