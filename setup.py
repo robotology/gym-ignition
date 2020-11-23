@@ -24,7 +24,7 @@ setup(
     license="LGPL",
     platforms='any',
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Operating System :: POSIX :: Linux",
         "Topic :: Games/Entertainment :: Simulation",
         "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -59,6 +59,11 @@ setup(
             'sphinx-tabs',
             "breathe",
         ],
+        test=[
+            "pytest",
+            "pytest-xvfb",
+            "pytest-icdiff",
+        ]
     ),
     packages=find_packages("python"),
     package_dir={'': "python"},

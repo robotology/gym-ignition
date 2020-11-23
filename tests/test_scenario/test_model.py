@@ -240,12 +240,9 @@ def test_model_references(gazebo: scenario.GazeboSimulator):
     assert model.joint_acceleration_targets() == pytest.approx([-0, 3.14])
     assert model.joint_acceleration_targets(["pivot"]) == pytest.approx([3.14])
 
-    # TODO
-    # assert not model.set_joint_generalized_force_targets([20.1, -13])
-    # assert model.set_joint_control_mode()(bindings.JointControlMode_force)
-    # assert model.set_joint_generalized_force_targets([20.1, -13])
-    # assert model.joint_generalized_force_targets() == pytest.approx([20.1, -13])
-    # assert model.joint_generalized_force_targets(["pivot"]) == pytest.approx([-13])
+    assert model.set_joint_generalized_force_targets([20.1, -13])
+    assert model.joint_generalized_force_targets() == pytest.approx([20.1, -13])
+    assert model.joint_generalized_force_targets(["pivot"]) == pytest.approx([-13])
 
     assert model.set_base_pose_target((0, 0, 5), (0, 0, 0, 1.0))
     assert model.set_base_orientation_target((0, 0, 1.0, 0))

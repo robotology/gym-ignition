@@ -9,12 +9,12 @@ for reinforcement learning research compatible with OpenAI Gym.
 
 Beyond the abstractions provided by ScenarIO, gym-ignition introduces the following:
 
-- :py:class:`~gym_ignition.base.Runtime`: Base class to abstract the runtime of an environment.
+- :py:class:`~gym_ignition.base.runtime.Runtime`: Base class to abstract the runtime of an environment.
   It provides the code that steps the simulator for simulated environments or deals with real-time execution for
   environments running on real robots.
   The implementation for Ignition Gazebo is :py:class:`~gym_ignition.runtimes.gazebo_runtime.GazeboRuntime`.
 
-- :py:class:`~gym_ignition.base.Task`: Base class providing the structure of the decision-making logic.
+- :py:class:`~gym_ignition.base.task.Task`: Base class providing the structure of the decision-making logic.
   The code of the task must be independent from the runtime, and only the ScenarIO APIs should be used.
   The active runtime will then execute the task on either simulated or real worlds.
 

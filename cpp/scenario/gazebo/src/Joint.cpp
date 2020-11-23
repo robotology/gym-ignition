@@ -1105,7 +1105,7 @@ std::vector<double> Joint::jointAccelerationTarget() const
 std::vector<double> Joint::jointGeneralizedForceTarget() const
 {
     const std::vector<double>& target = utils::getExistingComponentData< //
-        ignition::gazebo::components::JointForce>(m_ecm, m_entity);
+        ignition::gazebo::components::JointForceCmd>(m_ecm, m_entity);
 
     if (target.size() != this->dofs()) {
         throw exceptions::DOFMismatch(
