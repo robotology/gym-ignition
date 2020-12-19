@@ -63,3 +63,5 @@ From the root of the repository:
 The editable installation only symlinks the resources of the repository into the active Python installation.
 It allows to develop directly operating on the files of the repository and use the updated package without requiring
 to install it again.
+
+.. include:: system_configuration.rst
