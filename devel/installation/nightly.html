@@ -38,7 +38,6 @@
     <script src="../_static/jquery.js"></script>
     <script src="../_static/underscore.js"></script>
     <script src="../_static/doctools.js"></script>
-    <script src="../_static/language_data.js"></script>
     <script src="../_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
@@ -308,6 +307,11 @@
    PyPI Package
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#system-configuration">
+   System Configuration
+  </a>
+ </li>
 </ul>
 
         </nav>
@@ -342,6 +346,18 @@ Make sure to execute the next steps in a terminal where the virtual environment 
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --pre gym-ignition
 </pre></div>
 </div>
+</div>
+<div class="section" id="system-configuration">
+<h2>System Configuration<a class="headerlink" href="#system-configuration" title="Permalink to this headline">¶</a></h2>
+<p>This section applies only to the installations that require building Ignition from sources.</p>
+<p>If you installed Ignition from sources, you likely used <code class="docutils literal notranslate"><span class="pre">colcon</span></code> and therefore the entire suite was installed in a custom folder called workspace.
+The workspace contains all the shared libraries and executables of Ignition, including the plugins loaded during runtime.
+Since we cannot know in advance where you created the workspace, <code class="docutils literal notranslate"><span class="pre">gym-ignition</span></code> is not able to find the physics plugins.</p>
+<p>After you enabled the workspace by sourcing its bash script, you may need to also export the following variable:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">IGN_GAZEBO_PHYSICS_ENGINE_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">IGN_GAZEBO_PHYSICS_ENGINE_PATH</span><span class="si">}</span>:<span class="si">${</span><span class="nv">COLCON_PREFIX_PATH</span><span class="si">}</span>/lib/ign-physics-3/engine-plugins/
+</pre></div>
+</div>
+<p>Make sure to select the folder corresponding to the correct version of ign-physics, otherwise the wrong plugins are found.</p>
 </div>
 </div>
 

@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Limitations &#8212; gym-ignition  documentation</title>
+    <title>System Configuration &#8212; gym-ignition  documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -42,7 +42,6 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="prev" title="FAQ" href="faq.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -109,22 +108,22 @@
 </p>
 <ul class="nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="../installation/support_policy.html">
+  <a class="reference internal" href="support_policy.html">
    Support policy
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../installation/stable.html">
+  <a class="reference internal" href="stable.html">
    Stable
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../installation/nightly.html">
+  <a class="reference internal" href="nightly.html">
    Nightly
   </a>
  </li>
  <li class="toctree-l1">
-  <a class="reference internal" href="../installation/developer.html">
+  <a class="reference internal" href="developer.html">
    Developer Installation
   </a>
  </li>
@@ -195,14 +194,14 @@
   Information
  </span>
 </p>
-<ul class="current nav sidenav_l1">
+<ul class="nav sidenav_l1">
  <li class="toctree-l1">
-  <a class="reference internal" href="faq.html">
+  <a class="reference internal" href="../info/faq.html">
    FAQ
   </a>
  </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../info/limitations.html">
    Limitations
   </a>
  </li>
@@ -248,7 +247,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/info/limitations.rst.txt"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/installation/system_configuration.rst.txt"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.rst</button></a>
         <!-- Download PDF via print -->
@@ -268,10 +267,10 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/robotology/gym-ignition/issues/new?title=Issue%20on%20page%20%2Finfo/limitations.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/robotology/gym-ignition/issues/new?title=Issue%20on%20page%20%2Finstallation/system_configuration.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
-        <a class="edit-button" href="https://github.com/robotology/gym-ignition/edit/master/docs/sphinx/info/limitations.rst"><button
+        <a class="edit-button" href="https://github.com/robotology/gym-ignition/edit/master/docs/sphinx/installation/system_configuration.rst"><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
     </div>
@@ -291,25 +290,6 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
-        <div class="tocsection onthispage pt-5 pb-3">
-            <i class="fas fa-list"></i> Contents
-        </div>
-        <nav id="bd-toc-nav">
-            <ul class="nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#sensors-support">
-   Sensors support
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#performance">
-   Performance
-  </a>
- </li>
-</ul>
-
-        </nav>
-        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -317,35 +297,17 @@
         
               <div>
                 
-  <div class="section" id="limitations">
-<h1>Limitations<a class="headerlink" href="#limitations" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="sensors-support">
-<h2>Sensors support<a class="headerlink" href="#sensors-support" title="Permalink to this headline">¶</a></h2>
-<p>Ignition Gazebo supports a wide variety of <a class="reference external" href="https://ignitionrobotics.org/docs/citadel/comparison#sensors">sensors</a>,
-like cameras, lidars, …
-However, ScenarI/O and consequently gym-ignition are not yet able to extract data from sensors.
-Follow <a class="reference external" href="https://github.com/robotology/gym-ignition/issues/199">#199</a> if you’re interested in sensors support.</p>
+  <div class="section" id="system-configuration">
+<h1>System Configuration<a class="headerlink" href="#system-configuration" title="Permalink to this headline">¶</a></h1>
+<p>This section applies only to the installations that require building Ignition from sources.</p>
+<p>If you installed Ignition from sources, you likely used <code class="docutils literal notranslate"><span class="pre">colcon</span></code> and therefore the entire suite was installed in a custom folder called workspace.
+The workspace contains all the shared libraries and executables of Ignition, including the plugins loaded during runtime.
+Since we cannot know in advance where you created the workspace, <code class="docutils literal notranslate"><span class="pre">gym-ignition</span></code> is not able to find the physics plugins.</p>
+<p>After you enabled the workspace by sourcing its bash script, you may need to also export the following variable:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">IGN_GAZEBO_PHYSICS_ENGINE_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">IGN_GAZEBO_PHYSICS_ENGINE_PATH</span><span class="si">}</span>:<span class="si">${</span><span class="nv">COLCON_PREFIX_PATH</span><span class="si">}</span>/lib/ign-physics-3/engine-plugins/
+</pre></div>
 </div>
-<div class="section" id="performance">
-<h2>Performance<a class="headerlink" href="#performance" title="Permalink to this headline">¶</a></h2>
-<p>When operating on a single model, DART provides good enough performance and accuracy for most of the use-cases.
-However, we noticed that it does not perform well when many models are inserted in the simulated world,
-especially in contact-rich scenarios.</p>
-<p>If your aim is performing simulations for robot learning, we recommend running multiple instances of the simulator,
-each of them operating on a world containing a single robot.</p>
-<p>If your aim is simulating a big world where the controlled model can move inside the scene, exploiting a new feature
-of Ignition Gazebo called <a class="reference external" href="https://github.com/ignitionrobotics/ign-gazebo/blob/ign-gazebo4/tutorials/levels.md">levels</a>
-could be the proper solution. This feature is exploited by the big worlds of <a class="reference external" href="https://subtchallenge.com">subt</a>.</p>
-<p>Instead, if your world has many models and the usage of levels does not apply to your use-case, you can try to switch
-the physics backend to an engine that handles better your simulation.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>At the time of writing only DART is officially supported.
-There is some recent activity to implement the bullet physics engine, but this back-and is not yet ready.
-As last resort, you can implement a new physics backend following the
-<a class="reference external" href="https://github.com/ignitionrobotics/ign-physics/blob/ign-physics3/tutorials/03_physics_plugins.md">instructions</a>.</p>
-</div>
-</div>
+<p>Make sure to select the folder corresponding to the correct version of ign-physics, otherwise the wrong plugins are found.</p>
 </div>
 
 
@@ -357,7 +319,6 @@ As last resort, you can implement a new physics backend following the
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="faq.html" title="previous page">FAQ</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">
