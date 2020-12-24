@@ -18,13 +18,36 @@
 #ifndef SCENARIO_PLUGINS_GAZEBO_PHYSICS
 #define SCENARIO_PLUGINS_GAZEBO_PHYSICS
 
-#include <ignition/gazebo/System.hh>
-#include <ignition/physics/FeatureList.hh>
-#include <ignition/physics/RequestFeatures.hh>
-
 #include <memory>
 #include <unordered_map>
 #include <utility>
+
+#include <ignition/gazebo/System.hh>
+#include <ignition/physics/FeatureList.hh>
+#include <ignition/physics/FindFeatures.hh>
+#include <ignition/physics/RequestFeatures.hh>
+
+// Features need to be defined ahead of entityCast
+#include <ignition/physics/BoxShape.hh>
+#include <ignition/physics/CylinderShape.hh>
+#include <ignition/physics/FixedJoint.hh>
+#include <ignition/physics/ForwardStep.hh>
+#include <ignition/physics/FrameSemantics.hh>
+#include <ignition/physics/FreeGroup.hh>
+#include <ignition/physics/GetBoundingBox.hh>
+#include <ignition/physics/GetContacts.hh>
+#include <ignition/physics/Joint.hh>
+#include <ignition/physics/Link.hh>
+#include <ignition/physics/RemoveEntities.hh>
+#include <ignition/physics/Shape.hh>
+#include <ignition/physics/SphereShape.hh>
+#include <ignition/physics/mesh/MeshShape.hh>
+#include <ignition/physics/sdf/ConstructCollision.hh>
+#include <ignition/physics/sdf/ConstructJoint.hh>
+#include <ignition/physics/sdf/ConstructLink.hh>
+#include <ignition/physics/sdf/ConstructModel.hh>
+#include <ignition/physics/sdf/ConstructNestedModel.hh>
+#include <ignition/physics/sdf/ConstructWorld.hh>
 
 namespace scenario::plugins::gazebo {
     class Physics;
