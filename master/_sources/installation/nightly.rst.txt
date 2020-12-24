@@ -18,3 +18,5 @@ Install the pre-release `gym-ignition <https://pypi.org/project/gym-ignition/>`_
 .. code-block:: bash
 
    pip install --pre gym-ignition
+
+.. include:: system_configuration.rst

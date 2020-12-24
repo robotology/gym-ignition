@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Nightly &#8212; gym-ignition  documentation</title>
+    <title>System Configuration &#8212; gym-ignition  documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.73d71520a4ca3b99cfee5594769eaaae.css">
 
@@ -42,8 +42,6 @@
     <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Developer Installation" href="developer.html" />
-    <link rel="prev" title="Stable" href="stable.html" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -108,7 +106,7 @@
   Installation
  </span>
 </p>
-<ul class="current nav sidenav_l1">
+<ul class="nav sidenav_l1">
  <li class="toctree-l1">
   <a class="reference internal" href="support_policy.html">
    Support policy
@@ -119,8 +117,8 @@
    Stable
   </a>
  </li>
- <li class="toctree-l1 current active">
-  <a class="current reference internal" href="#">
+ <li class="toctree-l1">
+  <a class="reference internal" href="nightly.html">
    Nightly
   </a>
  </li>
@@ -249,7 +247,7 @@
         <!-- ipynb file if we had a myst markdown file -->
         
         <!-- Download raw file -->
-        <a class="dropdown-buttons" href="../_sources/installation/nightly.rst.txt"><button type="button"
+        <a class="dropdown-buttons" href="../_sources/installation/system_configuration.rst.txt"><button type="button"
                 class="btn btn-secondary topbarbtn" title="Download source file" data-toggle="tooltip"
                 data-placement="left">.rst</button></a>
         <!-- Download PDF via print -->
@@ -269,10 +267,10 @@
                 data-toggle="tooltip" data-placement="left" title="Source repository"><i
                     class="fab fa-github"></i>repository</button></a>
         <a class="issues-button"
-            href="https://github.com/robotology/gym-ignition/issues/new?title=Issue%20on%20page%20%2Finstallation/nightly.html&body=Your%20issue%20content%20here."><button
+            href="https://github.com/robotology/gym-ignition/issues/new?title=Issue%20on%20page%20%2Finstallation/system_configuration.html&body=Your%20issue%20content%20here."><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Open an issue"><i class="fas fa-lightbulb"></i>open issue</button></a>
-        <a class="edit-button" href="https://github.com/robotology/gym-ignition/edit/master/docs/sphinx/installation/nightly.rst"><button
+        <a class="edit-button" href="https://github.com/robotology/gym-ignition/edit/master/docs/sphinx/installation/system_configuration.rst"><button
                 type="button" class="btn btn-secondary topbarbtn" data-toggle="tooltip" data-placement="left"
                 title="Edit this page"><i class="fas fa-pencil-alt"></i>suggest edit</button></a>
     </div>
@@ -292,30 +290,6 @@
     <!-- Table of contents -->
     <div class="d-none d-md-block col-md-2 bd-toc show">
         
-        <div class="tocsection onthispage pt-5 pb-3">
-            <i class="fas fa-list"></i> Contents
-        </div>
-        <nav id="bd-toc-nav">
-            <ul class="nav section-nav flex-column">
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#virtual-environment-optional">
-   Virtual Environment (optional)
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#pypi-package">
-   PyPI Package
-  </a>
- </li>
- <li class="toc-h2 nav-item toc-entry">
-  <a class="reference internal nav-link" href="#system-configuration">
-   System Configuration
-  </a>
- </li>
-</ul>
-
-        </nav>
-        
     </div>
 </div>
     <div id="main-content" class="row">
@@ -323,32 +297,8 @@
         
               <div>
                 
-  <div class="section" id="nightly">
-<span id="installation-nightly"></span><h1>Nightly<a class="headerlink" href="#nightly" title="Permalink to this headline">¶</a></h1>
-<p>The nightly channel contains the most recent updates of the project.
-As described in the <a class="reference internal" href="support_policy.html#support-policy"><span class="std std-ref">support policy</span></a>, this channel requires building Ignition from sources.</p>
-<p>We publish updated nightly packages after any pull request merged in the <code class="docutils literal notranslate"><span class="pre">devel</span></code> branch.</p>
-<div class="section" id="virtual-environment-optional">
-<h2>Virtual Environment (optional)<a class="headerlink" href="#virtual-environment-optional" title="Permalink to this headline">¶</a></h2>
-<p>This step is optional but highly recommended.
-Visit the <a class="reference external" href="https://docs.python.org/3.6/tutorial/venv.html">virtual environments</a> documentation for more details.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt install virtualenv
-virtualenv -p python3.8 <span class="nv">$HOME</span>/venv
-<span class="nb">source</span> <span class="nv">$HOME</span>/venv/bin/activate
-</pre></div>
-</div>
-<p>Note that the activation is temporary and it is valid only in the same terminal.
-Make sure to execute the next steps in a terminal where the virtual environment is active.</p>
-</div>
-<div class="section" id="pypi-package">
-<h2>PyPI Package<a class="headerlink" href="#pypi-package" title="Permalink to this headline">¶</a></h2>
-<p>Install the pre-release <a class="reference external" href="https://pypi.org/project/gym-ignition/">gym-ignition</a> package from PyPI:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install --pre gym-ignition
-</pre></div>
-</div>
-</div>
-<div class="section" id="system-configuration">
-<h2>System Configuration<a class="headerlink" href="#system-configuration" title="Permalink to this headline">¶</a></h2>
+  <div class="section" id="system-configuration">
+<h1>System Configuration<a class="headerlink" href="#system-configuration" title="Permalink to this headline">¶</a></h1>
 <p>This section applies only to the installations that require building Ignition from sources.</p>
 <p>If you installed Ignition from sources, you likely used <code class="docutils literal notranslate"><span class="pre">colcon</span></code> and therefore the entire suite was installed in a custom folder called workspace.
 The workspace contains all the shared libraries and executables of Ignition, including the plugins loaded during runtime.
@@ -358,7 +308,6 @@ Since we cannot know in advance where you created the workspace, <code class="do
 </pre></div>
 </div>
 <p>Make sure to select the folder corresponding to the correct version of ign-physics, otherwise the wrong plugins are found.</p>
-</div>
 </div>
 
 
@@ -370,8 +319,6 @@ Since we cannot know in advance where you created the workspace, <code class="do
     
     <div class='prev-next-bottom'>
         
-    <a class='left-prev' id="prev-link" href="stable.html" title="previous page">Stable</a>
-    <a class='right-next' id="next-link" href="developer.html" title="next page">Developer Installation</a>
 
     </div>
     <footer class="footer mt-5 mt-md-0">

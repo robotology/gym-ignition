@@ -317,6 +317,11 @@
    Editable Python Installation
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#system-configuration">
+   System Configuration
+  </a>
+ </li>
 </ul>
 
         </nav>
@@ -394,6 +399,18 @@ From the root of the repository:</p>
 <p>The editable installation only symlinks the resources of the repository into the active Python installation.
 It allows to develop directly operating on the files of the repository and use the updated package without requiring
 to install it again.</p>
+</div>
+<div class="section" id="system-configuration">
+<h2>System Configuration<a class="headerlink" href="#system-configuration" title="Permalink to this headline">¶</a></h2>
+<p>This section applies only to the installations that require building Ignition from sources.</p>
+<p>If you installed Ignition from sources, you likely used <code class="docutils literal notranslate"><span class="pre">colcon</span></code> and therefore the entire suite was installed in a custom folder called workspace.
+The workspace contains all the shared libraries and executables of Ignition, including the plugins loaded during runtime.
+Since we cannot know in advance where you created the workspace, <code class="docutils literal notranslate"><span class="pre">gym-ignition</span></code> is not able to find the physics plugins.</p>
+<p>After you enabled the workspace by sourcing its bash script, you may need to also export the following variable:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">export</span> <span class="nv">IGN_GAZEBO_PHYSICS_ENGINE_PATH</span><span class="o">=</span><span class="si">${</span><span class="nv">IGN_GAZEBO_PHYSICS_ENGINE_PATH</span><span class="si">}</span>:<span class="si">${</span><span class="nv">COLCON_PREFIX_PATH</span><span class="si">}</span>/lib/ign-physics-3/engine-plugins/
+</pre></div>
+</div>
+<p>Make sure to select the folder corresponding to the correct version of ign-physics, otherwise the wrong plugins are found.</p>
 </div>
 </div>
 
