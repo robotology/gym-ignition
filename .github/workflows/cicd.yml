@@ -232,10 +232,17 @@ jobs:
 
       # When this workflow will test other OSs, the sdist has to be created and pushed only once
       - name: Create sdist
-        if: matrix.type == 'User' && startsWith(matrix.os, 'ubuntu')
+        if: matrix.type == 'User'
+        # if: matrix.type == 'User' && startsWith(matrix.os, 'ubuntu')
         run: |
           pip3 install cmake_build_extension setuptools_scm
           python3 setup.py sdist
+
+      - uses: actions/upload-artifact@v2
+        if: matrix.type == 'User'
+        with:
+          name: packages
+          path: dist/*
 
       # Validate the last tag accordingly to PEP440
       # From https://stackoverflow.com/a/37972030/12150968
