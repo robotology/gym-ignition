@@ -819,6 +819,16 @@
 <em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.idyntree.kindyncomputations.</code><code class="sig-name descname">KinDynComputations</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">model_file</span></em>, <em class="sig-param"><span class="n">considered_joints</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="n">world_gravity</span><span class="o">=</span><span class="default_value">array([0., 0., - 9.806])</span></em>, <em class="sig-param"><span class="n">velocity_representation</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_average_velocity_jacobian">
+<code class="sig-name descname">get_average_velocity_jacobian</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_average_velocity_jacobian" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_bias_forces">
 <code class="sig-name descname">get_bias_forces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_bias_forces" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
@@ -901,6 +911,16 @@
 <dl class="py method">
 <dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_frame_jacobian">
 <code class="sig-name descname">get_frame_jacobian</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">frame_name</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_frame_jacobian" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_generalized_gravity_forces">
+<code class="sig-name descname">get_generalized_gravity_forces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations.get_generalized_gravity_forces" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
@@ -1172,7 +1192,7 @@
         
           By Diego Ferigo<br/>
         
-            &copy; Copyright 2020, Istituto Italiano di Tecnologia.<br/>
+            &copy; Copyright 2021, Istituto Italiano di Tecnologia.<br/>
       </p>
     </div>
   </footer>

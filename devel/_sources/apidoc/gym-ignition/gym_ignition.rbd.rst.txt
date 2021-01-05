@@ -20,3 +20,11 @@ gym\_ignition.rbd.conversions
    :members:
    :undoc-members:
    :show-inheritance:
+
+gym\_ignition.rbd.utils
+-----------------------
+
+.. automodule:: gym_ignition.rbd.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:

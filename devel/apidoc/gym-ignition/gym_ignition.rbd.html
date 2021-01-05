@@ -365,6 +365,11 @@
    gym_ignition.rbd.conversions
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-gym_ignition.rbd.utils">
+   gym_ignition.rbd.utils
+  </a>
+ </li>
 </ul>
 
         </nav>
@@ -484,6 +489,86 @@
 </dd></dl>
 
 </div>
+<div class="section" id="module-gym_ignition.rbd.utils">
+<span id="gym-ignition-rbd-utils"></span><h2>gym_ignition.rbd.utils<a class="headerlink" href="#module-gym_ignition.rbd.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="gym_ignition.rbd.utils.extract_skew">
+<code class="sig-prename descclassname">gym_ignition.rbd.utils.</code><code class="sig-name descname">extract_skew</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.utils.extract_skew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the skew-symmetric part of a square matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – A square matrix.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The skew-symmetric part of the input matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.rbd.utils.extract_symm">
+<code class="sig-prename descclassname">gym_ignition.rbd.utils.</code><code class="sig-name descname">extract_symm</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.utils.extract_symm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the symmetric part of a square matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – A square matrix.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The symmetric part of the input matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.rbd.utils.vee">
+<code class="sig-prename descclassname">gym_ignition.rbd.utils.</code><code class="sig-name descname">vee</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">matrix3x3</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.utils.vee" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a 3x3 matrix to a 3D vector with the components of its skew-symmetric part.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>matrix3x3</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – The input 3x3 matrix. If present, its symmetric part is removed.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The 3D vector defining the skew-symmetric matrix.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is the inverse operator of <a class="reference internal" href="#gym_ignition.rbd.utils.wedge" title="gym_ignition.rbd.utils.wedge"><code class="xref py py-func docutils literal notranslate"><span class="pre">wedge()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.rbd.utils.wedge">
+<code class="sig-prename descclassname">gym_ignition.rbd.utils.</code><code class="sig-name descname">wedge</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">vector3</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.utils.wedge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a 3D vector to a skew-symmetric matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>vector3</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – The 3D vector defining the matrix coefficients.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The skew-symmetric matrix whose elements are created from the input vector.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The wedge operator can be useful to compute the cross product of 3D vectors:
+<span class="math notranslate nohighlight">\(v_1 \times v_2 = v_1^\wedge v_2\)</span>.</p>
+</div>
+</dd></dl>
+
+</div>
 </div>
 
 
@@ -505,7 +590,7 @@
         
           By Diego Ferigo<br/>
         
-            &copy; Copyright 2020, Istituto Italiano di Tecnologia.<br/>
+            &copy; Copyright 2021, Istituto Italiano di Tecnologia.<br/>
       </p>
     </div>
   </footer>
