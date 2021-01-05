@@ -273,12 +273,24 @@ class KinDynComputations:
 
         return M.toNumPy()
 
+    def get_generalized_gravity_forces(self) -> np.ndarray:
+
+        g = idt.FreeFloatingGeneralizedTorques(self.kindyn.model())
+
+        if not self.kindyn.generalizedGravityForces(g):
+            raise RuntimeError("Failed to get the generalized gravity forces")
+
+        base_wrench: idt.Wrench = g.baseWrench()
+        joint_torques: idt.JointDOFsDoubleArray = g.jointTorques()
+
+        return np.concatenate([base_wrench.toNumPy().flatten(),
+                               joint_torques.toNumPy().flatten()])
+
     def get_bias_forces(self) -> np.ndarray:
 
         h = idt.FreeFloatingGeneralizedTorques(self.kindyn.model())
-        ok_h = self.kindyn.generalizedBiasForces(h)
 
-        if not ok_h:
+        if not self.kindyn.generalizedBiasForces(h):
             raise RuntimeError("Failed to get the generalized bias forces")
 
         base_wrench: idt.Wrench = h.baseWrench()
@@ -368,6 +380,15 @@ class KinDynComputations:
             raise RuntimeError("Failed to get the centroidal total momentum jacobian")
 
         return J_cmm.toNumPy()
+
+    def get_average_velocity_jacobian(self) -> np.ndarray:
+
+        J_avg_vel = idt.MatrixDynSize()
+
+        if not self.kindyn.getAverageVelocityJacobian(J_avg_vel):
+            raise RuntimeError("Failed to get the average velocity jacobian")
+
+        return J_avg_vel.toNumPy()
 
     def get_frame_bias_acc(self, frame_name: str) -> np.ndarray:
 
