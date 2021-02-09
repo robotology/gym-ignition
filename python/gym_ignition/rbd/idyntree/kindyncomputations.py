@@ -17,7 +17,10 @@ class KinDynComputations:
                  model_file: str,
                  considered_joints: List[str] = None,
                  world_gravity: np.ndarray = np.array([0, 0, -9.806]),
-                 velocity_representation: FrameVelocityRepresentation = None) -> None:
+                 velocity_representation: FrameVelocityRepresentation =
+                    FrameVelocityRepresentation.MIXED_REPRESENTATION) -> None:
+
+        self.velocity_representation = velocity_representation
 
         self.kindyn = iDynTreeHelpers.get_kindyncomputations(model_file,
                                                              considered_joints,
