@@ -82,7 +82,8 @@ def import_gazebo() -> None:
 
     # Preload the shared libraries of tensorflow if the package is installed.
     # If tensorflow is imported after scenario.bindings.gazebo, the application segfaults.
-    preload_tensorflow_shared_libraries()
+    if os.environ.get("SCENARIO_DISABLE_TENSORFLOW_PRELOAD") != "1":
+        preload_tensorflow_shared_libraries()
 
     # Import SWIG bindings
     # See https://github.com/robotology/gym-ignition/issues/7
