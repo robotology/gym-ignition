@@ -130,7 +130,7 @@ jobs:
         run: |
           apt-get update
           apt-get install -y --no-install-recommends \
-            python3-numpy libxml2-dev coinor-libipopt-dev libeigen3-dev libassimp-dev swig
+            libxml2-dev coinor-libipopt-dev libeigen3-dev libassimp-dev swig
 
       # =============
       # Build project

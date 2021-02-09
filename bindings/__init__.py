@@ -42,11 +42,48 @@ def setup_gazebo_environment() -> None:
     os.environ["IGN_GAZEBO_SYSTEM_PLUGIN_PATH"] = ign_gazebo_system_plugin_path
 
 
+def preload_tensorflow_shared_libraries() -> None:
+
+    # Check if tensorflow is installed
+    import importlib.util
+    spec = importlib.util.find_spec("tensorflow")
+
+    if spec is None:
+        return
+
+    # Get the tensorflow __init__ location
+    import pathlib
+    init = pathlib.Path(spec.origin)
+
+    # Get the tensorflow top-level folder
+    tensorflow_dir = init.parent
+    assert tensorflow_dir.is_dir()
+
+    # Get the tensorflow/python folder
+    tensorflow_python_dir = tensorflow_dir / "python"
+    assert tensorflow_python_dir.is_dir()
+
+    # Load the main shared library
+    for lib in tensorflow_dir.glob("*tensorflow*.so*"):
+        import ctypes
+        ctypes.CDLL(str(lib))
+
+    # Load all the shared libraries inside tensorflow/python
+    for lib in tensorflow_python_dir.glob("_*.so"):
+        import ctypes
+        ctypes.CDLL(str(lib))
+
+
 def import_gazebo() -> None:
 
     # Check the the module was never loaded by someone else
     if "scenario.bindings._gazebo" in sys.modules:
         raise ImportError("Failed to load ScenarI/O Gazebo with custom dlopen flags")
+
+    # Preload the shared libraries of tensorflow if the package is installed.
+    # If tensorflow is imported after scenario.bindings.gazebo, the application segfaults.
+    if os.environ.get("SCENARIO_DISABLE_TENSORFLOW_PRELOAD") != "1":
+        preload_tensorflow_shared_libraries()
 
     # Import SWIG bindings
     # See https://github.com/robotology/gym-ignition/issues/7
