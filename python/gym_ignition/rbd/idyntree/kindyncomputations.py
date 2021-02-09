@@ -17,7 +17,10 @@ class KinDynComputations:
                  model_file: str,
                  considered_joints: List[str] = None,
                  world_gravity: np.ndarray = np.array([0, 0, -9.806]),
-                 velocity_representation: FrameVelocityRepresentation = None) -> None:
+                 velocity_representation: FrameVelocityRepresentation =
+                    FrameVelocityRepresentation.MIXED_REPRESENTATION) -> None:
+
+        self.velocity_representation = velocity_representation
 
         self.kindyn = iDynTreeHelpers.get_kindyncomputations(model_file,
                                                              considered_joints,
@@ -351,6 +354,16 @@ class KinDynComputations:
         else:
             raise RuntimeError("INERTIAL_FIXED_REPRESENTATION not yet supported")
 
+    def get_average_velocity(self) -> np.ndarray:
+
+        twist: idt.Twist = self.kindyn.getAverageVelocity()
+        return twist.toNumPy()
+
+    def get_centroidal_average_velocity(self) -> np.ndarray:
+
+        twist: idt.Twist = self.kindyn.getCentroidalAverageVelocity()
+        return twist.toNumPy()
+
     def get_frame_jacobian(self, frame_name: str) -> np.ndarray:
 
         if self.kindyn.getFrameIndex(frame_name) < 0:
@@ -389,6 +402,15 @@ class KinDynComputations:
             raise RuntimeError("Failed to get the average velocity jacobian")
 
         return J_avg_vel.toNumPy()
+
+    def get_centroidal_average_velocity_jacobian(self) -> np.ndarray:
+
+        J_cen_avg_vel = idt.MatrixDynSize()
+
+        if not self.kindyn.getCentroidalAverageVelocityJacobian(J_cen_avg_vel):
+            raise RuntimeError("Failed to get the average velocity jacobian")
+
+        return J_cen_avg_vel.toNumPy()
 
     def get_frame_bias_acc(self, frame_name: str) -> np.ndarray:
 
