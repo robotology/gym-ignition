@@ -362,6 +362,11 @@
    gym_ignition.rbd.conversions
   </a>
  </li>
+ <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#module-gym_ignition.rbd.utils">
+   gym_ignition.rbd.utils
+  </a>
+ </li>
 </ul>
 
         </nav>
@@ -390,11 +395,11 @@
 <span id="gym-ignition-rbd-conversions"></span><h2>gym_ignition.rbd.conversions<a class="headerlink" href="#module-gym_ignition.rbd.conversions" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="gym_ignition.rbd.conversions.Quaternion">
-<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.conversions.</code><code class="sig-name descname">Quaternion</code><a class="headerlink" href="#gym_ignition.rbd.conversions.Quaternion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition.rbd.conversions.</span></code><code class="sig-name descname"><span class="pre">Quaternion</span></code><a class="headerlink" href="#gym_ignition.rbd.conversions.Quaternion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <dl class="py method">
 <dt id="gym_ignition.rbd.conversions.Quaternion.from_matrix">
-<em class="property">static </em><code class="sig-name descname">from_matrix</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">matrix</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Quaternion.from_matrix" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">from_matrix</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Quaternion.from_matrix" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
@@ -404,7 +409,7 @@
 
 <dl class="py method">
 <dt id="gym_ignition.rbd.conversions.Quaternion.to_rotation">
-<em class="property">static </em><code class="sig-name descname">to_rotation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Quaternion.to_rotation" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">to_rotation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">quaternion</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Quaternion.to_rotation" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
@@ -414,7 +419,7 @@
 
 <dl class="py method">
 <dt id="gym_ignition.rbd.conversions.Quaternion.to_wxyz">
-<em class="property">static </em><code class="sig-name descname">to_wxyz</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">xyzw</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Quaternion.to_wxyz" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">to_wxyz</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">xyzw</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Quaternion.to_wxyz" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
@@ -424,7 +429,7 @@
 
 <dl class="py method">
 <dt id="gym_ignition.rbd.conversions.Quaternion.to_xyzw">
-<em class="property">static </em><code class="sig-name descname">to_xyzw</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">wxyz</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Quaternion.to_xyzw" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">to_xyzw</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">wxyz</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Quaternion.to_xyzw" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
@@ -436,11 +441,11 @@
 
 <dl class="py class">
 <dt id="gym_ignition.rbd.conversions.Transform">
-<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.rbd.conversions.</code><code class="sig-name descname">Transform</code><a class="headerlink" href="#gym_ignition.rbd.conversions.Transform" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition.rbd.conversions.</span></code><code class="sig-name descname"><span class="pre">Transform</span></code><a class="headerlink" href="#gym_ignition.rbd.conversions.Transform" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <dl class="py method">
 <dt id="gym_ignition.rbd.conversions.Transform.from_position_and_quaternion">
-<em class="property">static </em><code class="sig-name descname">from_position_and_quaternion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">quaternion</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Transform.from_position_and_quaternion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">from_position_and_quaternion</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">quaternion</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Transform.from_position_and_quaternion" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
@@ -450,7 +455,7 @@
 
 <dl class="py method">
 <dt id="gym_ignition.rbd.conversions.Transform.from_position_and_rotation">
-<em class="property">static </em><code class="sig-name descname">from_position_and_rotation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">position</span></em>, <em class="sig-param"><span class="n">rotation</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Transform.from_position_and_rotation" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">from_position_and_rotation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rotation</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Transform.from_position_and_rotation" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
@@ -460,7 +465,7 @@
 
 <dl class="py method">
 <dt id="gym_ignition.rbd.conversions.Transform.to_position_and_quaternion">
-<em class="property">static </em><code class="sig-name descname">to_position_and_quaternion</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transform</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Transform.to_position_and_quaternion" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">to_position_and_quaternion</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Transform.to_position_and_quaternion" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
@@ -470,7 +475,7 @@
 
 <dl class="py method">
 <dt id="gym_ignition.rbd.conversions.Transform.to_position_and_rotation">
-<em class="property">static </em><code class="sig-name descname">to_position_and_rotation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">transform</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Transform.to_position_and_rotation" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">to_position_and_rotation</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">transform</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.conversions.Transform.to_position_and_rotation" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
@@ -478,6 +483,86 @@
 </dl>
 </dd></dl>
 
+</dd></dl>
+
+</div>
+<div class="section" id="module-gym_ignition.rbd.utils">
+<span id="gym-ignition-rbd-utils"></span><h2>gym_ignition.rbd.utils<a class="headerlink" href="#module-gym_ignition.rbd.utils" title="Permalink to this headline">¶</a></h2>
+<dl class="py function">
+<dt id="gym_ignition.rbd.utils.extract_skew">
+<code class="sig-prename descclassname"><span class="pre">gym_ignition.rbd.utils.</span></code><code class="sig-name descname"><span class="pre">extract_skew</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.utils.extract_skew" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the skew-symmetric part of a square matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – A square matrix.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The skew-symmetric part of the input matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.rbd.utils.extract_symm">
+<code class="sig-prename descclassname"><span class="pre">gym_ignition.rbd.utils.</span></code><code class="sig-name descname"><span class="pre">extract_symm</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.utils.extract_symm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the symmetric part of a square matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>matrix</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – A square matrix.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The symmetric part of the input matrix.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.rbd.utils.vee">
+<code class="sig-prename descclassname"><span class="pre">gym_ignition.rbd.utils.</span></code><code class="sig-name descname"><span class="pre">vee</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">matrix3x3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.utils.vee" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a 3x3 matrix to a 3D vector with the components of its skew-symmetric part.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>matrix3x3</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – The input 3x3 matrix. If present, its symmetric part is removed.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The 3D vector defining the skew-symmetric matrix.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This is the inverse operator of <a class="reference internal" href="#gym_ignition.rbd.utils.wedge" title="gym_ignition.rbd.utils.wedge"><code class="xref py py-func docutils literal notranslate"><span class="pre">wedge()</span></code></a>.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt id="gym_ignition.rbd.utils.wedge">
+<code class="sig-prename descclassname"><span class="pre">gym_ignition.rbd.utils.</span></code><code class="sig-name descname"><span class="pre">wedge</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vector3</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.rbd.utils.wedge" title="Permalink to this definition">¶</a></dt>
+<dd><p>Convert a 3D vector to a skew-symmetric matrix.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>vector3</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>) – The 3D vector defining the matrix coefficients.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code></p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The skew-symmetric matrix whose elements are created from the input vector.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The wedge operator can be useful to compute the cross product of 3D vectors:
+<span class="math notranslate nohighlight">\(v_1 \times v_2 = v_1^\wedge v_2\)</span>.</p>
+</div>
 </dd></dl>
 
 </div>

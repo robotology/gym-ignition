@@ -36,7 +36,6 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="FAQ" href="../../info/faq.html" />
@@ -348,11 +347,11 @@
 <span id="gym-ignition-environments-tasks-cartpole-continuous-balancing"></span><h2>gym_ignition_environments.tasks.cartpole_continuous_balancing<a class="headerlink" href="#module-gym_ignition_environments.tasks.cartpole_continuous_balancing" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing">
-<em class="property">class </em><code class="sig-prename descclassname">gym_ignition_environments.tasks.cartpole_continuous_balancing.</code><code class="sig-name descname">CartPoleContinuousBalancing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agent_rate</span></em>, <em class="sig-param"><span class="n">reward_cart_at_center</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition_environments.tasks.cartpole_continuous_balancing.</span></code><code class="sig-name descname"><span class="pre">CartPoleContinuousBalancing</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_cart_at_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.base.task.Task</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.create_spaces">
-<code class="sig-name descname">create_spaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.create_spaces" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">create_spaces</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.create_spaces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the action and observations spaces.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -378,7 +377,7 @@ a lot of information from the model file.</p>
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.get_observation">
-<code class="sig-name descname">get_observation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.get_observation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_observation</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.get_observation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task observation.</p>
 <p>This method contains the logic for constructing the environment observation.
 It is called in the end of both <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> and
@@ -398,7 +397,7 @@ It is called in the end of both <code class="xref py py-meth docutils literal no
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.get_reward">
-<code class="sig-name descname">get_reward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.get_reward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_reward</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.get_reward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task reward.</p>
 <p>This method contains the logic for computing the environment reward.
 It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
@@ -417,7 +416,7 @@ It is called in the end of the <code class="xref py py-meth docutils literal not
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.is_done">
-<code class="sig-name descname">is_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.is_done" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">is_done</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.is_done" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task termination flag.</p>
 <p>This method contains the logic for defining when the environment has terminated.
 Subsequent calls to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.set_action()</span></code> should be preceded by a task
@@ -438,7 +437,7 @@ reset through <code class="xref py py-meth docutils literal notranslate"><span c
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.reset_task">
-<code class="sig-name descname">reset_task</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.reset_task" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">reset_task</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.reset_task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the task.</p>
 <p>This method contains the logic for resetting the task.
 It is called in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> method of the corresponding
@@ -455,7 +454,7 @@ environment.</p>
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.set_action">
-<code class="sig-name descname">set_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.set_action" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">set_action</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing.set_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the task action.</p>
 <p>This method contains the logic for setting the environment action.
 It is called in the beginning of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
@@ -479,11 +478,11 @@ It is called in the beginning of the <code class="xref py py-meth docutils liter
 <span id="gym-ignition-environments-tasks-cartpole-continuous-swingup"></span><h2>gym_ignition_environments.tasks.cartpole_continuous_swingup<a class="headerlink" href="#module-gym_ignition_environments.tasks.cartpole_continuous_swingup" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup">
-<em class="property">class </em><code class="sig-prename descclassname">gym_ignition_environments.tasks.cartpole_continuous_swingup.</code><code class="sig-name descname">CartPoleContinuousSwingup</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agent_rate</span></em>, <em class="sig-param"><span class="n">reward_cart_at_center</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition_environments.tasks.cartpole_continuous_swingup.</span></code><code class="sig-name descname"><span class="pre">CartPoleContinuousSwingup</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_cart_at_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.base.task.Task</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.create_spaces">
-<code class="sig-name descname">create_spaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.create_spaces" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">create_spaces</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.create_spaces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the action and observations spaces.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -509,7 +508,7 @@ a lot of information from the model file.</p>
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.get_observation">
-<code class="sig-name descname">get_observation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.get_observation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_observation</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.get_observation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task observation.</p>
 <p>This method contains the logic for constructing the environment observation.
 It is called in the end of both <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> and
@@ -529,7 +528,7 @@ It is called in the end of both <code class="xref py py-meth docutils literal no
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.get_reward">
-<code class="sig-name descname">get_reward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.get_reward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_reward</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.get_reward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task reward.</p>
 <p>This method contains the logic for computing the environment reward.
 It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
@@ -548,7 +547,7 @@ It is called in the end of the <code class="xref py py-meth docutils literal not
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.is_done">
-<code class="sig-name descname">is_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.is_done" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">is_done</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.is_done" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task termination flag.</p>
 <p>This method contains the logic for defining when the environment has terminated.
 Subsequent calls to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.set_action()</span></code> should be preceded by a task
@@ -569,7 +568,7 @@ reset through <code class="xref py py-meth docutils literal notranslate"><span c
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.reset_task">
-<code class="sig-name descname">reset_task</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.reset_task" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">reset_task</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.reset_task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the task.</p>
 <p>This method contains the logic for resetting the task.
 It is called in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> method of the corresponding
@@ -586,7 +585,7 @@ environment.</p>
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.set_action">
-<code class="sig-name descname">set_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.set_action" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">set_action</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup.set_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the task action.</p>
 <p>This method contains the logic for setting the environment action.
 It is called in the beginning of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
@@ -610,11 +609,11 @@ It is called in the beginning of the <code class="xref py py-meth docutils liter
 <span id="gym-ignition-environments-tasks-cartpole-discrete-balancing"></span><h2>gym_ignition_environments.tasks.cartpole_discrete_balancing<a class="headerlink" href="#module-gym_ignition_environments.tasks.cartpole_discrete_balancing" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing">
-<em class="property">class </em><code class="sig-prename descclassname">gym_ignition_environments.tasks.cartpole_discrete_balancing.</code><code class="sig-name descname">CartPoleDiscreteBalancing</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agent_rate</span></em>, <em class="sig-param"><span class="n">reward_cart_at_center</span><span class="o">=</span><span class="default_value">True</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition_environments.tasks.cartpole_discrete_balancing.</span></code><code class="sig-name descname"><span class="pre">CartPoleDiscreteBalancing</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">reward_cart_at_center</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.base.task.Task</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.create_spaces">
-<code class="sig-name descname">create_spaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.create_spaces" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">create_spaces</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.create_spaces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the action and observations spaces.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -640,7 +639,7 @@ a lot of information from the model file.</p>
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.get_observation">
-<code class="sig-name descname">get_observation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.get_observation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_observation</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.get_observation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task observation.</p>
 <p>This method contains the logic for constructing the environment observation.
 It is called in the end of both <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> and
@@ -660,7 +659,7 @@ It is called in the end of both <code class="xref py py-meth docutils literal no
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.get_reward">
-<code class="sig-name descname">get_reward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.get_reward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_reward</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.get_reward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task reward.</p>
 <p>This method contains the logic for computing the environment reward.
 It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
@@ -679,7 +678,7 @@ It is called in the end of the <code class="xref py py-meth docutils literal not
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.is_done">
-<code class="sig-name descname">is_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.is_done" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">is_done</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.is_done" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task termination flag.</p>
 <p>This method contains the logic for defining when the environment has terminated.
 Subsequent calls to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.set_action()</span></code> should be preceded by a task
@@ -700,7 +699,7 @@ reset through <code class="xref py py-meth docutils literal notranslate"><span c
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.reset_task">
-<code class="sig-name descname">reset_task</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.reset_task" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">reset_task</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.reset_task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the task.</p>
 <p>This method contains the logic for resetting the task.
 It is called in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> method of the corresponding
@@ -717,7 +716,7 @@ environment.</p>
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.set_action">
-<code class="sig-name descname">set_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.set_action" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">set_action</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing.set_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the task action.</p>
 <p>This method contains the logic for setting the environment action.
 It is called in the beginning of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
@@ -741,11 +740,11 @@ It is called in the beginning of the <code class="xref py py-meth docutils liter
 <span id="gym-ignition-environments-tasks-pendulum-swingup"></span><h2>gym_ignition_environments.tasks.pendulum_swingup<a class="headerlink" href="#module-gym_ignition_environments.tasks.pendulum_swingup" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp">
-<em class="property">class </em><code class="sig-prename descclassname">gym_ignition_environments.tasks.pendulum_swingup.</code><code class="sig-name descname">PendulumSwingUp</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">agent_rate</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition_environments.tasks.pendulum_swingup.</span></code><code class="sig-name descname"><span class="pre">PendulumSwingUp</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">agent_rate</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.base.task.Task</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.create_spaces">
-<code class="sig-name descname">create_spaces</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.create_spaces" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">create_spaces</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.create_spaces" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the action and observations spaces.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -771,7 +770,7 @@ a lot of information from the model file.</p>
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.get_observation">
-<code class="sig-name descname">get_observation</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.get_observation" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_observation</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.get_observation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task observation.</p>
 <p>This method contains the logic for constructing the environment observation.
 It is called in the end of both <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> and
@@ -791,7 +790,7 @@ It is called in the end of both <code class="xref py py-meth docutils literal no
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.get_reward">
-<code class="sig-name descname">get_reward</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.get_reward" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">get_reward</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.get_reward" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task reward.</p>
 <p>This method contains the logic for computing the environment reward.
 It is called in the end of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>
@@ -810,7 +809,7 @@ It is called in the end of the <code class="xref py py-meth docutils literal not
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.is_done">
-<code class="sig-name descname">is_done</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.is_done" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">is_done</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.is_done" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the task termination flag.</p>
 <p>This method contains the logic for defining when the environment has terminated.
 Subsequent calls to <code class="xref py py-meth docutils literal notranslate"><span class="pre">Task.set_action()</span></code> should be preceded by a task
@@ -831,7 +830,7 @@ reset through <code class="xref py py-meth docutils literal notranslate"><span c
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.reset_task">
-<code class="sig-name descname">reset_task</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.reset_task" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">reset_task</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.reset_task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Reset the task.</p>
 <p>This method contains the logic for resetting the task.
 It is called in the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.reset()</span></code> method of the corresponding
@@ -848,7 +847,7 @@ environment.</p>
 
 <dl class="py method">
 <dt id="gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.set_action">
-<code class="sig-name descname">set_action</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.set_action" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">set_action</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.tasks.pendulum_swingup.PendulumSwingUp.set_action" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the task action.</p>
 <p>This method contains the logic for setting the environment action.
 It is called in the beginning of the <code class="xref py py-meth docutils literal notranslate"><span class="pre">gym.Env.step()</span></code> method.</p>

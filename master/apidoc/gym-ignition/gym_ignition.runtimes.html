@@ -36,7 +36,6 @@
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
     <script src="../../_static/sphinx-book-theme.be0a4a0c39cd630af62a2fcf693f3f06.js"></script>
-    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="gym_ignition.scenario" href="gym_ignition.scenario.html" />
@@ -384,7 +383,7 @@
 <span id="gym-ignition-runtimes-gazebo-runtime"></span><h2>gym_ignition.runtimes.gazebo_runtime<a class="headerlink" href="#module-gym_ignition.runtimes.gazebo_runtime" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime">
-<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.runtimes.gazebo_runtime.</code><code class="sig-name descname">GazeboRuntime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">task_cls</span></em>, <em class="sig-param"><span class="n">agent_rate</span></em>, <em class="sig-param"><span class="n">physics_rate</span></em>, <em class="sig-param"><span class="n">real_time_factor</span></em>, <em class="sig-param"><span class="n">physics_engine</span><span class="o">=</span><span class="default_value">0</span></em>, <em class="sig-param"><span class="n">world</span><span class="o">=</span><span class="default_value">None</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition.runtimes.gazebo_runtime.</span></code><code class="sig-name descname"><span class="pre">GazeboRuntime</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">physics_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_time_factor</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">physics_engine</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">world</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="gym_ignition.base.html#gym_ignition.base.runtime.Runtime" title="gym_ignition.base.runtime.Runtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.base.runtime.Runtime</span></code></a></p>
 <p>Implementation of <a class="reference internal" href="gym_ignition.base.html#gym_ignition.base.runtime.Runtime" title="gym_ignition.base.runtime.Runtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runtime</span></code></a> for the Ignition
 Gazebo simulator.</p>
@@ -409,7 +408,7 @@ physics, a new simulator should be created.</p>
 </div>
 <dl class="py method">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.close" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">close</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override close in your subclass to perform any necessary cleanup.</p>
 <p>Environments will automatically close() themselves when
 garbage collected or when the program exits.</p>
@@ -422,7 +421,7 @@ garbage collected or when the program exits.</p>
 
 <dl class="py method">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.gazebo">
-<em class="property">property </em><code class="sig-name descname">gazebo</code><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.gazebo" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">gazebo</span></code><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.gazebo" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="../scenario/scenario.bindings.html#scenario.bindings.gazebo.GazeboSimulator" title="scenario.bindings.gazebo.GazeboSimulator"><code class="xref py py-class docutils literal notranslate"><span class="pre">GazeboSimulator</span></code></a></p>
@@ -432,12 +431,12 @@ garbage collected or when the program exits.</p>
 
 <dl class="py attribute">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.metadata">
-<code class="sig-name descname">metadata</code><em class="property"> = {'render.modes': ['human']}</em><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.metadata" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">metadata</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'render.modes':</span> <span class="pre">['human']}</span></em><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.metadata" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.render">
-<code class="sig-name descname">render</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'human'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.render" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">render</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'human'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.render" title="Permalink to this definition">¶</a></dt>
 <dd><p>Renders the environment.</p>
 <p>The set of supported modes varies per environment. (And some
 environments do not support rendering at all.) By convention,
@@ -490,7 +489,7 @@ in implementations to use the functionality of this method.</p>
 
 <dl class="py method">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">reset</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resets the environment to an initial state and returns an initial
 observation.</p>
 <p>Note that this function should not reset the environment’s random
@@ -510,7 +509,7 @@ a new episode, independent of previous episodes.</p>
 
 <dl class="py method">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.seed">
-<code class="sig-name descname">seed</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">seed</span><span class="o">=</span><span class="default_value">None</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.seed" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">seed</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.seed" title="Permalink to this definition">¶</a></dt>
 <dd><p>Sets the seed for this env’s random number generator(s).</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -537,7 +536,7 @@ this won’t be true if seed=None, for example.</p>
 
 <dl class="py method">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.step">
-<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">step</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run one timestep of the environment’s dynamics. When end of
 episode is reached, you are responsible for calling <cite>reset()</cite>
 to reset this environment’s state.</p>
@@ -560,13 +559,13 @@ info (dict): contains auxiliary diagnostic information (helpful for debugging, a
 
 <dl class="py attribute">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.task">
-<code class="sig-name descname">task</code><em class="property">: <a class="reference internal" href="gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task">gym_ignition.base.task.Task</a></em><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.task" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">task</span></code><em class="property"><span class="pre">:</span> <a class="reference internal" href="gym_ignition.base.html#gym_ignition.base.task.Task" title="gym_ignition.base.task.Task"><span class="pre">gym_ignition.base.task.Task</span></a></em><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Task handled by the runtime.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.timestamp">
-<code class="sig-name descname">timestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.timestamp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">timestamp</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.timestamp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the timestamp associated to the execution of the environment.</p>
 <p>In real-time environments, the timestamp is the time read from the host system.
 In simulated environments, the timestamp is the simulated time, which might not
@@ -583,7 +582,7 @@ match the real-time in the case of a real-time factor different than 1.</p>
 
 <dl class="py method">
 <dt id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.world">
-<em class="property">property </em><code class="sig-name descname">world</code><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.world" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">property</span> </em><code class="sig-name descname"><span class="pre">world</span></code><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.world" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="../scenario/scenario.bindings.html#scenario.bindings.gazebo.World" title="scenario.bindings.gazebo.World"><code class="xref py py-class docutils literal notranslate"><span class="pre">World</span></code></a></p>
@@ -598,7 +597,7 @@ match the real-time in the case of a real-time factor different than 1.</p>
 <span id="gym-ignition-runtimes-realtime-runtime"></span><h2>gym_ignition.runtimes.realtime_runtime<a class="headerlink" href="#module-gym_ignition.runtimes.realtime_runtime" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="gym_ignition.runtimes.realtime_runtime.RealTimeRuntime">
-<em class="property">class </em><code class="sig-prename descclassname">gym_ignition.runtimes.realtime_runtime.</code><code class="sig-name descname">RealTimeRuntime</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">task_cls</span></em>, <em class="sig-param"><span class="n">robot_cls</span></em>, <em class="sig-param"><span class="n">agent_rate</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime" title="Permalink to this definition">¶</a></dt>
+<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition.runtimes.realtime_runtime.</span></code><code class="sig-name descname"><span class="pre">RealTimeRuntime</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">robot_cls</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agent_rate</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="gym_ignition.base.html#gym_ignition.base.runtime.Runtime" title="gym_ignition.base.runtime.Runtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.base.runtime.Runtime</span></code></a></p>
 <p>Implementation of <a class="reference internal" href="gym_ignition.base.html#gym_ignition.base.runtime.Runtime" title="gym_ignition.base.runtime.Runtime"><code class="xref py py-class docutils literal notranslate"><span class="pre">Runtime</span></code></a> for real-time
 execution.</p>
@@ -608,7 +607,7 @@ execution.</p>
 </div>
 <dl class="py method">
 <dt id="gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.close" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">close</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.close" title="Permalink to this definition">¶</a></dt>
 <dd><p>Override close in your subclass to perform any necessary cleanup.</p>
 <p>Environments will automatically close() themselves when
 garbage collected or when the program exits.</p>
@@ -621,7 +620,7 @@ garbage collected or when the program exits.</p>
 
 <dl class="py method">
 <dt id="gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.render">
-<code class="sig-name descname">render</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">mode</span><span class="o">=</span><span class="default_value">'human'</span></em>, <em class="sig-param"><span class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.render" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">render</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'human'</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.render" title="Permalink to this definition">¶</a></dt>
 <dd><p>Renders the environment.</p>
 <p>The set of supported modes varies per environment. (And some
 environments do not support rendering at all.) By convention,
@@ -674,7 +673,7 @@ in implementations to use the functionality of this method.</p>
 
 <dl class="py method">
 <dt id="gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.reset" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">reset</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.reset" title="Permalink to this definition">¶</a></dt>
 <dd><p>Resets the environment to an initial state and returns an initial
 observation.</p>
 <p>Note that this function should not reset the environment’s random
@@ -694,7 +693,7 @@ a new episode, independent of previous episodes.</p>
 
 <dl class="py method">
 <dt id="gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.step">
-<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">action</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.step" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">step</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">action</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.step" title="Permalink to this definition">¶</a></dt>
 <dd><p>Run one timestep of the environment’s dynamics. When end of
 episode is reached, you are responsible for calling <cite>reset()</cite>
 to reset this environment’s state.</p>
@@ -717,13 +716,13 @@ info (dict): contains auxiliary diagnostic information (helpful for debugging, a
 
 <dl class="py attribute">
 <dt id="gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.task">
-<code class="sig-name descname">task</code><em class="property">: base.task.Task</em><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.task" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">task</span></code><em class="property"><span class="pre">:</span> <span class="pre">base.task.Task</span></em><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.task" title="Permalink to this definition">¶</a></dt>
 <dd><p>Task handled by the runtime.</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.timestamp">
-<code class="sig-name descname">timestamp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.timestamp" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname"><span class="pre">timestamp</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.timestamp" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the timestamp associated to the execution of the environment.</p>
 <p>In real-time environments, the timestamp is the time read from the host system.
 In simulated environments, the timestamp is the simulated time, which might not
