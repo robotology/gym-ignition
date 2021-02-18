@@ -61,7 +61,8 @@ class iDynTreeHelpers(abc.ABC):
     def get_kindyncomputations(
             model_file: str,
             considered_joints: List[str] = None,
-            velocity_representation: FrameVelocityRepresentation = None):
+            velocity_representation: FrameVelocityRepresentation =
+                FrameVelocityRepresentation.MIXED_REPRESENTATION):
 
         # Get the model loader
         model_loader = iDynTreeHelpers.get_model_loader(model_file, considered_joints)
@@ -72,9 +73,6 @@ class iDynTreeHelpers(abc.ABC):
 
         if not ok_load:
             raise RuntimeError("Failed to load model")
-
-        if velocity_representation is None:
-            velocity_representation = FrameVelocityRepresentation.MIXED_REPRESENTATION
 
         # Configure the velocity representation
         velocity_representation_idyntree = velocity_representation.to_idyntree()

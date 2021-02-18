@@ -187,8 +187,7 @@ class InverseKinematicsNLP:
 
         q = rbd.idyntree.numpy.FromNumPy.to_idyntree_dyn_vector(array=joint_configuration)
 
-        if not self._ik.setCurrentRobotConfiguration(baseConfiguration=H,
-                                                     jointConfiguration=q):
+        if not self._ik.setCurrentRobotConfiguration(H, q):
             raise RuntimeError("Failed to set the current robot configuration")
 
         if not self._floating_base:
