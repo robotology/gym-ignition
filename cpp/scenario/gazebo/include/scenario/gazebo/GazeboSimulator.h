@@ -146,6 +146,9 @@ public:
      * inserted. The default empty world does not have the ground plane nor
      * any physics. Both can be added by operating on the ``World`` object.
      *
+     * @note This function can only be used while the simulator object is
+     * uninitialized.
+     *
      * @param worldFile The path to the SDF world file.
      * @param worldName Optionally override the name of the world defined in the
      * SDF world file.

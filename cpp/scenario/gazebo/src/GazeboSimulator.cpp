@@ -384,7 +384,7 @@ bool GazeboSimulator::insertWorldFromSDF(const std::string& worldFile,
                                          const std::string& worldName)
 {
     if (this->initialized()) {
-        sMessage << "Worlds must be inserted before the initialization"
+        sError << "Worlds must be inserted before the initialization"
                  << std::endl;
         return false;
     }
