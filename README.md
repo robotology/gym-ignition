@@ -37,7 +37,7 @@
                 <a href="https://github.com/robotology/gym-ignition/actions">
                 <img src="https://github.com/robotology/gym-ignition/workflows/Docker%20Images/badge.svg" alt="Docker Images" />
                 </a>
-                <a href="ttps://www.codacy.com/gh/robotology/gym-ignition/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=robotology/gym-ignition&amp;utm_campaign=Badge_Grade">
+                <a href="https://www.codacy.com/gh/robotology/gym-ignition/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=robotology/gym-ignition&amp;utm_campaign=Badge_Grade">
                 <img src="https://api.codacy.com/project/badge/Grade/5536b05f8be94483b64ee883e7170a39" alt="Codacy Badge" />
                 </a>
             </td>
