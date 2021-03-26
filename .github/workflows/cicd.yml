@@ -193,11 +193,13 @@ jobs:
       # ============
 
       - name: '[ScenarI/O] Python Tests'
+        shell: bash -i -e {0}
         run: |
           cd tests
           pytest -m "scenario"
 
       - name: '[ScenarI/O] Python Tests with Valgrind'
+        shell: bash -i -e {0}
         if: failure()
         run: |
           apt-get install -y --no-install-recommends valgrind
@@ -206,11 +208,13 @@ jobs:
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
 
       - name: '[gym_ignition] Python Tests'
+        shell: bash -i -e {0}
         run: |
           cd tests
           pytest -m "gym_ignition"
 
       - name: '[gym_ignition] Python Tests with Valgrind'
+        shell: bash -i -e {0}
         if: failure()
         run: |
           pip3 install colour-valgrind
