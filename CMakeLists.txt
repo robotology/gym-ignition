@@ -146,7 +146,7 @@ add_install_rpath_support(
 if(NOT IGNITION_DISTRIBUTION)
 
     include(FindIgnitionDistribution)
-    set(SUPPORTED_IGNITION_DISTRIBUTIONS "Dome" "Citadel")
+    set(SUPPORTED_IGNITION_DISTRIBUTIONS "Edifice" "Dome" "Citadel")
 
     foreach(distribution IN LISTS SUPPORTED_IGNITION_DISTRIBUTIONS)
 
