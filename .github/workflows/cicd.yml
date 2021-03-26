@@ -20,6 +20,7 @@ jobs:
           - User
           - Developer
         ignition:
+          - edifice
           - dome
           # - citadel
 
@@ -163,13 +164,13 @@ jobs:
 
       # User installation
       - name: '[User] Create wheel'
-        if: matrix.type == 'User' && matrix.ignition == 'dome'
+        if: matrix.type == 'User' && matrix.ignition == 'edifice'
         shell: bash -i -e {0}
         run: pip3 wheel -w dist/ .
       # Note: calling "pip wheel" with "--global-option" forces dependencies to be build from their sdist.
       #       Since it's very slow, we create the wheel from setup.py without isolation.
       - name: '[User] Create wheel'
-        if: matrix.type == 'User' && matrix.ignition != 'dome'
+        if: matrix.type == 'User' && matrix.ignition != 'edifice'
         shell: bash -i -e {0}
         run: |
           pip3 install \
@@ -265,8 +266,8 @@ jobs:
       - name: Publish package to PyPI
         if: |
           github.repository == 'robotology/gym-ignition' && matrix.type == 'User' &&
-          ((github.event_name == 'release' && github.event.action == 'published' && matrix.ignition == 'dome') ||
-           (github.event_name == 'push' && matrix.ignition == 'dome' && github.ref == 'refs/heads/devel'))
+          ((github.event_name == 'release' && github.event.action == 'published' && matrix.ignition == 'edifice') ||
+           (github.event_name == 'push' && matrix.ignition == 'edifice' && github.ref == 'refs/heads/devel'))
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__
