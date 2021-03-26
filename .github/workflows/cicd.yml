@@ -110,7 +110,8 @@ jobs:
           cd /workspace/src
           wget -O - ${TAGS_YAML} | vcs import
           SYSTEM_VERSION=$(lsb_release -cs)
-          apt-get -y install $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
+          #apt-get -y install $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
+          apt-get -y install $(sort -u $(find . -iname 'packages-'$(lsb_release -cs)'.apt' -o -iname 'packages.apt') | grep -v -E "^libignition|^libsdformat")
           cd /workspace
           colcon graph
           colcon build \
