@@ -56,7 +56,7 @@
 #include <unordered_map>
 
 using namespace scenario::gazebo;
-using ignition::fuel_tools::ClientConfig;
+using ignition::fuel_tools::FuelClient;
 
 namespace scenario::gazebo::detail {
     struct PhysicsData;
