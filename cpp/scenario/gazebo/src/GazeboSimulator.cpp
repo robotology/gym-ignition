@@ -35,16 +35,15 @@
 #include "scenario/gazebo/utils.h"
 #include "scenario/plugins/gazebo/ECMSingleton.h"
 
+
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/World.hh>
 #include <ignition/transport/Node.hh>
 #include <ignition/transport/Publisher.hh>
-#include <sdf/Element.hh>
-#include <sdf/Physics.hh>
-#include <sdf/Root.hh>
-#include <sdf/World.hh>
+#include <sdf/sdf.hh>
+#include <ignition/fuel_tools.hh>
 
 #include <algorithm>
 #include <cassert>
@@ -57,6 +56,7 @@
 #include <unordered_map>
 
 using namespace scenario::gazebo;
+using ignition::fuel_tools::ClientConfig;
 
 namespace scenario::gazebo::detail {
     struct PhysicsData;
@@ -96,7 +96,7 @@ struct detail::PhysicsData
 
 class GazeboSimulator::Impl
 {
-public:
+public: // attributes
     sdf::ElementPtr sdfElement = nullptr;
 
     struct
@@ -107,25 +107,43 @@ public:
         std::shared_ptr<ignition::gazebo::Server> server;
     } gazebo;
 
+    using WorldName = std::string;
+    using GazeboWorldPtr = std::shared_ptr<scenario::gazebo::World>;
+    std::unordered_map<WorldName, GazeboWorldPtr> worlds;
+
+    // Attributes related to Fuel Support
+    // Note to devs: sdformat10 uses a global parser config. Starting with
+    // stformat11, this practice is depreciated in favour of creating a local
+    // parser config that is fed into all functions reading sdf
+    // (sdf::readFile(...), etc.) with Ignition Edifice and beyond, this will
+    // need an to be amended with the local sdf config.
+    std::shared_ptr<FuelClient> fuelClient;
+
+public: // methods
+    Impl()
+        : fuelClient{new FuelClient()}
+    {}
+
     bool insertSDFWorld(const sdf::World& world);
     std::shared_ptr<ignition::gazebo::Server> getServer();
 
     static std::shared_ptr<World>
     CreateGazeboWorld(const std::string& worldName);
 
-    using WorldName = std::string;
-    using GazeboWorldPtr = std::shared_ptr<scenario::gazebo::World>;
-    std::unordered_map<WorldName, GazeboWorldPtr> worlds;
-
     static detail::PhysicsData getPhysicsData(const sdf::Root& root,
                                               const size_t worldIndex);
     bool sceneBroadcasterActive(const std::string& worldName);
+
+    // Implementation of the Fuel Callback
+    std::string fetchFuelModel(std::string uri)
+    {
+        return fetchResourceWithClient(uri, *this->fuelClient.get());
+    }
 };
 
 // ===============
 // GazeboSimulator
 // ===============
-
 GazeboSimulator::GazeboSimulator(const double stepSize,
                                  const double rtf,
                                  const size_t stepsPerRun)
@@ -137,6 +155,11 @@ GazeboSimulator::GazeboSimulator(const double stepSize,
     // Configure the physics profile
     pImpl->gazebo.physics.rtf = rtf;
     pImpl->gazebo.physics.maxStepSize = stepSize;
+
+    // Configure Fuel Callback
+    sdf::setFindCallback(std::bind(&GazeboSimulator::Impl::fetchFuelModel,
+                                   pImpl.get(),
+                                   std::placeholders::_1));
 }
 
 GazeboSimulator::~GazeboSimulator()
@@ -385,7 +408,7 @@ bool GazeboSimulator::insertWorldFromSDF(const std::string& worldFile,
 {
     if (this->initialized()) {
         sError << "Worlds must be inserted before the initialization"
-                 << std::endl;
+               << std::endl;
         return false;
     }
 
