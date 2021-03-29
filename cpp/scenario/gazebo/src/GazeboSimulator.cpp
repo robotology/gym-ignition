@@ -136,6 +136,7 @@ public: // methods
 // ===============
 // GazeboSimulator
 // ===============
+
 GazeboSimulator::GazeboSimulator(const double stepSize,
                                  const double rtf,
                                  const size_t stepsPerRun)
