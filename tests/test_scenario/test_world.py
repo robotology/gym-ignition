@@ -122,11 +122,21 @@ def test_world_api(gazebo: scenario.GazeboSimulator):
     assert cube2.base_position() == pytest.approx(custom_model_pose.position)
     assert cube2.base_orientation() == pytest.approx(custom_model_pose.orientation)
 
+    # insert a cube from urdf string
+    cube_3_pose = core.Pose([1, 0, 0], [0, 0, 0, 1])
+    assert world.insert_model(utils.get_cube_urdf_string(), cube_3_pose, "cube3")
+    assert "cube3" in world.model_names()
+
+    # insert a cube from sdf string
+    cube_4_pose = core.Pose([2, 0, 0], [0, 0, 0, 1])
+    assert world.insert_model(utils.get_cube_sdf_string(), cube_3_pose, "cube4")
+    assert "cube4" in world.model_names()
+
     # Remove the first model (requires either a paused or unpaused step)
     assert world.remove_model(default_model_name)
-    assert len(world.model_names()) == 2
+    assert len(world.model_names()) == 4
     gazebo.run(paused=True)
-    assert len(world.model_names()) == 1
+    assert len(world.model_names()) == 3
 
     # Without the physics system, the time should not increase
     gazebo.run()
