@@ -35,7 +35,7 @@
 #include "scenario/gazebo/utils.h"
 #include "scenario/plugins/gazebo/ECMSingleton.h"
 
-
+#include <ignition/fuel_tools.hh>
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
 #include <ignition/gazebo/components/Name.hh>
@@ -43,7 +43,6 @@
 #include <ignition/transport/Node.hh>
 #include <ignition/transport/Publisher.hh>
 #include <sdf/sdf.hh>
-#include <ignition/fuel_tools.hh>
 
 #include <algorithm>
 #include <cassert>
@@ -133,12 +132,6 @@ public: // methods
     static detail::PhysicsData getPhysicsData(const sdf::Root& root,
                                               const size_t worldIndex);
     bool sceneBroadcasterActive(const std::string& worldName);
-
-    // Implementation of the Fuel Callback
-    std::string fetchFuelModel(std::string uri)
-    {
-        return fetchResourceWithClient(uri, *this->fuelClient.get());
-    }
 };
 
 // ===============
@@ -157,9 +150,10 @@ GazeboSimulator::GazeboSimulator(const double stepSize,
     pImpl->gazebo.physics.maxStepSize = stepSize;
 
     // Configure Fuel Callback
-    sdf::setFindCallback(std::bind(&GazeboSimulator::Impl::fetchFuelModel,
-                                   pImpl.get(),
-                                   std::placeholders::_1));
+    sdf::setFindCallback([this](const std::string uri) -> std::string {
+        auto path = fetchResourceWithClient(uri, *pImpl.get()->fuelClient.get());
+        return path;
+    });
 }
 
 GazeboSimulator::~GazeboSimulator()
