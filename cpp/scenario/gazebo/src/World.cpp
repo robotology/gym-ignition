@@ -278,12 +278,16 @@ scenario::core::ModelPtr World::getModel(const std::string& modelName) const
     return pImpl->models[modelName];
 }
 
-bool World::insertModel(const std::string& modelFile,
+bool World::insertModel(const std::string& modelString,
                         const core::Pose& pose,
                         const std::string& overrideModelName)
 {
-    const std::shared_ptr<sdf::Root> modelSdfRoot =
-        utils::getSdfRootFromFile(modelFile);
+    std::shared_ptr<sdf::Root> modelSdfRoot;
+
+    modelSdfRoot = utils::getSdfRootFromString(modelString);
+
+    if (!modelSdfRoot)
+        modelSdfRoot = utils::getSdfRootFromFile(modelString);
 
     if (!modelSdfRoot) {
         return false;

@@ -117,7 +117,8 @@ public:
     /**
      * Insert a model in the world.
      *
-     * @param modelFile The path to the URDF or SDF file to load.
+     * @param modelString An SDF string to insert, or a path to the URDF or SDF
+     * file to load and insert.
      * @param pose The optional initial pose of the model.
      * @param overrideModelName The optional name of the model. This is the name
      * used to get the model with ``World::getModel``.
@@ -129,7 +130,7 @@ public:
      * @warning In order to process the model insertion, a simulator step must
      * be executed. It could either be a paused or unpaused step.
      */
-    bool insertModel(const std::string& modelFile,
+    bool insertModel(const std::string& modelString,
                      const core::Pose& pose = core::Pose::Identity(),
                      const std::string& overrideModelName = {});
 
