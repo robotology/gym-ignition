@@ -150,8 +150,9 @@ GazeboSimulator::GazeboSimulator(const double stepSize,
     pImpl->gazebo.physics.maxStepSize = stepSize;
 
     // Configure Fuel Callback
-    sdf::setFindCallback([this](const std::string &uri) -> std::string {
-        auto path = fetchResourceWithClient(uri, *pImpl.get()->fuelClient.get());
+    sdf::setFindCallback([this](const std::string& uri) -> std::string {
+        const auto path = ignition::fuel_tools::fetchResourceWithClient(
+            uri, *pImpl->fuelClient);
         return path;
     });
 }
