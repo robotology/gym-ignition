@@ -119,7 +119,7 @@ public: // attributes
 
 public: // methods
     Impl()
-        : fuelClient{new ignition::fuel_tools::FuelClient()}
+        : fuelClient{std::make_shared<ignition::fuel_tools::FuelClient>()}
     {}
 
     bool insertSDFWorld(const sdf::World& world);
