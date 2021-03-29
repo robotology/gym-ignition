@@ -55,7 +55,6 @@
 #include <unordered_map>
 
 using namespace scenario::gazebo;
-using ignition::fuel_tools::FuelClient;
 
 namespace scenario::gazebo::detail {
     struct PhysicsData;
@@ -116,11 +115,11 @@ public: // attributes
     // parser config that is fed into all functions reading sdf
     // (sdf::readFile(...), etc.) with Ignition Edifice and beyond, this will
     // need an to be amended with the local sdf config.
-    std::shared_ptr<FuelClient> fuelClient;
+    std::shared_ptr<ignition::fuel_tools::FuelClient> fuelClient;
 
 public: // methods
     Impl()
-        : fuelClient{new FuelClient()}
+        : fuelClient{new ignition::fuel_tools::FuelClient()}
     {}
 
     bool insertSDFWorld(const sdf::World& world);
