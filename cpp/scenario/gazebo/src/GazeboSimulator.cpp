@@ -109,19 +109,7 @@ public: // attributes
     using GazeboWorldPtr = std::shared_ptr<scenario::gazebo::World>;
     std::unordered_map<WorldName, GazeboWorldPtr> worlds;
 
-    // Attributes related to Fuel Support
-    // Note to devs: sdformat10 uses a global parser config. Starting with
-    // stformat11, this practice is depreciated in favour of creating a local
-    // parser config that is fed into all functions reading sdf
-    // (sdf::readFile(...), etc.) with Ignition Edifice and beyond, this will
-    // need an to be amended with the local sdf config.
-    std::shared_ptr<ignition::fuel_tools::FuelClient> fuelClient;
-
 public: // methods
-    Impl()
-        : fuelClient{std::make_shared<ignition::fuel_tools::FuelClient>()}
-    {}
-
     bool insertSDFWorld(const sdf::World& world);
     std::shared_ptr<ignition::gazebo::Server> getServer();
 
@@ -150,9 +138,10 @@ GazeboSimulator::GazeboSimulator(const double stepSize,
     pImpl->gazebo.physics.maxStepSize = stepSize;
 
     // Configure Fuel Callback
-    sdf::setFindCallback([this](const std::string& uri) -> std::string {
-        const auto path = ignition::fuel_tools::fetchResourceWithClient(
-            uri, *pImpl->fuelClient);
+    sdf::setFindCallback([](const std::string& uri) -> std::string {
+        auto fuelClient = ignition::fuel_tools::FuelClient();
+        const auto path =
+            ignition::fuel_tools::fetchResourceWithClient(uri, fuelClient);
         return path;
     });
 }
