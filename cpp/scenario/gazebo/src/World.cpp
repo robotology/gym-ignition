@@ -86,7 +86,7 @@ public:
 
         // Get the final name of the model
         if (overrideModelName.empty()) {
-            assert(modelSdfRoot.ModelByIndex(ModelIndex));
+            assert(modelSdfRoot->ModelByIndex(ModelIndex));
             finalModelEntityName =
                 modelSdfRoot->ModelByIndex(ModelIndex)->Name();
         }
