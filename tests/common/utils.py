@@ -97,6 +97,54 @@ def get_multi_world_sdf_file() -> str:
     return multi_world_sdf
 
 
+def get_cube_sdf_string() -> str:
+    return """
+    <?xml version="1.0" ?>
+    <sdf version="1.6">
+        <model name='box'>
+        <pose>0 0 0.5 0 -0 0</pose>
+            <link name='box_link'>
+                <inertial>
+                <inertia>
+                    <ixx>1</ixx>
+                    <ixy>0</ixy>
+                    <ixz>0</ixz>
+                    <iyy>1</iyy>
+                    <iyz>0</iyz>
+                    <izz>1</izz>
+                </inertia>
+                <mass>1</mass>
+                </inertial>
+                <collision name='box_collision'>
+                <geometry>
+                    <box>
+                        <size>1 1 1</size>
+                    </box>
+                </geometry>
+                <surface>
+                    <friction>
+                        <ode/>
+                    </friction>
+                    <contact/>
+                </surface>
+                </collision>
+                <visual name='box_visual'>
+                <geometry>
+                    <box>
+                    <size>1 1 1</size>
+                    </box>
+                </geometry>
+                <material>
+                    <ambient>1 0 0 1</ambient>
+                    <diffuse>1 0 0 1</diffuse>
+                    <specular>1 0 0 1</specular>
+                </material>
+                </visual>
+            </link>
+        </model>
+    </sdf>
+    """
+
 def get_cube_urdf_string() -> str:
 
     mass = 5.0

@@ -3,6 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+
 pytestmark = pytest.mark.scenario
 
 from scenario import core
@@ -14,10 +15,9 @@ from ..common.utils import gazebo_fixture as gazebo
 scenario.set_verbosity(scenario.Verbosity_debug)
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_load_default_world(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
@@ -28,10 +28,9 @@ def test_load_default_world(gazebo: scenario.GazeboSimulator):
     assert world.name() == "default"
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_load_default_world_from_file(gazebo: scenario.GazeboSimulator):
 
     empty_world_sdf = utils.get_empty_world_sdf()
@@ -46,10 +45,9 @@ def test_load_default_world_from_file(gazebo: scenario.GazeboSimulator):
     assert world.name() == "default"
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_rename_default_world(gazebo: scenario.GazeboSimulator):
 
     empty_world_sdf = utils.get_empty_world_sdf()
@@ -69,10 +67,9 @@ def test_rename_default_world(gazebo: scenario.GazeboSimulator):
     assert world1.name() == "myWorld"
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_world_api(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
@@ -122,11 +119,25 @@ def test_world_api(gazebo: scenario.GazeboSimulator):
     assert cube2.base_position() == pytest.approx(custom_model_pose.position)
     assert cube2.base_orientation() == pytest.approx(custom_model_pose.orientation)
 
+    # insert a cube from urdf string
+    cube_3_pose = core.Pose([1, 0, 0], [0, 0, 0, 1])
+    assert world.insert_model_from_string(
+        utils.get_cube_urdf_string(), cube_3_pose, "cube3"
+    )
+    assert "cube3" in world.model_names()
+
+    # insert a cube from sdf string
+    cube_4_pose = core.Pose([2, 0, 0], [0, 0, 0, 1])
+    assert world.insert_model_from_string(
+        utils.get_cube_sdf_string(), cube_4_pose, "cube4"
+    )
+    assert "cube4" in world.model_names()
+
     # Remove the first model (requires either a paused or unpaused step)
     assert world.remove_model(default_model_name)
-    assert len(world.model_names()) == 2
+    assert len(world.model_names()) == 4
     gazebo.run(paused=True)
-    assert len(world.model_names()) == 1
+    assert len(world.model_names()) == 3
 
     # Without the physics system, the time should not increase
     gazebo.run()
@@ -135,10 +146,9 @@ def test_world_api(gazebo: scenario.GazeboSimulator):
     assert world.time() == 0.0
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_world_physics_plugin(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
@@ -182,10 +192,9 @@ def test_world_physics_plugin(gazebo: scenario.GazeboSimulator):
     assert world.time() == pytest.approx(12 * dt)
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1), (1e-9, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1), (1e-9, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_sim_time_starts_from_zero(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()

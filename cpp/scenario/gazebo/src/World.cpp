@@ -65,6 +65,119 @@ public:
     {
         std::vector<std::string> modelNames;
     } buffers;
+
+public:
+    bool insertModel(const std::shared_ptr<sdf::Root>& modelSdfRoot,
+                     const core::Pose& pose,
+                     const std::string& overrideModelName,
+                     World& world)
+    {
+        if (modelSdfRoot->ModelCount() != 1) {
+            sError << "The SDF file contains more than one model" << std::endl;
+            return false;
+        }
+
+        constexpr size_t ModelIndex = 0;
+
+        // Every SDF model has a name. In order to insert multiple models from
+        // the same SDF file, the modelData struct allows providing a scoped
+        // name.
+        std::string finalModelEntityName;
+
+        // Get the final name of the model
+        if (overrideModelName.empty()) {
+            assert(modelSdfRoot->ModelByIndex(ModelIndex));
+            finalModelEntityName =
+                modelSdfRoot->ModelByIndex(ModelIndex)->Name();
+        }
+        else {
+            finalModelEntityName = overrideModelName;
+        }
+
+        // Check for model name clash
+        const std::vector<std::string>& modelNames = world.modelNames();
+        if (std::find(
+                modelNames.begin(), modelNames.end(), finalModelEntityName)
+            != modelNames.end()) {
+            sError << "Failed to insert model '" << finalModelEntityName
+                   << "'. Another entity with the same name already exists."
+                   << std::endl;
+            return false;
+        }
+
+        // Rename the model.
+        // NOTE: The following is not enough because the name is not serialized
+        // to
+        //       string. We need also to operate directly on the raw element.
+        const_cast<sdf::Model*>(modelSdfRoot->ModelByIndex(ModelIndex))
+            ->SetName(finalModelEntityName);
+
+        // Update the name in the sdf model. This is necessary because model
+        // plugins are loaded right before the creation of the model entity and,
+        // instead of receiving the model entity name, they receive the model
+        // sdf name.
+        if (!utils::renameSDFModel(
+                *modelSdfRoot, finalModelEntityName, ModelIndex)) {
+            sError << "Failed to rename SDF model" << std::endl;
+            return false;
+        }
+
+        if (utils::verboseFromEnvironment()) {
+            sDebug << "Inserting a model from the following SDF:" << std::endl;
+            std::cout << modelSdfRoot->Element()->ToString("") << std::endl;
+        }
+
+        // Create the model entity
+        ignition::gazebo::Entity modelEntity;
+        modelEntity = this->sdfEntityCreator->CreateEntities(
+            modelSdfRoot->ModelByIndex(ModelIndex));
+
+        // Attach the model entity to the world entity
+        this->sdfEntityCreator->SetParent(modelEntity, world.m_entity);
+
+        {
+            // Check that the model name is correct
+            assert(modelSdfRoot->ModelCount() == 1);
+            std::string modelNameSDF =
+                modelSdfRoot->ModelByIndex(ModelIndex)->Name();
+            std::string modelNameEntity = utils::getExistingComponentData< //
+                ignition::gazebo::components::Name>(world.m_ecm, modelEntity);
+            assert(modelNameSDF == modelNameEntity);
+        }
+
+        // Create the model
+        auto model = std::make_shared<scenario::gazebo::Model>();
+
+        // Initialize the model
+        if (!model->initialize(
+                modelEntity, world.m_ecm, world.m_eventManager)) {
+            sError << "Failed to initialize the model" << std::endl;
+            if (!world.removeModel(finalModelEntityName)) {
+                sError << "Failed to remove temporary model after failure"
+                       << std::endl;
+            }
+            return false;
+        }
+
+        // Create required model resources. This call prepares all the necessary
+        // components in the ECM to make our bindings work.
+        if (!model->createECMResources()) {
+            sError << "Failed to initialize ECM model resources" << std::endl;
+            return false;
+        }
+
+        // Set the initial model pose.
+        // We directly override the Pose component instead of using
+        // Model::resetBasePose because it would just store a pose command that
+        // needs to be processed by the Physics system. Overriding the
+        // component, instead, has direct effect.
+        if (pose != core::Pose::Identity()) {
+            utils::setComponentData<ignition::gazebo::components::Pose>(
+                world.m_ecm, modelEntity, utils::toIgnitionPose(pose));
+        }
+
+        return true;
+    }
 };
 
 World::World()
@@ -282,112 +395,37 @@ bool World::insertModel(const std::string& modelFile,
                         const core::Pose& pose,
                         const std::string& overrideModelName)
 {
-    const std::shared_ptr<sdf::Root> modelSdfRoot =
-        utils::getSdfRootFromFile(modelFile);
+    return this->insertModelFromFile(modelFile, pose, overrideModelName);
+}
+
+bool World::insertModelFromFile(const std::string& path,
+                                const core::Pose& pose,
+                                const std::string& overrideModelName)
+{
+    std::shared_ptr<sdf::Root> modelSdfRoot;
+    modelSdfRoot = utils::getSdfRootFromFile(path);
 
     if (!modelSdfRoot) {
         return false;
     }
 
-    if (modelSdfRoot->ModelCount() != 1) {
-        sError << "The SDF file contains more than one model" << std::endl;
+    return pImpl.get()->insertModel(
+        modelSdfRoot, pose, overrideModelName, *this);
+}
+
+bool World::insertModelFromString(const std::string& sdfString,
+                                  const core::Pose& pose,
+                                  const std::string& overrideModelName)
+{
+    std::shared_ptr<sdf::Root> modelSdfRoot;
+    modelSdfRoot = utils::getSdfRootFromString(sdfString);
+
+    if (!modelSdfRoot) {
         return false;
     }
 
-    constexpr size_t ModelIndex = 0;
-
-    // Every SDF model has a name. In order to insert multiple models from the
-    // same SDF file, the modelData struct allows providing a scoped name.
-    std::string finalModelEntityName;
-
-    // Get the final name of the model
-    if (overrideModelName.empty()) {
-        assert(modelSdfRoot->ModelByIndex(ModelIndex));
-        finalModelEntityName = modelSdfRoot->ModelByIndex(ModelIndex)->Name();
-    }
-    else {
-        finalModelEntityName = overrideModelName;
-    }
-
-    // Check for model name clash
-    const std::vector<std::string>& modelNames = this->modelNames();
-    if (std::find(modelNames.begin(), modelNames.end(), finalModelEntityName)
-        != modelNames.end()) {
-        sError << "Failed to insert model '" << finalModelEntityName
-               << "'. Another entity with the same name already exists."
-               << std::endl;
-        return false;
-    }
-
-    // Rename the model.
-    // NOTE: The following is not enough because the name is not serialized to
-    //       string. We need also to operate directly on the raw element.
-    const_cast<sdf::Model*>(modelSdfRoot->ModelByIndex(ModelIndex))
-        ->SetName(finalModelEntityName);
-
-    // Update the name in the sdf model. This is necessary because model plugins
-    // are loaded right before the creation of the model entity and, instead of
-    // receiving the model entity name, they receive the model sdf name.
-    if (!utils::renameSDFModel(
-            *modelSdfRoot, finalModelEntityName, ModelIndex)) {
-        sError << "Failed to rename SDF model" << std::endl;
-        return false;
-    }
-
-    if (utils::verboseFromEnvironment()) {
-        sDebug << "Inserting a model from the following SDF:" << std::endl;
-        std::cout << modelSdfRoot->Element()->ToString("") << std::endl;
-    }
-
-    // Create the model entity
-    ignition::gazebo::Entity modelEntity;
-    modelEntity = pImpl->sdfEntityCreator->CreateEntities(
-        modelSdfRoot->ModelByIndex(ModelIndex));
-
-    // Attach the model entity to the world entity
-    pImpl->sdfEntityCreator->SetParent(modelEntity, m_entity);
-
-    {
-        // Check that the model name is correct
-        assert(modelSdfRoot->ModelCount() == 1);
-        std::string modelNameSDF =
-            modelSdfRoot->ModelByIndex(ModelIndex)->Name();
-        std::string modelNameEntity = utils::getExistingComponentData< //
-            ignition::gazebo::components::Name>(m_ecm, modelEntity);
-        assert(modelNameSDF == modelNameEntity);
-    }
-
-    // Create the model
-    auto model = std::make_shared<scenario::gazebo::Model>();
-
-    // Initialize the model
-    if (!model->initialize(modelEntity, m_ecm, m_eventManager)) {
-        sError << "Failed to initialize the model" << std::endl;
-        if (!this->removeModel(finalModelEntityName)) {
-            sError << "Failed to remove temporary model after failure"
-                   << std::endl;
-        }
-        return false;
-    }
-
-    // Create required model resources. This call prepares all the necessary
-    // components in the ECM to make our bindings work.
-    if (!model->createECMResources()) {
-        sError << "Failed to initialize ECM model resources" << std::endl;
-        return false;
-    }
-
-    // Set the initial model pose.
-    // We directly override the Pose component instead of using
-    // Model::resetBasePose because it would just store a pose command that
-    // needs to be processed by the Physics system. Overriding the component,
-    // instead, has direct effect.
-    if (pose != core::Pose::Identity()) {
-        utils::setComponentData<ignition::gazebo::components::Pose>(
-            m_ecm, modelEntity, utils::toIgnitionPose(pose));
-    }
-
-    return true;
+    return pImpl.get()->insertModel(
+        modelSdfRoot, pose, overrideModelName, *this);
 }
 
 bool World::removeModel(const std::string& modelName)
