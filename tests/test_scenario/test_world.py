@@ -124,12 +124,12 @@ def test_world_api(gazebo: scenario.GazeboSimulator):
 
     # insert a cube from urdf string
     cube_3_pose = core.Pose([1, 0, 0], [0, 0, 0, 1])
-    assert world.insert_model(utils.get_cube_urdf_string(), cube_3_pose, "cube3")
+    assert world.insert_model_from_string(utils.get_cube_urdf_string(), cube_3_pose, "cube3")
     assert "cube3" in world.model_names()
 
     # insert a cube from sdf string
     cube_4_pose = core.Pose([2, 0, 0], [0, 0, 0, 1])
-    assert world.insert_model(utils.get_cube_sdf_string(), cube_4_pose, "cube4")
+    assert world.insert_model_from_string(utils.get_cube_sdf_string(), cube_4_pose, "cube4")
     assert "cube4" in world.model_names()
 
     # Remove the first model (requires either a paused or unpaused step)
