@@ -67,8 +67,10 @@ public:
     } buffers;
 
 public:
-    bool insertModel(const std::shared_ptr<sdf::Root>& modelSdfRoot, const core::Pose& pose,
-                        const std::string& overrideModelName, World& world)
+    bool insertModel(const std::shared_ptr<sdf::Root>& modelSdfRoot,
+                     const core::Pose& pose,
+                     const std::string& overrideModelName,
+                     World& world)
     {
         if (modelSdfRoot->ModelCount() != 1) {
             sError << "The SDF file contains more than one model" << std::endl;
@@ -147,7 +149,8 @@ public:
         auto model = std::make_shared<scenario::gazebo::Model>();
 
         // Initialize the model
-        if (!model->initialize(modelEntity, world.m_ecm, world.m_eventManager)) {
+        if (!model->initialize(
+                modelEntity, world.m_ecm, world.m_eventManager)) {
             sError << "Failed to initialize the model" << std::endl;
             if (!world.removeModel(finalModelEntityName)) {
                 sError << "Failed to remove temporary model after failure"
@@ -388,22 +391,41 @@ scenario::core::ModelPtr World::getModel(const std::string& modelName) const
     return pImpl->models[modelName];
 }
 
-bool World::insertModel(const std::string& modelString,
+bool World::insertModel(const std::string& modelFile,
                         const core::Pose& pose,
                         const std::string& overrideModelName)
 {
+    return this->insertModelFromFile(modelFile, pose, overrideModelName);
+}
+
+bool World::insertModelFromFile(const std::string& path,
+                                const core::Pose& pose,
+                                const std::string& overrideModelName)
+{
     std::shared_ptr<sdf::Root> modelSdfRoot;
-
-    modelSdfRoot = utils::getSdfRootFromString(modelString);
-
-    if (!modelSdfRoot)
-        modelSdfRoot = utils::getSdfRootFromFile(modelString);
+    modelSdfRoot = utils::getSdfRootFromFile(path);
 
     if (!modelSdfRoot) {
         return false;
     }
 
-    return pImpl.get()->insertModel(modelSdfRoot, pose, overrideModelName, *this);
+    return pImpl.get()->insertModel(
+        modelSdfRoot, pose, overrideModelName, *this);
+}
+
+bool World::insertModelFromString(const std::string& sdfString,
+                                  const core::Pose& pose,
+                                  const std::string& overrideModelName)
+{
+    std::shared_ptr<sdf::Root> modelSdfRoot;
+    modelSdfRoot = utils::getSdfRootFromString(sdfString);
+
+    if (!modelSdfRoot) {
+        return false;
+    }
+
+    return pImpl.get()->insertModel(
+        modelSdfRoot, pose, overrideModelName, *this);
 }
 
 bool World::removeModel(const std::string& modelName)

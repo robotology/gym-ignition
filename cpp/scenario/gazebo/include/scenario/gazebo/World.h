@@ -115,24 +115,64 @@ public:
     bool setGravity(const std::array<double, 3>& gravity);
 
     /**
-     * Insert a model in the world.
+     * Load a model from the given path and insert it into the world.
      *
-     * @param modelString An SDF string to insert, or a path to the URDF or SDF
-     * file to load and insert.
+     * This function is a shim over InsertModelFromFile for backwards
+     * compatibility.
+     *
+     * @param modelFile A path to the URDF or SDF file to load and insert.
      * @param pose The optional initial pose of the model.
      * @param overrideModelName The optional name of the model. This is the name
      * used to get the model with ``World::getModel``.
      * @return True for success, false otherwise.
      *
-     * @note The default pose and model name are those specified in the
-     * robot description. If the pose is not specified, the identity is used.
+     * @note The default pose and model name are those specified in the robot
+     * description. If the pose is not specified, the identity is used.
      *
      * @warning In order to process the model insertion, a simulator step must
      * be executed. It could either be a paused or unpaused step.
      */
-    bool insertModel(const std::string& modelString,
+    bool insertModel(const std::string& modelFile,
                      const core::Pose& pose = core::Pose::Identity(),
                      const std::string& overrideModelName = {});
+
+    /**
+     * Load a model from the given path and insert it into the world.
+     *
+     * @param path A path to the URDF or SDF file to load and insert.
+     * @param pose The optional initial pose of the model.
+     * @param overrideModelName The optional name of the model. This is the name
+     * used to get the model with ``World::getModel``.
+     * @return True for success, false otherwise.
+     *
+     * @note The default pose and model name are those specified in the robot
+     * description. If the pose is not specified, the identity is used.
+     *
+     * @warning In order to process the model insertion, a simulator step must
+     * be executed. It could either be a paused or unpaused step.
+     */
+    bool insertModelFromFile(const std::string& path,
+                             const core::Pose& pose = core::Pose::Identity(),
+                             const std::string& overrideModelName = {});
+
+    /**
+     * Load a model from the given string and insert it into the world.
+     *
+     * @param sdfString A string containing the model's SDF/URDF XML.
+     * @param pose The optional initial pose of the model.
+     * @param overrideModelName The optional name of the model. This is the name
+     * used to get the model with ``World::getModel``.
+     * @return True for success, false otherwise.
+     *
+     * @note The default pose and model name are those specified in the robot
+     * description. If the pose is not specified, the identity is used.
+     *
+     * @warning In order to process the model insertion, a simulator step must
+     * be executed. It could either be a paused or unpaused step.
+     */
+    bool insertModelFromString(const std::string& sdfString,
+                               const core::Pose& pose = core::Pose::Identity(),
+                               const std::string& overrideModelName = {});
 
     /**
      * Remove a model from the world.
