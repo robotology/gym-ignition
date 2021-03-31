@@ -35,16 +35,14 @@
 #include "scenario/gazebo/utils.h"
 #include "scenario/plugins/gazebo/ECMSingleton.h"
 
+#include <ignition/fuel_tools.hh>
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/World.hh>
 #include <ignition/transport/Node.hh>
 #include <ignition/transport/Publisher.hh>
-#include <sdf/Element.hh>
-#include <sdf/Physics.hh>
-#include <sdf/Root.hh>
-#include <sdf/World.hh>
+#include <sdf/sdf.hh>
 
 #include <algorithm>
 #include <cassert>
@@ -96,7 +94,7 @@ struct detail::PhysicsData
 
 class GazeboSimulator::Impl
 {
-public:
+public: // attributes
     sdf::ElementPtr sdfElement = nullptr;
 
     struct
@@ -107,15 +105,16 @@ public:
         std::shared_ptr<ignition::gazebo::Server> server;
     } gazebo;
 
+    using WorldName = std::string;
+    using GazeboWorldPtr = std::shared_ptr<scenario::gazebo::World>;
+    std::unordered_map<WorldName, GazeboWorldPtr> worlds;
+
+public: // methods
     bool insertSDFWorld(const sdf::World& world);
     std::shared_ptr<ignition::gazebo::Server> getServer();
 
     static std::shared_ptr<World>
     CreateGazeboWorld(const std::string& worldName);
-
-    using WorldName = std::string;
-    using GazeboWorldPtr = std::shared_ptr<scenario::gazebo::World>;
-    std::unordered_map<WorldName, GazeboWorldPtr> worlds;
 
     static detail::PhysicsData getPhysicsData(const sdf::Root& root,
                                               const size_t worldIndex);
@@ -137,6 +136,14 @@ GazeboSimulator::GazeboSimulator(const double stepSize,
     // Configure the physics profile
     pImpl->gazebo.physics.rtf = rtf;
     pImpl->gazebo.physics.maxStepSize = stepSize;
+
+    // Configure Fuel Callback
+    sdf::setFindCallback([](const std::string& uri) -> std::string {
+        auto fuelClient = ignition::fuel_tools::FuelClient();
+        const auto path =
+            ignition::fuel_tools::fetchResourceWithClient(uri, fuelClient);
+        return path;
+    });
 }
 
 GazeboSimulator::~GazeboSimulator()
@@ -384,8 +391,8 @@ bool GazeboSimulator::insertWorldFromSDF(const std::string& worldFile,
                                          const std::string& worldName)
 {
     if (this->initialized()) {
-        sMessage << "Worlds must be inserted before the initialization"
-                 << std::endl;
+        sError << "Worlds must be inserted before the initialization"
+               << std::endl;
         return false;
     }
 
