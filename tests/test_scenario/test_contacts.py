@@ -84,6 +84,8 @@ def test_cube_contact(gazebo: scenario.GazeboSimulator,
     cube = world.get_model("cube")
 
     # Enable contact detection
+    assert not cube.contacts_enabled()
+    assert cube.enable_contacts(enable=True)
     assert cube.contacts_enabled()
 
     # The cube was inserted floating in the air with a 5cm gap wrt to ground.
@@ -153,7 +155,13 @@ def test_cube_multiple_contacts(gazebo: scenario.GazeboSimulator,
     cube2 = world.get_model("cube2")
 
     # Enable contact detection
+    assert not cube1.contacts_enabled()
+    assert cube1.enable_contacts(enable=True)
     assert cube1.contacts_enabled()
+
+    # Enable contact detection
+    assert not cube2.contacts_enabled()
+    assert cube2.enable_contacts(enable=True)
     assert cube2.contacts_enabled()
 
     # The cubes were inserted floating in the air with a 1mm gap wrt to ground.
@@ -180,6 +188,8 @@ def test_cube_multiple_contacts(gazebo: scenario.GazeboSimulator,
     assert len(world.model_names()) == 4
 
     cube3 = world.get_model("cube3")
+    assert not cube3.contacts_enabled()
+    assert cube3.enable_contacts(enable=True)
     assert cube3.contacts_enabled()
 
     gazebo.run(paused=True)
