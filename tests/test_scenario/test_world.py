@@ -89,7 +89,7 @@ def test_world_api(gazebo: scenario.GazeboSimulator):
     assert world.insert_model(cube_urdf)
     assert len(world.model_names()) == 1
 
-    default_model_name = scenario.get_model_name_from_sdf(cube_urdf, 0)
+    default_model_name = scenario.get_model_name_from_sdf(cube_urdf)
     assert default_model_name in world.model_names()
     cube1 = world.get_model(default_model_name)
     # TODO: assert cube1
