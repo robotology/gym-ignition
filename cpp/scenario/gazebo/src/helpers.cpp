@@ -320,20 +320,20 @@ sdf::World utils::renameSDFWorld(const sdf::World& world,
     return renamedWorld;
 }
 
-bool utils::renameSDFModel(sdf::Root& sdfRoot,
-                           const std::string& newModelName,
-                           const size_t modelIndex)
+bool utils::renameSDFModel(sdf::Root& sdfRoot, const std::string& newModelName)
 {
-    const size_t initialNrOfModels = sdfRoot.ModelCount();
-
     // Create a new model with the scoped name
     auto renamedModel = std::make_shared<sdf::Element>();
     renamedModel->SetName("model");
     renamedModel->AddAttribute("name", "string", newModelName, true);
 
+    if (!sdfRoot.Model()) {
+        sError << "The sdf Root does not contain any model" << std::endl;
+        return false;
+    }
+
     // Get the first child of the original model element
-    sdf::ElementPtr child =
-        sdfRoot.ModelByIndex(modelIndex)->Element()->GetFirstElement();
+    sdf::ElementPtr child = sdfRoot.Model()->Element()->GetFirstElement();
 
     // Add all the children to the renamed model element
     while (child) {
@@ -343,19 +343,14 @@ bool utils::renameSDFModel(sdf::Root& sdfRoot,
     }
 
     // Remove the old model
-    auto originalModelElement = sdfRoot.ModelByIndex(modelIndex)->Element();
+    auto originalModelElement = sdfRoot.Model()->Element();
     originalModelElement->RemoveFromParent();
 
     // Insert the renamed model
     renamedModel->SetParent(sdfRoot.Element());
     sdfRoot.Element()->InsertElement(renamedModel);
 
-    if (sdfRoot.ModelCount() != initialNrOfModels) {
-        sError << "Failed to rename SDF model" << std::endl;
-        return false;
-    }
-
-    if (!sdfRoot.ModelNameExists(newModelName)) {
+    if (sdfRoot.Model()->Name() != newModelName) {
         sError << "Failed to insert renamed model in SDF root" << std::endl;
         return false;
     }

@@ -149,9 +149,7 @@ namespace scenario::gazebo::utils {
     sdf::World renameSDFWorld(const sdf::World& world,
                               const std::string& newWorldName);
 
-    bool renameSDFModel(sdf::Root& sdfRoot,
-                        const std::string& newModelName,
-                        const size_t modelIndex = 0);
+    bool renameSDFModel(sdf::Root& sdfRoot, const std::string& newModelName);
 
     bool updateSDFPhysics(sdf::Root& sdfRoot,
                           const double maxStepSize,
