@@ -12,15 +12,16 @@ We do not yet provide direct support to other operating systems.
 
 The table below recaps the project requirements of the :ref:`Stable <installation_stable>` and :ref:`Nightly <installation_nightly>` channels:
 
-+-------------+-----------------+--------+------------------+----------+------------+---------+
-| Channel     |       C++       | Python |     Ignition     |  Ubuntu  | macOS [*]_ | Windows |
-+=============+=================+========+==================+==========+============+=========+
-| **Stable**  | >= gcc8, clang6 | >= 3.8 | `Dome`_ (binary) | >= 20.04 |     No     |    No   |
-+-------------+-----------------+--------+------------------+----------+------------+---------+
-| **Nightly** | >= gcc8, clang6 | >= 3.8 | `Dome`_ (source) | >= 20.04 |     No     |    No   |
-+-------------+-----------------+--------+------------------+----------+------------+---------+
++-------------+-----------------+--------+---------------------+----------+------------+---------+
+| Channel     |       C++       | Python |      Ignition       |  Ubuntu  | macOS [*]_ | Windows |
++=============+=================+========+=====================+==========+============+=========+
+| **Stable**  | >= gcc8, clang6 | >= 3.8 | `Dome`_ (binary)    | >= 20.04 |     No     |    No   |
++-------------+-----------------+--------+---------------------+----------+------------+---------+
+| **Nightly** | >= gcc8, clang6 | >= 3.8 | `Edifice`_ (source) | >= 20.04 |     No     |    No   |
++-------------+-----------------+--------+---------------------+----------+------------+---------+
 
 .. _`Dome`: https://ignitionrobotics.org/docs/dome/install
+.. _`Edifice`: https://ignitionrobotics.org/docs/edifice/install
 
 .. [*] Ignition officially supports macOS and also ``gym-ignition`` could be installed on this platform.
        However, we do not currently test this configuration and we cannot guarantee support.
