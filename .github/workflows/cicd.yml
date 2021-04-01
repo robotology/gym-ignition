@@ -20,9 +20,9 @@ jobs:
           - User
           - Developer
         ignition:
-          - edifice
-          - dome
           # - citadel
+          # - dome
+          - edifice
 
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
