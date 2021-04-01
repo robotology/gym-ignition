@@ -609,8 +609,7 @@
 <dl class="cpp function">
 <dt id="_CPPv4N8scenario6gazebo5World11insertModelERKNSt6stringERKN4core4PoseERKNSt6stringE">
 <span id="_CPPv3N8scenario6gazebo5World11insertModelERKNSt6stringERKN4core4PoseERKNSt6stringE"></span><span id="_CPPv2N8scenario6gazebo5World11insertModelERKNSt6stringERKN4core4PoseERKNSt6stringE"></span><span id="scenario::gazebo::World::insertModel__ssCR.core::PoseCR.ssCR"></span><span class="target" id="classscenario_1_1gazebo_1_1World_1a5b67c4435900be0ae1ebacf0ece95a53"></span><span class="pre">bool</span> <code class="sig-name descname"><span class="pre">insertModel</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">modelFile</span></em>, <em class="property"><span class="pre">const</span></em> <a class="reference internal" href="core.html#_CPPv4N8scenario4coreE" title="scenario::core"><span class="pre">core</span></a><span class="pre">::</span><span class="pre">Pose</span> <span class="pre">&amp;</span><em><span class="pre">pose</span></em> <span class="pre">=</span> <a class="reference internal" href="core.html#_CPPv4N8scenario4coreE" title="scenario::core"><span class="pre">core</span></a><span class="pre">::</span><span class="pre">Pose</span><span class="pre">::</span><span class="pre">Identity</span><span class="pre">(</span><span class="pre">)</span>, <em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">overrideModelName</span></em> <span class="pre">=</span> <span class="pre">{</span><span class="pre">}</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo5World11insertModelERKNSt6stringERKN4core4PoseERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Load a model from the given path and insert it into the world.</p>
-<p>This function is a shim over InsertModelFromFile for backwards compatibility.</p>
+<dd><p>Insert a model in the world.</p>
 <p><dl class="simple">
 <dt><strong>Return</strong></dt><dd><p>True for success, false otherwise.</p>
 </dd>
@@ -619,49 +618,7 @@
 <dt><strong>Warning</strong></dt><dd><p>In order to process the model insertion, a simulator step must be executed. It could either be a paused or unpaused step. </p>
 </dd>
 <dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">modelFile</span></code>: A path to the URDF or SDF file to load and insert. </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pose</span></code>: The optional initial pose of the model. </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">overrideModelName</span></code>: The optional name of the model. This is the name used to get the model with <code class="docutils literal notranslate"><a class="reference internal" href="#classscenario_1_1gazebo_1_1World_1a5b031683ed1780e639a98767f1ffb4ee"><span class="std std-ref"><span class="pre">World::getModel</span></span></a></code>. </p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt id="_CPPv4N8scenario6gazebo5World19insertModelFromFileERKNSt6stringERKN4core4PoseERKNSt6stringE">
-<span id="_CPPv3N8scenario6gazebo5World19insertModelFromFileERKNSt6stringERKN4core4PoseERKNSt6stringE"></span><span id="_CPPv2N8scenario6gazebo5World19insertModelFromFileERKNSt6stringERKN4core4PoseERKNSt6stringE"></span><span id="scenario::gazebo::World::insertModelFromFile__ssCR.core::PoseCR.ssCR"></span><span class="target" id="classscenario_1_1gazebo_1_1World_1ac30d2604bb0f51b4fbfb49f478c3d73b"></span><span class="pre">bool</span> <code class="sig-name descname"><span class="pre">insertModelFromFile</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">path</span></em>, <em class="property"><span class="pre">const</span></em> <a class="reference internal" href="core.html#_CPPv4N8scenario4coreE" title="scenario::core"><span class="pre">core</span></a><span class="pre">::</span><span class="pre">Pose</span> <span class="pre">&amp;</span><em><span class="pre">pose</span></em> <span class="pre">=</span> <a class="reference internal" href="core.html#_CPPv4N8scenario4coreE" title="scenario::core"><span class="pre">core</span></a><span class="pre">::</span><span class="pre">Pose</span><span class="pre">::</span><span class="pre">Identity</span><span class="pre">(</span><span class="pre">)</span>, <em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">overrideModelName</span></em> <span class="pre">=</span> <span class="pre">{</span><span class="pre">}</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo5World19insertModelFromFileERKNSt6stringERKN4core4PoseERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Load a model from the given path and insert it into the world.</p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>True for success, false otherwise.</p>
-</dd>
-<dt><strong>Note</strong></dt><dd><p>The default pose and model name are those specified in the robot description. If the pose is not specified, the identity is used.</p>
-</dd>
-<dt><strong>Warning</strong></dt><dd><p>In order to process the model insertion, a simulator step must be executed. It could either be a paused or unpaused step. </p>
-</dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">path</span></code>: A path to the URDF or SDF file to load and insert. </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">pose</span></code>: The optional initial pose of the model. </p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">overrideModelName</span></code>: The optional name of the model. This is the name used to get the model with <code class="docutils literal notranslate"><a class="reference internal" href="#classscenario_1_1gazebo_1_1World_1a5b031683ed1780e639a98767f1ffb4ee"><span class="std std-ref"><span class="pre">World::getModel</span></span></a></code>. </p></li>
-</ul>
-</dd>
-</dl>
-</p>
-</dd></dl>
-
-<dl class="cpp function">
-<dt id="_CPPv4N8scenario6gazebo5World21insertModelFromStringERKNSt6stringERKN4core4PoseERKNSt6stringE">
-<span id="_CPPv3N8scenario6gazebo5World21insertModelFromStringERKNSt6stringERKN4core4PoseERKNSt6stringE"></span><span id="_CPPv2N8scenario6gazebo5World21insertModelFromStringERKNSt6stringERKN4core4PoseERKNSt6stringE"></span><span id="scenario::gazebo::World::insertModelFromString__ssCR.core::PoseCR.ssCR"></span><span class="target" id="classscenario_1_1gazebo_1_1World_1a073d4e161f46174c9bf27d72f5616601"></span><span class="pre">bool</span> <code class="sig-name descname"><span class="pre">insertModelFromString</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">sdfString</span></em>, <em class="property"><span class="pre">const</span></em> <a class="reference internal" href="core.html#_CPPv4N8scenario4coreE" title="scenario::core"><span class="pre">core</span></a><span class="pre">::</span><span class="pre">Pose</span> <span class="pre">&amp;</span><em><span class="pre">pose</span></em> <span class="pre">=</span> <a class="reference internal" href="core.html#_CPPv4N8scenario4coreE" title="scenario::core"><span class="pre">core</span></a><span class="pre">::</span><span class="pre">Pose</span><span class="pre">::</span><span class="pre">Identity</span><span class="pre">(</span><span class="pre">)</span>, <em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">overrideModelName</span></em> <span class="pre">=</span> <span class="pre">{</span><span class="pre">}</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo5World21insertModelFromStringERKNSt6stringERKN4core4PoseERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Load a model from the given string and insert it into the world.</p>
-<p><dl class="simple">
-<dt><strong>Return</strong></dt><dd><p>True for success, false otherwise.</p>
-</dd>
-<dt><strong>Note</strong></dt><dd><p>The default pose and model name are those specified in the robot description. If the pose is not specified, the identity is used.</p>
-</dd>
-<dt><strong>Warning</strong></dt><dd><p>In order to process the model insertion, a simulator step must be executed. It could either be a paused or unpaused step. </p>
-</dd>
-<dt><strong>Parameters</strong></dt><dd><ul class="breatheparameterlist simple">
-<li><p><code class="docutils literal notranslate"><span class="pre">sdfString</span></code>: A string containing the model’s SDF/URDF XML. </p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">modelFile</span></code>: The path to the URDF or SDF file to load. </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">pose</span></code>: The optional initial pose of the model. </p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">overrideModelName</span></code>: The optional name of the model. This is the name used to get the model with <code class="docutils literal notranslate"><a class="reference internal" href="#classscenario_1_1gazebo_1_1World_1a5b031683ed1780e639a98767f1ffb4ee"><span class="std std-ref"><span class="pre">World::getModel</span></span></a></code>. </p></li>
 </ul>

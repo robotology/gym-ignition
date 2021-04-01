@@ -7193,13 +7193,11 @@ numbering.</p>
 <dl class="py method">
 <dt id="scenario.bindings.gazebo.World.insert_model">
 <code class="sig-name descname"><span class="pre">insert_model</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.World.insert_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load a model from the given path and insert it into the world.</p>
-<p>This function is a shim over InsertModelFromFile for backwards
-compatibility.</p>
+<dd><p>Insert a model in the world.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>modelFile</strong> (<em>string</em>) – A path to the URDF or SDF file to load and insert.</p></li>
+<li><p><strong>modelFile</strong> (<em>string</em>) – The path to the URDF or SDF file to load.</p></li>
 <li><p><strong>pose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Pose</span></code>) – The optional initial pose of the model.</p></li>
 <li><p><strong>overrideModelName</strong> (<em>string</em>) – The optional name of the model. This is the name
 used to get the model with <code class="docutils literal notranslate"><span class="pre">World::getModel</span></code>.</p></li>
@@ -7212,60 +7210,8 @@ used to get the model with <code class="docutils literal notranslate"><span clas
 <dd class="field-odd"><p>True for success, false otherwise.</p>
 </dd>
 </dl>
-<p>Notes: The default pose and model name are those specified in the robot
-description. If the pose is not specified, the identity is used.</p>
-<p>Warning: In order to process the model insertion, a simulator step must
-be executed. It could either be a paused or unpaused step.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="scenario.bindings.gazebo.World.insert_model_from_file">
-<code class="sig-name descname"><span class="pre">insert_model_from_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.World.insert_model_from_file" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load a model from the given path and insert it into the world.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>path</strong> (<em>string</em>) – A path to the URDF or SDF file to load and insert.</p></li>
-<li><p><strong>pose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Pose</span></code>) – The optional initial pose of the model.</p></li>
-<li><p><strong>overrideModelName</strong> (<em>string</em>) – The optional name of the model. This is the name
-used to get the model with <code class="docutils literal notranslate"><span class="pre">World::getModel</span></code>.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>boolean</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>True for success, false otherwise.</p>
-</dd>
-</dl>
-<p>Notes: The default pose and model name are those specified in the robot
-description. If the pose is not specified, the identity is used.</p>
-<p>Warning: In order to process the model insertion, a simulator step must
-be executed. It could either be a paused or unpaused step.</p>
-</dd></dl>
-
-<dl class="py method">
-<dt id="scenario.bindings.gazebo.World.insert_model_from_string">
-<code class="sig-name descname"><span class="pre">insert_model_from_string</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.World.insert_model_from_string" title="Permalink to this definition">¶</a></dt>
-<dd><p>Load a model from the given string and insert it into the world.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>sdfString</strong> (<em>string</em>) – A string containing the model’s SDF/URDF XML.</p></li>
-<li><p><strong>pose</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Pose</span></code>) – The optional initial pose of the model.</p></li>
-<li><p><strong>overrideModelName</strong> (<em>string</em>) – The optional name of the model. This is the name
-used to get the model with <code class="docutils literal notranslate"><span class="pre">World::getModel</span></code>.</p></li>
-</ul>
-</dd>
-<dt class="field-even">Return type</dt>
-<dd class="field-even"><p>boolean</p>
-</dd>
-<dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>True for success, false otherwise.</p>
-</dd>
-</dl>
-<p>Notes: The default pose and model name are those specified in the robot
-description. If the pose is not specified, the identity is used.</p>
+<p>Notes: The default pose and model name are those specified in the
+robot description. If the pose is not specified, the identity is used.</p>
 <p>Warning: In order to process the model insertion, a simulator step must
 be executed. It could either be a paused or unpaused step.</p>
 </dd></dl>
