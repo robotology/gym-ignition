@@ -27,8 +27,8 @@
 # =============
 
 add_library(PhysicsSystem SHARED
-    Physics.h
-    Physics.cpp)
+    Physics.hh
+    Physics.cc)
 
 target_link_libraries(PhysicsSystem
     PUBLIC
