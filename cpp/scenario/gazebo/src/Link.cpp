@@ -165,7 +165,7 @@ bool Link::createECMResources()
     m_ecm->CreateComponent(m_entity, components::LinearAcceleration());
     m_ecm->CreateComponent(m_entity, components::AngularAcceleration());
 
-    if (!this->enableContactDetection(true)) {
+    if (!this->enableContactDetection(false)) {
         sError << "Failed to enable contact detection" << std::endl;
         return false;
     }
