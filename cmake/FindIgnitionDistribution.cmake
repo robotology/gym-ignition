@@ -7,6 +7,7 @@
 # In the future we could pull and parse the tags.yaml file.
 set(IGNITION-GAZEBO_CITADEL_VER 3)
 set(IGNITION-GAZEBO_DOME_VER 4)
+set(IGNITION-GAZEBO_EDIFICE_VER 5)
 
 macro(find_ignition_distribution)
 

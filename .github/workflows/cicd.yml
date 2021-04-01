@@ -20,6 +20,7 @@ jobs:
           - User
           - Developer
         ignition:
+          - edifice
           - dome
           # - citadel
 
@@ -109,7 +110,8 @@ jobs:
           cd /workspace/src
           wget -O - ${TAGS_YAML} | vcs import
           SYSTEM_VERSION=$(lsb_release -cs)
-          apt-get -y install $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
+          #apt-get -y install $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
+          apt-get -y install $(sort -u $(find . -iname 'packages-'$(lsb_release -cs)'.apt' -o -iname 'packages.apt') | grep -v -E "^libignition|^libsdformat")
           cd /workspace
           colcon graph
           colcon build \
@@ -163,13 +165,13 @@ jobs:
 
       # User installation
       - name: '[User] Create wheel'
-        if: matrix.type == 'User' && matrix.ignition == 'dome'
+        if: matrix.type == 'User' && matrix.ignition == 'edifice'
         shell: bash -i -e {0}
         run: pip3 wheel -w dist/ .
       # Note: calling "pip wheel" with "--global-option" forces dependencies to be build from their sdist.
       #       Since it's very slow, we create the wheel from setup.py without isolation.
       - name: '[User] Create wheel'
-        if: matrix.type == 'User' && matrix.ignition != 'dome'
+        if: matrix.type == 'User' && matrix.ignition != 'edifice'
         shell: bash -i -e {0}
         run: |
           pip3 install \
@@ -191,11 +193,13 @@ jobs:
       # ============
 
       - name: '[ScenarI/O] Python Tests'
+        shell: bash -i -e {0}
         run: |
           cd tests
           pytest -m "scenario"
 
       - name: '[ScenarI/O] Python Tests with Valgrind'
+        shell: bash -i -e {0}
         if: failure()
         run: |
           apt-get install -y --no-install-recommends valgrind
@@ -204,11 +208,13 @@ jobs:
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
 
       - name: '[gym_ignition] Python Tests'
+        shell: bash -i -e {0}
         run: |
           cd tests
           pytest -m "gym_ignition"
 
       - name: '[gym_ignition] Python Tests with Valgrind'
+        shell: bash -i -e {0}
         if: failure()
         run: |
           pip3 install colour-valgrind
@@ -265,8 +271,8 @@ jobs:
       - name: Publish package to PyPI
         if: |
           github.repository == 'robotology/gym-ignition' && matrix.type == 'User' &&
-          ((github.event_name == 'release' && github.event.action == 'published' && matrix.ignition == 'dome') ||
-           (github.event_name == 'push' && matrix.ignition == 'dome' && github.ref == 'refs/heads/devel'))
+          ((github.event_name == 'release' && github.event.action == 'published' && matrix.ignition == 'edifice') ||
+           (github.event_name == 'push' && matrix.ignition == 'edifice' && github.ref == 'refs/heads/devel'))
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__

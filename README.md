@@ -103,7 +103,7 @@ our simulations, visit the _Motivations_ section of the [website](https://roboto
 
 ## Setup
 
-1. Install the latest Ignition suite following the [official instructions](https://ignitionrobotics.org/docs/dome).
+1. Install the Ignition suite following the [official instructions](https://ignitionrobotics.org/docs/edifice).
 1. Execute `pip install gym-ignition`, preferably in a virtual environment.
 
 **Note**: `gym-ignition` currently only supports the latest version of the ignition suite. For more information on supported versions please refer to the [Support Policy](https://robotology.github.io/gym-ignition/master/installation/support_policy.html).
