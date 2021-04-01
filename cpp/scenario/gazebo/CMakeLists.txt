@@ -99,7 +99,8 @@ target_link_libraries(ScenarioGazebo
     ${ignition-common.ignition-common}
     PRIVATE
     ScenarioCore::CoreUtils
-    ScenarioGazebo::ExtraComponents)
+    ScenarioGazebo::ExtraComponents
+    ${ignition-fuel_tools.ignition-fuel_tools})
 
 set_target_properties(ScenarioGazebo PROPERTIES
     PUBLIC_HEADER "${SCENARIO_GAZEBO_PUBLIC_HDRS}")
@@ -126,7 +127,8 @@ target_link_libraries(GazeboSimulator
     ScenarioCore::CoreUtils
     ScenarioGazebo::ScenarioGazebo
     ScenarioGazebo::ExtraComponents
-    ScenarioGazeboPlugins::ECMSingleton)
+    ScenarioGazeboPlugins::ECMSingleton
+    ${ignition-fuel_tools.ignition-fuel_tools})
 
 set_target_properties(GazeboSimulator PROPERTIES
     PUBLIC_HEADER include/scenario/gazebo/GazeboSimulator.h)

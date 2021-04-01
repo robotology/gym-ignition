@@ -71,3 +71,13 @@ alias_imported_target(
     NAMESPACE_DEST ignition-physics
     REQUIRED TRUE
     )
+
+    alias_imported_target(
+    PACKAGE_ORIG ignition-fuel_tools5
+    PACKAGE_DEST ignition-fuel_tools
+    TARGETS_ORIG ignition-fuel_tools5
+    TARGETS_DEST ignition-fuel_tools
+    NAMESPACE_ORIG ignition-fuel_tools5
+    NAMESPACE_DEST ignition-fuel_tools
+    REQUIRED TRUE
+    )

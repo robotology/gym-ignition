@@ -221,6 +221,12 @@ gazebo.run(paused=True)
 # Insert the Panda manipulator
 panda = gym_ignition_environments.models.panda.Panda(
     world=world, position=[-0.1, 0, 1.0])
+
+# Enable contacts only for the finger links
+panda.get_link("panda_leftfinger").to_gazebo().enable_contact_detection(True)
+panda.get_link("panda_rightfinger").to_gazebo().enable_contact_detection(True)
+
+# Process model insertion in the simulation
 gazebo.run(paused=True)
 
 # Monkey patch the class with finger helpers

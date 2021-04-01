@@ -74,6 +74,18 @@ def preload_tensorflow_shared_libraries() -> None:
         ctypes.CDLL(str(lib))
 
 
+def pre_import_gym() -> None:
+
+    # Check if gym is installed
+    import importlib.util
+    spec = importlib.util.find_spec("gym")
+
+    if spec is None:
+        return
+
+    import gym
+
+
 def import_gazebo() -> None:
 
     # Check the the module was never loaded by someone else
@@ -84,6 +96,11 @@ def import_gazebo() -> None:
     # If tensorflow is imported after scenario.bindings.gazebo, the application segfaults.
     if os.environ.get("SCENARIO_DISABLE_TENSORFLOW_PRELOAD") != "1":
         preload_tensorflow_shared_libraries()
+
+    # Import gym before scenario.bindings.gazebo. Similarly to tensorflow, also gym
+    # includes a module that imports protobuf, producing a similar segfault.
+    if os.environ.get("SCENARIO_DISABLE_GYM_PREIMPORT") != "1":
+        pre_import_gym()
 
     # Import SWIG bindings
     # See https://github.com/robotology/gym-ignition/issues/7
