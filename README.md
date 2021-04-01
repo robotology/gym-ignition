@@ -8,7 +8,6 @@
 <b><a href="https://github.com/robotology/gym-ignition#setup">Setup</a></b>
 •
 <b><a href="https://github.com/robotology/gym-ignition#citation">Citation</a></b>
-</p>
 •
 <b><a href="https://robotology.github.io/gym-ignition/master/index.html">Website</a></b>
 </p>
