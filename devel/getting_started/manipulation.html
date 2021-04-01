@@ -547,6 +547,12 @@ of the manipulator. When these situations occur, grasping might fail.</p>
 <span class="c1"># Insert the Panda manipulator</span>
 <span class="n">panda</span> <span class="o">=</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">(</span>
     <span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+
+<span class="c1"># Enable contacts only for the finger links</span>
+<span class="n">panda</span><span class="o">.</span><span class="n">get_link</span><span class="p">(</span><span class="s2">&quot;panda_leftfinger&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span><span class="n">enable_contact_detection</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">panda</span><span class="o">.</span><span class="n">get_link</span><span class="p">(</span><span class="s2">&quot;panda_rightfinger&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span><span class="n">enable_contact_detection</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># Process model insertion in the simulation</span>
 <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">paused</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Monkey patch the class with finger helpers</span>
