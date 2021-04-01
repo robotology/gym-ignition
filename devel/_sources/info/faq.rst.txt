@@ -24,7 +24,7 @@ On GNU/Linux distributions that ship an old OpenGL version, the GUI could fail t
 error like *Unable to create the rendering window*.
 The reason is that Ignition Gazebo has `ogre-next <https://github.com/OGRECave/ogre-next>`_
 (also known as ogre2) as default rendering engine, and it requires OpenGL greater than 3.3.
-You can find more details `here <https://github.com/ignitionrobotics/blob/master/docs/dome/install_ubuntu_src.md#unable-to-create-the-rendering-window>`_.
+You can find more details `here <https://github.com/ignitionrobotics/docs/blob/master/edifice/troubleshooting.md#unable-to-create-the-rendering-window>`_.
 
 The workaround we recommend is modifying the file ``~/.ignition/gazebo/gui.config`` as follows:
 

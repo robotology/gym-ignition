@@ -342,7 +342,7 @@ Tensorflow will segfault.</p>
 error like <em>Unable to create the rendering window</em>.
 The reason is that Ignition Gazebo has <a class="reference external" href="https://github.com/OGRECave/ogre-next">ogre-next</a>
 (also known as ogre2) as default rendering engine, and it requires OpenGL greater than 3.3.
-You can find more details <a class="reference external" href="https://github.com/ignitionrobotics/blob/master/docs/dome/install_ubuntu_src.md#unable-to-create-the-rendering-window">here</a>.</p>
+You can find more details <a class="reference external" href="https://github.com/ignitionrobotics/docs/blob/master/edifice/troubleshooting.md#unable-to-create-the-rendering-window">here</a>.</p>
 <p>The workaround we recommend is modifying the file <code class="docutils literal notranslate"><span class="pre">~/.ignition/gazebo/gui.config</span></code> as follows:</p>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">--- .ignition/gazebo/gui.config 2020-06-04 14:41:33.471804733 +0200</span>
 <span class="gi">+++ .ignition/gazebo/gui.config 2020-06-04 14:42:47.826475035 +0200</span>
