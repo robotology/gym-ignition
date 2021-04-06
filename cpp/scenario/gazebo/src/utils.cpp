@@ -170,16 +170,17 @@ std::string utils::getWorldNameFromSdf(const std::string& fileName,
 
 std::string utils::getEmptyWorld()
 {
+    // The empty world matches default.sdf from upstream without models
     const std::string world = R""""(<?xml version="1.0" ?>
 <sdf version="1.6">
     <world name="default">
-        <physics default="true" type="dart">
+        <physics default="true" type="ignored">
         </physics>
         <light type="directional" name="sun">
             <cast_shadows>true</cast_shadows>
             <pose>0 0 10 0 0 0</pose>
-            <diffuse>1 1 1 1</diffuse>
-            <specular>0.5 0.5 0.5 1</specular>
+            <diffuse>0.8 0.8 0.8 1</diffuse>
+            <specular>0.2 0.2 0.2 1</specular>
             <attenuation>
                 <range>1000</range>
                 <constant>0.9</constant>
