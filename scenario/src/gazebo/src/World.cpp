@@ -246,6 +246,8 @@ bool World::setPhysicsEngine(const PhysicsEngine engine)
         switch (engine) {
             case PhysicsEngine::Dart:
                 return "ignition-physics-dartsim-plugin";
+            case PhysicsEngine::Bullet:
+                return "ignition-physics-bullet-plugin";
         }
         return "";
     }();
