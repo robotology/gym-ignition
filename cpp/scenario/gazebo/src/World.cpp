@@ -40,6 +40,7 @@
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
 #include <ignition/gazebo/components/Physics.hh>
+#include <ignition/gazebo/components/PhysicsEnginePlugin.hh>
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
@@ -271,16 +272,29 @@ bool World::insertWorldPlugin(const std::string& libName,
 
 bool World::setPhysicsEngine(const PhysicsEngine engine)
 {
-    std::string libName;
-    std::string className;
+    // Get the name of the physics plugin
+    const std::string pluginLib = [&engine]() -> std::string {
+        switch (engine) {
+            case PhysicsEngine::Dart:
+                return "ignition-physics-dartsim-plugin";
+        }
+        return "";
+    }();
 
-    switch (engine) {
-        case PhysicsEngine::Dart:
-            libName = "PhysicsSystem";
-            className = "scenario::plugins::gazebo::Physics";
-            break;
+    if (pluginLib.empty()) {
+        sError << "Failed to retrieve the name of physics plugin library";
+        return false;
     }
 
+    // This component is read by the Physics system during its configuration
+    utils::setComponentData<ignition::gazebo::components::PhysicsEnginePlugin>(
+        m_ecm, m_entity, pluginLib);
+
+    // Vendored Physics system
+    const std::string libName = "PhysicsSystem";
+    const std::string className = "scenario::plugins::gazebo::Physics";
+
+    // Load the Physics system
     if (!this->insertWorldPlugin(libName, className)) {
         sError << "Failed to insert the physics plugin" << std::endl;
         return false;
