@@ -454,8 +454,12 @@ class ignition::gazebo::systems::PhysicsPrivate
   /// \brief Feature list to handle collisions.
   public: struct CollisionFeatureList : ignition::physics::FeatureList<
             MinimumFeatureList,
-            ignition::physics::GetContactsFromLastStepFeature,
             ignition::physics::sdf::ConstructSdfCollision>{};
+
+  /// \brief Feature list to handle contacts information.
+  public: struct ContactFeatureList : ignition::physics::FeatureList<
+            CollisionFeatureList,
+            ignition::physics::GetContactsFromLastStepFeature>{};
 
   /// \brief Collision type with collision features.
   public: using ShapePtrType = ignition::physics::ShapePtr<
@@ -463,7 +467,7 @@ class ignition::gazebo::systems::PhysicsPrivate
 
   /// \brief World type with just the minimum features. Non-pointer.
   public: using WorldShapeType = ignition::physics::World<
-            ignition::physics::FeaturePolicy3d, CollisionFeatureList>;
+            ignition::physics::FeaturePolicy3d, ContactFeatureList>;
 
   //////////////////////////////////////////////////
   // Collision filtering with bitmasks
@@ -547,6 +551,7 @@ class ignition::gazebo::systems::PhysicsPrivate
           physics::World,
           MinimumFeatureList,
           CollisionFeatureList,
+          ContactFeatureList,
           NestedModelFeatureList,
           CollisionDetectorFeatureList,
           SolverFeatureList>;
@@ -598,6 +603,7 @@ class ignition::gazebo::systems::PhysicsPrivate
   public: using EntityCollisionMap = EntityFeatureMap3d<
             physics::Shape,
             CollisionFeatureList,
+            ContactFeatureList,
             CollisionMaskFeatureList,
             FrictionPyramidSlipComplianceFeatureList
             >;
@@ -3124,7 +3130,7 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
   }
 
   auto worldCollisionFeature =
-      this->entityWorldMap.EntityCast<CollisionFeatureList>(worldEntity);
+      this->entityWorldMap.EntityCast<ContactFeatureList>(worldEntity);
   if (!worldCollisionFeature)
   {
     static bool informed{false};
