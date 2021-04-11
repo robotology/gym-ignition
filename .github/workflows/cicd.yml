@@ -183,6 +183,11 @@ jobs:
           cd dist
           pip3 install -v *.whl
 
+      - name: Inspect installed ScenarIO package
+        run: |
+          apt-get install -y --no-install-recommends tree
+          tree $(python3 -c "import scenario, pathlib; print(pathlib.Path(scenario.__file__).parent)")
+
       - name: Ccache stats
         run: ccache --show-stats
 
