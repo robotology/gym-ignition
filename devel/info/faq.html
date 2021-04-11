@@ -4,8 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>FAQ &#8212; gym-ignition  documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
@@ -320,9 +319,9 @@
         
               <div>
                 
-  <section id="faq">
+  <div class="section" id="faq">
 <h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
-<section id="interaction-with-tensorflow">
+<div class="section" id="interaction-with-tensorflow">
 <h2>Interaction with Tensorflow<a class="headerlink" href="#interaction-with-tensorflow" title="Permalink to this headline">¶</a></h2>
 <p>If your Python application imports both <code class="docutils literal notranslate"><span class="pre">scenario</span></code> and <code class="docutils literal notranslate"><span class="pre">tensorflow</span></code>,
 you might experience segfaults with no error messages.
@@ -336,8 +335,8 @@ Tensorflow will segfault.</p>
 <span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">scenario.bindings.gazebo</span>
 </pre></div>
 </div>
-</section>
-<section id="ogre2-and-opengl">
+</div>
+<div class="section" id="ogre2-and-opengl">
 <h2>Ogre2 and OpenGL<a class="headerlink" href="#ogre2-and-opengl" title="Permalink to this headline">¶</a></h2>
 <p>On GNU/Linux distributions that ship an old OpenGL version, the GUI could fail to open printing
 error like <em>Unable to create the rendering window</em>.
@@ -360,8 +359,8 @@ You can find more details <a class="reference external" href="https://github.com
 </div>
 <p>After this modification, world SDF files that do no specifically ask <code class="docutils literal notranslate"><span class="pre">ogre2</span></code> will use
 <code class="docutils literal notranslate"><span class="pre">ogre</span></code> as default rendering engine which works also with older OpenGL versions.</p>
-</section>
-<section id="default-sdf-world">
+</div>
+<div class="section" id="default-sdf-world">
 <h2>Default SDF world<a class="headerlink" href="#default-sdf-world" title="Permalink to this headline">¶</a></h2>
 <p>If not specified differently, the <a class="reference internal" href="../breathe/gazebo.html#_CPPv4N8scenario6gazebo15GazeboSimulatorE" title="scenario::gazebo::GazeboSimulator"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">GazeboSimulator</span></code></a>
 class uses a default world file that is completely empty, without even the ground plane.
@@ -406,8 +405,8 @@ You can also load other plugins during runtime using
 <a class="reference internal" href="../breathe/gazebo.html#_CPPv4N8scenario6gazebo5World17insertWorldPluginERKNSt6stringERKNSt6stringERKNSt6stringE" title="scenario::gazebo::World::insertWorldPlugin"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">scenario::gazebo::World::insertWorldPlugin()</span></code></a> and
 <a class="reference internal" href="../breathe/gazebo.html#_CPPv4N8scenario6gazebo5Model17insertModelPluginERKNSt6stringERKNSt6stringERKNSt6stringE" title="scenario::gazebo::Model::insertModelPlugin"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">scenario::gazebo::Model::insertModelPlugin()</span></code></a>.</p>
 </div>
-</section>
-</section>
+</div>
+</div>
 
 
               </div>
