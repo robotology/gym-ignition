@@ -54,7 +54,9 @@ endif()
 
 # Add the SWIG folders
 add_subdirectory(core)
-add_subdirectory(gazebo)
+if(SCENARIO_USE_IGNITION)
+    add_subdirectory(gazebo)
+endif()
 
 # Move main init.py file to package root of the build tree
 configure_file(
