@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
     <title>Developer Installation &#8212; gym-ignition  documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
@@ -329,7 +330,7 @@
         
               <div>
                 
-  <div class="section" id="developer-installation">
+  <section id="developer-installation">
 <span id="installation-developer"></span><h1>Developer Installation<a class="headerlink" href="#developer-installation" title="Permalink to this headline">¶</a></h1>
 <p>This installation type is intended for those that want to contribute to the development of the project.
 Compared to <a class="reference internal" href="stable.html#installation-stable"><span class="std std-ref">Stable</span></a> and <a class="reference internal" href="nightly.html#installation-nightly"><span class="std std-ref">Nightly</span></a>,
@@ -337,7 +338,7 @@ this installation type provides a simplified setup for development, VCS integrat
 <p>Depending on whether you want to target the <code class="docutils literal notranslate"><span class="pre">Stable</span></code> or <code class="docutils literal notranslate"><span class="pre">Nightly</span></code> channels,
 you have to clone respectively the <code class="docutils literal notranslate"><span class="pre">master</span></code> or <code class="docutils literal notranslate"><span class="pre">devel</span></code> branch.
 Check our <a class="reference internal" href="support_policy.html#support-policy"><span class="std std-ref">support policy</span></a> to select the right distribution of Ignition to install.</p>
-<div class="section" id="dependencies">
+<section id="dependencies">
 <h2>Dependencies<a class="headerlink" href="#dependencies" title="Permalink to this headline">¶</a></h2>
 <p>The developer installation requires finding in the system other dependencies not required by the other installation types.
 In those cases, we rely on setuptools to download, install, and find all the necessary third-party dependencies.</p>
@@ -349,8 +350,8 @@ that you also enable and install the <a class="reference external" href="https:/
 <p>You can verify that the installation succeeded and your system is properly configured if you can <code class="docutils literal notranslate"><span class="pre">import</span> <span class="pre">idyntree.bindings</span></code> in a Python interpreter.</p>
 </li>
 </ol>
-</div>
-<div class="section" id="c-project">
+</section>
+<section id="c-project">
 <h2>C++ Project<a class="headerlink" href="#c-project" title="Permalink to this headline">¶</a></h2>
 <p>From the root of the repository and from the branch you are interested, you can configure, compile, and install
 the CMake project as follows:</p>
@@ -372,8 +373,8 @@ If you want to use a different folder, pass <code class="docutils literal notran
 If you have an active virtual environment, it will be automatically detected.
 Visit <a class="reference external" href="https://cmake.org/cmake/help/v3.12/module/FindPython3.html">FindPython3</a> for more details.</p>
 </div>
-</div>
-<div class="section" id="virtual-environment-optional">
+</section>
+<section id="virtual-environment-optional">
 <h2>Virtual Environment (optional)<a class="headerlink" href="#virtual-environment-optional" title="Permalink to this headline">¶</a></h2>
 <p>This step is optional but highly recommended.
 Visit the <a class="reference external" href="https://docs.python.org/3.6/tutorial/venv.html">virtual environments</a> documentation for more details.</p>
@@ -384,8 +385,8 @@ virtualenv -p python3.8 <span class="nv">$HOME</span>/venv
 </div>
 <p>Note that the activation is temporary and it is valid only in the same terminal.
 Make sure to execute the next steps in a terminal where the virtual environment is active.</p>
-</div>
-<div class="section" id="editable-python-installation">
+</section>
+<section id="editable-python-installation">
 <h2>Editable Python Installation<a class="headerlink" href="#editable-python-installation" title="Permalink to this headline">¶</a></h2>
 <p>Install the Python package in <a class="reference external" href="https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs">editable mode</a>.
 From the root of the repository:</p>
@@ -395,8 +396,8 @@ From the root of the repository:</p>
 <p>The editable installation only symlinks the resources of the repository into the active Python installation.
 It allows to develop directly operating on the files of the repository and use the updated package without requiring
 to install it again.</p>
-</div>
-<div class="section" id="system-configuration">
+</section>
+<section id="system-configuration">
 <h2>System Configuration<a class="headerlink" href="#system-configuration" title="Permalink to this headline">¶</a></h2>
 <p>This section applies only to the installations that require building Ignition from sources.</p>
 <p>If you installed Ignition from sources, you likely used <code class="docutils literal notranslate"><span class="pre">colcon</span></code> and therefore the entire suite was installed in a custom folder called workspace.
@@ -407,8 +408,8 @@ Since we cannot know in advance where you created the workspace, <code class="do
 </pre></div>
 </div>
 <p>Make sure to select the folder corresponding to the correct version of ign-physics, otherwise the wrong plugins are found.</p>
-</div>
-</div>
+</section>
+</section>
 
 
               </div>
