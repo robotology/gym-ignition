@@ -50,6 +50,8 @@ target_include_directories(CoreUtils PUBLIC
 set_target_properties(CoreUtils PROPERTIES
     PUBLIC_HEADER "${CORE_UTILS_HEADERS}")
 
+# This definition is used by the "scenario" Python package
+# to detect User / Developer installation mode
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
     target_compile_options(CoreUtils PRIVATE
         -DSCENARIO_CMAKE_INSTALL_PREFIX="${CMAKE_INSTALL_PREFIX}")
