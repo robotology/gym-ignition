@@ -167,7 +167,7 @@ jobs:
       - name: '[User] Create wheel'
         if: matrix.type == 'User' && matrix.ignition == 'edifice'
         shell: bash -i -e {0}
-        run: pip3 wheel -w dist/ .
+        run: pip3 wheel -v -w dist/ .
       # Note: calling "pip wheel" with "--global-option" forces dependencies to be build from their sdist.
       #       Since it's very slow, we create the wheel from setup.py without isolation.
       - name: '[User] Create wheel'
@@ -184,6 +184,11 @@ jobs:
         run: |
           cd dist
           pip3 install -v *.whl
+
+      - name: Inspect installed ScenarIO package
+        run: |
+          apt-get install -y --no-install-recommends tree
+          tree $(python3 -c "import scenario, pathlib; print(pathlib.Path(scenario.__file__).parent)")
 
       - name: Ccache stats
         run: ccache --show-stats

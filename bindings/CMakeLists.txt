@@ -36,25 +36,30 @@ find_package(SWIG 4.0 REQUIRED)
 set(UseSWIG_MODULE_VERSION 2)
 include(${SWIG_USE_FILE})
 
-# Change the install prefix of the bindings targets depending on
-# the installation mode (User or Developer)
+# By default, install ScenarIO in the python site-package directory
+if(NOT BINDINGS_INSTALL_PREFIX)
+    set(BINDINGS_INSTALL_PREFIX ${Python3_SITELIB})
+endif()
+
+# Expose the install prefix as CMake option
+set(BINDINGS_INSTALL_PREFIX "${BINDINGS_INSTALL_PREFIX}"
+    CACHE STRING "Installation prefix of the bindings")
+
+# Final directory of the "scenario" package
 if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
-    if(NOT BINDINGS_INSTALL_PREFIX)
-        # Install in the python site-package directory
-        set(BINDINGS_INSTALL_PREFIX ${Python3_SITELIB}/scenario)
-    else()
-        set(BINDINGS_INSTALL_PREFIX "${BINDINGS_INSTALL_PREFIX}"
-            CACHE STRING "Custom location where to install the bindings")
-    endif()
+    set(SCENARIO_PACKAGE_INSTALL_DIR "${BINDINGS_INSTALL_PREFIX}/scenario")
 else()
-    # Install in the root of the PyPI package directory that
-    # will become the archive to install / publish.
-    set(BINDINGS_INSTALL_PREFIX ${CMAKE_INSTALL_PREFIX})
+    # If packaging for PyPI, install ScenarIO in the temp site-package directory
+    # created by either setup.py or pip.
+    # The "scenario/" folder is added by cmake_build_extension
+    set(SCENARIO_PACKAGE_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
 # Add the SWIG folders
 add_subdirectory(core)
-add_subdirectory(gazebo)
+if(SCENARIO_USE_IGNITION)
+    add_subdirectory(gazebo)
+endif()
 
 # Move main init.py file to package root of the build tree
 configure_file(
@@ -68,4 +73,4 @@ file(TOUCH ${CMAKE_CURRENT_BINARY_DIR}/scenario/bindings/__init__.py)
 # Move main init.py file to package root of the install tree
 install(
     FILES ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
-    DESTINATION ${BINDINGS_INSTALL_PREFIX})
+    DESTINATION ${SCENARIO_PACKAGE_INSTALL_DIR})

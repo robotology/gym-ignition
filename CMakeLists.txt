@@ -3,7 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 cmake_minimum_required(VERSION 3.16)
-project(Scenario VERSION 1.2.0)
+project(Scenario VERSION 1.2.1)
 
 # Add custom functions / macros
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
@@ -64,7 +64,7 @@ if(UNIX AND NOT APPLE)
     if("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
         get_filename_component(LINKER_BIN ${CMAKE_LINKER} NAME)
             if("${LINKER_BIN}" STREQUAL "ld")
-                set(CMAKE_SHARED_LINKER_FLAGS "-Wl,--unresolved-symbols=report-all")
+                set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--unresolved-symbols=report-all")
             endif()
     endif()
 endif()
@@ -172,7 +172,7 @@ if(NOT IGNITION_DISTRIBUTION)
 
 endif()
 
-if(NOT IGNITION_DISTRIBUTION)
+if(NOT IGNITION_DISTRIBUTION OR "${IGNITION_DISTRIBUTION}" STREQUAL "")
     set(USE_IGNITION FALSE)
 else()
     set(USE_IGNITION TRUE)
@@ -182,8 +182,13 @@ option(SCENARIO_USE_IGNITION
        "Build C++ code depending on Ignition"
        ${USE_IGNITION})
 
+# Fail if Ignition is enabled but no compatible distribution was found
+if(SCENARIO_USE_IGNITION AND "${IGNITION_DISTRIBUTION}" STREQUAL "")
+    message(FATAL_ERROR "Failed to find a compatible Ignition Gazebo distribution")
+endif()
+
 # Alias the targets
-if(${SCENARIO_USE_IGNITION})
+if(SCENARIO_USE_IGNITION)
     include(ImportTargets${IGNITION_DISTRIBUTION})
 endif()
 
@@ -205,7 +210,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "PyPI" AND NOT USE_IGNITION)
     message(FATAL_ERROR "Found no Ignition distribution for PyPI package")
 endif()
 
-option(SCENARIO_ENABLE_BINDINGS "Enable SWIG bindings" ON)
+find_package(SWIG 4.0 QUIET)
+option(SCENARIO_ENABLE_BINDINGS "Enable SWIG bindings" ${SWIG_FOUND})
 
 if(SCENARIO_ENABLE_BINDINGS)
     add_subdirectory(bindings)
