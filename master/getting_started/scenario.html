@@ -4,7 +4,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17: http://docutils.sourceforge.net/" />
+
     <title>ScenarI/O &#8212; gym-ignition  documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
@@ -315,15 +316,15 @@
         
               <div>
                 
-  <div class="section" id="scenari-o">
+  <section id="scenari-o">
 <span id="getting-started-scenario"></span><h1>ScenarI/O<a class="headerlink" href="#scenari-o" title="Permalink to this headline">¶</a></h1>
 <p>In this getting started section we show how to use the Gazebo ScenarIO library to simulate a pendulum system.
 We will use the models of the ground plane and the pendulum stored in the repository
 <a class="reference external" href="https://github.com/robotology/gym-ignition-models">gym_ignition_models</a>.</p>
 <p>The final outcome of this section is shown in the following GIF:</p>
-<div class="figure align-center">
+<figure class="align-center">
 <img alt="https://user-images.githubusercontent.com/469199/99263551-a9097a80-281f-11eb-98de-714c69385b06.png" src="https://user-images.githubusercontent.com/469199/99263551-a9097a80-281f-11eb-98de-714c69385b06.png" />
-</div>
+</figure>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
 <p>We fully support <a class="reference external" href="https://app.ignitionrobotics.org/dashboard">Ignition Fuel</a>, a constantly enlarging database of SDF models.
@@ -337,7 +338,7 @@ You can use <a class="reference internal" href="../apidoc/scenario/scenario.bind
 </pre></div>
 </div>
 </div>
-<div class="section" id="python">
+<section id="python">
 <span id="getting-started-scenario-python"></span><h2>Python<a class="headerlink" href="#python" title="Permalink to this headline">¶</a></h2>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-0-ZXhhbXBsZS5weQ==" aria-selected="true" class="sphinx-tabs-tab group-tab" id="tab-0-ZXhhbXBsZS5weQ==" name="ZXhhbXBsZS5weQ==" role="tab" tabindex="0">example.py</button></div><div aria-labelledby="tab-0-ZXhhbXBsZS5weQ==" class="sphinx-tabs-panel group-tab" id="panel-0-ZXhhbXBsZS5weQ==" name="ZXhhbXBsZS5weQ==" role="tabpanel" tabindex="0"><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
@@ -387,8 +388,8 @@ You can use <a class="reference internal" href="../apidoc/scenario/scenario.bind
 </pre></div>
 </div>
 </div></div>
-</div>
-<div class="section" id="c">
+</section>
+<section id="c">
 <span id="getting-started-scenario-cpp"></span><h2>C++<a class="headerlink" href="#c" title="Permalink to this headline">¶</a></h2>
 <div class="sphinx-tabs docutils container">
 <div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-ZXhhbXBsZS5jcHA=" aria-selected="true" class="sphinx-tabs-tab group-tab" id="tab-1-ZXhhbXBsZS5jcHA=" name="ZXhhbXBsZS5jcHA=" role="tab" tabindex="0">example.cpp</button><button aria-controls="panel-1-Q01ha2VMaXN0cy50eHQ=" aria-selected="false" class="sphinx-tabs-tab group-tab" id="tab-1-Q01ha2VMaXN0cy50eHQ=" name="Q01ha2VMaXN0cy50eHQ=" role="tab" tabindex="-1">CMakeLists.txt</button></div><div aria-labelledby="tab-1-ZXhhbXBsZS5jcHA=" class="sphinx-tabs-panel group-tab" id="panel-1-ZXhhbXBsZS5jcHA=" name="ZXhhbXBsZS5jcHA=" role="tabpanel" tabindex="0"><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;scenario/gazebo/GazeboSimulator.h&gt;</span><span class="cp"></span>
@@ -471,8 +472,8 @@ You can use <a class="reference internal" href="../apidoc/scenario/scenario.bind
 <p>The environment should be properly configured to find the plugins and the models.
 Use <code class="docutils literal notranslate"><span class="pre">IGN_GAZEBO_SYSTEM_PLUGIN_PATH</span></code> for the plugins and <code class="docutils literal notranslate"><span class="pre">IGN_GAZEBO_RESOURCE_PATH</span></code> for the models and meshes.</p>
 </div>
-</div>
-</div>
+</section>
+</section>
 
 
               </div>
