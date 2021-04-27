@@ -34,7 +34,6 @@ set(EXTRA_COMPONENTS_PUBLIC_HEADERS
     include/scenario/gazebo/components/BaseWorldAccelerationTarget.h
     include/scenario/gazebo/components/JointControlMode.h
     include/scenario/gazebo/components/JointController.h
-    include/scenario/gazebo/components/WorldVelocityCmd.h
     include/scenario/gazebo/components/JointPositionTarget.h
     include/scenario/gazebo/components/JointVelocityTarget.h
     include/scenario/gazebo/components/JointAccelerationTarget.h
