@@ -9,6 +9,9 @@ set(SCENARIO_PRIVATE_DEPENDENCIES "")
 
 if(SCENARIO_USE_IGNITION)
 
+    option(ENABLE_PROFILER "Enable Ignition Profiler" OFF)
+    mark_as_advanced(ENABLE_PROFILER)
+
     add_subdirectory(gazebo)
     add_subdirectory(plugins)
     add_subdirectory(controllers)

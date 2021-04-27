@@ -27,8 +27,8 @@
 # =============
 
 add_library(PhysicsSystem SHARED
-    Physics.h
-    Physics.cpp)
+    Physics.hh
+    Physics.cc)
 
 target_link_libraries(PhysicsSystem
     PUBLIC
@@ -40,6 +40,10 @@ target_link_libraries(PhysicsSystem
 
 target_include_directories(PhysicsSystem PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
+
+if(ENABLE_PROFILER)
+    target_compile_definitions(PhysicsSystem PRIVATE "IGN_PROFILER_ENABLE=1")
+endif()
 
 # ===================
 # Install the targets

@@ -34,15 +34,16 @@
 #include "scenario/gazebo/components/BaseWorldVelocityTarget.h"
 #include "scenario/gazebo/components/JointControllerPeriod.h"
 #include "scenario/gazebo/components/Timestamp.h"
-#include "scenario/gazebo/components/WorldVelocityCmd.h"
 #include "scenario/gazebo/exceptions.h"
 #include "scenario/gazebo/helpers.h"
 
 #include <ignition/common/Event.hh>
 #include <ignition/gazebo/Events.hh>
 #include <ignition/gazebo/Model.hh>
+#include <ignition/gazebo/components/AngularVelocityCmd.hh>
 #include <ignition/gazebo/components/CanonicalLink.hh>
 #include <ignition/gazebo/components/Joint.hh>
+#include <ignition/gazebo/components/LinearVelocityCmd.hh>
 #include <ignition/gazebo/components/Link.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
@@ -300,49 +301,13 @@ bool Model::resetBaseOrientation(const std::array<double, 4>& orientation)
 
 bool Model::resetBaseWorldLinearVelocity(const std::array<double, 3>& linear)
 {
-    // Check if the velocity was not already reset in this simulation run,
-    // otherwise the previous target would get overridden
-    if (!this->m_ecm->EntityHasComponentType(
-            this->m_entity,
-            ignition::gazebo::components::WorldVelocityCmd::typeId)) {
+    // Note: there could be a rigid transformation between the base frame and
+    //       the canonical frame. The Physics system processes velocity commands
+    //       in the canonical frame, but this method receives velocity commands
+    //       of in the base frame (all expressed in world coordinates).
+    //       Therefore, we need to compute the base linear velocity from the
+    //       base frame to the canonical frame.
 
-        return this->resetBaseWorldVelocity(linear,
-                                            this->baseWorldAngularVelocity());
-    }
-
-    // Get the existing cmd
-    const auto& velocityCmd = utils::getExistingComponentData<
-        ignition::gazebo::components::WorldVelocityCmd>(m_ecm, m_entity);
-
-    // Override only the linear velocity
-    return this->resetBaseWorldVelocity(
-        linear, utils::fromIgnitionVector(velocityCmd.angular));
-}
-
-bool Model::resetBaseWorldAngularVelocity(const std::array<double, 3>& angular)
-{
-    // Check if the velocity was not already reset in this simulation run,
-    // otherwise the previous target would get overridden
-    if (!this->m_ecm->EntityHasComponentType(
-            this->m_entity,
-            ignition::gazebo::components::WorldVelocityCmd::typeId)) {
-
-        return this->resetBaseWorldVelocity(this->baseWorldLinearVelocity(),
-                                            angular);
-    }
-
-    // Get the existing cmd
-    const auto& velocityCmd = utils::getExistingComponentData<
-        ignition::gazebo::components::WorldVelocityCmd>(m_ecm, m_entity);
-
-    // Override only the angular velocity
-    return this->resetBaseWorldVelocity(
-        utils::fromIgnitionVector(velocityCmd.linear), angular);
-}
-
-bool Model::resetBaseWorldVelocity(const std::array<double, 3>& linear,
-                                   const std::array<double, 3>& angular)
-{
     // Get the entity of the canonical (base) link
     const auto canonicalLinkEntity = m_ecm->EntityByComponents(
         ignition::gazebo::components::Link(),
@@ -359,21 +324,38 @@ bool Model::resetBaseWorldVelocity(const std::array<double, 3>& linear,
     const auto& W_R_B = utils::toIgnitionQuaternion(
         this->getLink(this->baseFrame())->orientation());
 
-    // Create the new model velocity
-    ignition::gazebo::WorldVelocity baseWorldVelocity;
-
-    // Compute the mixed velocity of the base link
-    std::tie(baseWorldVelocity.linear, baseWorldVelocity.angular) =
-        utils::fromModelToBaseVelocity(utils::toIgnitionVector3(linear),
-                                       utils::toIgnitionVector3(angular),
-                                       M_H_B,
-                                       W_R_B);
+    // Compute the linear part of the base link mixed velocity
+    const ignition::math::Vector3d baseLinearWorldVelocity =
+        utils::fromModelToBaseLinearVelocity(
+            utils::toIgnitionVector3(linear),
+            utils::toIgnitionVector3(this->baseWorldAngularVelocity()),
+            M_H_B,
+            W_R_B);
 
     // Store the new velocity
-    utils::setComponentData<ignition::gazebo::components::WorldVelocityCmd>(
-        m_ecm, m_entity, baseWorldVelocity);
+    utils::setComponentData<ignition::gazebo::components::LinearVelocityCmd>(
+        m_ecm, m_entity, baseLinearWorldVelocity);
 
     return true;
+}
+
+bool Model::resetBaseWorldAngularVelocity(const std::array<double, 3>& angular)
+{
+    // Note: the angular part of the velocity does not change between the base
+    //       link and the canonical link (as the linear part).
+    //       In fact, the angular velocity is invariant if there's a rigid
+    //       transformation between the two frames, like in this case.
+    utils::setComponentData<ignition::gazebo::components::AngularVelocityCmd>(
+        m_ecm, m_entity, utils::toIgnitionVector3(angular));
+
+    return true;
+}
+
+bool Model::resetBaseWorldVelocity(const std::array<double, 3>& linear,
+                                   const std::array<double, 3>& angular)
+{
+    return this->resetBaseWorldLinearVelocity(linear)
+           && this->resetBaseWorldAngularVelocity(angular);
 }
 
 bool Model::valid() const
@@ -1050,7 +1032,7 @@ std::array<double, 3> Model::baseWorldLinearVelocity() const
             this->getLink(this->baseFrame())->worldAngularVelocity());
 
     // Convert the base velocity to the model mixed velocity
-    auto [modelLinearVelocity, _] = utils::fromBaseToModelVelocity( //
+    const auto& modelLinearVelocity = utils::fromBaseToModelLinearVelocity( //
         canonicalLinkLinearVelocity,
         canonicalLinkAngularVelocity,
         M_H_B,

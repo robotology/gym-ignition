@@ -504,46 +504,41 @@ scenario::core::JointType utils::fromSdf(const sdf::JointType sdfType)
     return type;
 }
 
-std::pair<ignition::math::Vector3d, ignition::math::Vector3d>
-utils::fromModelToBaseVelocity(const ignition::math::Vector3d& linModelVelocity,
-                               const ignition::math::Vector3d& angModelVelocity,
-                               const ignition::math::Pose3d& M_H_B,
-                               const ignition::math::Quaterniond& W_R_B)
+ignition::math::Vector3d utils::fromModelToBaseLinearVelocity(
+    const ignition::math::Vector3d& linModelVelocity,
+    const ignition::math::Vector3d& angModelVelocity,
+    const ignition::math::Pose3d& M_H_B,
+    const ignition::math::Quaterniond& W_R_B)
 {
-    ignition::math::Vector3d linBaseVelocity;
-    const ignition::math::Vector3d& angBaseVelocity = angModelVelocity;
-
     // Extract the rotation and the position of the model wrt to the base
     auto B_R_M = M_H_B.Rot().Inverse();
     auto M_o_B = M_H_B.Pos();
     auto B_o_M = -B_R_M * M_o_B;
 
     // Compute the base linear velocity
-    linBaseVelocity = linModelVelocity - angModelVelocity.Cross(W_R_B * B_o_M);
+    const ignition::math::Vector3d linBaseVelocity =
+        linModelVelocity - angModelVelocity.Cross(W_R_B * B_o_M);
 
-    // Return the mixed velocity of the base
-    return {linBaseVelocity, angBaseVelocity};
+    // Return the linear part of the mixed velocity of the base
+    return linBaseVelocity;
 }
 
-std::pair<ignition::math::Vector3d, ignition::math::Vector3d>
-utils::fromBaseToModelVelocity(const ignition::math::Vector3d& linBaseVelocity,
-                               const ignition::math::Vector3d& angBaseVelocity,
-                               const ignition::math::Pose3d& M_H_B,
-                               const ignition::math::Quaterniond& W_R_B)
+ignition::math::Vector3d utils::fromBaseToModelLinearVelocity(
+    const ignition::math::Vector3d& linBaseVelocity,
+    const ignition::math::Vector3d& angBaseVelocity,
+    const ignition::math::Pose3d& M_H_B,
+    const ignition::math::Quaterniond& W_R_B)
 {
-    ignition::math::Vector3d linModelVelocity;
-    const ignition::math::Vector3d& angModelVelocity = angBaseVelocity;
-
     // Extract the rotation and the position of the model wrt to the base
     auto B_R_M = M_H_B.Rot().Inverse();
     auto M_o_B = M_H_B.Pos();
 
     // Compute the model linear velocity
-    linModelVelocity =
+    const ignition::math::Vector3d linModelVelocity =
         linBaseVelocity - angBaseVelocity.Cross(W_R_B * B_R_M * M_o_B);
 
-    // Return the mixed velocity of the model
-    return {linModelVelocity, angModelVelocity};
+    // Return the linear part of the mixed velocity of the model
+    return linModelVelocity;
 }
 
 std::shared_ptr<World> utils::getParentWorld(const GazeboEntity& gazeboEntity)

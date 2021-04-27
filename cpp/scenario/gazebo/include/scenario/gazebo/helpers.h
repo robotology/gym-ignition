@@ -165,17 +165,17 @@ namespace scenario::gazebo::utils {
     sdf::JointType toSdf(const scenario::core::JointType type);
     scenario::core::JointType fromSdf(const sdf::JointType sdfType);
 
-    std::pair<ignition::math::Vector3d, ignition::math::Vector3d>
-    fromModelToBaseVelocity(const ignition::math::Vector3d& linModelVelocity,
-                            const ignition::math::Vector3d& angModelVelocity,
-                            const ignition::math::Pose3d& M_H_B,
-                            const ignition::math::Quaterniond& W_R_B);
+    ignition::math::Vector3d fromModelToBaseLinearVelocity(
+        const ignition::math::Vector3d& linModelVelocity,
+        const ignition::math::Vector3d& angModelVelocity,
+        const ignition::math::Pose3d& M_H_B,
+        const ignition::math::Quaterniond& W_R_B);
 
-    std::pair<ignition::math::Vector3d, ignition::math::Vector3d>
-    fromBaseToModelVelocity(const ignition::math::Vector3d& linBaseVelocity,
-                            const ignition::math::Vector3d& angBaseVelocity,
-                            const ignition::math::Pose3d& M_H_B,
-                            const ignition::math::Quaterniond& W_R_B);
+    ignition::math::Vector3d fromBaseToModelLinearVelocity(
+        const ignition::math::Vector3d& linBaseVelocity,
+        const ignition::math::Vector3d& angBaseVelocity,
+        const ignition::math::Pose3d& M_H_B,
+        const ignition::math::Quaterniond& W_R_B);
 
     std::shared_ptr<World> getParentWorld(const GazeboEntity& gazeboEntity);
 
