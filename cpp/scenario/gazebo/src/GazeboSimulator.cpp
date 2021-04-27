@@ -40,6 +40,7 @@
 #include <ignition/gazebo/ServerConfig.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/Pose.hh>
+#include <ignition/gazebo/components/Physics.hh>
 #include <ignition/gazebo/components/PhysicsCmd.hh>
 #include <ignition/gazebo/components/World.hh>
 #include <ignition/transport/Node.hh>
@@ -134,12 +135,34 @@ GazeboSimulator::~GazeboSimulator()
 
 double GazeboSimulator::stepSize() const
 {
-    return pImpl->gazebo.physics.maxStepSize;
+    if (!this->initialized()) {
+        return pImpl->gazebo.physics.maxStepSize;
+    }
+
+    // Get the first world
+    const auto world = this->getWorld(this->worldNames().front());
+
+    // Get the active physics parameters
+    const auto& physics = utils::getExistingComponentData< //
+        ignition::gazebo::components::Physics>(world->ecm(), world->entity());
+
+    return physics.MaxStepSize();
 }
 
 double GazeboSimulator::realTimeFactor() const
 {
-    return pImpl->gazebo.physics.rtf;
+    if (!this->initialized()) {
+        return pImpl->gazebo.physics.rtf;
+    }
+
+    // Get the first world
+    const auto world = this->getWorld(this->worldNames().front());
+
+    // Get the active physics parameters
+    const auto& physics = utils::getExistingComponentData< //
+        ignition::gazebo::components::Physics>(world->ecm(), world->entity());
+
+    return physics.RealTimeFactor();
 }
 
 size_t GazeboSimulator::stepsPerRun() const
