@@ -40,6 +40,7 @@
 #include <ignition/gazebo/ServerConfig.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/Pose.hh>
+#include <ignition/gazebo/components/PhysicsCmd.hh>
 #include <ignition/gazebo/components/World.hh>
 #include <ignition/transport/Node.hh>
 #include <ignition/transport/Publisher.hh>
@@ -67,26 +68,7 @@ struct detail::PhysicsData
     double maxStepSize = -1;
     double realTimeUpdateRate = -1;
 
-    bool operator==(const PhysicsData& other)
-    {
-        return doubleEq(this->rtf, other.rtf)
-               && doubleEq(this->maxStepSize, other.maxStepSize)
-               && doubleEq(this->realTimeUpdateRate, other.realTimeUpdateRate);
-    }
-
-    static bool doubleEq(const double first, const double second)
-    {
-        return std::abs(first - second)
-               < 10 * std::numeric_limits<double>::epsilon();
-    }
-
-    friend std::ostream& operator<<(std::ostream& out, const PhysicsData& data)
-    {
-        out << "max_step_size=" << data.maxStepSize << std::endl;
-        out << "real_time_factor=" << data.rtf << std::endl;
-        out << "real_time_update_rate=" << data.realTimeUpdateRate;
-        return out;
-    }
+    bool valid() const { return this->rtf > 0 && this->maxStepSize > 0; }
 };
 
 // ==============
@@ -117,8 +99,6 @@ public: // methods
     static std::shared_ptr<World>
     CreateGazeboWorld(const std::string& worldName);
 
-    static detail::PhysicsData getPhysicsData(const sdf::Root& root,
-                                              const size_t worldIndex);
     bool sceneBroadcasterActive(const std::string& worldName);
 };
 
@@ -646,27 +626,6 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
         // Check if there are sdf parsing errors
         assert(utils::sdfStringValid(root.Element()->Clone()->ToString("")));
 
-        // There is no way yet to set the physics step size if not passing
-        // through the physics element of the SDF. We update here the SDF
-        // overriding the default profile.
-        // NOTE: this could be avoided if gazebo::Server would expose the
-        //       SimulationRunner::SetStepSize method.
-        for (size_t worldIdx = 0; worldIdx < root.WorldCount(); ++worldIdx) {
-            if (!utils::updateSDFPhysics(root,
-                                         gazebo.physics.maxStepSize,
-                                         gazebo.physics.rtf,
-                                         /*realTimeUpdateRate=*/-1,
-                                         worldIdx)) {
-                sError << "Failed to set physics profile" << std::endl;
-                return nullptr;
-            }
-
-            assert(Impl::getPhysicsData(root, worldIdx) == gazebo.physics);
-        }
-
-        sDebug << "Physics profile:" << std::endl
-               << this->gazebo.physics << std::endl;
-
         if (utils::verboseFromEnvironment()) {
             sDebug << "Loading the following SDF file in the gazebo server:"
                    << std::endl;
@@ -685,7 +644,9 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
             config.AddPlugin(getECMPluginInfo(worldName));
         }
 
-        // Create the server
+        // Create the server.
+        // The worlds are initialized with the physics parameters
+        // (rtf and physics step) defined in the SDF. They get overridden below.
         auto server = std::make_shared<ignition::gazebo::Server>(config);
         assert(server);
 
@@ -693,6 +654,48 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
 
         if (!server->RunOnce(/*paused=*/true)) {
             sError << "Failed to initialize the first gazebo server run"
+                   << std::endl;
+            return nullptr;
+        }
+
+        if (!gazebo.physics.valid()) {
+            sError << "The physics parameters are not valid" << std::endl;
+            return nullptr;
+        }
+
+        // Get the ECM singleton
+        auto& singleton = scenario::plugins::gazebo::ECMSingleton::Instance();
+
+        // Set the Physics parameters.
+        // Note: all worlds must share the same parameters.
+        for (const auto& worldName : singleton.worldNames()) {
+
+            // Get the resources needed by the world
+            auto* ecm = singleton.getECM(worldName);
+
+            // Get the world entity
+            const auto worldEntity = ecm->EntityByComponents(
+                ignition::gazebo::components::World(),
+                ignition::gazebo::components::Name(worldName));
+
+            // Create a new PhysicsCmd component
+            auto& physics = utils::getComponentData< //
+                ignition::gazebo::components::PhysicsCmd>(ecm, worldEntity);
+
+            // Store the physics parameters.
+            // They are processed the next simulator step.
+            physics.set_max_step_size(gazebo.physics.maxStepSize);
+            physics.set_real_time_factor(gazebo.physics.rtf);
+            physics.set_real_time_update_rate(
+                gazebo.physics.realTimeUpdateRate);
+        }
+
+        // Step the server to process the physics parameters.
+        // This call executes SimulationRunner::SetStepSize, updating the
+        // rate at which all systems are called.
+        // Note: it processes only the parameters of the first world.
+        if (!server->RunOnce(/*paused=*/true)) {
+            sError << "Failed to step the server to configure the physics"
                    << std::endl;
             return nullptr;
         }
@@ -772,21 +775,6 @@ GazeboSimulator::Impl::CreateGazeboWorld(const std::string& worldName)
     }
 
     return world;
-}
-
-detail::PhysicsData
-GazeboSimulator::Impl::getPhysicsData(const sdf::Root& root,
-                                      const size_t worldIndex)
-{
-    const sdf::World* world = root.WorldByIndex(worldIndex);
-    assert(world->PhysicsCount() == 1);
-
-    detail::PhysicsData physics;
-
-    physics.rtf = world->PhysicsByIndex(0)->RealTimeFactor();
-    physics.maxStepSize = world->PhysicsByIndex(0)->MaxStepSize();
-
-    return physics;
 }
 
 bool GazeboSimulator::Impl::sceneBroadcasterActive(const std::string& worldName)
