@@ -39,6 +39,7 @@
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
 #include <ignition/gazebo/components/Name.hh>
+#include <ignition/gazebo/components/Pose.hh>
 #include <ignition/gazebo/components/World.hh>
 #include <ignition/transport/Node.hh>
 #include <ignition/transport/Publisher.hh>
@@ -233,12 +234,45 @@ bool GazeboSimulator::run(const bool paused)
         iterations = 1;
     }
 
+    // Recent versions of Ignition Gazebo optimize the streaming of pose updates
+    // in order to reduce the bandwidth between server and client.
+    // However, it does not take into account paused steps.
+    // Here below we force all the Pose components to be streamed by manually
+    // setting them as changed.
+    if (paused) {
+        // Get the singleton
+        auto& ecmSingleton =
+            scenario::plugins::gazebo::ECMSingleton::Instance();
+
+        // Process all worlds
+        for (const auto& worldName : this->worldNames()) {
+            assert(ecmSingleton.hasWorld(worldName));
+            assert(ecmSingleton.valid(worldName));
+            assert(ecmSingleton.getECM(worldName));
+
+            // Get the ECM
+            auto* ecm = ecmSingleton.getECM(worldName);
+
+            // Mark all all entities with Pose component as Changed
+            ecm->Each<ignition::gazebo::components::Pose>(
+                [&](const ignition::gazebo::Entity& entity,
+                    ignition::gazebo::components::Pose*) -> bool {
+                    ecm->SetChanged(
+                        entity,
+                        ignition::gazebo::components::Pose::typeId,
+                        ignition::gazebo::ComponentState::OneTimeChange);
+                    return true;
+                });
+        }
+    }
+
+    // Paused simulation run
     if (paused && !server->RunOnce(/*paused=*/true)) {
         sError << "The server couldn't execute the paused step" << std::endl;
         return false;
     }
 
-    // Run the simulation
+    // Unpaused simulation run
     if (!paused
         && !server->Run(/*blocking=*/deterministic,
                         /*iterations=*/iterations,
