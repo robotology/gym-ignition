@@ -106,8 +106,7 @@ std::string utils::getSdfString(const std::string& fileName)
     return root->Element()->ToString("");
 }
 
-std::string utils::getModelNameFromSdf(const std::string& fileName,
-                                       const size_t modelIndex)
+std::string utils::getModelNameFromSdf(const std::string& fileName)
 {
     std::string absFileName = findSdfFile(fileName);
 
@@ -116,25 +115,18 @@ std::string utils::getModelNameFromSdf(const std::string& fileName,
         return {};
     }
 
-    auto root = utils::getSdfRootFromFile(absFileName);
+    const auto root = utils::getSdfRootFromFile(absFileName);
 
     if (!root) {
         return {};
     }
 
-    if (root->ModelCount() == 0) {
-        sError << "Didn't find any model in file " << fileName << std::endl;
-        return {};
+    if (const auto model = root->Model()) {
+        return model->Name();
     }
 
-    if (modelIndex >= root->ModelCount()) {
-        sError << "Model with index " << modelIndex
-               << " not found. The model has only " << root->ModelCount()
-               << " model(s)" << std::endl;
-        return {};
-    }
-
-    return root->ModelByIndex(modelIndex)->Name();
+    sError << "No model found in file " << fileName << std::endl;
+    return {};
 }
 
 std::string utils::getWorldNameFromSdf(const std::string& fileName,

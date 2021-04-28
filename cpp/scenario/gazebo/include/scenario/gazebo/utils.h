@@ -112,15 +112,15 @@ namespace scenario::gazebo::utils {
     /**
      * Get the name of a model from a SDF file.
      *
+     * @note sdformat supports only one model per SDF file.
+     *
      * @param fileName An SDF file. It could be either an absolute path
      *        to the file or the file name if the parent folder is part
      *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
-     * @param modelIndex The index of the model in the SDF file. By
-     *        default it finds the first model.
-     * @return The name of the model.
+     * @return The name of the model if the file was found and is valid,
+     *         an empty string otherwise.
      */
-    std::string getModelNameFromSdf(const std::string& fileName,
-                                    const size_t modelIndex = 0);
+    std::string getModelNameFromSdf(const std::string& fileName);
 
     /**
      * Get the name of a world from a SDF file.
@@ -130,7 +130,8 @@ namespace scenario::gazebo::utils {
      *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
      * @param worldIndex The index of the world in the SDF file. By
      *        default it finds the first world.
-     * @return The name of the world.
+     * @return The name of the world if the file was found and is valid,
+     *         an empty string otherwise.
      */
     std::string getWorldNameFromSdf(const std::string& fileName,
                                     const size_t worldIndex = 0);

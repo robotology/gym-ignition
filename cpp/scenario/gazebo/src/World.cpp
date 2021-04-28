@@ -72,23 +72,16 @@ public:
                      const std::string& overrideModelName,
                      World& world)
     {
-        if (modelSdfRoot->ModelCount() != 1) {
-            sError << "The SDF file contains more than one model" << std::endl;
-            return false;
-        }
+        // NOTE: sdf::Root objects could only contain one sdf::Model starting
+        //       from sdformat11.
 
-        constexpr size_t ModelIndex = 0;
-
-        // Every SDF model has a name. In order to insert multiple models from
-        // the same SDF file, the modelData struct allows providing a scoped
-        // name.
+        // Name of the model to insert (allowing renaming from SDF)
         std::string finalModelEntityName;
 
         // Get the final name of the model
         if (overrideModelName.empty()) {
-            assert(modelSdfRoot->ModelByIndex(ModelIndex));
-            finalModelEntityName =
-                modelSdfRoot->ModelByIndex(ModelIndex)->Name();
+            assert(modelSdfRoot->Model());
+            finalModelEntityName = modelSdfRoot->Model()->Name();
         }
         else {
             finalModelEntityName = overrideModelName;
@@ -107,17 +100,15 @@ public:
 
         // Rename the model.
         // NOTE: The following is not enough because the name is not serialized
-        // to
-        //       string. We need also to operate directly on the raw element.
-        const_cast<sdf::Model*>(modelSdfRoot->ModelByIndex(ModelIndex))
+        //       to string. We need also to operate directly on the raw element.
+        const_cast<sdf::Model*>(modelSdfRoot->Model())
             ->SetName(finalModelEntityName);
 
         // Update the name in the sdf model. This is necessary because model
         // plugins are loaded right before the creation of the model entity and,
         // instead of receiving the model entity name, they receive the model
         // sdf name.
-        if (!utils::renameSDFModel(
-                *modelSdfRoot, finalModelEntityName, ModelIndex)) {
+        if (!utils::renameSDFModel(*modelSdfRoot, finalModelEntityName)) {
             sError << "Failed to rename SDF model" << std::endl;
             return false;
         }
@@ -128,9 +119,8 @@ public:
         }
 
         // Create the model entity
-        ignition::gazebo::Entity modelEntity;
-        modelEntity = this->sdfEntityCreator->CreateEntities(
-            modelSdfRoot->ModelByIndex(ModelIndex));
+        const ignition::gazebo::Entity modelEntity =
+            this->sdfEntityCreator->CreateEntities(modelSdfRoot->Model());
 
         // Attach the model entity to the world entity
         this->sdfEntityCreator->SetParent(modelEntity, world.m_entity);
@@ -138,8 +128,7 @@ public:
         {
             // Check that the model name is correct
             assert(modelSdfRoot->ModelCount() == 1);
-            std::string modelNameSDF =
-                modelSdfRoot->ModelByIndex(ModelIndex)->Name();
+            std::string modelNameSDF = modelSdfRoot->Model()->Name();
             std::string modelNameEntity = utils::getExistingComponentData< //
                 ignition::gazebo::components::Name>(world.m_ecm, modelEntity);
             assert(modelNameSDF == modelNameEntity);
@@ -170,7 +159,7 @@ public:
         // We directly override the Pose component instead of using
         // Model::resetBasePose because it would just store a pose command that
         // needs to be processed by the Physics system. Overriding the
-        // component, instead, has direct effect.
+        // component, instead, has instantaneous effect.
         if (pose != core::Pose::Identity()) {
             utils::setComponentData<ignition::gazebo::components::Pose>(
                 world.m_ecm, modelEntity, utils::toIgnitionPose(pose));
@@ -409,8 +398,7 @@ bool World::insertModelFromFile(const std::string& path,
         return false;
     }
 
-    return pImpl.get()->insertModel(
-        modelSdfRoot, pose, overrideModelName, *this);
+    return pImpl->insertModel(modelSdfRoot, pose, overrideModelName, *this);
 }
 
 bool World::insertModelFromString(const std::string& sdfString,
