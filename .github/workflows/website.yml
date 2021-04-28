@@ -2,6 +2,8 @@ name: Website
 
 on:
   push:
+    tags-ignore:
+      - '**'
   pull_request:
     branches:
       - master
