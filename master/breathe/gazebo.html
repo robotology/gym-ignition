@@ -3164,19 +3164,18 @@
 </dd></dl>
 
 <dl class="cpp function">
-<dt id="_CPPv4N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringE">
-<span id="_CPPv3N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringE"></span><span id="_CPPv2N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringE"></span><span id="scenario::gazebo::utils::getModelNameFromSdf__ssCR"></span><span class="target" id="gazebo_2include_2scenario_2gazebo_2utils_8h_1a3aab0082d8f450a227df16f58ec7e6d2"></span><span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <code class="sig-name descname"><span class="pre">getModelNameFromSdf</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">fileName</span></em><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dt id="_CPPv4N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringEK6size_t">
+<span id="_CPPv3N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringEK6size_t"></span><span id="_CPPv2N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringEK6size_t"></span><span id="scenario::gazebo::utils::getModelNameFromSdf__ssCR.sC"></span><span class="target" id="gazebo_2include_2scenario_2gazebo_2utils_8h_1a5a97196a60085540d4d503ecbe822aee"></span><span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <code class="sig-name descname"><span class="pre">getModelNameFromSdf</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">fileName</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">modelIndex</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Get the name of a model from a SDF file.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>sdformat supports only one model per SDF file.</p>
-</div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fileName</strong> – An SDF file. It could be either an absolute path to the file or the file name if the parent folder is part of the <code class="docutils literal notranslate"><span class="pre">IGN_GAZEBO_RESOURCE_PATH</span></code> environment variable. </p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fileName</strong> – An SDF file. It could be either an absolute path to the file or the file name if the parent folder is part of the <code class="docutils literal notranslate"><span class="pre">IGN_GAZEBO_RESOURCE_PATH</span></code> environment variable. </p></li>
+<li><p><strong>modelIndex</strong> – The index of the model in the SDF file. By default it finds the first model. </p></li>
+</ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The name of the model if the file was found and is valid, an empty string otherwise. </p>
+<dd class="field-even"><p>The name of the model. </p>
 </dd>
 </dl>
 </dd></dl>
@@ -3193,7 +3192,7 @@
 </ul>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The name of the world if the file was found and is valid, an empty string otherwise. </p>
+<dd class="field-even"><p>The name of the world. </p>
 </dd>
 </dl>
 </dd></dl>
