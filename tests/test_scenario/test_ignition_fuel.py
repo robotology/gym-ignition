@@ -17,6 +17,8 @@ from pathlib import Path
 scenario.set_verbosity(scenario.Verbosity_debug)
 
 
+# See https://github.com/robotology/gym-ignition/pull/339#issuecomment-828300490
+@pytest.mark.xfail(strict=False)
 @pytest.mark.parametrize(
     "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
 )
@@ -49,7 +51,7 @@ def test_download_model_from_fuel(gazebo: scenario.GazeboSimulator):
 @pytest.mark.parametrize(
     "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
 )
-def test_fuel_world(gazebo):
+def test_fuel_world(gazebo: scenario.GazeboSimulator):
     # (setup) load a world that includes a fuel model
     worlds_folder = Path(__file__) / ".." / ".." / "assets" / "worlds"
     world_file = worlds_folder / "fuel_support.sdf"
