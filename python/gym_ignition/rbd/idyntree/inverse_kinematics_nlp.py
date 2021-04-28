@@ -279,7 +279,7 @@ class InverseKinematicsNLP:
                        constraint_tolerance: float = 1E-8) -> None:
 
         # Add the target
-        self._ik.setCOMTarget(desiredPosition=idt.Position_Zero(), weight=weight)
+        self._ik.setCOMTarget(idt.Position_Zero(), weight)
 
         # Configure it either as target or constraint
         self._ik.setCOMAsConstraint(asConstraint=as_constraint)
@@ -374,8 +374,7 @@ class InverseKinematicsNLP:
         p = rbd.idyntree.numpy.FromNumPy.to_idyntree_position(position=position)
 
         # Update the target inside IK
-        self._ik.setCOMTarget(desiredPosition=p,
-                              weight=self._targets_data["com"].weight)
+        self._ik.setCOMTarget(p, self._targets_data["com"].weight)
 
         # Update the target data
         self._targets_data["com"] = TargetData(type=TargetType.POSITION,
