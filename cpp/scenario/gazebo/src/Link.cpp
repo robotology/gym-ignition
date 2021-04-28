@@ -166,7 +166,7 @@ bool Link::createECMResources()
     m_ecm->CreateComponent(m_entity, components::AngularAcceleration());
 
     if (!this->enableContactDetection(false)) {
-        sError << "Failed to enable contact detection" << std::endl;
+        sError << "Failed to initialize contact detection" << std::endl;
         return false;
     }
 
@@ -300,8 +300,16 @@ bool Link::contactsEnabled() const
         ignition::gazebo::components::Collision(),
         ignition::gazebo::components::ParentEntity(m_entity));
 
-    // Create the contact sensor data component that enables the Physics
-    // system to extract contact information from the physics engine
+    // If the link has no collision elements, we return true regardless.
+    // To prevent surprises, e.g. users expecting that calling Link::inContact
+    // for such links would return true, we print a debug message.
+    if (collisionEntities.empty()) {
+        sDebug << "The link '" << this->name() << "' has no collision elements "
+               << "and contacts cannot be detected" << std::endl;
+        return true;
+    }
+
+    // Iterate through all link's collisions
     for (const auto collisionEntity : collisionEntities) {
         const bool hasContactSensorData = m_ecm->EntityHasComponentType(
             collisionEntity,
@@ -344,11 +352,22 @@ bool Link::enableContactDetection(const bool enable)
             ignition::gazebo::components::Collision(),
             ignition::gazebo::components::ParentEntity(m_entity));
 
+        // Links with no collision elements already print a sDebug in the
+        // contactsEnabled method, and not further action is needed
+        if (collisionEntities.empty()) {
+            return true;
+        }
+
         // Delete the contact sensor data component
         for (const auto collisionEntity : collisionEntities) {
             m_ecm->RemoveComponent<
                 ignition::gazebo::components::ContactSensorData>(
                 collisionEntity);
+        }
+
+        if (this->contactsEnabled()) {
+            sError << "Failed to disable contact detection" << std::endl;
+            return false;
         }
 
         return true;
@@ -369,6 +388,7 @@ std::vector<scenario::core::Contact> Link::contacts() const
         ignition::gazebo::components::ParentEntity(m_entity),
         ignition::gazebo::components::Collision());
 
+    // Return early if the link has no collision elements
     if (collisionEntities.empty()) {
         return {};
     }

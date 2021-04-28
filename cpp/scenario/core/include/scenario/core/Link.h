@@ -161,7 +161,8 @@ public:
     /**
      * Check if the link has active contacts.
      *
-     * @return True if the link has at least one contact, false otherwise.
+     * @return True if the link has at least one contact and contacts are
+     * enabled, false otherwise.
      */
     virtual bool inContact() const = 0;
 

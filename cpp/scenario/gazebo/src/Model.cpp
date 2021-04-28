@@ -656,6 +656,8 @@ std::vector<double> Model::historyOfAppliedJointForces(
 bool Model::contactsEnabled() const
 {
     for (auto& link : this->links()) {
+        // Note: links with no collision elements return true even though no
+        //       contacts can be detected.
         if (!link->contactsEnabled()) {
             return false;
         }
@@ -670,6 +672,8 @@ bool Model::enableContacts(const bool enable)
     bool ok = true;
 
     for (auto& link : this->links()) {
+        // Note: links with no collision elements return true even though no
+        //       contacts can be detected.
         ok = ok && link->enableContactDetection(enable);
     }
 
