@@ -39,6 +39,7 @@
 #include <ignition/gazebo/components/Model.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
+#include <ignition/gazebo/components/Physics.hh>
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
@@ -215,6 +216,15 @@ bool World::createECMResources()
         utils::setComponentData<ignition::gazebo::components::SimulatedTime>(
             m_ecm, m_entity, std::chrono::steady_clock::duration::zero());
     }
+
+    // Print the active physics profile
+    const auto& physics = utils::getExistingComponentData< //
+        ignition::gazebo::components::Physics>(m_ecm, m_entity);
+    sDebug << "Initializing world '" << this->name()
+           << "' with physics parameters:" << std::endl
+           << "rtf=" << physics.RealTimeFactor() << std::endl
+           << "step=" << physics.MaxStepSize() << std::endl
+           << "type=" << physics.EngineType() << std::endl;
 
     return true;
 }
