@@ -4,8 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>scenario.bindings &#8212; gym-ignition  documentation</title>
     
   <link rel="stylesheet" href="../../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
@@ -316,9 +315,9 @@
         
               <div>
                 
-  <section id="module-scenario.bindings">
+  <div class="section" id="module-scenario.bindings">
 <span id="scenario-bindings"></span><h1>scenario.bindings<a class="headerlink" href="#module-scenario.bindings" title="Permalink to this headline">¶</a></h1>
-<section id="module-scenario.bindings.core">
+<div class="section" id="module-scenario.bindings.core">
 <span id="scenario-bindings-core"></span><h2>scenario.bindings.core<a class="headerlink" href="#module-scenario.bindings.core" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="scenario.bindings.core.Array3d">
@@ -4154,8 +4153,8 @@ installed in Developer mode, an empty string otherwise.</p>
 </dl>
 </dd></dl>
 
-</section>
-<section id="module-scenario.bindings.gazebo">
+</div>
+<div class="section" id="module-scenario.bindings.gazebo">
 <span id="scenario-bindings-gazebo"></span><h2>scenario.bindings.gazebo<a class="headerlink" href="#module-scenario.bindings.gazebo" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="scenario.bindings.gazebo.ECMSingleton">
@@ -7510,23 +7509,21 @@ physics profile enabled.</p>
 
 <dl class="py function">
 <dt id="scenario.bindings.gazebo.get_model_name_from_sdf">
-<code class="sig-prename descclassname"><span class="pre">scenario.bindings.gazebo.</span></code><code class="sig-name descname"><span class="pre">get_model_name_from_sdf</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_index</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.get_model_name_from_sdf" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">scenario.bindings.gazebo.</span></code><code class="sig-name descname"><span class="pre">get_model_name_from_sdf</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.get_model_name_from_sdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the name of a model from a SDF file.</p>
+<p>Notes: sdformat supports only one model per SDF file.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>fileName</strong> (<em>string</em>) – An SDF file. It could be either an absolute path
+<dd class="field-odd"><p><strong>fileName</strong> (<em>string</em>) – An SDF file. It could be either an absolute path
 to the file or the file name if the parent folder is part
-of the <code class="docutils literal notranslate"><span class="pre">IGN_GAZEBO_RESOURCE_PATH</span></code> environment variable.</p></li>
-<li><p><strong>modelIndex</strong> (<em>int</em>) – The index of the model in the SDF file. By
-default it finds the first model.</p></li>
-</ul>
+of the <code class="docutils literal notranslate"><span class="pre">IGN_GAZEBO_RESOURCE_PATH</span></code> environment variable.</p>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p>string</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The name of the model.</p>
+<dd class="field-odd"><p>The name of the model if the file was found and is valid,
+an empty string otherwise.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -7586,7 +7583,8 @@ default it finds the first world.</p></li>
 <dd class="field-even"><p>string</p>
 </dd>
 <dt class="field-odd">Returns</dt>
-<dd class="field-odd"><p>The name of the world.</p>
+<dd class="field-odd"><p>The name of the world if the file was found and is valid,
+an empty string otherwise.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -7703,8 +7701,8 @@ converted, an empty string otherwise.</p>
 </dl>
 </dd></dl>
 
-</section>
-</section>
+</div>
+</div>
 
 
               </div>

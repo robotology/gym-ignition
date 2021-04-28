@@ -4,8 +4,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Why ScenarIO &#8212; gym-ignition  documentation</title>
     
   <link rel="stylesheet" href="../_static/css/index.f658d18f9b420779cfdf24aa0a7e2d77.css">
@@ -326,7 +325,7 @@ help deciding whether it meets your needs or not.</p>
 <p>The development of the framework is evolving quickly, and the architecture and motivations described in the
 <a class="reference external" href="https://github.com/robotology/gym-ignition#Citation">reference publication</a> are no longer accurate.
 This section provides a constantly updated description aligned with the most recent development news.</p>
-<section id="why-scenario">
+<div class="section" id="why-scenario">
 <span id="id1"></span><h1>Why ScenarIO<a class="headerlink" href="#why-scenario" title="Permalink to this headline">¶</a></h1>
 <p><em>SCENe interfAces for Robot Input/Output</em> is an abstraction layer to interface with robots.
 It exposes APIs to interact with a scene, providing a <a class="reference internal" href="../breathe/core.html#_CPPv4N8scenario4core5WorldE" title="scenario::core::World"><code class="xref cpp cpp-class docutils literal notranslate"><span class="pre">World</span></code></a> that can return
@@ -350,8 +349,8 @@ Let’s say you already have built your functionality with the backends we provi
 You can implement your own simulation backend and run it alongside those we provide.
 The same applies to the real-time backend, in case your robot uses a custom middleware or SDK.</p>
 </div>
-</section>
-<section id="why-ignition-gazebo">
+</div>
+<div class="section" id="why-ignition-gazebo">
 <span id="id2"></span><h1>Why Ignition Gazebo<a class="headerlink" href="#why-ignition-gazebo" title="Permalink to this headline">¶</a></h1>
 <p>In this section we want to go a bit deeper in the motivations that led us to select Ignition Gazebo as target solution for the simulation back-end of ScenarIO.</p>
 <p>To begin, a bit of history. The <a class="reference external" href="https://gazebosim.org">Gazebo</a> simulator that the entire robotic community has used for
@@ -413,8 +412,8 @@ even better, fire up a pull request!</p>
 <p>Ignition Gazebo is the target simulator of the new <a class="reference external" href="https://subtchallenge.com">DARPA Subterranean Challenge</a>.
 Have a look to their simulation results to understand what you can expect from using Ignition Gazebo.</p>
 </div>
-</section>
-<section id="why-gym-ignition">
+</div>
+<div class="section" id="why-gym-ignition">
 <span id="id5"></span><h1>Why gym-ignition<a class="headerlink" href="#why-gym-ignition" title="Permalink to this headline">¶</a></h1>
 <p>In the previous sections we described why we developed ScenarIO and why we used Ignition Gazebo to implement its simulation back-end.
 While we mentioned few advantages for the robot learning domain, ScenarIO remains a general C++ library that can be used for generic robotic applications.</p>
@@ -450,7 +449,7 @@ the simulator is <a class="reference external" href="http://wiki.ros.org/openai_
 We have been inspired by its structure in the early stage of development, and the current interfaces implemented in
 gym-ignition are an evolution of the original architecture.</p>
 </div>
-</section>
+</div>
 
 
               </div>
