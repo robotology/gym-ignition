@@ -36,7 +36,7 @@ def warn(msg: str, *args) -> None:
 warnings.formatwarning = custom_formatwarning
 
 
-def set_level(level: int) -> None:
+def set_level(level: int, scenario_level: int = None) -> None:
     """
     Set the verbosity level of both :py:mod:`gym` and :py:mod:`gym_ignition`.
 
@@ -50,6 +50,7 @@ def set_level(level: int) -> None:
 
     Args:
         level: The desired verbosity level.
+        scenario_level: The desired ScenarIO verbosity level (defaults to ``level``).
     """
 
     # Set the gym verbosity
@@ -60,14 +61,17 @@ def set_level(level: int) -> None:
     except ImportError:
         return
 
+    if scenario_level is None:
+        scenario_level = level
+
     # Set the ScenarI/O verbosity
-    if logger.MIN_LEVEL <= logger.DEBUG:
+    if scenario_level <= logger.DEBUG:
         scenario.set_verbosity(scenario.Verbosity_debug)
-    elif logger.MIN_LEVEL <= logger.INFO:
+    elif scenario_level <= logger.INFO:
         scenario.set_verbosity(scenario.Verbosity_info)
-    elif logger.MIN_LEVEL <= logger.WARN:
+    elif scenario_level <= logger.WARN:
         scenario.set_verbosity(scenario.Verbosity_warning)
-    elif logger.MIN_LEVEL <= logger.ERROR:
+    elif scenario_level <= logger.ERROR:
         scenario.set_verbosity(scenario.Verbosity_error)
     else:
         scenario.set_verbosity(scenario.Verbosity_suppress_all)
