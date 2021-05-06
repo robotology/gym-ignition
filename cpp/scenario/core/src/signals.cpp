@@ -73,8 +73,6 @@ SignalManager::setCallback(const SignalType type,
 {
     SignalCallback oldCallback = this->getCallback(type);
 
-    sDebug << "Setting callback for signal " << Impl::ToString(type)
-           << std::endl;
     std::signal(type, SignalManager::ExecuteCallback);
     pImpl->callbacks[type] = callback;
 
