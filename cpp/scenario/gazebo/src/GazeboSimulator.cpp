@@ -318,20 +318,29 @@ bool GazeboSimulator::gui(const int verbosity)
                 "ignition-gazebo-scene-broadcaster-system",
                 "ignition::gazebo::systems::SceneBroadcaster")) {
             sError << "Failed to load SceneBroadcaster plugin" << std::endl;
+            return false;
         }
     }
 
     // Allow specifying a GUI verbosity different than the server verbosity
-    int appliedVerbosity = verbosity;
+    int guiVerbosity = verbosity;
 
-    if (appliedVerbosity < 0) {
+    if (guiVerbosity < 0) {
         // Get the verbosity level
-        appliedVerbosity = ignition::common::Console::Verbosity();
+        guiVerbosity = ignition::common::Console::Verbosity();
     }
+
+#if defined(WIN32) || defined(_WIN32)
+    const std::string redirect = "";
+#else
+    // Suppress GUI stderr.
+    // Recent versions of the GUI segfault printing an annoying stacktrace.
+    const std::string redirect = guiVerbosity >= 4 ? "" : " 2>/dev/null";
+#endif
 
     // Spawn a new process with the GUI
     pImpl->gazebo.gui = std::make_unique<TinyProcessLib::Process>(
-        "ign gazebo -g -v " + std::to_string(appliedVerbosity));
+        "ign gazebo -g -v " + std::to_string(guiVerbosity) + redirect);
 
     bool guiServiceExists = false;
     ignition::transport::Node node;
@@ -348,7 +357,7 @@ bool GazeboSimulator::gui(const int verbosity)
             }
         }
 
-        std::this_thread::sleep_for(std::chrono::milliseconds(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(100));
     } while (!guiServiceExists);
 
     sDebug << "GUI up and running" << std::endl;

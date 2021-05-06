@@ -52,6 +52,9 @@ class GazeboEnvRandomizer(gym.Wrapper,
                  randomizers.physics.dart.DART(),
                  **kwargs):
 
+        # Print the extra kwargs
+        gym.logger.debug(f"GazeboEnvRandomizer: {dict(kwargs=kwargs)}")
+
         # Store the options
         self._env_option = env
         self._kwargs = dict(**kwargs, physics_engine=physics_randomizer.get_engine())
@@ -128,15 +131,11 @@ class GazeboEnvRandomizer(gym.Wrapper,
     def _create_from_callable(make_env: MakeEnvCallable,
                               **kwargs) -> gym.Env:
 
-        with logger.gym_verbosity(level=gym.logger.WARN):
-            env = make_env(**kwargs)
-
+        env = make_env(**kwargs)
         return env
 
     @staticmethod
     def _create_from_id(env_id: str, **kwargs) -> gym.Env:
 
-        with logger.gym_verbosity(level=gym.logger.WARN):
-            env = gym.make(env_id, **kwargs)
-
+        env = gym.make(env_id, **kwargs)
         return env
