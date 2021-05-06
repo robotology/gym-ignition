@@ -131,7 +131,6 @@ endif()
 include(AddInstallRPATHSupport)
 add_install_rpath_support(
     BIN_DIRS
-    "${CMAKE_INSTALL_PREFIX}/${GYMPP_INSTALL_BINDIR}"
     "${CMAKE_INSTALL_PREFIX}/${SCENARIO_INSTALL_BINDIR}"
     LIB_DIRS
     "${CMAKE_INSTALL_PREFIX}/${SCENARIO_INSTALL_LIBDIR}"

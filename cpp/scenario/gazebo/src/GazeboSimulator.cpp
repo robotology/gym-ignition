@@ -39,9 +39,9 @@
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
 #include <ignition/gazebo/components/Name.hh>
-#include <ignition/gazebo/components/Pose.hh>
 #include <ignition/gazebo/components/Physics.hh>
 #include <ignition/gazebo/components/PhysicsCmd.hh>
+#include <ignition/gazebo/components/Pose.hh>
 #include <ignition/gazebo/components/World.hh>
 #include <ignition/transport/Node.hh>
 #include <ignition/transport/Publisher.hh>
