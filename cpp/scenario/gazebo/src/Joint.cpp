@@ -40,6 +40,7 @@
 #include "scenario/gazebo/components/Timestamp.h"
 #include "scenario/gazebo/exceptions.h"
 #include "scenario/gazebo/helpers.h"
+#include "scenario/gazebo/utils.h"
 
 #include <ignition/gazebo/components/JointAxis.hh>
 #include <ignition/gazebo/components/JointForce.hh>
@@ -127,6 +128,14 @@ bool Joint::createECMResources()
         m_entity, components::JointControlMode(core::JointControlMode::Idle));
 
     return true;
+}
+
+bool Joint::insertJointPlugin(const std::string& libName,
+                              const std::string& className,
+                              const std::string& context)
+{
+    return utils::insertPluginToGazeboEntity(
+        *this, libName, className, context);
 }
 
 bool Joint::resetPosition(const double position, size_t dof)

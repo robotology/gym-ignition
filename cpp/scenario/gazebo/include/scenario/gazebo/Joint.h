@@ -68,6 +68,18 @@ public:
     // ============
 
     /**
+     * Insert a Ignition Gazebo plugin to the joint.
+     *
+     * @param libName The library name of the plugin.
+     * @param className The class name (or alias) of the plugin.
+     * @param context Optional XML plugin context.
+     * @return True for success, false otherwise.
+     */
+    bool insertJointPlugin(const std::string& libName,
+                           const std::string& className,
+                           const std::string& context = {});
+
+    /**
      * Reset the position of a joint DOF.
      *
      * @param position The desired position.
