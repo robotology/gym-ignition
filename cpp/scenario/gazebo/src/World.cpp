@@ -31,6 +31,7 @@
 #include "scenario/gazebo/components/Timestamp.h"
 #include "scenario/gazebo/exceptions.h"
 #include "scenario/gazebo/helpers.h"
+#include "scenario/gazebo/utils.h"
 
 #include <ignition/common/Event.hh>
 #include <ignition/gazebo/Events.hh>
@@ -234,40 +235,8 @@ bool World::insertWorldPlugin(const std::string& libName,
                               const std::string& className,
                               const std::string& context)
 {
-    // Create a new <plugin name="" filename=""> element without context
-    sdf::ElementPtr pluginElement =
-        utils::getPluginSDFElement(libName, className);
-
-    // Insert the context into the plugin element
-    if (!context.empty()) {
-
-        // Try to get the sdf::Root (it will alredy print an error if it fails)
-        auto contextRoot = utils::getSdfRootFromString(context);
-
-        if (!contextRoot) {
-            return false;
-        }
-
-        // Get the first element of the context
-        // (stripping out the <sdf> container)
-        auto contextNextElement = contextRoot->Element()->GetFirstElement();
-
-        // Insert the plugin context elements
-        while (contextNextElement) {
-            pluginElement->InsertElement(contextNextElement);
-            contextNextElement = contextNextElement->GetNextElement();
-        }
-    }
-
-    // The plugin element must be wrapped in another element, otherwise
-    // who receives it does not get the additional context
-    const auto wrapped = sdf::SDF::WrapInRoot(pluginElement);
-
-    // Trigger the plugin loading
-    m_eventManager->Emit<ignition::gazebo::events::LoadPlugins>(m_entity,
-                                                                wrapped);
-
-    return true;
+    return utils::insertPluginToGazeboEntity(
+        *this, libName, className, context);
 }
 
 bool World::setPhysicsEngine(const PhysicsEngine engine)

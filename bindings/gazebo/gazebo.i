@@ -65,9 +65,6 @@ namespace scenario::gazebo::utils {
 %rename("") GazeboSimulator;
 %rename("") JointControlMode;
 
-// Public helpers
-%include "scenario/gazebo/utils.h"
-
 // Other templates for ScenarI/O APIs
 %shared_ptr(scenario::gazebo::Joint)
 %shared_ptr(scenario::gazebo::Link)
@@ -96,6 +93,9 @@ namespace scenario::gazebo::utils {
 
 // Interface of Gazebo entities
 %include "scenario/gazebo/GazeboEntity.h"
+
+// Public helpers
+%include "scenario/gazebo/utils.h"
 
 // ScenarI/O headers
 %include "scenario/gazebo/Joint.h"

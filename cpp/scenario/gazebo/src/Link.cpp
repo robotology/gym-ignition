@@ -32,6 +32,7 @@
 #include "scenario/gazebo/components/SimulatedTime.h"
 #include "scenario/gazebo/exceptions.h"
 #include "scenario/gazebo/helpers.h"
+#include "scenario/gazebo/utils.h"
 
 #include <ignition/gazebo/Link.hh>
 #include <ignition/gazebo/components/AngularAcceleration.hh>
@@ -171,6 +172,14 @@ bool Link::createECMResources()
     }
 
     return true;
+}
+
+bool Link::insertLinkPlugin(const std::string& libName,
+                            const std::string& className,
+                            const std::string& context)
+{
+    return utils::insertPluginToGazeboEntity(
+        *this, libName, className, context);
 }
 
 bool Link::valid() const

@@ -37,6 +37,7 @@
 #include <ignition/fuel_tools/FuelClient.hh>
 #include <ignition/fuel_tools/Interface.hh>
 #include <ignition/fuel_tools/Result.hh>
+#include <ignition/gazebo/Events.hh>
 #include <ignition/gazebo/config.hh>
 #include <sdf/Element.hh>
 #include <sdf/Model.hh>
@@ -366,4 +367,60 @@ std::vector<double> utils::denormalize(const std::vector<double>& input,
     outputEigen = (inputEigen + 1) * (highEigen - lowEigen) / 2.0 + lowEigen;
 
     return output;
+}
+
+bool utils::insertPluginToGazeboEntity(const GazeboEntity& gazeboEntity,
+                                       const std::string& libName,
+                                       const std::string& className,
+                                       const std::string& context)
+{
+    if (!gazeboEntity.validEntity()) {
+        sError << "The Gazebo Entity is not valid" << std::endl;
+        return false;
+    }
+
+    if (libName.empty() || className.empty()) {
+        sError << "Either the library name or the class name are empty strings"
+               << std::endl;
+        return false;
+    }
+
+    sLog << "Triggering plugin loading:" << std::endl;
+    sLog << className << " from " << libName << " for entity ["
+         << gazeboEntity.entity() << "]" << std::endl;
+
+    // Create a new <plugin name="" filename=""> element without context
+    sdf::ElementPtr pluginElement =
+        utils::getPluginSDFElement(libName, className);
+
+    // Insert the context into the plugin element
+    if (!context.empty()) {
+
+        std::shared_ptr<sdf::Root> contextRoot =
+            utils::getSdfRootFromString(context);
+
+        if (!contextRoot) {
+            return false;
+        }
+
+        // Get the first element of the context
+        // (stripping out the <sdf> container)
+        auto contextNextElement = contextRoot->Element()->GetFirstElement();
+
+        // Insert the plugin context elements
+        while (contextNextElement) {
+            pluginElement->InsertElement(contextNextElement);
+            contextNextElement = contextNextElement->GetNextElement();
+        }
+    }
+
+    // The plugin element must be wrapped in another element, otherwise
+    // who receives it does not get the additional context
+    const auto wrapped = sdf::SDF::WrapInRoot(pluginElement);
+
+    // Trigger the plugin loading
+    gazeboEntity.eventManager()->Emit<ignition::gazebo::events::LoadPlugins>(
+        gazeboEntity.entity(), wrapped);
+
+    return true;
 }
