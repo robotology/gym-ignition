@@ -65,6 +65,22 @@ public:
 
     bool createECMResources() override;
 
+    // ===========
+    // Gazebo Link
+    // ===========
+
+    /**
+     * Insert a Ignition Gazebo plugin to the link.
+     *
+     * @param libName The library name of the plugin.
+     * @param className The class name (or alias) of the plugin.
+     * @param context Optional XML plugin context.
+     * @return True for success, false otherwise.
+     */
+    bool insertLinkPlugin(const std::string& libName,
+                          const std::string& className,
+                          const std::string& context = {});
+
     // =========
     // Link Core
     // =========
