@@ -27,6 +27,7 @@
 #ifndef SCENARIO_GAZEBO_UTILS_H
 #define SCENARIO_GAZEBO_UTILS_H
 
+#include "scenario/gazebo/GazeboEntity.h"
 #include <memory>
 #include <string>
 #include <vector>
@@ -239,6 +240,25 @@ namespace scenario::gazebo::utils {
     std::vector<double> denormalize(const std::vector<double>& input,
                                     const std::vector<double>& low,
                                     const std::vector<double>& high);
+
+    /**
+     * Insert a plugin to any Gazebo entity.
+     *
+     * @note This function will not return true if the plugin is successful.
+     * This function just triggers an event that notifies the server to load a
+     * plugin, and it does not receive any return value that could be used to
+     * assess the outcome.
+     *
+     * @param gazeboEntity The Gazebo entity (world, model, joint, ...).
+     * @param libName The name of the plugin library.
+     * @param className The name of the class implementing the plugin.
+     * @param context The optional plugin SDF context.
+     * @return True if the entity is valid, false otherwise.
+     */
+    bool insertPluginToGazeboEntity(const GazeboEntity& gazeboEntity,
+                                    const std::string& libName,
+                                    const std::string& className,
+                                    const std::string& context = "");
 } // namespace scenario::gazebo::utils
 
 #endif // SCENARIO_GAZEBO_UTILS_H
