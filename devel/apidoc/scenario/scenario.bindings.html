@@ -4696,6 +4696,27 @@ numbering.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.insert_joint_plugin">
+<code class="sig-name descname"><span class="pre">insert_joint_plugin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.insert_joint_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a Ignition Gazebo plugin to the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>libName</strong> (<em>string</em>) – The library name of the plugin.</p></li>
+<li><p><strong>className</strong> (<em>string</em>) – The class name (or alias) of the plugin.</p></li>
+<li><p><strong>context</strong> (<em>string</em>) – Optional XML plugin context.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True for success, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.gazebo.Joint.joint_acceleration">
 <code class="sig-name descname"><span class="pre">joint_acceleration</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.joint_acceleration" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the acceleration of the joint.</p>
@@ -5688,6 +5709,27 @@ numbering.</p>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>True if the link has at least one contact and contacts are
 enabled, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.gazebo.Link.insert_link_plugin">
+<code class="sig-name descname"><span class="pre">insert_link_plugin</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Link.insert_link_plugin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a Ignition Gazebo plugin to the link.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>libName</strong> (<em>string</em>) – The library name of the plugin.</p></li>
+<li><p><strong>className</strong> (<em>string</em>) – The class name (or alias) of the plugin.</p></li>
+<li><p><strong>context</strong> (<em>string</em>) – Optional XML plugin context.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True for success, false otherwise.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -7588,6 +7630,32 @@ default it finds the first world.</p></li>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The name of the world if the file was found and is valid,
 an empty string otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt id="scenario.bindings.gazebo.insert_plugin_to_gazebo_entity">
+<code class="sig-prename descclassname"><span class="pre">scenario.bindings.gazebo.</span></code><code class="sig-name descname"><span class="pre">insert_plugin_to_gazebo_entity</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.insert_plugin_to_gazebo_entity" title="Permalink to this definition">¶</a></dt>
+<dd><p>Insert a plugin to any Gazebo entity.</p>
+<p>Notes: This function will not return true if the plugin is successful.
+This function just triggers an event that notifies the server to load a
+plugin, and it does not receive any return value that could be used to
+assess the outcome.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gazeboEntity</strong> (<a class="reference internal" href="#scenario.bindings.gazebo.GazeboEntity" title="scenario.bindings.gazebo.GazeboEntity"><code class="xref py py-class docutils literal notranslate"><span class="pre">GazeboEntity</span></code></a>) – The Gazebo entity (world, model, joint, …).</p></li>
+<li><p><strong>libName</strong> (<em>string</em>) – The name of the plugin library.</p></li>
+<li><p><strong>className</strong> (<em>string</em>) – The name of the class implementing the plugin.</p></li>
+<li><p><strong>context</strong> (<em>string</em>) – The optional plugin SDF context.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True if the entity is valid, false otherwise.</p>
 </dd>
 </dl>
 </dd></dl>

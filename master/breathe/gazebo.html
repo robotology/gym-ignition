@@ -1868,6 +1868,24 @@
 </dd></dl>
 
 <dl class="cpp function">
+<dt id="_CPPv4N8scenario6gazebo4Link16insertLinkPluginERKNSt6stringERKNSt6stringERKNSt6stringE">
+<span id="_CPPv3N8scenario6gazebo4Link16insertLinkPluginERKNSt6stringERKNSt6stringERKNSt6stringE"></span><span id="_CPPv2N8scenario6gazebo4Link16insertLinkPluginERKNSt6stringERKNSt6stringERKNSt6stringE"></span><span id="scenario::gazebo::Link::insertLinkPlugin__ssCR.ssCR.ssCR"></span><span class="target" id="classscenario_1_1gazebo_1_1Link_1ab96a0a75a695cb102ac7d91bc9bb64e5"></span><span class="pre">bool</span> <code class="sig-name descname"><span class="pre">insertLinkPlugin</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">libName</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">className</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">context</span></em> <span class="pre">=</span> <span class="pre">{</span><span class="pre">}</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo4Link16insertLinkPluginERKNSt6stringERKNSt6stringERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Insert a Ignition Gazebo plugin to the link.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>libName</strong> – The library name of the plugin. </p></li>
+<li><p><strong>className</strong> – The class name (or alias) of the plugin. </p></li>
+<li><p><strong>context</strong> – Optional XML plugin context. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
 <dt id="_CPPv4NK8scenario6gazebo4Link5validEv">
 <span id="_CPPv3NK8scenario6gazebo4Link5validEv"></span><span id="_CPPv2NK8scenario6gazebo4Link5validEv"></span><span id="scenario::gazebo::Link::validC"></span><span class="target" id="classscenario_1_1gazebo_1_1Link_1accba2d6abdb1188fcbe32cdb739fc265"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">bool</span> <code class="sig-name descname"><span class="pre">valid</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <em class="property"><span class="pre">override</span></em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo4Link5validEv" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Check if the link is valid.</p>
@@ -2259,6 +2277,24 @@
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>True for success, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N8scenario6gazebo5Joint17insertJointPluginERKNSt6stringERKNSt6stringERKNSt6stringE">
+<span id="_CPPv3N8scenario6gazebo5Joint17insertJointPluginERKNSt6stringERKNSt6stringERKNSt6stringE"></span><span id="_CPPv2N8scenario6gazebo5Joint17insertJointPluginERKNSt6stringERKNSt6stringERKNSt6stringE"></span><span id="scenario::gazebo::Joint::insertJointPlugin__ssCR.ssCR.ssCR"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1ab8a1125afb6c83a57c1495e993ef2268"></span><span class="pre">bool</span> <code class="sig-name descname"><span class="pre">insertJointPlugin</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">libName</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">className</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">context</span></em> <span class="pre">=</span> <span class="pre">{</span><span class="pre">}</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo5Joint17insertJointPluginERKNSt6stringERKNSt6stringERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Insert a Ignition Gazebo plugin to the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>libName</strong> – The library name of the plugin. </p></li>
+<li><p><strong>className</strong> – The class name (or alias) of the plugin. </p></li>
+<li><p><strong>context</strong> – Optional XML plugin context. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success, false otherwise. </p>
 </dd>
 </dl>
 </dd></dl>
@@ -3327,6 +3363,29 @@
 </dd>
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The denormalized input. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N8scenario6gazebo5utils26insertPluginToGazeboEntityERK12GazeboEntityRKNSt6stringERKNSt6stringERKNSt6stringE">
+<span id="_CPPv3N8scenario6gazebo5utils26insertPluginToGazeboEntityERK12GazeboEntityRKNSt6stringERKNSt6stringERKNSt6stringE"></span><span id="_CPPv2N8scenario6gazebo5utils26insertPluginToGazeboEntityERK12GazeboEntityRKNSt6stringERKNSt6stringERKNSt6stringE"></span><span id="scenario::gazebo::utils::insertPluginToGazeboEntity__GazeboEntityCR.ssCR.ssCR.ssCR"></span><span class="target" id="gazebo_2include_2scenario_2gazebo_2utils_8h_1ad3f675f5941eb06ddf3d77b9447bfa14"></span><span class="pre">bool</span> <code class="sig-name descname"><span class="pre">insertPluginToGazeboEntity</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">GazeboEntity</span> <span class="pre">&amp;</span><em><span class="pre">gazeboEntity</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">libName</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">className</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">string</span> <span class="pre">&amp;</span><em><span class="pre">context</span></em> <span class="pre">=</span> <span class="pre">&quot;&quot;</span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo5utils26insertPluginToGazeboEntityERK12GazeboEntityRKNSt6stringERKNSt6stringERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Insert a plugin to any Gazebo entity.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This function will not return true if the plugin is successful. This function just triggers an event that notifies the server to load a plugin, and it does not receive any return value that could be used to assess the outcome.</p>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gazeboEntity</strong> – The Gazebo entity (world, model, joint, …). </p></li>
+<li><p><strong>libName</strong> – The name of the plugin library. </p></li>
+<li><p><strong>className</strong> – The name of the class implementing the plugin. </p></li>
+<li><p><strong>context</strong> – The optional plugin SDF context. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True if the entity is valid, false otherwise. </p>
 </dd>
 </dl>
 </dd></dl>
