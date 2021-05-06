@@ -415,7 +415,7 @@
 
 <dl class="py function">
 <dt id="gym_ignition.utils.logger.set_level">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.logger.</span></code><code class="sig-name descname"><span class="pre">set_level</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.set_level" title="Permalink to this definition">¶</a></dt>
+<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.logger.</span></code><code class="sig-name descname"><span class="pre">set_level</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.set_level" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the verbosity level of both <code class="xref py py-mod docutils literal notranslate"><span class="pre">gym</span></code> and <a class="reference internal" href="gym_ignition.html#module-gym_ignition" title="gym_ignition"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gym_ignition</span></code></a>.</p>
 <p>Accepted values:</p>
 <ul class="simple">
@@ -427,7 +427,10 @@
 </ul>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>level</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The desired verbosity level.</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>level</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>) – The desired verbosity level.</p></li>
+<li><p><strong>scenario_level</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code>]) – The desired ScenarIO verbosity level (defaults to <code class="docutils literal notranslate"><span class="pre">level</span></code>).</p></li>
+</ul>
 </dd>
 <dt class="field-even">Return type</dt>
 <dd class="field-even"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
