@@ -198,7 +198,7 @@ include(InstallBasicPackageFiles)
 # SCENARI/O
 # =========
 
-add_subdirectory(cpp/scenario)
+add_subdirectory(scenario)
 
 # ========
 # BINDINGS
