@@ -278,7 +278,7 @@ jobs:
       # ====================
 
       - name: '🐍 Install gym-ignition'
-        run: pip install wheel && pip install .[test]
+        run: pip install wheel && pip install .[test,website]
 
       # ============
       # Test project
@@ -340,6 +340,74 @@ jobs:
         with:
           path: dist/*
           name: dist
+
+      # =======
+      # Website
+      # =======
+
+      - name: '⬇️ Install website dependencies'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen texlive-font-utils
+
+      - name: '🔍 Inspect metadata'
+        run: sphinx-multiversion --dump-metadata docs/sphinx/ build/
+
+      # This is necessary because otherwise the check for uncommitted apidoc
+      # only detects additions, not removals.
+      - name: '🗑️ Remove apidoc folder'
+        run: rm -r docs/sphinx/apidoc
+
+      - name: '🏗️ Build sphinx website'
+        run: |
+          cmake -S . -B build/ -DBUILD_DOCS:BOOL=ON
+          cmake --build build/ --target sphinx
+
+      - name: '🔍 Check new uncommitted apidoc'
+        run: test $(git status --porcelain | wc -l) -eq 0
+
+      - name: '🔍 git status'
+        if: ${{ failure() }}
+        run: |
+          git status
+          git diff
+
+      - name: '⬆️ Upload website folder'
+        uses: actions/upload-artifact@v2
+        if: matrix.type == 'User' && matrix.ignition == 'edifice' && contains(matrix.os, 'ubuntu')
+        with:
+          path: build/html
+          name: website
+
+# ===================
+  website-deployment:
+# ===================
+    name: 'Website Deployment'
+    needs: [ build-and-test ]
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: '⬇️ Download website folder'
+        uses: actions/download-artifact@v2
+        with:
+          path: build/html
+          name: website
+
+      - name: '🔍 Inspect html folder'
+        run: ls -lah build/html
+
+      - name: '🚀 Deploy'
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        if: |
+          github.event_name == 'push' &&
+          github.repository == 'robotology/gym-ignition' &&
+          (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/devel')
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: build/html
+          CLEAN: true
+          CLEAN_EXCLUDE: '[".gitignore", ".nojekyll"]'
 
 # =================
   python-packaging:
