@@ -224,17 +224,16 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
             libxml2-dev coinor-libipopt-dev libeigen3-dev libassimp-dev swig
+      - name: '🤖 Install iDynTree'
+        run: |
+          pip install idyntree
+          IDYNTREE_PYTHON_PKG=$(python3 -c 'import idyntree, pathlib; print(pathlib.Path(idyntree.__file__).parent)')
+          echo "CMAKE_PREFIX_PATH=$IDYNTREE_PYTHON_PKG" >> $GITHUB_ENV
 
       # Note: In order to execute the setup.sh script, the file /etc/bash.bashrc must be sourced.
       #       To do that, we change the shell to a bash interactive session with 'bash -i -e'.
 
       # Developer installation
-      - name: '[👷|developer] Install iDynTree'
-        if: matrix.type == 'Developer'
-        run: |
-          pip install idyntree
-          IDYNTREE_PYTHON_PKG=$(python3 -c 'import idyntree, pathlib; print(pathlib.Path(idyntree.__file__).parent)')
-          echo "CMAKE_PREFIX_PATH=$IDYNTREE_PYTHON_PKG" >> $GITHUB_ENV
       - name: '[👷|developer] Build and Install C++ ScenarIO'
         if: matrix.type == 'Developer'
         shell: bash -i -e {0}
@@ -359,7 +358,9 @@ jobs:
         run: rm -r docs/sphinx/apidoc
 
       - name: '🏗️ Build sphinx website'
+        shell: bash -i -e {0}
         run: |
+          [[ -d build ]] && sudo chown -R $(id -u):$(id -g) build/
           cmake -S . -B build/ -DBUILD_DOCS:BOOL=ON
           cmake --build build/ --target sphinx
 

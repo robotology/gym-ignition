@@ -8,10 +8,6 @@ project(Scenario VERSION 1.2.2)
 # Add custom functions / macros
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
-if(BUILD_DOCS)
-    add_subdirectory(docs)
-endif()
-
 # C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -218,3 +214,11 @@ endif()
 
 # Add unistall target
 include(AddUninstallTarget)
+
+# =============
+# DOCUMENTATION
+# =============
+
+if(BUILD_DOCS)
+    add_subdirectory(docs)
+endif()
