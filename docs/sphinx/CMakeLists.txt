@@ -25,6 +25,14 @@ set(BINDINGS_MODULES_DIR "${PROJECT_BINARY_DIR}/bindings")
 # - docs/sphinx/gym_ignition
 # - docs/sphinx/gym_ignition_environments
 
+if (NOT TARGET ScenarioSwig::Core)
+    message(FATAL_ERROR "Target ScenarioSwig::Core not found")
+endif()
+
+if (NOT TARGET ScenarioSwig::Gazebo)
+    message(FATAL_ERROR "Target ScenarioSwig::Gazebo not found")
+endif()
+
 find_package(SphinxApidoc REQUIRED)
 add_custom_target(apidoc ALL DEPENDS
     doxygen ScenarioSwig::Core ScenarioSwig::Gazebo)
