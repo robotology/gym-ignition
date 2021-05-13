@@ -219,6 +219,28 @@ public:
     virtual Limit positionLimit(const size_t dof = 0) const = 0;
 
     /**
+     * Get the velocity limit of a joint DOF.
+     *
+     * @param dof The index of the DOF.
+     * @throw std::runtime_error if the DOF is not valid.
+     * @return The velocity limit of the joint DOF.
+     */
+    virtual Limit velocityLimit(const size_t dof = 0) const = 0;
+
+    /**
+     * Set the maximum velocity of a joint DOF.
+     *
+     * This limit can be used to clip the velocity applied by joint
+     * controllers.
+     *
+     * @param maxVelocity The maximum velocity.
+     * @param dof The index of the DOF.
+     * @return True for success, false otherwise.
+     */
+    virtual bool setVelocityLimit(const double maxVelocity,
+                                  const size_t dof = 0) = 0;
+
+    /**
      * Get the maximum generalized force that could be applied to a joint
      * DOF.
      *
@@ -377,6 +399,25 @@ public:
      * @return The position limits of the joint.
      */
     virtual JointLimit jointPositionLimit() const = 0;
+
+    /**
+     * Get the velocity limits of the joint.
+     *
+     * @return The velocity limits of the joint.
+     */
+    virtual JointLimit jointVelocityLimit() const = 0;
+
+    /**
+     * Set the maximum velocity of the joint.
+     *
+     * This limit can be used to clip the velocity applied by joint
+     * controllers.
+     *
+     * @param maxVelocity A vector with the maximum velocity of the joint DOFs.
+     * @return True for success, false otherwise.
+     */
+    virtual bool
+    setJointVelocityLimit(const std::vector<double>& maxVelocity) = 0;
 
     /**
      * Get the maximum generalized force that could be applied to the joint.
