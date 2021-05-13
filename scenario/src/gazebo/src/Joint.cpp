@@ -626,6 +626,29 @@ scenario::core::Limit Joint::positionLimit(const size_t dof) const
     return core::Limit(jointLimit.min[dof], jointLimit.max[dof]);
 }
 
+scenario::core::Limit Joint::velocityLimit(const size_t dof) const
+{
+    if (dof >= this->dofs()) {
+        throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
+    }
+
+    const auto& jointLimit = this->jointVelocityLimit();
+    assert(dof < jointLimit.min.size());
+    assert(dof < jointLimit.max.size());
+
+    return core::Limit(jointLimit.min[dof], jointLimit.max[dof]);
+}
+
+bool Joint::setVelocityLimit(const double maxVelocity, const size_t dof)
+{
+    if (dof >= this->dofs()) {
+        throw exceptions::DOFMismatch(this->dofs(), dof, this->name());
+    }
+    auto velocityLimit = this->jointVelocityLimit();
+    velocityLimit.max[dof] = maxVelocity;
+    return this->setJointVelocityLimit(velocityLimit.max);
+}
+
 double Joint::maxGeneralizedForce(const size_t dof) const
 {
     if (dof >= this->dofs()) {
@@ -889,6 +912,83 @@ scenario::core::JointLimit Joint::jointPositionLimit() const
     }
 
     return jointLimit;
+}
+
+scenario::core::JointLimit Joint::jointVelocityLimit() const
+{
+    core::JointLimit jointLimit(this->dofs());
+
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic: {
+            sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            jointLimit.min[0] = -axis.MaxVelocity();
+            jointLimit.max[0] = axis.MaxVelocity();
+            break;
+        }
+        case core::JointType::Fixed:
+            sWarning << "Fixed joints do not have DOFs, limits are not defined"
+                     << std::endl;
+            break;
+        case core::JointType::Invalid:
+        case core::JointType::Ball:
+            sWarning << "Type of Joint '" << this->name() << "' has no limits"
+                     << std::endl;
+            break;
+    }
+
+    return jointLimit;
+}
+
+bool Joint::setJointVelocityLimit(const std::vector<double>& maxVelocity)
+{
+    if (!utils::parentModelJustCreated(*this)) {
+        sError << "The model has been already processed and its "
+               << "parameters cannot be modified" << std::endl;
+        return false;
+    }
+
+    if (maxVelocity.size() != this->dofs()) {
+        sError << "Wrong number of elements (joint_dofs=" << this->dofs() << ")"
+               << std::endl;
+        return false;
+    }
+
+    switch (this->type()) {
+        case core::JointType::Revolute:
+        case core::JointType::Prismatic: {
+            sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            axis.SetMaxVelocity(maxVelocity[0]);
+            return true;
+        }
+        case core::JointType::Ball: {
+            const auto maxVelocity0 = maxVelocity[0];
+
+            for (const auto max : maxVelocity) {
+                if (max != maxVelocity0) {
+                    sWarning << "Setting different velocity limits for each "
+                             << "DOF is not supported. "
+                             << "Using the limit of the first DOF."
+                             << std::endl;
+                    break;
+                }
+            }
+
+            sdf::JointAxis& axis = utils::getExistingComponentData< //
+                ignition::gazebo::components::JointAxis>(m_ecm, m_entity);
+            axis.SetMaxVelocity(maxVelocity0);
+            return true;
+        }
+        case core::JointType::Fixed:
+        case core::JointType::Invalid:
+            sWarning << "Fixed and Invalid joints have no friction defined."
+                     << std::endl;
+            return false;
+    }
+
+    return false;
 }
 
 std::vector<double> Joint::jointMaxGeneralizedForce() const
