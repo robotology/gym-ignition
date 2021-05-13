@@ -17,9 +17,9 @@ swig_add_library(${scenario_swig_name}
 
 target_link_libraries(${scenario_swig_name}
     PUBLIC
-    ECMSingleton
     ScenarioGazebo::ScenarioGazebo
     ScenarioGazebo::GazeboSimulator
+    ECMSingleton
     Python3::Python)
 add_library(ScenarioSwig::Gazebo ALIAS gazebo)
 
