@@ -61,7 +61,7 @@ setup(
     extras_require=dict(
         website=[
             "sphinx",
-            "sphinx-book-theme<0.0.39",
+            "sphinx-book-theme",
             "sphinx-autodoc-typehints",
             "sphinx_fontawesome",
             "sphinx-multiversion",

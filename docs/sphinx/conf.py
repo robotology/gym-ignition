@@ -72,12 +72,15 @@ html_theme_options = {
     "use_edit_page_button": True,
     "path_to_docs": "docs/sphinx",
     "home_page_in_toc": True,
+    "use_download_button": False,
+    "use_fullscreen_button": True,
+    "single_page": False,
 }
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = ['_static']
+# html_static_path = ['_static']
 
 # The name of the Pygments (syntax highlighting) style to use.
 pygments_style = 'pastie'
@@ -99,18 +102,18 @@ breathe_default_project = "scenario"
 # From: https://holzhaus.github.io/sphinx-multiversion
 smv_prefer_remote_refs = False
 smv_remote_whitelist = r'^(origin|upstream)$'
-smv_tag_whitelist = None
+smv_tag_whitelist = r'^dummy'
 smv_branch_whitelist = r'^(master|devel|docs/.*)$'
 smv_released_pattern = r'^tags/.*$'
 smv_outputdir_format = '{ref.name}'
 
 html_sidebars = {
     "**": [
-        "about.html",
-        "navigation.html",
-        "versions.html",
-        "searchbox.html",
-    ],
+        "sbt-sidebar-nav.html",
+        "versioning.html",
+        "search-field.html",
+        "sbt-sidebar-footer.html",
+    ]
 }
 
 # -- Options for extlinks extension ----------------------------------
