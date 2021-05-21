@@ -13,10 +13,23 @@ We publish updated nightly packages after any pull request merged in the ``devel
 PyPI Package
 ************
 
-Install the pre-release `gym-ignition <https://pypi.org/project/gym-ignition/>`_ package from PyPI:
+We provide two different packages for ScenarIO and gym-ignition.
+
+If you are interested in the ScenarIO package,
+install the `scenar-io <https://pypi.org/project/scenar-io/>`_ package from PyPI:
 
 .. code-block:: bash
 
-   pip install --pre gym-ignition
+   pip install --pre scenar-io
+
+Instead, if you are interested in gym-ignition,
+install the `gym-ignition <https://pypi.org/project/gym-ignition/>`_ package from PyPI:
+
+.. code-block:: bash
+
+   pip install --pre scenar-io gym-ignition
+
+Note that in this case, specifying also the ``scenar-io`` dependency is necessary,
+otherwise ``pip`` will pull the stable package from PyPI.
 
 .. include:: system_configuration.rst

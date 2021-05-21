@@ -8,7 +8,7 @@ dependencies, depending on the installation type you select.
 
 The project mostly supports all the major operating systems.
 However, we are currently using and testing only GNU/Linux systems.
-We do not yet provide direct support to other operating systems.
+We do not yet provide official support to other operating systems.
 
 The table below recaps the project requirements of the :ref:`Stable <installation_stable>` and :ref:`Nightly <installation_nightly>` channels:
 
@@ -31,12 +31,12 @@ The table below recaps the project requirements of the :ref:`Stable <installatio
     Our policy is to support Ubuntu from the most recent LTS distribution, currently Ubuntu 20.04 Focal.
     We typically switch to a new LTS when the first minor release ``YY.MM.1`` is released.
 
-    The Python and compilers policies follow a similar policy, we try to keep them updated as much as
-    possible following what includes the supported LTS distribution.
+    The Python and compilers policies follow a similar approach, we try to keep them updated as much as
+    possible following what the supported LTS distribution includes.
 
 .. note::
 
-    External contributions to add the support and provide feedback of other platforms are most welcome.
+    External contributions to extend the support and provide feedback about other platforms are most welcome.
 
 .. admonition:: Fun fact
 
