@@ -51,7 +51,6 @@ setup(
     ],
     python_requires=">=3.0",
     ext_modules=[CMakeExtension(name="ScenarioCMakeProject",
-                                source_dir=str(this_directory.parent),
                                 install_prefix="scenario",
                                 cmake_build_type="PyPI",
                                 cmake_depends_on=["idyntree"],

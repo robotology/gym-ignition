@@ -8,7 +8,7 @@
 # 2. The folder containing the bindings Python modules
 #
 set(PYTHON_PACKAGES_DIR "${CMAKE_SOURCE_DIR}/python")
-set(BINDINGS_MODULES_DIR "${PROJECT_BINARY_DIR}/bindings")
+set(BINDINGS_MODULES_DIR "${PROJECT_BINARY_DIR}/scenario/bindings")
 
 # =============
 # APIDOC TARGET
