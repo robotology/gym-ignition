@@ -2,16 +2,17 @@
 
 [![C++ standard](https://img.shields.io/badge/standard-C++17-blue.svg?style=flat&logo=c%2B%2B)](https://isocpp.org)
 [![Size](https://img.shields.io/github/languages/code-size/robotology/gym-ignition.svg)][scenario]
-[![Lines](https://img.shields.io/tokei/lines/github/robotology/gym-ignition)][scenario]
+[![Lines](https://img.shields.io/tokei/lines/github/robotology/gym-ignition)][gym-ignition]
 [![Python CI/CD](https://github.com/robotology/gym-ignition/workflows/CI/CD/badge.svg)](https://github.com/robotology/gym-ignition/actions)
 
-[![Version](https://img.shields.io/pypi/v/scenario.svg)][pypi]
-[![Python versions](https://img.shields.io/pypi/pyversions/scenario.svg)][pypi]
-[![Status](https://img.shields.io/pypi/status/scenario.svg)][pypi]
-[![Format](https://img.shields.io/pypi/format/scenario.svg)][pypi]
-[![License](https://img.shields.io/pypi/l/scenario.svg)][pypi]
+[![Version](https://img.shields.io/pypi/v/scenar-io.svg)][pypi]
+[![Python versions](https://img.shields.io/pypi/pyversions/scenar-io.svg)][pypi]
+[![Status](https://img.shields.io/pypi/status/scenar-io.svg)][pypi]
+[![Format](https://img.shields.io/pypi/format/scenar-io.svg)][pypi]
+[![License](https://img.shields.io/pypi/l/scenar-io.svg)][pypi]
 
-[pypi]: https://pypi.org/project/scenario/
+[pypi]: https://pypi.org/project/scenar-io/
+[gym-ignition]: https://github.com/robotology/gym-ignition
 [scenario]: https://github.com/robotology/gym-ignition/tree/master/scenario
 
 **SCEN**e interf**A**ces for **R**obot **I**nput / **O**utput.
