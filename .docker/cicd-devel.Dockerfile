@@ -31,6 +31,9 @@ RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-${IGNITION_DEFAULT
     find build/ -type f -not -name 'CMakeCache.txt' -delete &&\
     echo "source /workspace/install/setup.bash" >> /etc/bash.bashrc
 
+# Source /etc/bash.bashrc before each command
+SHELL ["/bin/bash", "-i", "-c"]
+
 COPY entrypoint.sh /entrypoint.sh
 COPY setup_virtualenv.sh /setup_virtualenv.sh
 RUN chmod 755 /entrypoint.sh
