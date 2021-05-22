@@ -9,27 +9,26 @@ on:
 
 jobs:
 
-  build-and-test:
-    name: Build and Test
+# =============
+  build-colcon:
+# =============
+    name: 'colcon@${{ matrix.ignition }}'
+    if: |
+      (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+      (github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'master')
     runs-on: ubuntu-latest
-    container: 'ubuntu:focal'
     strategy:
       fail-fast: false
       matrix:
-        type:
-          - User
-          - Developer
         ignition:
-          # - citadel
           # - dome
           - edifice
-
+          # - fortress
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
-
     steps:
 
-      - name: Inspect Environment
+      - name: '🔍️ Inspect Environment'
         run: |
           env | grep ^GITHUB
           echo ""
@@ -37,81 +36,65 @@ jobs:
           echo ""
           env
 
-      - name: Install dependencies
+      - name: '⬇️️ Install dependencies'
         run: |
-          apt-get update
-          apt-get install -y --no-install-recommends \
-            wget \
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            lz4 \
             git \
+            wget \
             gpg-agent \
             ninja-build \
             build-essential \
-            software-properties-common \
-            python3 \
-            python3-pip \
-            python3-wheel
-          pip3 install pytest pytest-xvfb setuptools_scm
-        env:
-          DEBIAN_FRONTEND: noninteractive
+            software-properties-common
 
-      - uses: actions/checkout@master
-      - run: git fetch --prune --unshallow
+      - name: '🐍 Initialize Python'
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
 
-      - name: Compilation cache
+      - name: '🚚 Compilation cache'
         uses: actions/cache@v2
         with:
           path: ${{ env.CCACHE_DIR }}
           # We include the commit sha in the cache key, as new cache entries are
           # only created if there is no existing entry for the key yet.
-          key: ${{ runner.os }}-ccache-${{ matrix.ignition }}-${{ matrix.type }}-${{ github.sha }}
+          key: ${{ runner.os }}-ccache-${{ matrix.ignition }}-${{ github.sha }}
           # Restore any ccache cache entry, if none for the key above exists
-          restore-keys: |
-            ${{ runner.os }}-ccache-${{ matrix.ignition }}-${{ matrix.type }}
-            ${{ runner.os }}-ccache-${{ matrix.ignition }}
-            ${{ runner.os }}-ccache
+          restore-keys: ${{ runner.os }}-ccache-${{ matrix.ignition }}
 
-      - name: Enable ccache
+      - name: '🚚 Enable ccache'
         run: |
-          apt-get update
-          apt-get install -y ccache
+          sudo apt-get update
+          sudo apt-get install -y ccache
           echo "/usr/lib/ccache" >> $GITHUB_PATH
           ccache --set-config=max_size=5.0G
           ccache --set-config=sloppiness=file_macro,locale,time_macros
           ccache -p
           ccache -s
 
-      # ================
-      # Install Ignition
-      # ================
-
-      - name: '[Stable Channel] Install Ignition ${{ matrix.ignition }}'
-        if: |
-          github.event_name == 'release' ||
-          github.ref == 'refs/heads/master' ||
-          (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master')
+      - name: '⚙️ Add osrf ppa'
         run: |
-          sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
+          sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
             /etc/apt/sources.list.d/gazebo-stable.list'
-          wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-          apt-get update
-          apt-get install -y --no-install-recommends ignition-${{ matrix.ignition }}
+          wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+          sudo apt-get update
 
-      - name: '[Nightly Channel] Install Ignition ${{ matrix.ignition }}'
-        if: |
-          (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
-          (github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'master')
+      - name: '⚙️ Prepare colcon workspace'
         run: |
-          sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
-            /etc/apt/sources.list.d/gazebo-stable.list'
-          wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add -
-          apt-get update
-          pip3 install vcstool colcon-common-extensions
-          mkdir -p /workspace/src
+          pip install vcstool colcon-common-extensions
+          sudo mkdir -p /workspace/src /workspace/install
+          sudo chmod -R a+rw /workspace
           cd /workspace/src
           wget -O - ${TAGS_YAML} | vcs import
-          SYSTEM_VERSION=$(lsb_release -cs)
-          #apt-get -y install $(sort -u $(find . -iname 'packages-'$SYSTEM_VERSION'.apt' -o -iname 'packages.apt') | tr '\n' ' ')
-          apt-get -y install $(sort -u $(find . -iname 'packages-'$(lsb_release -cs)'.apt' -o -iname 'packages.apt') | grep -v -E "^libignition|^libsdformat")
+          echo $(sort -u $(find . -iname 'packages-'$(lsb_release -cs)'.apt' -o -iname 'packages.apt') | grep -v -E "^libignition|^libsdformat" | tr '\n' ' ') \
+            > /workspace/install/pkg.txt
+          xargs -a /workspace/install/pkg.txt sudo apt-get install -y --no-install-recommends
+        env:
+          TAGS_YAML: https://raw.githubusercontent.com/ignition-tooling/gazebodistro/master/collection-${{ matrix.ignition }}.yaml
+
+      - name: '🏗️ Build colcon workspace'
+        run: |
           cd /workspace
           colcon graph
           colcon build \
@@ -120,148 +103,422 @@ jobs:
                   -DBUILD_TESTING:BOOL=OFF \
                   -DCMAKE_BUILD_TYPE=Debug \
               --merge-install
-          echo "source /workspace/install/setup.bash" >> /etc/bash.bashrc
-        env:
-          TAGS_YAML: https://raw.githubusercontent.com/ignition-tooling/gazebodistro/master/collection-${{ matrix.ignition }}.yaml
 
-      # ==========================
-      # Install other dependencies
-      # ==========================
+      - name: '📈 Ccache stats'
+        run: ccache --show-stats
 
-      - name: Install iDynTree dependencies
+      - name: '📦️ Compress the workspace'
+        run: tar -I lz4 -cf /tmp/workspace_install.tar.lz4 /workspace/install
+      - name: '⬆️ Upload the workspace'
+        uses: actions/upload-artifact@v2
+        with:
+          path: /tmp/workspace_install.tar.lz4
+          name: workspace-${{ matrix.ignition }}
+          retention-days: 1
+
+# ===============
+  build-and-test:
+# ===============
+    name: 'Build and Test [${{matrix.type}}|${{matrix.ignition}}|${{matrix.python}}]'
+    if: always()
+    needs: [ build-colcon ]
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+        type:
+          - User
+          - Developer
+        ignition:
+          # - dome
+          - edifice
+          # - fortress
+        python:
+          - 3.8
+          - 3.9
+    steps:
+
+      - name: '🔍 Inspect Environment'
         run: |
-          apt-get update
-          apt-get install -y --no-install-recommends \
-            libxml2-dev coinor-libipopt-dev libeigen3-dev libassimp-dev swig
+          env | grep ^GITHUB
+          echo ""
+          cat ${GITHUB_EVENT_PATH}
+          echo ""
+          env
+
+      - name: '⬇️ Install build dependencies'
+        if: contains(matrix.os, 'ubuntu')
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            lz4 \
+            git \
+            wget \
+            cmake \
+            gpg-agent \
+            ninja-build \
+            build-essential \
+            software-properties-common
+
+      - name: '🐍 Initialize Python'
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python }}
+
+      - name: '🔀 Clone repository'
+        uses: actions/checkout@master
+      - name: '🔀 Download all refs'
+        run: git fetch --prune --unshallow
+
+      # ================
+      # Install Ignition
+      # ================
+
+      - name: '⚙️ Add osrf ppa'
+        if: contains(matrix.os, 'ubuntu')
+        run: |
+          sudo sh -c 'echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" >\
+            /etc/apt/sources.list.d/gazebo-stable.list'
+          wget http://packages.osrfoundation.org/gazebo.key -O - | sudo apt-key add -
+          sudo apt-get update
+      - name: '[🔒️|stable] Install Ignition from ppa'
+        if: |
+          contains(matrix.os, 'ubuntu') && (
+            github.event_name == 'release' ||
+            github.ref == 'refs/heads/master' ||
+            (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master')
+          )
+        run: sudo apt-get install -y --no-install-recommends ignition-${{ matrix.ignition }}
+
+      - name: '[🧪|nightly] Download pre-built colcon workspace'
+        uses: actions/download-artifact@v2
+        if: |
+          contains(matrix.os, 'ubuntu') && (
+            (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+            (github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'master')
+          )
+        with:
+          path: /tmp
+          name: workspace-${{ matrix.ignition }}
+      - name: '[🧪|nightly] Setup colcon workspace'
+        if: |
+          contains(matrix.os, 'ubuntu') && (
+            (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+            (github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'master')
+          )
+        run: |
+          sudo tar -I lz4 -xf /tmp/workspace_install.tar.lz4 -C /
+          xargs -a /workspace/install/pkg.txt sudo apt-get install -y --no-install-recommends
+          echo "source /workspace/install/setup.bash" | sudo tee -a /etc/bash.bashrc
 
       # =============
       # Build project
       # =============
 
-      # Note: In order to execute the setup.sh script, the file /etc/bash.bashrc must be sourced.
-      #       To do that, we change the shell to a bash interactive session.
-
-      # Developer installation
-      - name: Install iDynTree
-        if: matrix.type == 'Developer'
+      # This is required because ScenarIO needs to import the iDynTree targets
+      - name: '⬇️ Install iDynTree dependencies'
+        if: contains(matrix.os, 'ubuntu')
         run: |
-          pip3 install git+https://github.com/robotology/idyntree@devel
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            libxml2-dev coinor-libipopt-dev libeigen3-dev libassimp-dev swig
+      - name: '🤖 Install iDynTree'
+        run: |
+          pip install idyntree
           IDYNTREE_PYTHON_PKG=$(python3 -c 'import idyntree, pathlib; print(pathlib.Path(idyntree.__file__).parent)')
           echo "CMAKE_PREFIX_PATH=$IDYNTREE_PYTHON_PKG" >> $GITHUB_ENV
-      - name: '[Developer] Build and Install C++'
+
+      # Note: In order to execute the setup.sh script, the file /etc/bash.bashrc must be sourced.
+      #       To do that, we change the shell to a bash interactive session with 'bash -i -e'.
+
+      # Developer installation
+      - name: '[👷|developer] Build and Install C++ ScenarIO'
         if: matrix.type == 'Developer'
         shell: bash -i -e {0}
         run: |
           env
-          mkdir build && cd build
-          cmake .. \
+          cmake -S . -B build/ \
             -GNinja \
             -DCMAKE_BUILD_TYPE=Debug \
             -DIGNITION_DISTRIBUTION=$(python3 -c "print('${{ matrix.ignition }}'.capitalize())")
-          cmake --build . --target install
-      - name: '[Developer] Setup Python Package'
+          sudo cmake --build build/ --target install
+      - name: '[👷|developer] Install Python ScenarIO'
         if: matrix.type == 'Developer'
-        run: pip3 install -e .
+        run: pip install -e ./scenario
 
       # User installation
-      - name: '[User] Create wheel'
+      - name: '[👤|user] Create wheel (default ignition)'
         if: matrix.type == 'User' && matrix.ignition == 'edifice'
         shell: bash -i -e {0}
-        run: pip3 wheel -v -w dist/ .
-      # Note: calling "pip wheel" with "--global-option" forces dependencies to be build from their sdist.
-      #       Since it's very slow, we create the wheel from setup.py without isolation.
-      - name: '[User] Create wheel'
+        run: pip wheel --use-feature=in-tree-build -v -w dist/ ./scenario
+      # Note: Calling "pip wheel" with "--global-option" forces all dependencies to be built from their sdist.
+      #       Since it's very slow, we create the wheel from setup.py without isolation (requires system deps).
+      - name: '[👤|user] Create wheel (custom ignition)'
         if: matrix.type == 'User' && matrix.ignition != 'edifice'
         shell: bash -i -e {0}
         run: |
-          pip3 install \
-            cmake_build_extension \
-            git+https://github.com/robotology/idyntree@devel
-          python3 setup.py bdist_wheel \
+          pip install wheel setuptools-scm cmake-build-extension
+          python3 ./scenario/setup.py bdist_wheel \
             build_ext -DIGNITION_DISTRIBUTION=$(python3 -c "print('${{ matrix.ignition }}'.capitalize())")
-      - name: '[User] Install local wheel'
+      - name: '[👤|user] Install local wheel'
         if: matrix.type == 'User'
-        run: |
-          cd dist
-          pip3 install -v *.whl
+        run: pip install -v dist/scenar_io-*.whl
 
-      - name: Inspect installed ScenarIO package
+      - name: '🔍️ Inspect installed ScenarIO package'
+        if: matrix.type == 'User' && contains(matrix.os, 'ubuntu')
         run: |
-          apt-get install -y --no-install-recommends tree
+          sudo apt-get install -y --no-install-recommends tree
           tree $(python3 -c "import scenario, pathlib; print(pathlib.Path(scenario.__file__).parent)")
 
-      - name: Ccache stats
-        run: ccache --show-stats
+      # ====================
+      # Install gym-ignition
+      # ====================
+
+      - name: '🐍 Install gym-ignition'
+        run: pip install wheel && pip install .[test,website]
 
       # ============
       # Test project
       # ============
 
-      - name: '[ScenarI/O] Python Tests'
+      - name: '[🐍|scenario] Python Tests'
         shell: bash -i -e {0}
-        run: |
-          cd tests
-          pytest -m "scenario"
+        working-directory: tests
+        run: pytest -m "scenario"
 
-      - name: '[ScenarI/O] Python Tests with Valgrind'
+      - name: '[🚨|scenario] Python Tests with Valgrind'
         shell: bash -i -e {0}
+        working-directory: tests
         if: failure()
         run: |
-          apt-get install -y --no-install-recommends valgrind
-          pip3 install colour-valgrind
-          cd tests
+          sudo apt-get install -y --no-install-recommends valgrind
+          pip install colour-valgrind
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
 
-      - name: '[gym_ignition] Python Tests'
+      - name: '[🐍|gym-ignition] Python Tests'
         shell: bash -i -e {0}
-        run: |
-          cd tests
-          pytest -m "gym_ignition"
+        working-directory: tests
+        run: pytest -m "gym_ignition"
 
-      - name: '[gym_ignition] Python Tests with Valgrind'
+      - name: '[🚨|gym-ignition] Python Tests with Valgrind'
         shell: bash -i -e {0}
+        working-directory: tests
         if: failure()
         run: |
-          pip3 install colour-valgrind
-          cd tests
+          sudo apt-get install -y --no-install-recommends valgrind
+          pip install colour-valgrind
           valgrind --log-file=/tmp/valgrind.log pytest -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
 
-      # ======
-      # Deploy
-      # ======
+      # ============================
+      # Upload artifacts (only User)
+      # ============================
 
-      - name: Remove other wheels
+      - name: '🗑️ Remove external wheels'
         if: matrix.type == 'User'
-        run: find dist/ -type f -not -name 'gym_ignition-*' -delete
+        run: find dist/ -type f -not -name 'scenar_io-*' -delete -print
 
-      - name: Rename wheel
-        if: matrix.type == 'User'
+      # We have to trick PyPI that our wheels are manylinux2014 even if they are not.
+      # Unfortunately we cannot create self-contained wheels (neither the PEP600 perennial)
+      # due to the Ignition architecture.
+      - name: '📝 Rename scenario wheel'
+        if: matrix.type == 'User' && contains(matrix.os, 'ubuntu')
         run: |
           ls dist/
-          find dist/ -type f -name "*.whl" -exec rename.ul linux manylinux1 {} +
+          find dist/ -type f -name "*.whl" -exec rename.ul linux manylinux2014 {} +
           ls dist/
 
-      # When this workflow will test other OSs, the sdist has to be created and pushed only once
-      - name: Create sdist
+      - name: '🔍 Inspect dist folder'
         if: matrix.type == 'User'
-        # if: matrix.type == 'User' && startsWith(matrix.os, 'ubuntu')
-        run: |
-          pip3 install cmake_build_extension setuptools_scm
-          python3 setup.py sdist
+        run: ls -lah dist/
 
-      - uses: actions/upload-artifact@v2
-        if: matrix.type == 'User'
+      - name: '⬆️ Upload artifacts'
+        uses: actions/upload-artifact@v2
+        if: matrix.type == 'User' && matrix.ignition == 'edifice'
         with:
-          name: packages
           path: dist/*
+          name: dist
+
+      # =======
+      # Website
+      # =======
+
+      - name: '⬇️ Install website dependencies'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y doxygen texlive-font-utils
+
+      - name: '🔍 Inspect metadata'
+        run: sphinx-multiversion --dump-metadata docs/sphinx/ build/
+
+      # This is necessary because otherwise the check for uncommitted apidoc
+      # only detects additions, not removals.
+      - name: '🗑️ Remove apidoc folder'
+        run: rm -r docs/sphinx/apidoc
+
+      - name: '🏗️ Build sphinx website'
+        shell: bash -i -e {0}
+        run: |
+          [[ -d build ]] && sudo chown -R $(id -u):$(id -g) build/
+          cmake -S . -B build/ -DBUILD_DOCS:BOOL=ON
+          cmake --build build/ --target sphinx
+
+      - name: '🔍 Check new uncommitted apidoc'
+        run: test $(git status --porcelain | wc -l) -eq 0
+
+      - name: '🔍 git status'
+        if: ${{ failure() }}
+        run: |
+          git status
+          git diff
+
+      - name: '⬆️ Upload website folder'
+        uses: actions/upload-artifact@v2
+        if: matrix.type == 'User' && matrix.ignition == 'edifice' && contains(matrix.os, 'ubuntu')
+        with:
+          path: build/html
+          name: website
+          retention-days: 1
+
+# ===================
+  website-deployment:
+# ===================
+    name: 'Website Deployment'
+    needs: [ build-and-test ]
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: '⬇️ Download website folder'
+        uses: actions/download-artifact@v2
+        with:
+          path: build/html
+          name: website
+
+      - name: '🔍 Inspect html folder'
+        run: ls -lah build/html
+
+      - name: '🚀 Deploy'
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        if: |
+          github.event_name == 'push' &&
+          github.repository == 'robotology/gym-ignition' &&
+          (github.ref == 'refs/heads/master' || github.ref == 'refs/heads/devel')
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: build/html
+          CLEAN: true
+          CLEAN_EXCLUDE: '[".gitignore", ".nojekyll"]'
+
+# =================
+  python-packaging:
+# =================
+    name: 'Python packaging'
+    needs: [ build-and-test ]
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: '🔍️ Inspect Environment'
+        run: |
+          env | grep ^GITHUB
+          echo ""
+          cat ${GITHUB_EVENT_PATH}
+          echo ""
+          env
+
+      # Any Python3 version is ok in this job
+      - name: '🐍 Initialize Python'
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: '🔀 Clone repository'
+        uses: actions/checkout@master
+      - name: '🔀 Download all refs'
+        run: git fetch --prune --unshallow
+
+      # ===============
+      # Download wheels
+      # ===============
+
+      - name: '⬇️ Download scenario wheels'
+        uses: actions/download-artifact@v2
+        with:
+          path: dist
+          name: dist
+
+      - name: '🔍 Inspect dist folder'
+        run: ls -lah dist/
+
+      # ===============
+      # Create packages
+      # ===============
+
+      # We use build to create sdist. Also pipx would work.
+      # https://github.com/pypa/build
+      # Compared to calling setup.py, the advantage of these tools is that
+      # they automatically handle the build dependencies.
+      - name: '🐍️️ Install dependencies'
+        run: pip install build
+
+      - name: '[📦|scenario]️ Create sdist'
+        run: python -m build --sdist scenario/ -o dist/
+
+      - name: '[📦|gym-ignition]️ Create sdist'
+        run: python -m build --sdist .
+
+      - name: '[📦|gym-ignition]️ Create wheel'
+        run: python -m build --wheel .
+
+      # ================
+      # Upload artifacts
+      # ================
+
+      - name: '🗑️ Remove external packages'
+        run: find dist/ -type f -not \( -name '*scenar-io-*' -o -name '*scenar_io-*' -o -name 'gym-ignition-*' -o -name '*gym_ignition-*' \) -delete -print
+
+      - name: '🔍 Check packages'
+        run: pipx run twine check dist/*
+
+      - name: '🔍 Inspect dist folder'
+        run: ls -lah dist/
+
+      - name: '⬆️ Upload artifacts'
+        uses: actions/upload-artifact@v2
+        with:
+          path: dist/*
+          name: dist
+
+# ============
+  upload_pypi:
+# ============
+    name: Publish to PyPI
+    needs:
+      - build-and-test
+      - python-packaging
+    runs-on: ubuntu-20.04
+    # Devel branch produces pre-releases.
+    # Tagged versions produce stable releases.
+
+    steps:
+
+      - name: '⬇️ Download Python packages'
+        uses: actions/download-artifact@v2
+        with:
+          path: dist
+          name: dist
+
+      - name: '🔍 Inspect dist folder'
+        run: ls -lah dist/
 
       # Validate the last tag accordingly to PEP440
       # From https://stackoverflow.com/a/37972030/12150968
-      - name: Check PEP440 compliance
+      - name: '📌 Check PEP440 compliance'
         if: github.event_name == 'release'
         run: |
-          apt-get update
-          apt-get install -y source-highlight
+          sudo apt-get update
+          sudo apt-get install -y source-highlight
           last_tag_with_v="$(git describe --abbrev=0 --tags)"
           last_tag=${last_tag_with_v#v}
           rel_regexp='^(\d+!)?(\d+)(\.\d+)+([\.\-\_])?((a(lpha)?|b(eta)?|c|r(c|ev)?|pre(view)?)\d*)?(\.?(post|dev)\d*)?$'
@@ -272,12 +529,11 @@ jobs:
           match=$(check-regexp ${rel_regexp} ${last_tag} | grep matches | cut -d ' ' -f 5)
           test $match -eq 1 && true
 
-      # The package is deployed only if there's an upstream release / prerelease, or it is upstream's devel.
-      - name: Publish package to PyPI
+      - name: '⬆️ Publish packages to PyPI'
         if: |
-          github.repository == 'robotology/gym-ignition' && matrix.type == 'User' &&
-          ((github.event_name == 'release' && github.event.action == 'published' && matrix.ignition == 'edifice') ||
-           (github.event_name == 'push' && matrix.ignition == 'edifice' && github.ref == 'refs/heads/devel'))
+          github.repository == 'robotology/gym-ignition' &&
+          ((github.event_name == 'release' && github.event.action == 'published') ||
+           (github.event_name == 'push' && github.ref == 'refs/heads/devel'))
         uses: pypa/gh-action-pypi-publish@master
         with:
           user: __token__

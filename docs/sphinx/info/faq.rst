@@ -1,6 +1,26 @@
 FAQ
 ===
 
+.. _faq_citation:
+
+How to give credit?
+-------------------
+
+If you use **ScenarIO** or **gym-ignition** for your research,
+please cite the following reference:
+
+.. code-block:: bibtex
+   :caption: BibTeX entry
+
+   @INPROCEEDINGS{ferigo2020gymignition,
+     title={Gym-Ignition: Reproducible Robotic Simulations for Reinforcement Learning},
+     author={D. {Ferigo} and S. {Traversaro} and G. {Metta} and D. {Pucci}},
+     booktitle={2020 IEEE/SICE International Symposium on System Integration (SII)},
+     year={2020},
+     pages={885-890},
+     doi={10.1109/SII46433.2020.9025951}
+   }
+
 Interaction with Tensorflow
 ---------------------------
 

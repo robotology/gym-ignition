@@ -2,36 +2,10 @@
 <h1 align="center">gym-ignition</h1>
 </p>
 
-<p align="center">
-<b><a href="https://github.com/robotology/gym-ignition#description">Description</a></b>
-•
-<b><a href="https://github.com/robotology/gym-ignition#setup">Setup</a></b>
-•
-<b><a href="https://github.com/robotology/gym-ignition#citation">Citation</a></b>
-•
-<b><a href="https://robotology.github.io/gym-ignition/master/index.html">Website</a></b>
-</p>
-
 <div align="center">
-<p><br/></p>
 <table>
     <tbody>
          <tr>
-            <td align="left">General</td>
-            <td align="center">
-                <a href="https://isocpp.org">
-                <img src="https://img.shields.io/badge/standard-C++17-blue.svg?style=flat&logo=c%2B%2B" alt="C++ Standard" />
-                </a>
-                <a href="https://github.com/robotology/gym-ignition">
-                <img src="https://img.shields.io/github/languages/code-size/robotology/gym-ignition.svg" alt="Size" />
-                </a>
-                <a href="https://github.com/robotology/gym-ignition/blob/master/LICENSE">
-                <img src="https://img.shields.io/badge/license-LGPL-19c2d8.svg" alt="Size" />
-                </a>
-            </td>
-        </tr> 
-         <tr>
-            <td align="left">CI/CD</td>
             <td align="center">
                 <a href="https://github.com/robotology/gym-ignition/actions">
                 <img src="https://github.com/robotology/gym-ignition/workflows/CI/CD/badge.svg" alt="CICD" />
@@ -45,7 +19,6 @@
             </td>
         </tr>   
         <tr>
-            <td align="left"><code>gym-ignition</code></td>
             <td align="center">
                 <a href="https://pypi.org/project/gym-ignition/">
                 <img src="https://img.shields.io/pypi/v/gym-ignition.svg" />
@@ -66,62 +39,61 @@
         </tr>
     </tbody>
 </table>
-<p><br/></p>
 </div>
+
+||||
+|:---:|:---:|:---:|
+| ![][pendulum] | ![][panda] | ![][icub] |
+
+[icub]: https://user-images.githubusercontent.com/469199/99262746-9e021a80-281e-11eb-9df1-d70134b0801a.png
+[panda]: https://user-images.githubusercontent.com/469199/99263111-0cdf7380-281f-11eb-9cfe-338b2aae0503.png
+[pendulum]: https://user-images.githubusercontent.com/469199/99262383-321fb200-281e-11eb-89cc-cc31f590daa3.png
 
 ## Description
 
 **gym-ignition** is a framework to create **reproducible robotics environments** for reinforcement learning research.
 
-The project consists of the following components:
+It is based on the [ScenarIO](scenario/) project which provides the low-level APIs to interface with the Ignition Gazebo simulator.
+By default, RL environments share a lot of boilerplate code, e.g. for initializing the simulator or structuring the classes
+to expose the `gym.Env` interface.
+Gym-ignition provides the [`Task`](python/gym_ignition/base/task.py) and [`Runtime`](python/gym_ignition/base/runtime.py)
+abstractions that help you focusing on the development of the decision-making logic rather than engineering.
+It includes [randomizers](python/gym_ignition/randomizers) to simplify the implementation of domain randomization
+of models, physics, and tasks.
+Gym-ignition also provides powerful dynamics algorithms compatible with both fixed-base and floating-based robots by
+exploiting [robotology/idyntree](https://github.com/robotology/idyntree/) and exposing
+[high-level functionalities](python/gym_ignition/rbd/idyntree).
 
-- [**`ScenarI/O`**](cpp/scenario/core): 
-  *Scene Interfaces for Robot Input / Output* is a C++ abstraction layer to interact with simulated and real robots.
-- [**`Gazebo ScenarI/O`**](cpp/scenario/gazebo): 
-  Implementation of the ScenarI/O interfaces to interact with the [Ignition Gazebo](https://ignitionrobotics.org) simulator. 
-  We provide Python bindings with functionalities comparable to popular alternatives like 
-  [pybullet](https://github.com/bulletphysics/bullet3) and [mujoco-py](https://github.com/openai/mujoco-py).
-- [**`gym_ignition`**](python/gym_ignition): 
-  A Python package with the tooling to create OpenAI Gym environments for robot learning. 
-  It provides abstractions like `Task` and `Runtime` to help developing environments that can be executed transparently 
-  on all the ScenarI/O implementations (different simulators, real robots, ...).
-  The package also contains resources for inverse kinematics and multi-body dynamics supporting floating-based robots
-  based on the [iDynTree](https://github.com/robotology/idyntree) library.
-- [**`gym_ignition_environments`**](python/gym_ignition_environments):
-  Demo environments created with `gym_ignition` and [`gym-ignition-models`](https://github.com/dic-iit/gym-ignition-models) 
-  that show the recommended structure.
-  
-This project provides the complete implementation of ScenarI/O for the Ignition Gazebo simulator.
-We expose all the physics engines supported by Ignition Gazebo.
-Currently, the default and only physics engine is [DART](https://github.com/dartsim/dart).
+Gym-ignition does not provide out-of-the-box environments ready to be used.
+Rather, its aim is simplifying and streamlining their development.
+Nonetheless, for illustrative purpose, it includes canonical examples in the
+[`gym_ignition_environments`](python/gym_ignition_environments) package.
 
-We are currently working on backends based on robotic middleware to transparently execute the environments developed 
-with `gym_ignition` on real robots.
+Visit the [website][website] for more information about the project.
 
-If you're interested to know the reasons why we started developing gym-ignition and why we selected Ignition Gazebo for
-our simulations, visit the _Motivations_ section of the [website](https://robotology.github.io/gym-ignition). 
+[website]: https://robotology.github.io/gym-ignition
 
-## Setup
+## Installation
 
-1. Install the Ignition suite following the [official instructions](https://ignitionrobotics.org/docs/edifice).
-1. Execute `pip install gym-ignition`, preferably in a virtual environment.
+1. First, follow the installation instructions of [ScenarIO](scenario/).
+2. `pip install gym-ignition`, preferably in a [virtual environment](https://docs.python.org/3.8/tutorial/venv.html).
 
-**Note**: `gym-ignition` currently only supports the latest version of the ignition suite. For more information on supported versions please refer to the [Support Policy](https://robotology.github.io/gym-ignition/master/installation/support_policy.html).
+## Contributing
 
+You can visit our community forum hosted in [GitHub Discussions](https://github.com/robotology/gym-ignition/discussions).
+Even without coding skills, replying user's questions is a great way of contributing.
+If you use gym-ignition in your application and want to show it off, visit the
+[Show and tell](https://github.com/robotology/gym-ignition/discussions/categories/show-and-tell) section!
+You can advertise there your environments created with gym-ignition.
 
-Then, for some simple examples, visit the _Getting Started_ section of the [website](https://robotology.github.io/gym-ignition).
+Pull requests are welcome.
 
-You can decide to install only the C++ resources if you are not interested in using Python.
-We also offer a constantly updated pre-release channel with the last development updates.
-You can find all the details about the different types of installations we support in the [website](https://robotology.github.io/gym-ignition).
-
-||||
-|:---:|:---:|:---:|
-| ![](https://user-images.githubusercontent.com/469199/99262383-321fb200-281e-11eb-89cc-cc31f590daa3.png) | ![](https://user-images.githubusercontent.com/469199/99263111-0cdf7380-281f-11eb-9cfe-338b2aae0503.png) | ![](https://user-images.githubusercontent.com/469199/99262746-9e021a80-281e-11eb-9df1-d70134b0801a.png) |
+For major changes, please open a [discussion](https://github.com/robotology/gym-ignition/discussions)
+first to propose what you would like to change.
 
 ## Citation
 
-```
+```bibtex
 @INPROCEEDINGS{ferigo2020gymignition,
     title={Gym-Ignition: Reproducible Robotic Simulations for Reinforcement Learning},
     author={D. {Ferigo} and S. {Traversaro} and G. {Metta} and D. {Pucci}},
@@ -132,6 +104,10 @@ You can find all the details about the different types of installations we suppo
 } 
 ```
 
+## License
+
+[LGPL v2.1](https://choosealicense.com/licenses/lgpl-2.1/) or any later version.
+
 ---
 
-**Disclaimer:** Gym-Ignition is an independent project and is not related by any means to OpenAI and Open Robotics.
+**Disclaimer:** Gym-ignition is an independent project and is not related by any means to OpenAI and Open Robotics.
