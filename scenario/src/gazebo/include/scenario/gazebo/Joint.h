@@ -205,6 +205,11 @@ public:
 
     core::Limit positionLimit(const size_t dof = 0) const override;
 
+    core::Limit velocityLimit(const size_t dof = 0) const override;
+
+    bool setVelocityLimit(const double maxVelocity,
+                          const size_t dof = 0) override;
+
     double maxGeneralizedForce(const size_t dof = 0) const override;
 
     bool setMaxGeneralizedForce(const double maxForce,
@@ -243,6 +248,10 @@ public:
     // =================
 
     core::JointLimit jointPositionLimit() const override;
+
+    core::JointLimit jointVelocityLimit() const override;
+
+    bool setJointVelocityLimit(const std::vector<double>& maxVelocity) override;
 
     std::vector<double> jointMaxGeneralizedForce() const override;
 
