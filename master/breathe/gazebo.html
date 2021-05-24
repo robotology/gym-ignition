@@ -4603,6 +4603,41 @@
 </dd></dl>
 
 <dl class="cpp function">
+<dt id="_CPPv4NK8scenario6gazebo5Joint13velocityLimitEK6size_t">
+<span id="_CPPv3NK8scenario6gazebo5Joint13velocityLimitEK6size_t"></span><span id="_CPPv2NK8scenario6gazebo5Joint13velocityLimitEK6size_t"></span><span id="scenario::gazebo::Joint::velocityLimit__sCC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1ae9778741865a4b6fa16d7d445592042c"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">core</span><span class="pre">::</span><span class="pre">Limit</span> <code class="sig-name descname"><span class="pre">velocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <em class="property"><span class="pre">override</span></em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Joint13velocityLimitEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the velocity limit of a joint DOF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dof</strong> – The index of the DOF. </p>
+</dd>
+<dt class="field-even">Throws</dt>
+<dd class="field-even"><p><strong>std::runtime_error</strong> – if the DOF is not valid. </p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The velocity limit of the joint DOF. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N8scenario6gazebo5Joint16setVelocityLimitEKdK6size_t">
+<span id="_CPPv3N8scenario6gazebo5Joint16setVelocityLimitEKdK6size_t"></span><span id="_CPPv2N8scenario6gazebo5Joint16setVelocityLimitEKdK6size_t"></span><span id="scenario::gazebo::Joint::setVelocityLimit__doubleC.sC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1a856ec0ca6e4b337eb28ce0bc520c9c21"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">bool</span> <code class="sig-name descname"><span class="pre">setVelocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">double</span> <em><span class="pre">maxVelocity</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <em class="property"><span class="pre">override</span></em><a class="headerlink" href="#_CPPv4N8scenario6gazebo5Joint16setVelocityLimitEKdK6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the maximum velocity of a joint DOF.</p>
+<p>This limit can be used to clip the velocity applied by joint controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maxVelocity</strong> – The maximum velocity. </p></li>
+<li><p><strong>dof</strong> – The index of the DOF. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
 <dt id="_CPPv4NK8scenario6gazebo5Joint19maxGeneralizedForceEK6size_t">
 <span id="_CPPv3NK8scenario6gazebo5Joint19maxGeneralizedForceEK6size_t"></span><span id="_CPPv2NK8scenario6gazebo5Joint19maxGeneralizedForceEK6size_t"></span><span id="scenario::gazebo::Joint::maxGeneralizedForce__sCC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1af6d256bb617f36edbc4460692e39983b"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">double</span> <code class="sig-name descname"><span class="pre">maxGeneralizedForce</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <em class="property"><span class="pre">override</span></em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Joint19maxGeneralizedForceEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Get the maximum generalized force that could be applied to a joint DOF.</p>
@@ -4855,6 +4890,32 @@
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The position limits of the joint. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario6gazebo5Joint18jointVelocityLimitEv">
+<span id="_CPPv3NK8scenario6gazebo5Joint18jointVelocityLimitEv"></span><span id="_CPPv2NK8scenario6gazebo5Joint18jointVelocityLimitEv"></span><span id="scenario::gazebo::Joint::jointVelocityLimitC"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1aec1a6b534a711241a6f3ca2352ea2d5c"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">core</span><span class="pre">::</span><span class="pre">JointLimit</span> <code class="sig-name descname"><span class="pre">jointVelocityLimit</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <em class="property"><span class="pre">override</span></em><a class="headerlink" href="#_CPPv4NK8scenario6gazebo5Joint18jointVelocityLimitEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the velocity limits of the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The velocity limits of the joint. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N8scenario6gazebo5Joint21setJointVelocityLimitERKNSt6vectorIdEE">
+<span id="_CPPv3N8scenario6gazebo5Joint21setJointVelocityLimitERKNSt6vectorIdEE"></span><span id="_CPPv2N8scenario6gazebo5Joint21setJointVelocityLimitERKNSt6vectorIdEE"></span><span id="scenario::gazebo::Joint::setJointVelocityLimit__std::vector:double:CR"></span><span class="target" id="classscenario_1_1gazebo_1_1Joint_1ac951c69c5d582c6f2daf8a18515419b8"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">bool</span> <code class="sig-name descname"><span class="pre">setJointVelocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">double</span><span class="pre">&gt;</span> <span class="pre">&amp;</span><em><span class="pre">maxVelocity</span></em><span class="sig-paren">)</span> <em class="property"><span class="pre">override</span></em><a class="headerlink" href="#_CPPv4N8scenario6gazebo5Joint21setJointVelocityLimitERKNSt6vectorIdEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the maximum velocity of the joint.</p>
+<p>This limit can be used to clip the velocity applied by joint controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>maxVelocity</strong> – A vector with the maximum velocity of the joint DOFs. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success, false otherwise. </p>
 </dd>
 </dl>
 </dd></dl>
@@ -5431,6 +5492,41 @@
 
 <dl class="cpp function">
 <dt>
+<span class="target" id="classscenario_1_1gazebo_1_1Joint_1ae9778741865a4b6fa16d7d445592042c"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">core</span><span class="pre">::</span><span class="pre">Limit</span> <code class="sig-name descname"><span class="pre">velocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <em class="property"><span class="pre">override</span></em><br /></dt>
+<dd><p>Get the velocity limit of a joint DOF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dof</strong> – The index of the DOF. </p>
+</dd>
+<dt class="field-even">Throws</dt>
+<dd class="field-even"><p><strong>std::runtime_error</strong> – if the DOF is not valid. </p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The velocity limit of the joint DOF. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt>
+<span class="target" id="classscenario_1_1gazebo_1_1Joint_1a856ec0ca6e4b337eb28ce0bc520c9c21"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">bool</span> <code class="sig-name descname"><span class="pre">setVelocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">double</span> <em><span class="pre">maxVelocity</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <em class="property"><span class="pre">override</span></em><br /></dt>
+<dd><p>Set the maximum velocity of a joint DOF.</p>
+<p>This limit can be used to clip the velocity applied by joint controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maxVelocity</strong> – The maximum velocity. </p></li>
+<li><p><strong>dof</strong> – The index of the DOF. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt>
 <span class="target" id="classscenario_1_1gazebo_1_1Joint_1af6d256bb617f36edbc4460692e39983b"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">double</span> <code class="sig-name descname"><span class="pre">maxGeneralizedForce</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <em class="property"><span class="pre">override</span></em><br /></dt>
 <dd><p>Get the maximum generalized force that could be applied to a joint DOF.</p>
 <dl class="field-list simple">
@@ -5688,6 +5784,32 @@
 
 <dl class="cpp function">
 <dt>
+<span class="target" id="classscenario_1_1gazebo_1_1Joint_1aec1a6b534a711241a6f3ca2352ea2d5c"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">core</span><span class="pre">::</span><span class="pre">JointLimit</span> <code class="sig-name descname"><span class="pre">jointVelocityLimit</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <em class="property"><span class="pre">override</span></em><br /></dt>
+<dd><p>Get the velocity limits of the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The velocity limits of the joint. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt>
+<span class="target" id="classscenario_1_1gazebo_1_1Joint_1ac951c69c5d582c6f2daf8a18515419b8"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">bool</span> <code class="sig-name descname"><span class="pre">setJointVelocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">double</span><span class="pre">&gt;</span> <span class="pre">&amp;</span><em><span class="pre">maxVelocity</span></em><span class="sig-paren">)</span> <em class="property"><span class="pre">override</span></em><br /></dt>
+<dd><p>Set the maximum velocity of the joint.</p>
+<p>This limit can be used to clip the velocity applied by joint controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>maxVelocity</strong> – A vector with the maximum velocity of the joint DOFs. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt>
 <span class="target" id="classscenario_1_1gazebo_1_1Joint_1a7a7ba4988ee3bebe4ef8f542a9218b1f"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">double</span><span class="pre">&gt;</span> <code class="sig-name descname"><span class="pre">jointMaxGeneralizedForce</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <em class="property"><span class="pre">override</span></em><br /></dt>
 <dd><p>Get the maximum generalized force that could be applied to the joint.</p>
 <dl class="field-list simple">
@@ -5865,18 +5987,18 @@
 
 <dl class="cpp enum">
 <dt id="_CPPv4N8scenario6gazebo13PhysicsEngineE">
-<span id="_CPPv3N8scenario6gazebo13PhysicsEngineE"></span><span id="_CPPv2N8scenario6gazebo13PhysicsEngineE"></span><span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2gazebo_2World_8h_1aea2e0116ef55202fb495d6eb8fa7d629"></span><em class="property"><span class="pre">enum</span> </em><code class="sig-prename descclassname"><span class="pre">scenario</span><span class="pre">::</span><span class="pre">gazebo</span><code class="sig-prename descclassname"><span class="pre">::</span></code></code><code class="sig-name descname"><span class="pre">PhysicsEngine</span></code><a class="headerlink" href="#_CPPv4N8scenario6gazebo13PhysicsEngineE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N8scenario6gazebo13PhysicsEngineE"></span><span id="_CPPv2N8scenario6gazebo13PhysicsEngineE"></span><span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2gazebo_2World_8h_1aea2e0116ef55202fb495d6eb8fa7d629"></span><em class="property"><span class="pre">enum</span> </em><code class="sig-prename descclassname"><span class="pre">scenario</span><span class="pre">::</span><span class="pre">gazebo</span><code class="sig-prename descclassname"><span class="pre">::</span></code></code><code class="sig-name descname"><span class="pre">PhysicsEngine</span></code><a class="headerlink" href="#_CPPv4N8scenario6gazebo13PhysicsEngineE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Supported physics engines. </p>
 <p><em>Values:</em></p>
 <dl class="cpp enumerator">
 <dt id="_CPPv4N8scenario6gazebo13PhysicsEngine4DartE">
-<span id="_CPPv3N8scenario6gazebo13PhysicsEngine4DartE"></span><span id="_CPPv2N8scenario6gazebo13PhysicsEngine4DartE"></span><span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2gazebo_2World_8h_1aea2e0116ef55202fb495d6eb8fa7d629a35900d987289a83af101d18a9f7c3501"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Dart</span></code><a class="headerlink" href="#_CPPv4N8scenario6gazebo13PhysicsEngine4DartE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N8scenario6gazebo13PhysicsEngine4DartE"></span><span id="_CPPv2N8scenario6gazebo13PhysicsEngine4DartE"></span><span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2gazebo_2World_8h_1aea2e0116ef55202fb495d6eb8fa7d629a35900d987289a83af101d18a9f7c3501"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Dart</span></code><a class="headerlink" href="#_CPPv4N8scenario6gazebo13PhysicsEngine4DartE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>The physics engine included in the Dynamic Animation and Robotics Toolkit. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt>
-<span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2gazebo_2World_8h_1aea2e0116ef55202fb495d6eb8fa7d629a35900d987289a83af101d18a9f7c3501"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Dart</span></code><br /></dt>
+<span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2gazebo_2World_8h_1aea2e0116ef55202fb495d6eb8fa7d629a35900d987289a83af101d18a9f7c3501"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Dart</span></code><br /></dt>
 <dd><p>The physics engine included in the Dynamic Animation and Robotics Toolkit. </p>
 </dd></dl>
 

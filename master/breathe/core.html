@@ -2864,6 +2864,41 @@
 </dd></dl>
 
 <dl class="cpp function">
+<dt id="_CPPv4NK8scenario4core5Joint13velocityLimitEK6size_t">
+<span id="_CPPv3NK8scenario4core5Joint13velocityLimitEK6size_t"></span><span id="_CPPv2NK8scenario4core5Joint13velocityLimitEK6size_t"></span><span id="scenario::core::Joint::velocityLimit__sCC"></span><span class="target" id="classscenario_1_1core_1_1Joint_1a172674166bae72f03702f9112edd47f1"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">Limit</span> <code class="sig-name descname"><span class="pre">velocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <span class="pre">=</span> <span class="pre">0</span><a class="headerlink" href="#_CPPv4NK8scenario4core5Joint13velocityLimitEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the velocity limit of a joint DOF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dof</strong> – The index of the DOF. </p>
+</dd>
+<dt class="field-even">Throws</dt>
+<dd class="field-even"><p><strong>std::runtime_error</strong> – if the DOF is not valid. </p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The velocity limit of the joint DOF. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N8scenario4core5Joint16setVelocityLimitEKdK6size_t">
+<span id="_CPPv3N8scenario4core5Joint16setVelocityLimitEKdK6size_t"></span><span id="_CPPv2N8scenario4core5Joint16setVelocityLimitEKdK6size_t"></span><span id="scenario::core::Joint::setVelocityLimit__doubleC.sC"></span><span class="target" id="classscenario_1_1core_1_1Joint_1ac11f42c1988ef28a59850e033c088bb4"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">bool</span> <code class="sig-name descname"><span class="pre">setVelocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">double</span> <em><span class="pre">maxVelocity</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <span class="pre">=</span> <span class="pre">0</span><a class="headerlink" href="#_CPPv4N8scenario4core5Joint16setVelocityLimitEKdK6size_t" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the maximum velocity of a joint DOF.</p>
+<p>This limit can be used to clip the velocity applied by joint controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maxVelocity</strong> – The maximum velocity. </p></li>
+<li><p><strong>dof</strong> – The index of the DOF. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
 <dt id="_CPPv4NK8scenario4core5Joint19maxGeneralizedForceEK6size_t">
 <span id="_CPPv3NK8scenario4core5Joint19maxGeneralizedForceEK6size_t"></span><span id="_CPPv2NK8scenario4core5Joint19maxGeneralizedForceEK6size_t"></span><span id="scenario::core::Joint::maxGeneralizedForce__sCC"></span><span class="target" id="classscenario_1_1core_1_1Joint_1ac405235a2524e55af2d8ec7a0b86aaef"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">double</span> <code class="sig-name descname"><span class="pre">maxGeneralizedForce</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <span class="pre">=</span> <span class="pre">0</span><a class="headerlink" href="#_CPPv4NK8scenario4core5Joint19maxGeneralizedForceEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Get the maximum generalized force that could be applied to a joint DOF.</p>
@@ -3116,6 +3151,32 @@
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
 <dd class="field-odd"><p>The position limits of the joint. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4NK8scenario4core5Joint18jointVelocityLimitEv">
+<span id="_CPPv3NK8scenario4core5Joint18jointVelocityLimitEv"></span><span id="_CPPv2NK8scenario4core5Joint18jointVelocityLimitEv"></span><span id="scenario::core::Joint::jointVelocityLimitC"></span><span class="target" id="classscenario_1_1core_1_1Joint_1a6e07d024082e56f8e577825c7752f985"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">JointLimit</span> <code class="sig-name descname"><span class="pre">jointVelocityLimit</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <span class="pre">=</span> <span class="pre">0</span><a class="headerlink" href="#_CPPv4NK8scenario4core5Joint18jointVelocityLimitEv" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Get the velocity limits of the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The velocity limits of the joint. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt id="_CPPv4N8scenario4core5Joint21setJointVelocityLimitERKNSt6vectorIdEE">
+<span id="_CPPv3N8scenario4core5Joint21setJointVelocityLimitERKNSt6vectorIdEE"></span><span id="_CPPv2N8scenario4core5Joint21setJointVelocityLimitERKNSt6vectorIdEE"></span><span id="scenario::core::Joint::setJointVelocityLimit__std::vector:double:CR"></span><span class="target" id="classscenario_1_1core_1_1Joint_1a50e4dd68601c7d153603a7f27297f4ea"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">bool</span> <code class="sig-name descname"><span class="pre">setJointVelocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">double</span><span class="pre">&gt;</span> <span class="pre">&amp;</span><em><span class="pre">maxVelocity</span></em><span class="sig-paren">)</span> <span class="pre">=</span> <span class="pre">0</span><a class="headerlink" href="#_CPPv4N8scenario4core5Joint21setJointVelocityLimitERKNSt6vectorIdEE" title="Permalink to this definition">¶</a><br /></dt>
+<dd><p>Set the maximum velocity of the joint.</p>
+<p>This limit can be used to clip the velocity applied by joint controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>maxVelocity</strong> – A vector with the maximum velocity of the joint DOFs. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success, false otherwise. </p>
 </dd>
 </dl>
 </dd></dl>
@@ -3489,6 +3550,41 @@
 
 <dl class="cpp function">
 <dt>
+<span class="target" id="classscenario_1_1core_1_1Joint_1a172674166bae72f03702f9112edd47f1"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">Limit</span> <code class="sig-name descname"><span class="pre">velocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <span class="pre">=</span> <span class="pre">0</span><br /></dt>
+<dd><p>Get the velocity limit of a joint DOF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dof</strong> – The index of the DOF. </p>
+</dd>
+<dt class="field-even">Throws</dt>
+<dd class="field-even"><p><strong>std::runtime_error</strong> – if the DOF is not valid. </p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The velocity limit of the joint DOF. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt>
+<span class="target" id="classscenario_1_1core_1_1Joint_1ac11f42c1988ef28a59850e033c088bb4"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">bool</span> <code class="sig-name descname"><span class="pre">setVelocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">double</span> <em><span class="pre">maxVelocity</span></em>, <em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <span class="pre">=</span> <span class="pre">0</span><br /></dt>
+<dd><p>Set the maximum velocity of a joint DOF.</p>
+<p>This limit can be used to clip the velocity applied by joint controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maxVelocity</strong> – The maximum velocity. </p></li>
+<li><p><strong>dof</strong> – The index of the DOF. </p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt>
 <span class="target" id="classscenario_1_1core_1_1Joint_1ac405235a2524e55af2d8ec7a0b86aaef"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">double</span> <code class="sig-name descname"><span class="pre">maxGeneralizedForce</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">size_t</span> <em><span class="pre">dof</span></em> <span class="pre">=</span> <span class="pre">0</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <span class="pre">=</span> <span class="pre">0</span><br /></dt>
 <dd><p>Get the maximum generalized force that could be applied to a joint DOF.</p>
 <dl class="field-list simple">
@@ -3746,6 +3842,32 @@
 
 <dl class="cpp function">
 <dt>
+<span class="target" id="classscenario_1_1core_1_1Joint_1a6e07d024082e56f8e577825c7752f985"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">JointLimit</span> <code class="sig-name descname"><span class="pre">jointVelocityLimit</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <span class="pre">=</span> <span class="pre">0</span><br /></dt>
+<dd><p>Get the velocity limits of the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>The velocity limits of the joint. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt>
+<span class="target" id="classscenario_1_1core_1_1Joint_1a50e4dd68601c7d153603a7f27297f4ea"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">bool</span> <code class="sig-name descname"><span class="pre">setJointVelocityLimit</span></code><span class="sig-paren">(</span><em class="property"><span class="pre">const</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">double</span><span class="pre">&gt;</span> <span class="pre">&amp;</span><em><span class="pre">maxVelocity</span></em><span class="sig-paren">)</span> <span class="pre">=</span> <span class="pre">0</span><br /></dt>
+<dd><p>Set the maximum velocity of the joint.</p>
+<p>This limit can be used to clip the velocity applied by joint controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>maxVelocity</strong> – A vector with the maximum velocity of the joint DOFs. </p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>True for success, false otherwise. </p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="cpp function">
+<dt>
 <span class="target" id="classscenario_1_1core_1_1Joint_1aaec29c1a7aa07d4c7ae80e94bf0a7fde"></span><em class="property"><span class="pre">virtual</span></em> <span class="pre">std</span><span class="pre">::</span><span class="pre">vector</span><span class="pre">&lt;</span><span class="pre">double</span><span class="pre">&gt;</span> <code class="sig-name descname"><span class="pre">jointMaxGeneralizedForce</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span> <em class="property"><span class="pre">const</span></em> <span class="pre">=</span> <span class="pre">0</span><br /></dt>
 <dd><p>Get the maximum generalized force that could be applied to the joint.</p>
 <dl class="field-list simple">
@@ -3923,90 +4045,90 @@
 
 <dl class="cpp enum">
 <dt id="_CPPv4N8scenario4core16JointControlModeE">
-<span id="_CPPv3N8scenario4core16JointControlModeE"></span><span id="_CPPv2N8scenario4core16JointControlModeE"></span><span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591"></span><em class="property"><span class="pre">enum</span> </em><code class="sig-prename descclassname"><span class="pre">scenario</span><span class="pre">::</span><span class="pre">core</span><code class="sig-prename descclassname"><span class="pre">::</span></code></code><code class="sig-name descname"><span class="pre">JointControlMode</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlModeE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N8scenario4core16JointControlModeE"></span><span id="_CPPv2N8scenario4core16JointControlModeE"></span><span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591"></span><em class="property"><span class="pre">enum</span> </em><code class="sig-prename descclassname"><span class="pre">scenario</span><span class="pre">::</span><span class="pre">core</span><code class="sig-prename descclassname"><span class="pre">::</span></code></code><code class="sig-name descname"><span class="pre">JointControlMode</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlModeE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Supported joint control modes. </p>
 <p><em>Values:</em></p>
 <dl class="cpp enumerator">
 <dt id="_CPPv4N8scenario4core16JointControlMode7InvalidE">
-<span id="_CPPv3N8scenario4core16JointControlMode7InvalidE"></span><span id="_CPPv2N8scenario4core16JointControlMode7InvalidE"></span><span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a4bbb8f967da6d1a610596d7257179c2b"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Invalid</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode7InvalidE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N8scenario4core16JointControlMode7InvalidE"></span><span id="_CPPv2N8scenario4core16JointControlMode7InvalidE"></span><span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a4bbb8f967da6d1a610596d7257179c2b"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Invalid</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode7InvalidE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Marks the joint to have an invalid control mode. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt id="_CPPv4N8scenario4core16JointControlMode4IdleE">
-<span id="_CPPv3N8scenario4core16JointControlMode4IdleE"></span><span id="_CPPv2N8scenario4core16JointControlMode4IdleE"></span><span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591ae599161956d626eda4cb0a5ffb85271c"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Idle</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode4IdleE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N8scenario4core16JointControlMode4IdleE"></span><span id="_CPPv2N8scenario4core16JointControlMode4IdleE"></span><span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591ae599161956d626eda4cb0a5ffb85271c"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Idle</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode4IdleE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Marks the joint to be IDLE. An IDLE joint is equivalent to a joint controlled in Force with zero references. The joint shows only passive behaviour. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt id="_CPPv4N8scenario4core16JointControlMode5ForceE">
-<span id="_CPPv3N8scenario4core16JointControlMode5ForceE"></span><span id="_CPPv2N8scenario4core16JointControlMode5ForceE"></span><span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a9eb6b78a99cdb6ffd3d40d18621d9f80"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Force</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode5ForceE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N8scenario4core16JointControlMode5ForceE"></span><span id="_CPPv2N8scenario4core16JointControlMode5ForceE"></span><span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a9eb6b78a99cdb6ffd3d40d18621d9f80"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Force</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode5ForceE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Marks the joint to be controlled in force. A Force joint receives generalized force references that are actuated by a force actuator. Depending on the active backend, the presence of friction and other loss components could be compensated. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt id="_CPPv4N8scenario4core16JointControlMode8VelocityE">
-<span id="_CPPv3N8scenario4core16JointControlMode8VelocityE"></span><span id="_CPPv2N8scenario4core16JointControlMode8VelocityE"></span><span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a88156d46910a2d733443c339a9231d12"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Velocity</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode8VelocityE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N8scenario4core16JointControlMode8VelocityE"></span><span id="_CPPv2N8scenario4core16JointControlMode8VelocityE"></span><span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a88156d46910a2d733443c339a9231d12"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Velocity</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode8VelocityE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Marks the joint to be controlled in velocity. A Velocity joint receives velocity references that are actuated using a PID controller. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt id="_CPPv4N8scenario4core16JointControlMode20VelocityFollowerDartE">
-<span id="_CPPv3N8scenario4core16JointControlMode20VelocityFollowerDartE"></span><span id="_CPPv2N8scenario4core16JointControlMode20VelocityFollowerDartE"></span><span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591ac3aed1a8dd52208fdab3cbbb64c40cfb"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">VelocityFollowerDart</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode20VelocityFollowerDartE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N8scenario4core16JointControlMode20VelocityFollowerDartE"></span><span id="_CPPv2N8scenario4core16JointControlMode20VelocityFollowerDartE"></span><span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591ac3aed1a8dd52208fdab3cbbb64c40cfb"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">VelocityFollowerDart</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode20VelocityFollowerDartE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Marks the joint to follow precisely a velocity trajectory. A VelocityFollowerDart joint receives velocity references that are processed by the physics engine, which computes instantaneously the right force to apply to follow the desired trajectory. It works only with the DART physics engine. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt id="_CPPv4N8scenario4core16JointControlMode8PositionE">
-<span id="_CPPv3N8scenario4core16JointControlMode8PositionE"></span><span id="_CPPv2N8scenario4core16JointControlMode8PositionE"></span><span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a52f5e0bc3859bc5f5e25130b6c7e8881"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Position</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode8PositionE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N8scenario4core16JointControlMode8PositionE"></span><span id="_CPPv2N8scenario4core16JointControlMode8PositionE"></span><span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a52f5e0bc3859bc5f5e25130b6c7e8881"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Position</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode8PositionE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Marks the joint to be controlled in position. A Position joint receives position references that are actuated using a PID controller. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt id="_CPPv4N8scenario4core16JointControlMode20PositionInterpolatedE">
-<span id="_CPPv3N8scenario4core16JointControlMode20PositionInterpolatedE"></span><span id="_CPPv2N8scenario4core16JointControlMode20PositionInterpolatedE"></span><span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a203a8d5a5a4fcbba2633aafb07382534"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">PositionInterpolated</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode20PositionInterpolatedE" title="Permalink to this definition">¶</a><br /></dt>
+<span id="_CPPv3N8scenario4core16JointControlMode20PositionInterpolatedE"></span><span id="_CPPv2N8scenario4core16JointControlMode20PositionInterpolatedE"></span><span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a203a8d5a5a4fcbba2633aafb07382534"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">PositionInterpolated</span></code><a class="headerlink" href="#_CPPv4N8scenario4core16JointControlMode20PositionInterpolatedE" title="Permalink to this definition">¶</a><br /></dt>
 <dd><p>Marks the joint to be controlled in position with trajectory smoothing. A PositionInterpolated joint receives position references that are filtered to get a smooth trajectory. The resulting trajectory is then actuated using a position PID controller. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt>
-<span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a4bbb8f967da6d1a610596d7257179c2b"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Invalid</span></code><br /></dt>
+<span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a4bbb8f967da6d1a610596d7257179c2b"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Invalid</span></code><br /></dt>
 <dd><p>Marks the joint to have an invalid control mode. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt>
-<span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591ae599161956d626eda4cb0a5ffb85271c"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Idle</span></code><br /></dt>
+<span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591ae599161956d626eda4cb0a5ffb85271c"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Idle</span></code><br /></dt>
 <dd><p>Marks the joint to be IDLE. An IDLE joint is equivalent to a joint controlled in Force with zero references. The joint shows only passive behaviour. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt>
-<span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a9eb6b78a99cdb6ffd3d40d18621d9f80"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Force</span></code><br /></dt>
+<span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a9eb6b78a99cdb6ffd3d40d18621d9f80"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Force</span></code><br /></dt>
 <dd><p>Marks the joint to be controlled in force. A Force joint receives generalized force references that are actuated by a force actuator. Depending on the active backend, the presence of friction and other loss components could be compensated. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt>
-<span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a88156d46910a2d733443c339a9231d12"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Velocity</span></code><br /></dt>
+<span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a88156d46910a2d733443c339a9231d12"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Velocity</span></code><br /></dt>
 <dd><p>Marks the joint to be controlled in velocity. A Velocity joint receives velocity references that are actuated using a PID controller. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt>
-<span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591ac3aed1a8dd52208fdab3cbbb64c40cfb"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">VelocityFollowerDart</span></code><br /></dt>
+<span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591ac3aed1a8dd52208fdab3cbbb64c40cfb"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">VelocityFollowerDart</span></code><br /></dt>
 <dd><p>Marks the joint to follow precisely a velocity trajectory. A VelocityFollowerDart joint receives velocity references that are processed by the physics engine, which computes instantaneously the right force to apply to follow the desired trajectory. It works only with the DART physics engine. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt>
-<span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a52f5e0bc3859bc5f5e25130b6c7e8881"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Position</span></code><br /></dt>
+<span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a52f5e0bc3859bc5f5e25130b6c7e8881"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">Position</span></code><br /></dt>
 <dd><p>Marks the joint to be controlled in position. A Position joint receives position references that are actuated using a PID controller. </p>
 </dd></dl>
 
 <dl class="cpp enumerator">
 <dt>
-<span class="target" id="build_2lib_8linux-x86__64-3_89_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a203a8d5a5a4fcbba2633aafb07382534"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">PositionInterpolated</span></code><br /></dt>
+<span class="target" id="build_2lib_8linux-x86__64-3_88_2scenario_2include_2scenario_2core_2Joint_8h_1abdd8c49a958fdb0f513113b3ba93f591a203a8d5a5a4fcbba2633aafb07382534"></span><em class="property"><span class="pre">enumerator</span> </em><code class="sig-name descname"><span class="pre">PositionInterpolated</span></code><br /></dt>
 <dd><p>Marks the joint to be controlled in position with trajectory smoothing. A PositionInterpolated joint receives position references that are filtered to get a smooth trajectory. The resulting trajectory is then actuated using a position PID controller. </p>
 </dd></dl>
 

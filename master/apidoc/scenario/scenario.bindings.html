@@ -983,6 +983,20 @@ generalized force target was set.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.core.Joint.joint_velocity_limit">
+<code class="sig-name descname"><span class="pre">joint_velocity_limit</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.joint_velocity_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the velocity limits of the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#scenario.bindings.core.JointLimit" title="scenario.bindings.core.JointLimit"><code class="xref py py-class docutils literal notranslate"><span class="pre">JointLimit</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The velocity limits of the joint.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.core.Joint.joint_velocity_target">
 <code class="sig-name descname"><span class="pre">joint_velocity_target</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.joint_velocity_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the active velocity target.</p>
@@ -1249,6 +1263,25 @@ joint DOFs.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.core.Joint.set_joint_velocity_limit">
+<code class="sig-name descname"><span class="pre">set_joint_velocity_limit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_velocity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.set_joint_velocity_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the maximum velocity of the joint.</p>
+<p>This limit can be used to clip the velocity applied by joint
+controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>maxVelocity</strong> (<em>Tuple</em><em>[</em><em>float</em><em>]</em>) – A vector with the maximum velocity of the joint DOFs.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True for success, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.core.Joint.set_joint_velocity_target">
 <code class="sig-name descname"><span class="pre">set_joint_velocity_target</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.set_joint_velocity_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the velocity target of the joint.</p>
@@ -1325,6 +1358,28 @@ controllers.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>True for success, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.core.Joint.set_velocity_limit">
+<code class="sig-name descname"><span class="pre">set_velocity_limit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_velocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.set_velocity_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the maximum velocity of a joint DOF.</p>
+<p>This limit can be used to clip the velocity applied by joint
+controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maxVelocity</strong> (<em>float</em>) – The maximum velocity.</p></li>
+<li><p><strong>dof</strong> (<em>int</em>) – The index of the DOF.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True for success, false otherwise.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -1410,6 +1465,26 @@ controllers.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The velocity of the joint DOF.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.core.Joint.velocity_limit">
+<code class="sig-name descname"><span class="pre">velocity_limit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.Joint.velocity_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the velocity limit of a joint DOF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dof</strong> (<em>int</em>) – The index of the DOF.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>std::runtime_error if the DOF is not valid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><a class="reference internal" href="#scenario.bindings.core.Limit" title="scenario.bindings.core.Limit"><code class="xref py py-class docutils literal notranslate"><span class="pre">Limit</span></code></a></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The velocity limit of the joint DOF.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -4918,6 +4993,20 @@ numbering.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.joint_velocity_limit">
+<code class="sig-name descname"><span class="pre">joint_velocity_limit</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.joint_velocity_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the velocity limits of the joint.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">JointLimit</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The velocity limits of the joint.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.gazebo.Joint.joint_velocity_target">
 <code class="sig-name descname"><span class="pre">joint_velocity_target</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.joint_velocity_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the active velocity target.</p>
@@ -5322,6 +5411,25 @@ joint DOFs.</p>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.set_joint_velocity_limit">
+<code class="sig-name descname"><span class="pre">set_joint_velocity_limit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_velocity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.set_joint_velocity_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the maximum velocity of the joint.</p>
+<p>This limit can be used to clip the velocity applied by joint
+controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>maxVelocity</strong> (<em>Tuple</em><em>[</em><em>float</em><em>]</em>) – A vector with the maximum velocity of the joint DOFs.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True for success, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.gazebo.Joint.set_joint_velocity_target">
 <code class="sig-name descname"><span class="pre">set_joint_velocity_target</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">velocity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.set_joint_velocity_target" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the velocity target of the joint.</p>
@@ -5398,6 +5506,28 @@ controllers.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>True for success, false otherwise.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.set_velocity_limit">
+<code class="sig-name descname"><span class="pre">set_velocity_limit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">max_velocity</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.set_velocity_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the maximum velocity of a joint DOF.</p>
+<p>This limit can be used to clip the velocity applied by joint
+controllers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maxVelocity</strong> (<em>float</em>) – The maximum velocity.</p></li>
+<li><p><strong>dof</strong> (<em>int</em>) – The index of the DOF.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>boolean</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>True for success, false otherwise.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -5492,6 +5622,26 @@ after model insertion.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The velocity of the joint DOF.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.gazebo.Joint.velocity_limit">
+<code class="sig-name descname"><span class="pre">velocity_limit</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dof</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.Joint.velocity_limit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the velocity limit of a joint DOF.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>dof</strong> (<em>int</em>) – The index of the DOF.</p>
+</dd>
+<dt class="field-even">Raises</dt>
+<dd class="field-even"><p>std::runtime_error if the DOF is not valid.</p>
+</dd>
+<dt class="field-odd">Return type</dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">Limit</span></code></p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The velocity limit of the joint DOF.</p>
 </dd>
 </dl>
 </dd></dl>
