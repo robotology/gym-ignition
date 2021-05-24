@@ -1,4 +1,4 @@
-# Taken from: https://github.com/Kitware/CMake/blob/v3.17.0/Modules/FindPython3.cmake
+# Taken from: https://github.com/Kitware/CMake/blob/v3.20.2/Modules/FindPython3.cmake
 
 set (_PYTHON_PREFIX Python3)
 
