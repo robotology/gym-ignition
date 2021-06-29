@@ -277,7 +277,7 @@ jobs:
       # ====================
 
       - name: '🐍 Install gym-ignition'
-        run: pip install wheel && pip install .[test,website]
+        run: pip install wheel && pip install .[all]
 
       # ============
       # Test project
@@ -285,31 +285,27 @@ jobs:
 
       - name: '[🐍|scenario] Python Tests'
         shell: bash -i -e {0}
-        working-directory: tests
         run: pytest -m "scenario"
 
       - name: '[🚨|scenario] Python Tests with Valgrind'
         shell: bash -i -e {0}
-        working-directory: tests
         if: failure()
         run: |
           sudo apt-get install -y --no-install-recommends valgrind
           pip install colour-valgrind
-          valgrind --log-file=/tmp/valgrind.log pytest -s -m "scenario" || colour-valgrind -t /tmp/valgrind.log
+          valgrind --log-file=/tmp/valgrind.log pytest -m "scenario" || colour-valgrind -t /tmp/valgrind.log
 
       - name: '[🐍|gym-ignition] Python Tests'
         shell: bash -i -e {0}
-        working-directory: tests
         run: pytest -m "gym_ignition"
 
       - name: '[🚨|gym-ignition] Python Tests with Valgrind'
         shell: bash -i -e {0}
-        working-directory: tests
         if: failure()
         run: |
           sudo apt-get install -y --no-install-recommends valgrind
           pip install colour-valgrind
-          valgrind --log-file=/tmp/valgrind.log pytest -s -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
+          valgrind --log-file=/tmp/valgrind.log pytest -m "gym_ignition" || colour-valgrind -t /tmp/valgrind.log
 
       # ============================
       # Upload artifacts (only User)
@@ -476,7 +472,7 @@ jobs:
       # ================
 
       - name: '🗑️ Remove external packages'
-        run: find dist/ -type f -not \( -name '*scenar-io-*' -o -name '*scenar_io-*' -o -name 'gym-ignition-*' -o -name '*gym_ignition-*' \) -delete -print
+        run: find dist/ -type f -not \( -name '*scenar_io-*' -o -name '*gym_ignition-*' \) -delete -print
 
       - name: '🔍 Check packages'
         run: pipx run twine check dist/*
