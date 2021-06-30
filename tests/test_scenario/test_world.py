@@ -146,6 +146,8 @@ def test_world_api(gazebo: scenario.GazeboSimulator):
     assert world.time() == 0.0
 
 
+# See: https://github.com/robotology/gym-ignition/issues/366
+@pytest.mark.xfail(strict=False)
 @pytest.mark.parametrize(
     "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
 )
