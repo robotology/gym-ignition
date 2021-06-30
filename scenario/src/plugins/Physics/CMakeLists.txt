@@ -28,6 +28,8 @@
 
 add_library(PhysicsSystem SHARED
     Physics.hh
+    EntityFeatureMap.hh
+    CanonicalLinkModelTracker.hh
     Physics.cc)
 
 target_link_libraries(PhysicsSystem
