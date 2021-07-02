@@ -45,6 +45,7 @@
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/math/Pose3.hh>
 #include <ignition/math/Vector3.hh>
+#include <ignition/physics/config.hh>
 #include <sdf/Element.hh>
 #include <sdf/Model.hh>
 #include <sdf/Root.hh>
@@ -245,7 +246,9 @@ bool World::setPhysicsEngine(const PhysicsEngine engine)
     const std::string pluginLib = [&engine]() -> std::string {
         switch (engine) {
             case PhysicsEngine::Dart:
-                return "ignition-physics-dartsim-plugin";
+                return "ignition-physics"
+                       + std::to_string(IGNITION_PHYSICS_MAJOR_VERSION)
+                       + "-dartsim-plugin";
         }
         return "";
     }();
