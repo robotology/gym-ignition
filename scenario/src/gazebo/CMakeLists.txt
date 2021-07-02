@@ -99,6 +99,7 @@ target_link_libraries(ScenarioGazebo
     PRIVATE
     ScenarioCore::CoreUtils
     ScenarioGazebo::ExtraComponents
+    ${ignition-physics.ignition-physics}
     ${ignition-fuel_tools.ignition-fuel_tools})
 
 set_target_properties(ScenarioGazebo PROPERTIES
