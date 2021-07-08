@@ -6,6 +6,7 @@ import pytest
 pytestmark = pytest.mark.scenario
 
 import numpy as np
+from typing import Tuple
 from ..common import utils
 import gym_ignition_models
 from gym_ignition.utils import misc
@@ -113,53 +114,73 @@ def _test_insert_world_multiple_calls(gazebo: scenario_gazebo.GazeboSimulator):
     assert world1.id() != world2.id()
 
 
-# This test is flaky
-@pytest.mark.xfail(strict=False)
-@pytest.mark.parametrize("gazebo, solver",
-                         [((0.001, 2.0, 1), "pgs"),
-                          ((0.001, 2.0, 1), "dantzig")],
-                         indirect=["gazebo"],
-                         ids=utils.id_gazebo_fn)
-def test_multi_world_simulation(gazebo: scenario_gazebo.GazeboSimulator,
-                                solver: str):
+def multi_world_simulation_id(val):
 
-    # Empty DART world with bullet as collision detector.
-    # It should prevent ODE crashes in a multi-world setting due to its static variables.
-    world_sdf_string = f"""
+    if isinstance(val, tuple) and len(val) == 3:
+        return f"(step={val[0]}|rtf={val[1]}|iters={val[2]})"
+
+    if isinstance(val, tuple) and len(val) ==2:
+        return f"({val[0]}|{val[1]})"
+
+
+# This test is flaky
+# @pytest.mark.xfail(strict=False)
+@pytest.mark.parametrize("gazebo, physics1, physics2",
+                         [
+                          # ODE / ODE
+                          # ((0.001, 2.0, 1), ("ode", "dantzig"), ("ode", "dantzig")),
+                          # ((0.001, 2.0, 1), ("ode", "pgs"), ("ode", "pgs")),
+                          # ((0.001, 2.0, 1), ("ode", "dantzig"), ("ode", "pgs")),
+                          # BULLET / BULLET
+                          ((0.001, 2.0, 1), ("bullet", "pgs"), ("bullet", "pgs")),
+                          # ((0.001, 2.0, 1), ("bullet", "dantzig"), ("bullet", "dantzig")),
+                          # ((0.001, 2.0, 1), ("bullet", "pgs"), ("bullet", "dantzig")),
+                          # FCL / FCL
+                          # ((0.001, 2.0, 1), ("fcl", "dantzig"), ("fcl", "dantzig")),
+                          # ((0.001, 2.0, 1), ("fcl", "pgs"), ("fcl", "pgs")),
+                          # ((0.001, 2.0, 1), ("fcl", "dantzig"), ("fcl", "pgs")),
+                          # DART / DART
+                          # ((0.001, 2.0, 1), ("dart", "dantzig"), ("dart", "dantzig")),
+                          # ((0.001, 2.0, 1), ("dart", "pgs"), ("dart", "pgs")),
+                          # ((0.001, 2.0, 1), ("dart", "dantzig"), ("dart", "pgs")),
+                          # ODE / BULLET
+                          # ((0.001, 2.0, 1), ("ode", "dantzig"), ("bullet", "dantzig")),
+                          # ((0.001, 2.0, 1), ("ode", "pgs"), ("bullet", "pgs")),
+                          # ((0.001, 2.0, 1), ("ode", "dantzig"), ("bullet", "pgs")),
+                          ],
+                         indirect=["gazebo"],
+                         ids=multi_world_simulation_id)
+def test_multi_world_simulation(gazebo: scenario_gazebo.GazeboSimulator,
+                                physics1: Tuple[str, str],
+                                physics2: Tuple[str, str]):
+
+    detector1, solver1 = physics1
+    detector2, solver2 = physics2
+
+    # Empty DART world with configurable collision detector and solver
+    get_world_sdf_string = lambda detector, solver: f"""
     <?xml version="1.0" ?>
     <sdf version="1.7">
         <world name="default">
             <physics default="true" type="dart">
                 <dart>
-                    <collision_detector>bullet</collision_detector>
+                    <collision_detector>{detector}</collision_detector>
                     <solver>
                         <solver_type>{solver}</solver_type>
                     </solver>
                 </dart>
             </physics>
-            <light type="directional" name="sun">
-                <cast_shadows>true</cast_shadows>
-                <pose>0 0 10 0 0 0</pose>
-                <diffuse>1 1 1 1</diffuse>
-                <specular>0.5 0.5 0.5 1</specular>
-                <attenuation>
-                    <range>1000</range>
-                    <constant>0.9</constant>
-                    <linear>0.01</linear>
-                    <quadratic>0.001</quadratic>
-                </attenuation>
-                <direction>-0.5 0.1 -0.9</direction>
-            </light>
         </world>
     </sdf>
     """
 
-    # Create a tmp file from the SDF string
-    world_sdf_file = misc.string_to_file(string=world_sdf_string)
+    # Create tmp files from the SDF string
+    world1_sdf_file = misc.string_to_file(string=get_world_sdf_string(detector1, solver1))
+    world2_sdf_file = misc.string_to_file(string=get_world_sdf_string(detector2, solver2))
 
     # Load two different worlds
-    assert gazebo.insert_world_from_sdf(world_sdf_file, "dart1")
-    assert gazebo.insert_world_from_sdf(world_sdf_file, "dart2")
+    assert gazebo.insert_world_from_sdf(world1_sdf_file, "dart1")
+    assert gazebo.insert_world_from_sdf(world2_sdf_file, "dart2")
 
     # Initialize the simulator
     assert gazebo.initialize()
@@ -204,8 +225,4 @@ def test_multi_world_simulation(gazebo: scenario_gazebo.GazeboSimulator,
 
         # Check that both worlds evolve similarly
         assert sphere1.base_position() == \
-               pytest.approx(sphere2.base_position(), abs=0.001)
-        assert sphere1.base_world_linear_velocity() == \
-               pytest.approx(sphere2.base_world_linear_velocity(), abs=0.001)
-        assert sphere1.base_world_angular_velocity() == \
-               pytest.approx(sphere2.base_world_angular_velocity())
+               pytest.approx(sphere1.base_position(), abs=0.001)
