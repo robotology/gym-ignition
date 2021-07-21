@@ -1,0 +1,124 @@
+name: Conda
+
+on:
+  push:
+  pull_request:
+  release:
+    types:
+      - published
+
+jobs:
+
+  build-and-test:
+    name: ${{ matrix.os }}@${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          # - macOS-latest
+          # - windows-latest
+        python:
+          - 3.8
+          # - 3.9
+        build_type:
+          - Debug
+
+    steps:
+
+      - name: Inspect Environment
+        run: |
+          env | grep ^GITHUB
+          echo ""
+          cat ${GITHUB_EVENT_PATH}
+          echo ""
+          env
+
+      - uses: actions/checkout@master
+      - run: git fetch --prune --unshallow
+
+      - uses: conda-incubator/setup-miniconda@v2
+        with:
+          mamba-version: "*"
+          channel-priority: true
+          auto-update-conda: true
+          activate-environment: ci
+          python-version: ${{ matrix.python }}
+          channels: conda-forge,robotology,defaults
+
+      - name: Mamba info
+        run: mamba info
+
+      - name: Mamba list
+        run: mamba list
+
+      - name: Dependencies
+        run: |
+          mamba install -y cmake compilers ninja pkg-config swig pybind11 pytest
+          mamba install -y mesa-libgl-devel-cos7-x86_64
+          mamba install -y gym scipy numpy lxml
+          mamba install -c robotology idyntree
+          mamba install -y libode
+
+      - name: Ignition Gazebo [stable]
+        if: |
+          github.event_name == 'release' ||
+          github.ref == 'refs/heads/master' ||
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master')
+        run: mamba install -y libignition-gazebo4
+
+      - name: Ignition Gazebo [nightly]
+        if: |
+          (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'master')
+        run: mamba install -y libignition-gazebo5
+
+      - name: Configure [linux|macos]
+        if: contains(matrix.os, 'macos') || contains(matrix.os, 'ubuntu')
+        run: |
+          cmake \
+              -S scenario/ \
+              -B build/ \
+              -GNinja \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -DSCENARIO_USE_IGNITION:BOOL=ON \
+              -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX}
+
+      - name: Mamba list
+        run: mamba list
+
+      - name: Configure [windows]
+        if: contains(matrix.os, 'windows')
+        run: |
+          cmake \
+              -S scenario/ \
+              -B build/ \
+              -G"Visual Studio 16 2019" \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -DSCENARIO_USE_IGNITION:BOOL=ON \
+              -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX}
+
+      - name: Build
+        run: cmake --build build/ --config ${{ matrix.build_type }}
+
+      - name: Install C++
+        run: cmake --build build/ --target install
+
+      - name: Install Python
+        run: |
+          pip install -e scenario/
+          echo ""
+          pip install -e .[test]
+
+      - name: Inspect Python ABI (core)
+        run: ldd ${CONDA_PREFIX}/lib/python${{ matrix.python }}/site-packages/scenario/bindings/_core.so
+
+      - name: Inspect Python ABI (gazebo)
+        run: ldd ${CONDA_PREFIX}/lib/python${{ matrix.python }}/site-packages/scenario/bindings/_gazebo.so
+
+      - name: Test
+        run: pytest tests/
