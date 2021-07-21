@@ -41,6 +41,12 @@ class GazeboRuntime(runtime.Runtime):
                  world: str = None,
                  **kwargs):
 
+        if gym.logger.MIN_LEVEL <= gym.logger.DEBUG:
+            import inspect
+            frame = inspect.currentframe()
+            args, _, _, values = inspect.getargvalues(frame)
+            gym.logger.debug(f"{dict({arg: values[arg] for arg in args})}")
+
         # Gazebo attributes
         self._gazebo = None
         self._physics_rate = physics_rate

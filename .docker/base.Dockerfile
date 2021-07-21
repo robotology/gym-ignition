@@ -59,21 +59,4 @@ RUN add-apt-repository ppa:git-core/ppa &&\
 ENV VIRTUAL_ENV=/venv
 ENV PATH=$VIRTUAL_ENV/bin:$PATH
 
-# Install iDynTree
-RUN apt-get update &&\
-    apt-get install -y --no-install-recommends \
-        python3-numpy libxml2-dev coinor-libipopt-dev libeigen3-dev &&\
-    rm -rf /var/lib/apt/lists/* &&\
-    git clone --depth 1 -b devel https://github.com/robotology/idyntree /tmp/idyntree &&\
-    mkdir -p /tmp/idyntree/build && cd /tmp/idyntree/build &&\
-    cmake .. \
-        -GNinja \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DBUILD_SHARED_LIBS:BOOL=OFF \
-        -DIDYNTREE_USES_PYTHON=True \
-        -DIDYNTREE_USES_IPOPT:BOOL=ON \
-        &&\
-    cmake --build . --target install &&\
-    rm -r /tmp/idyntree
-
 CMD ["bash"]

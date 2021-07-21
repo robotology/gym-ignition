@@ -1,7 +1,7 @@
 .. _getting_started_scenario:
 
-ScenarI/O
-=========
+ScenarIO
+========
 
 In this getting started section we show how to use the Gazebo ScenarIO library to simulate a pendulum system.
 We will use the models of the ground plane and the pendulum stored in the repository

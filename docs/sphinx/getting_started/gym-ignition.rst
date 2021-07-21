@@ -27,6 +27,12 @@ Beyond the abstractions provided by ScenarIO, gym-ignition introduces the follow
   Refer to :py:class:`~gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP` and
   :py:class:`~gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations` for more details.
 
+.. tip::
+
+    If you want to learn more about ``iDynTree``, the two classes we mainly use are ``iDynTree::KinDynComputations`` (`docs <https://robotology.github.io/idyntree/master/classiDynTree_1_1KinDynComputations.html>`__) and ``iDynTree::InverseKinematics`` (`docs <https://robotology.github.io/idyntree/master/classiDynTree_1_1InverseKinematics.html>`__).
+
+    The theory and notation is summarized in `Multibody dynamics notation <https://pure.tue.nl/ws/portalfiles/portal/139293126/A_Multibody_Dynamics_Notation_Revision_2_.pdf>`_.
+
 You can find demo environments created with ``gym-ignition`` in the
 `gym_ignition_environments <https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments>`_ folder.
 These examples show how to structure a new standalone Python package containing the environment with your robots.
@@ -35,13 +41,13 @@ For example, taking the cartpole balancing problem with discrete actions,
 the components you need to implement are the following:
 
 - A model :py:class:`~gym_ignition_environments.models.cartpole.CartPole`
-  (`cartpole.py <https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/models/cartpole.py>`_)
+  (`model/cartpole.py <https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/models/cartpole.py>`_)
 
 - A task :py:class:`~gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing`
   (`cartpole_discrete_balancing.py <https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/tasks/cartpole_discrete_balancing.py>`_)
 
 - A randomizer :py:class:`~gym_ignition_environments.randomizers.cartpole.CartpoleEnvRandomizer`
-  (`cartpole.py <https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/randomizers/cartpole.py>`_)
+  (`randomizers/cartpole.py <https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/randomizers/cartpole.py>`_)
 
 - Environment registration as done in `__init__.py <https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/__init__.py>`_
 

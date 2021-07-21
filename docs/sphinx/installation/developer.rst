@@ -33,20 +33,23 @@ the CMake project as follows:
 
 .. code-block:: bash
 
-    mkdir build
-    cd build
-    cmake ..
-    cmake --build .
-    cmake --build . --target install
+    cd scenario/
+    cmake -S . -B build
+    cmake --build build/
+    cmake --build build/ --target install
 
 .. note::
+
     The default install prefix of the CMake project is ``/usr/local``.
     If you want to use a different folder, pass ``-DCMAKE_INSTALL_PREFIX=/new/install/prefix`` to the first ``cmake`` command.
 
 .. attention::
-    The SWIG bindings are installed in the `site-packages <https://docs.python.org/3/install/#how-installation-works>`_ folder of the active Python interpreter.
+
+    The SWIG bindings are installed in the `site-packages <https://docs.python.org/3/install/#how-installation-works>`_
+    folder of the active Python interpreter.
     If you have an active virtual environment, it will be automatically detected.
-    Visit `FindPython3 <https://cmake.org/cmake/help/v3.12/module/FindPython3.html>`_ for more details.
+    We rely on CMake's logic for detecting Python,
+    visit `FindPython3 <https://cmake.org/cmake/help/v3.16/module/FindPython3.html>`_ for more details.
 
 .. include:: virtual_environment.rst
 
@@ -58,10 +61,18 @@ From the root of the repository:
 
 .. code-block:: bash
 
+    pip install -e scenario/
     pip install -e .
 
 The editable installation only symlinks the resources of the repository into the active Python installation.
 It allows to develop directly operating on the files of the repository and use the updated package without requiring
 to install it again.
+
+.. note::
+
+    The ``scenario`` editable installation is just a placeholder.
+    It is necessary to prevent the editable installation of ``gym-ignition`` to override the resources installed by
+    the manual CMake execution.
+    Otherwise, the ``scenario`` package from PyPI would be pulled, resulting with a wrong version.
 
 .. include:: system_configuration.rst

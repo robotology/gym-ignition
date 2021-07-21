@@ -1,40 +1,27 @@
-.. _what_is_gym_ignition:
+.. _scenario_and_gym_ignition:
 
-What is gym-ignition?
-=====================
+ScenarIO and gym-ignition
+=========================
 
-**gym-ignition is a framework to create reproducible robotics environments for reinforcement learning research.**
+This project targets both *control* and *robot learning* research domains:
 
-The aims of the project are the following:
-
-- Provide unified APIs for interfacing with both simulated and real robots.
-- Implement the simulation backend interfacing with the Ignition Gazebo simulator.
-- Enable a seamless switch of all the physics engines supported by Ignition Gazebo.
-- Guarantee the reproducibility and the scalability of the simulations by using the simulator as a library, without
-  relying on any network transport.
-- Simplify the development of OpenAI Gym environments for robot learning research.
-
-**gym-ignition** targets both *control* and *robot learning* research domains:
-
-- Researchers in robotics and control can simulate their robots with familiar tools like Gazebo and URDF,
+- Researchers in robotics and control can simulate their robots with familiar tools like Gazebo and URDF/SDF,
   without the need to rely on any middleware.
 - Researchers in robot learning can quickly develop new robotic environments that can scale to hundreds of parallel instances.
 
-To know more about why we started developing gym-ignition, why we selected Ignition Gazebo for our simulations,
-and what are our long-term goals, visit the :ref:`Motivations <motivations>` page.
+We provide two related subprojects to each of these categories:
 
-We are building an entire ecosystem around gym-ignition, if you're interested have a look to the other projects:
+1. **ScenarIO** provides APIs to interface with the robots.
+2. **gym-ignition** helps structuring environments compatible with OpenAI Gym,
+   while minimizing boilerplate code and providing common rigid-body dynamics utilities.
 
-.. list-table::
-    :header-rows: 1
-    :align: center
+Check the sections :ref:`What is ScenarIO <what_is_scenario>` and
+:ref:`What is gym-ignition <what_is_gym_ignition>` for more details,
+and visit :ref:`Motivations <motivations>` for an extended overview.
 
-    * - ScenarI/O and ``gym_ignition``
-      - Robot Models
-      - Ignition Plugins
-    * - `robotology/gym-ignition <https://github.com/robotology/gym-ignition>`_
-      - `robotology/gym-ignition-models <https://github.com/robotology/gym-ignition-models>`_
-      - `dic-iit/gazebo-scenario-plugins <https://github.com/dic-iit/gazebo-scenario-plugins>`_
+For a quick practical introduction, visit the :ref:`Getting Started <getting_started_scenario>` page.
+
+If you use this project for your research, please check the FAQ about :ref:`how to give credit <faq_citation>`.
 
 .. list-table::
 
@@ -49,14 +36,25 @@ We are building an entire ecosystem around gym-ignition, if you're interested ha
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Motivations
+   :caption: What
 
-   motivations/why_gym_ignition
+   what/what_is_scenario
+   what/what_is_gym_ignition
 
 .. toctree::
    :hidden:
    :maxdepth: 1
-   :caption: Installation
+   :caption: Why
+
+   why/motivations
+   why/why_scenario
+   why/why_ignition_gazebo
+   why/why_gym_ignition
+
+.. toctree::
+   :hidden:
+   :maxdepth: 1
+   :caption: Installation (How)
 
    installation/support_policy
    installation/stable
@@ -75,7 +73,7 @@ We are building an entire ecosystem around gym-ignition, if you're interested ha
 .. toctree::
    :hidden:
    :maxdepth: 2
-   :caption: ScenarI/O C++ API:
+   :caption: ScenarIO C++ API:
 
    breathe/core
    breathe/gazebo

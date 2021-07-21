@@ -3,6 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+import dataclasses
 from typing import Tuple
 import gym_ignition_models
 from gym_ignition.utils import misc
@@ -188,3 +189,45 @@ def get_empty_world_sdf() -> str:
 
     world_file = misc.string_to_file(world_sdf_string)
     return world_file
+
+
+@dataclasses.dataclass
+class SphereURDF:
+
+    mass: float = 5.0
+    radius: float = 0.1
+    restitution: float = 0
+
+    def urdf(self) -> str:
+
+        i = 2.0 / 5 * self.mass * self.radius * self.radius
+        urdf = f"""
+            <robot name="sphere_model" xmlns:xacro="http://www.ros.org/wiki/xacro">
+                <link name="sphere">
+                    <inertial>
+                      <origin rpy="0 0 0" xyz="0 0 0"/>
+                      <mass value="{self.mass}"/>
+                      <inertia ixx="{i}" ixy="0" ixz="0" iyy="{i}" iyz="0" izz="{i}"/>
+                    </inertial>
+                    <visual>
+                      <geometry>
+                        <sphere radius="{self.radius}"/>
+                      </geometry>
+                      <origin rpy="0 0 0" xyz="0 0 0"/>
+                    </visual>
+                    <collision>
+                      <geometry>
+                        <sphere radius="{self.radius}"/>
+                      </geometry>
+                      <origin rpy="0 0 0" xyz="0 0 0"/>
+                    </collision>
+                </link>
+                <gazebo reference="sphere">
+                  <collision><surface><bounce>
+                    <restitution_coefficient>{self.restitution}</restitution_coefficient>
+                  </bounce></surface></collision>
+                </gazebo>
+            </robot>
+            """
+
+        return urdf

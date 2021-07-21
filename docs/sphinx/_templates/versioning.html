@@ -1,0 +1,14 @@
+{% if versions %}
+<nav id="bd-docs-nav" class="bd-links" aria-label="Versions navigation">
+  <div class="bd-toc-item active">
+    <p class="caption">
+      <span class="caption-text">{{ _('Doc Versions') }}</span>
+    </p>
+    <ul class="nav bd-sidenav">
+      {%- for item in versions %}
+      <li class="toctree-l1"><a class="reference internal" href="{{ item.url }}">{{ item.name }}</a></li>
+      {%- endfor %}
+    </ul>
+  </div>
+</nav>
+{% endif %}

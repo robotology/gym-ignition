@@ -12,3 +12,25 @@ import os
 from gym_ignition.utils import resource_finder
 if "IGN_GAZEBO_RESOURCE_PATH" in os.environ:
     resource_finder.add_path_from_env_var("IGN_GAZEBO_RESOURCE_PATH")
+
+
+def initialize_verbosity() -> None:
+
+    import gym
+    import scenario
+    import gym_ignition.utils.logger
+
+    if scenario.detect_install_mode() is scenario.InstallMode.Developer:
+        gym_ignition.utils.logger.set_level(level=gym.logger.INFO,
+                                            scenario_level=gym.logger.WARN)
+
+    elif scenario.detect_install_mode() is scenario.InstallMode.User:
+        gym_ignition.utils.logger.set_level(level=gym.logger.WARN,
+                                            scenario_level=gym.logger.WARN)
+
+    else:
+        raise ValueError(scenario.detect_install_mode())
+
+
+# Configure default verbosity
+initialize_verbosity()

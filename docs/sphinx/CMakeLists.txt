@@ -8,7 +8,7 @@
 # 2. The folder containing the bindings Python modules
 #
 set(PYTHON_PACKAGES_DIR "${CMAKE_SOURCE_DIR}/python")
-set(BINDINGS_MODULES_DIR "${PROJECT_BINARY_DIR}/bindings")
+set(BINDINGS_MODULES_DIR "${PROJECT_BINARY_DIR}/scenario/bindings")
 
 # =============
 # APIDOC TARGET
@@ -24,6 +24,14 @@ set(BINDINGS_MODULES_DIR "${PROJECT_BINARY_DIR}/bindings")
 # - docs/sphinx/scenario
 # - docs/sphinx/gym_ignition
 # - docs/sphinx/gym_ignition_environments
+
+if (NOT TARGET ScenarioSwig::Core)
+    message(FATAL_ERROR "Target ScenarioSwig::Core not found")
+endif()
+
+if (NOT TARGET ScenarioSwig::Gazebo)
+    message(FATAL_ERROR "Target ScenarioSwig::Gazebo not found")
+endif()
 
 find_package(SphinxApidoc REQUIRED)
 add_custom_target(apidoc ALL DEPENDS

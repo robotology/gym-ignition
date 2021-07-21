@@ -10,6 +10,7 @@ from gym_ignition.utils.scenario import get_unique_model_name
 
 
 class ICubGazeboABC(scenario.model_wrapper.ModelWrapper,
+                    scenario.model_with_file.ModelWithFile,
                     abc.ABC):
 
     DOFS = 32
@@ -78,8 +79,7 @@ class ICubGazeboABC(scenario.model_wrapper.ModelWrapper,
         assert ok_q0, "Failed to set initial position"
 
 
-class ICubGazebo(ICubGazeboABC,
-                 scenario.model_with_file.ModelWithFile):
+class ICubGazebo(ICubGazeboABC):
 
     def __init__(self,
                  world: scenario_core.World,
