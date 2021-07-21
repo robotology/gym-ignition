@@ -73,6 +73,6 @@ to install it again.
     The ``scenario`` editable installation is just a placeholder.
     It is necessary to prevent the editable installation of ``gym-ignition`` to override the resources installed by
     the manual CMake execution.
-    Otherwise, the ``scenar-io`` package from PyPI would be pulled, resulting with a wrong version.
+    Otherwise, the ``scenario`` package from PyPI would be pulled, resulting with a wrong version.
 
 .. include:: system_configuration.rst

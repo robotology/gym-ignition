@@ -5,13 +5,13 @@
 [![Lines](https://img.shields.io/tokei/lines/github/robotology/gym-ignition)][gym-ignition]
 [![Python CI/CD](https://github.com/robotology/gym-ignition/workflows/CI/CD/badge.svg)](https://github.com/robotology/gym-ignition/actions)
 
-[![Version](https://img.shields.io/pypi/v/scenar-io.svg)][pypi]
-[![Python versions](https://img.shields.io/pypi/pyversions/scenar-io.svg)][pypi]
-[![Status](https://img.shields.io/pypi/status/scenar-io.svg)][pypi]
-[![Format](https://img.shields.io/pypi/format/scenar-io.svg)][pypi]
-[![License](https://img.shields.io/pypi/l/scenar-io.svg)][pypi]
+[![Version](https://img.shields.io/pypi/v/scenario.svg)][pypi]
+[![Python versions](https://img.shields.io/pypi/pyversions/scenario.svg)][pypi]
+[![Status](https://img.shields.io/pypi/status/scenario.svg)][pypi]
+[![Format](https://img.shields.io/pypi/format/scenario.svg)][pypi]
+[![License](https://img.shields.io/pypi/l/scenario.svg)][pypi]
 
-[pypi]: https://pypi.org/project/scenar-io/
+[pypi]: https://pypi.org/project/scenario/
 [gym-ignition]: https://github.com/robotology/gym-ignition
 [scenario]: https://github.com/robotology/gym-ignition/tree/master/scenario
 
@@ -69,7 +69,7 @@ Then, install the supported Ignition suite following the
 Execute, preferably in a [virtual environment](https://docs.python.org/3.8/tutorial/venv.html):
 
 ```bash
-pip install scenar-io
+pip install scenario
 ```
 
 ### C++

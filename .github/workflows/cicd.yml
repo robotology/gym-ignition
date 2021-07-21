@@ -264,7 +264,7 @@ jobs:
             build_ext -DIGNITION_DISTRIBUTION=$(python3 -c "print('${{ matrix.ignition }}'.capitalize())")
       - name: '[👤|user] Install local wheel'
         if: matrix.type == 'User'
-        run: pip install -v dist/scenar_io-*.whl
+        run: pip install -v dist/scenario-*.whl
 
       - name: '🔍️ Inspect installed ScenarIO package'
         if: matrix.type == 'User' && contains(matrix.os, 'ubuntu')
@@ -313,7 +313,7 @@ jobs:
 
       - name: '🗑️ Remove external wheels'
         if: matrix.type == 'User'
-        run: find dist/ -type f -not -name 'scenar_io-*' -delete -print
+        run: find dist/ -type f -not -name 'scenario-*' -delete -print
 
       # We have to trick PyPI that our wheels are manylinux2014 even if they are not.
       # Unfortunately we cannot create self-contained wheels (neither the PEP600 perennial)
@@ -472,7 +472,7 @@ jobs:
       # ================
 
       - name: '🗑️ Remove external packages'
-        run: find dist/ -type f -not \( -name '*scenar_io-*' -o -name '*gym_ignition-*' \) -delete -print
+        run: find dist/ -type f -not \( -name '*scenario-*' -o -name '*gym_ignition-*' \) -delete -print
 
       - name: '🔍 Check packages'
         run: pipx run twine check dist/*
