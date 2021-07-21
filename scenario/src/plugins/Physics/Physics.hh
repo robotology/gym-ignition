@@ -13,11 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- */
+*/
 #ifndef IGNITION_GAZEBO_SYSTEMS_PHYSICS_HH_
 #define IGNITION_GAZEBO_SYSTEMS_PHYSICS_HH_
 
-// clang-format off
 #include <memory>
 #include <unordered_map>
 #include <utility>
