@@ -87,6 +87,9 @@ jobs:
               -DSCENARIO_USE_IGNITION:BOOL=ON \
               -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX}
 
+      - name: Mamba list
+        run: mamba list
+
       - name: Configure [windows]
         if: contains(matrix.os, 'windows')
         run: |
