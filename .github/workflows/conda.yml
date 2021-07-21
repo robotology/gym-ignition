@@ -62,6 +62,7 @@ jobs:
           mamba install -y mesa-libgl-devel-cos7-x86_64
           mamba install -y gym scipy numpy lxml
           mamba install -c robotology idyntree
+          mamba install -y libode
 
       - name: Ignition Gazebo [stable]
         if: |
