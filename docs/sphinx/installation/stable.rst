@@ -16,11 +16,11 @@ PyPI Package
 We provide two different packages for ScenarIO and gym-ignition.
 
 If you are interested in the ScenarIO package,
-install the `scenar-io <https://pypi.org/project/scenar-io/>`_ package from PyPI:
+install the `scenario <https://pypi.org/project/scenario/>`_ package from PyPI:
 
 .. code-block:: bash
 
-   pip install scenar-io
+   pip install scenario
 
 Instead, if you are interested in gym-ignition,
 install the `gym-ignition <https://pypi.org/project/gym-ignition/>`_ package from PyPI:
@@ -29,4 +29,4 @@ install the `gym-ignition <https://pypi.org/project/gym-ignition/>`_ package fro
 
    pip install gym-ignition
 
-It will download and install also ``scenar-io`` since it depends on it.
+It will download and install also ``scenario`` since it depends on it.
