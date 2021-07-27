@@ -15,7 +15,6 @@
  *
  */
 
-// clang-format off
 #include "Physics.hh"
 
 #include <ignition/msgs/contact.pb.h>
@@ -32,6 +31,8 @@
 #include <unordered_set>
 #include <vector>
 
+#include <ignition/common/HeightmapData.hh>
+#include <ignition/common/ImageHeightmap.hh>
 #include <ignition/common/MeshManager.hh>
 #include <ignition/common/Profiler.hh>
 #include <ignition/common/SystemPaths.hh>
@@ -41,6 +42,7 @@
 #include <ignition/physics/config.hh>
 #include <ignition/physics/FeatureList.hh>
 #include <ignition/physics/FeaturePolicy.hh>
+#include <ignition/physics/heightmap/HeightmapShape.hh>
 #include <ignition/physics/RelativeQuantity.hh>
 #include <ignition/physics/RequestEngine.hh>
 
@@ -71,6 +73,7 @@
 
 // SDF
 #include <sdf/Collision.hh>
+#include <sdf/Heightmap.hh>
 #include <sdf/Joint.hh>
 #include <sdf/Link.hh>
 #include <sdf/Mesh.hh>
@@ -79,6 +82,7 @@
 #include <sdf/World.hh>
 
 #include "ignition/gazebo/EntityComponentManager.hh"
+#include "ignition/gazebo/Model.hh"
 #include "ignition/gazebo/Util.hh"
 
 // Components
@@ -127,13 +131,6 @@
 #include "CanonicalLinkModelTracker.hh"
 #include "EntityFeatureMap.hh"
 
-// Extra components
-#include "scenario/gazebo/components/ExternalWorldWrenchCmdWithDuration.h"
-#include "scenario/gazebo/components/HistoryOfAppliedJointForces.h"
-#include "scenario/gazebo/components/JointAcceleration.h"
-#include <ignition/gazebo/components/JointForce.hh>
-#include "scenario/gazebo/components/SimulatedTime.h"
-
 using namespace ignition;
 using namespace ignition::gazebo;
 using namespace ignition::gazebo::systems;
@@ -154,7 +151,7 @@ class ignition::gazebo::systems::PhysicsPrivate
           ignition::physics::FreeGroupFrameSemantics,
           ignition::physics::LinkFrameSemantics,
           ignition::physics::ForwardStep,
-          ignition::physics::RemoveEntities,
+          ignition::physics::RemoveModelFromWorld,
           ignition::physics::sdf::ConstructSdfLink,
           ignition::physics::sdf::ConstructSdfModel,
           ignition::physics::sdf::ConstructSdfWorld
@@ -184,14 +181,37 @@ class ignition::gazebo::systems::PhysicsPrivate
   /// \param[in] _ecm Constant reference to ECM.
   public: void CreatePhysicsEntities(const EntityComponentManager &_ecm);
 
+  /// \brief Create world entities
+  /// \param[in] _ecm Constant reference to ECM.
+  public: void CreateWorldEntities(const EntityComponentManager &_ecm);
+
+  /// \brief Create model entities
+  /// \param[in] _ecm Constant reference to ECM.
+  public: void CreateModelEntities(const EntityComponentManager &_ecm);
+
+  /// \brief Create link entities
+  /// \param[in] _ecm Constant reference to ECM.
+  public: void CreateLinkEntities(const EntityComponentManager &_ecm);
+
+  /// \brief Create collision entities
+  /// \param[in] _ecm Constant reference to ECM.
+  public: void CreateCollisionEntities(const EntityComponentManager &_ecm);
+
+  /// \brief Create joint entities
+  /// \param[in] _ecm Constant reference to ECM.
+  public: void CreateJointEntities(const EntityComponentManager &_ecm);
+
+  /// \brief Create Battery entities
+  /// \param[in] _ecm Constant reference to ECM.
+  public: void CreateBatteryEntities(const EntityComponentManager &_ecm);
+
   /// \brief Remove physics entities if they are removed from the ECM
   /// \param[in] _ecm Constant reference to ECM.
   public: void RemovePhysicsEntities(const EntityComponentManager &_ecm);
 
   /// \brief Update physics from components
   /// \param[in] _ecm Mutable reference to ECM.
-  public: void UpdatePhysics(EntityComponentManager &_ecm,
-                             const ignition::gazebo::UpdateInfo& _info);
+  public: void UpdatePhysics(EntityComponentManager &_ecm);
 
   /// \brief Step the simulation for each world
   /// \param[in] _dt Duration
@@ -214,15 +234,36 @@ class ignition::gazebo::systems::PhysicsPrivate
               EntityComponentManager &_ecm,
               const ignition::physics::ForwardStep::Output &_updatedLinks);
 
+  /// \brief Helper function to update the pose of a model.
+  /// \param[in] _model The model to update.
+  /// \param[in] _canonicalLink The canonical link of _model.
+  /// \param[in] _ecm The entity component manager.
+  /// \param[in, out] _linkFrameData Links that experienced a pose change in the
+  /// most recent physics step. The key is the entity of the link, and the
+  /// value is the updated frame data corresponding to that entity. The
+  /// canonical links of _model's nested models are added to _linkFrameData to
+  /// ensure that all of _model's nested models are marked as models to be
+  /// updated (if a parent model's pose changes, all nested model poses must be
+  /// updated since nested model poses are saved w.r.t. the parent model).
+  public: void UpdateModelPose(const Entity _model,
+              const Entity _canonicalLink, EntityComponentManager &_ecm,
+              std::map<Entity, physics::FrameData3d> &_linkFrameData);
+
+  /// \brief Get an entity's frame data relative to world from physics.
+  /// \param[in] _entity The entity.
+  /// \param[in, out] _data The frame data to populate.
+  /// \return True if _data was populated with frame data for _entity, false
+  /// otherwise.
+  public: bool GetFrameDataRelativeToWorld(const Entity _entity,
+              physics::FrameData3d &_data);
+
   /// \brief Update components from physics simulation
   /// \param[in] _ecm Mutable reference to ECM.
-  /// \param[in] _linkFrameData Links that experienced a pose change in the
+  /// \param[in, out] _linkFrameData Links that experienced a pose change in the
   /// most recent physics step. The key is the entity of the link, and the
   /// value is the updated frame data corresponding to that entity.
   public: void UpdateSim(EntityComponentManager &_ecm,
-              const std::map<
-                Entity, physics::FrameData3d> &_linkFrameData,
-              const ignition::gazebo::UpdateInfo &_info);
+              std::map<Entity, physics::FrameData3d> &_linkFrameData);
 
   /// \brief Update collision components from physics simulation
   /// \param[in] _ecm Mutable reference to ECM.
@@ -383,8 +424,12 @@ class ignition::gazebo::systems::PhysicsPrivate
   /// \brief Feature list to handle collisions.
   public: struct CollisionFeatureList : ignition::physics::FeatureList<
             MinimumFeatureList,
-            ignition::physics::GetContactsFromLastStepFeature,
             ignition::physics::sdf::ConstructSdfCollision>{};
+
+  /// \brief Feature list to handle contacts information.
+  public: struct ContactFeatureList : ignition::physics::FeatureList<
+            CollisionFeatureList,
+            ignition::physics::GetContactsFromLastStepFeature>{};
 
   /// \brief Collision type with collision features.
   public: using ShapePtrType = ignition::physics::ShapePtr<
@@ -392,7 +437,7 @@ class ignition::gazebo::systems::PhysicsPrivate
 
   /// \brief World type with just the minimum features. Non-pointer.
   public: using WorldShapeType = ignition::physics::World<
-            ignition::physics::FeaturePolicy3d, CollisionFeatureList>;
+            ignition::physics::FeaturePolicy3d, ContactFeatureList>;
 
   //////////////////////////////////////////////////
   // Collision filtering with bitmasks
@@ -441,6 +486,16 @@ class ignition::gazebo::systems::PhysicsPrivate
             physics::mesh::AttachMeshShapeFeature>{};
 
   //////////////////////////////////////////////////
+  // Heightmap
+
+  /// \brief Feature list for heightmaps.
+  /// Include MinimumFeatureList so created collision can be automatically
+  /// up-cast.
+  public: struct HeightmapFeatureList : ignition::physics::FeatureList<
+            CollisionFeatureList,
+            physics::heightmap::AttachHeightmapShapeFeature>{};
+
+  //////////////////////////////////////////////////
   // Collision detector
   /// \brief Feature list for setting and getting the collision detector
   public: struct CollisionDetectorFeatureList : ignition::physics::FeatureList<
@@ -466,6 +521,7 @@ class ignition::gazebo::systems::PhysicsPrivate
           physics::World,
           MinimumFeatureList,
           CollisionFeatureList,
+          ContactFeatureList,
           NestedModelFeatureList,
           CollisionDetectorFeatureList,
           SolverFeatureList>;
@@ -492,6 +548,7 @@ class ignition::gazebo::systems::PhysicsPrivate
             MinimumFeatureList,
             DetachableJointFeatureList,
             CollisionFeatureList,
+            HeightmapFeatureList,
             LinkForceFeatureList,
             MeshFeatureList>;
 
@@ -515,6 +572,7 @@ class ignition::gazebo::systems::PhysicsPrivate
   public: using EntityCollisionMap = EntityFeatureMap3d<
             physics::Shape,
             CollisionFeatureList,
+            ContactFeatureList,
             CollisionMaskFeatureList,
             FrictionPyramidSlipComplianceFeatureList
             >;
@@ -533,10 +591,6 @@ class ignition::gazebo::systems::PhysicsPrivate
   /// \brief A map between collision entity ids in the ECM to FreeGroup Entities
   /// in ign-physics.
   public: EntityFreeGroupMap entityFreeGroupMap;
-
-  /// \brief Boolean value that is true only the first call of Configure and
-  /// PreUpdate.
-  bool firstRun = true;
 };
 
 //////////////////////////////////////////////////
@@ -673,22 +727,10 @@ void Physics::Update(const UpdateInfo &_info, EntityComponentManager &_ecm)
         << "s]. System may not work properly." << std::endl;
   }
 
-  // Update the component with the time in seconds that the simulation
-  // will have after the step
-  _ecm.Each<components::World, components::SimulatedTime>(
-              [&](const Entity& worldEntity,
-              const components::World*,
-              components::SimulatedTime*) {
-
-      scenario::gazebo::utils::setExistingComponentData<
-              components::SimulatedTime>(&_ecm, worldEntity, _info.simTime);
-      return true;
-  });
-
   if (this->dataPtr->engine)
   {
     this->dataPtr->CreatePhysicsEntities(_ecm);
-    this->dataPtr->UpdatePhysics(_ecm, _info);
+    this->dataPtr->UpdatePhysics(_ecm);
     ignition::physics::ForwardStep::Output stepOutput;
     // Only step if not paused.
     if (!_info.paused)
@@ -696,7 +738,7 @@ void Physics::Update(const UpdateInfo &_info, EntityComponentManager &_ecm)
       stepOutput = this->dataPtr->Step(_info.dt);
     }
     auto changedLinks = this->dataPtr->ChangedLinks(_ecm, stepOutput);
-    this->dataPtr->UpdateSim(_ecm, changedLinks, _info);
+    this->dataPtr->UpdateSim(_ecm, changedLinks);
 
     // Entities scheduled to be removed should be removed from physics after the
     // simulation step. Otherwise, since the to-be-removed entity still shows up
@@ -708,8 +750,20 @@ void Physics::Update(const UpdateInfo &_info, EntityComponentManager &_ecm)
 //////////////////////////////////////////////////
 void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager &_ecm)
 {
+  this->CreateWorldEntities(_ecm);
+  this->CreateModelEntities(_ecm);
+  this->CreateLinkEntities(_ecm);
+  // We don't need to add visuals to the physics engine.
+  this->CreateCollisionEntities(_ecm);
+  this->CreateJointEntities(_ecm);
+  this->CreateBatteryEntities(_ecm);
+}
+
+//////////////////////////////////////////////////
+void PhysicsPrivate::CreateWorldEntities(const EntityComponentManager &_ecm)
+{
   // Get all the new worlds
-  auto processWorld =
+  _ecm.EachNew<components::World, components::Name, components::Gravity>(
       [&](const Entity &_entity,
         const components::World * /* _world */,
         const components::Name *_name,
@@ -783,9 +837,14 @@ void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager &_ecm)
         }
 
         return true;
-      };
+      });
+}
 
-  auto processModel =
+//////////////////////////////////////////////////
+void PhysicsPrivate::CreateModelEntities(const EntityComponentManager &_ecm)
+{
+  _ecm.EachNew<components::Model, components::Name, components::Pose,
+            components::ParentEntity>(
       [&](const Entity &_entity,
           const components::Model *,
           const components::Name *_name,
@@ -910,9 +969,14 @@ void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager &_ecm)
         }
 
         return true;
-      };
+      });
+}
 
-  auto processLink =
+//////////////////////////////////////////////////
+void PhysicsPrivate::CreateLinkEntities(const EntityComponentManager &_ecm)
+{
+  _ecm.EachNew<components::Link, components::Name, components::Pose,
+            components::ParentEntity>(
       [&](const Entity &_entity,
         const components::Link * /* _link */,
         const components::Name *_name,
@@ -963,12 +1027,15 @@ void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager &_ecm)
             topLevelModel(_entity, _ecm)));
 
         return true;
-      };
+      });
+}
 
-  // We don't need to add visuals to the physics engine.
-
-  // collisions
-  auto processCollision =
+//////////////////////////////////////////////////
+void PhysicsPrivate::CreateCollisionEntities(const EntityComponentManager &_ecm)
+{
+  _ecm.EachNew<components::Collision, components::Name, components::Pose,
+            components::Geometry, components::CollisionElement,
+            components::ParentEntity>(
       [&](const Entity &_entity,
           const components::Collision *,
           const components::Name *_name,
@@ -1044,6 +1111,56 @@ void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager &_ecm)
               math::eigen3::convert(_pose->Data()),
               math::eigen3::convert(meshSdf->Scale()));
         }
+        else if (_geom->Data().Type() == sdf::GeometryType::HEIGHTMAP)
+        {
+          auto linkHeightmapFeature =
+              this->entityLinkMap.EntityCast<HeightmapFeatureList>(
+                  _parent->Data());
+          if (!linkHeightmapFeature)
+          {
+            static bool informed{false};
+            if (!informed)
+            {
+              igndbg << "Attempting to process heightmap geometries, but the "
+                     << "physics engine doesn't support feature "
+                     << "[AttachHeightmapShapeFeature]. Heightmaps will be "
+                     << "ignored." << std::endl;
+              informed = true;
+            }
+            return true;
+          }
+
+          auto heightmapSdf = _geom->Data().HeightmapShape();
+          if (nullptr == heightmapSdf)
+          {
+            ignwarn << "Heightmap geometry for collision [" << _name->Data()
+                    << "] missing heightmap shape." << std::endl;
+            return true;
+          }
+
+          auto fullPath = asFullPath(heightmapSdf->Uri(),
+              heightmapSdf->FilePath());
+          if (fullPath.empty())
+          {
+            ignerr << "Heightmap geometry missing URI" << std::endl;
+            return true;
+          }
+
+          common::ImageHeightmap data;
+          if (data.Load(fullPath) < 0)
+          {
+            ignerr << "Failed to load heightmap image data from [" << fullPath
+                   << "]" << std::endl;
+            return true;
+          }
+
+          collisionPtrPhys = linkHeightmapFeature->AttachHeightmapShape(
+              _name->Data(),
+              data,
+              math::eigen3::convert(_pose->Data()),
+              math::eigen3::convert(heightmapSdf->Size()),
+              heightmapSdf->Sampling());
+        }
         else
         {
           auto linkCollisionFeature =
@@ -1065,6 +1182,14 @@ void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager &_ecm)
 
           collisionPtrPhys =
               linkCollisionFeature->ConstructCollision(collision);
+        }
+
+        if (nullptr == collisionPtrPhys)
+        {
+          igndbg << "Failed to create collision [" << _name->Data()
+                 << "]. Does the physics engine support geometries of type ["
+                 << static_cast<int>(_geom->Data().Type()) << "]?" << std::endl;
+          return true;
         }
 
         this->entityCollisionMap.AddEntity(_entity, collisionPtrPhys);
@@ -1093,10 +1218,16 @@ void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager &_ecm)
         this->topLevelModelMap.insert(std::make_pair(_entity,
             topLevelModel(_entity, _ecm)));
         return true;
-      };
+      });
+}
 
-  // joints
-  auto processJoint =
+//////////////////////////////////////////////////
+void PhysicsPrivate::CreateJointEntities(const EntityComponentManager &_ecm)
+{
+  _ecm.EachNew<components::Joint, components::Name, components::JointType,
+               components::Pose, components::ThreadPitch,
+               components::ParentEntity, components::ParentLinkName,
+               components::ChildLinkName>(
       [&](const Entity &_entity,
           const components::Joint * /* _joint */,
           const components::Name *_name,
@@ -1175,19 +1306,10 @@ void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager &_ecm)
               topLevelModel(_entity, _ecm)));
         }
         return true;
-      };
-
-  auto processBatterySoC =
-      [&](const Entity & _entity, const components::BatterySoC *)->bool
-      {
-        // Parent entity of battery is model entity
-        this->entityOffMap.insert(std::make_pair(
-          _ecm.ParentEntity(_entity), false));
-        return true;
-      };
+      });
 
   // Detachable joints
-  auto processDetachableJoint =
+  _ecm.EachNew<components::DetachableJoint>(
       [&](const Entity &_entity,
           const components::DetachableJoint *_jointInfo) -> bool
       {
@@ -1272,80 +1394,20 @@ void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager &_ecm)
           ignwarn << "DetachableJoint could not be created." << std::endl;
         }
         return true;
-      };
+      });
+}
 
-  if (this->firstRun)
-  {
-    this->firstRun = false;
-
-    _ecm.Each<components::World, components::Name, components::Gravity>(
-        processWorld);
-
-    _ecm.Each<components::Model,
-              components::Name,
-              components::Pose,
-              components::ParentEntity>(processModel);
-
-    _ecm.Each<components::Link,
-              components::Name,
-              components::Pose,
-              components::ParentEntity>(processLink);
-
-    _ecm.Each<components::Collision,
-              components::Name,
-              components::Pose,
-              components::Geometry,
-              components::CollisionElement,
-              components::ParentEntity>(processCollision);
-
-    _ecm.Each<components::Joint,
-              components::Name,
-              components::JointType,
-              components::Pose,
-              components::ThreadPitch,
-              components::ParentEntity,
-              components::ParentLinkName,
-              components::ChildLinkName>(processJoint);
-
-    _ecm.Each<components::BatterySoC>(processBatterySoC);
-
-    _ecm.Each<components::DetachableJoint>(processDetachableJoint);
-  }
-  else
-  {
-    _ecm.EachNew<components::World, components::Name, components::Gravity>(
-        processWorld);
-
-    _ecm.EachNew<components::Model,
-                 components::Name,
-                 components::Pose,
-                 components::ParentEntity>(processModel);
-
-    _ecm.EachNew<components::Link,
-                 components::Name,
-                 components::Pose,
-                 components::ParentEntity>(processLink);
-
-    _ecm.EachNew<components::Collision,
-                 components::Name,
-                 components::Pose,
-                 components::Geometry,
-                 components::CollisionElement,
-                 components::ParentEntity>(processCollision);
-
-    _ecm.EachNew<components::Joint,
-                 components::Name,
-                 components::JointType,
-                 components::Pose,
-                 components::ThreadPitch,
-                 components::ParentEntity,
-                 components::ParentLinkName,
-                 components::ChildLinkName>(processJoint);
-
-    _ecm.EachNew<components::BatterySoC>(processBatterySoC);
-
-    _ecm.EachNew<components::DetachableJoint>(processDetachableJoint);
-  }
+//////////////////////////////////////////////////
+void PhysicsPrivate::CreateBatteryEntities(const EntityComponentManager &_ecm)
+{
+  _ecm.EachNew<components::BatterySoC>(
+      [&](const Entity & _entity, const components::BatterySoC *)->bool
+      {
+        // Parent entity of battery is model entity
+        this->entityOffMap.insert(std::make_pair(
+          _ecm.ParentEntity(_entity), false));
+        return true;
+      });
 }
 
 //////////////////////////////////////////////////
@@ -1436,8 +1498,7 @@ void PhysicsPrivate::RemovePhysicsEntities(const EntityComponentManager &_ecm)
 }
 
 //////////////////////////////////////////////////
-void PhysicsPrivate::UpdatePhysics(EntityComponentManager &_ecm,
-                                   const ignition::gazebo::UpdateInfo &_info)
+void PhysicsPrivate::UpdatePhysics(EntityComponentManager &_ecm)
 {
   IGN_PROFILE("PhysicsPrivate::UpdatePhysics");
   // Battery state
@@ -1644,54 +1705,6 @@ void PhysicsPrivate::UpdatePhysics(EntityComponentManager &_ecm,
 
         return true;
       });
-
-  // Link wrenches with duration
-  if (!_info.paused)
-  {
-    _ecm.Each<components::ExternalWorldWrenchCmdWithDuration>(
-        [&](const Entity& _entity,
-            components::ExternalWorldWrenchCmdWithDuration*
-                _wrenchWithDurComp)
-    {
-      if (!this->entityLinkMap.HasEntity(_entity))
-      {
-        ignwarn << "Failed to find link [" << _entity << "]."
-                << std::endl;
-        return true;
-      }
-
-      auto linkForceFeature =
-           this->entityLinkMap.EntityCast<LinkForceFeatureList>(_entity);
-      if (!linkForceFeature) {
-          static bool informed{false};
-          if (!informed)
-          {
-            igndbg << "Attempting to apply a wrench, but the physics "
-                   << "engine doesn't support feature "
-                   << "[AddLinkExternalForceTorque]. Wrench will be ignored."
-                   << std::endl;
-            informed = true;
-          }
-
-          // Break Each call since no ExternalWorldWrenchCmd's can be processed
-          return false;
-      }
-
-      const auto& totalWrench =  _wrenchWithDurComp->Data().totalWrench();
-      const math::Vector3 force = msgs::Convert(totalWrench.force());
-      const math::Vector3 torque = msgs::Convert(totalWrench.torque());
-
-      linkForceFeature->AddExternalForce(math::eigen3::convert(force));
-      linkForceFeature->AddExternalTorque(math::eigen3::convert(torque));
-
-      // NOTE: Cleaning could be moved to UpdateSim, but let's
-      //       keep things all together for now
-      auto simTimeAfterStep = _info.simTime;
-      _wrenchWithDurComp->Data().cleanExpired(simTimeAfterStep);
-
-      return true;
-    });
-  }
 
   // Update model pose
   auto olderWorldPoseCmdsToRemove = std::move(this->worldPoseCmdsToRemove);
@@ -2159,15 +2172,15 @@ std::map<Entity, physics::FrameData3d> PhysicsPrivate::ChangedLinks(
         // (if the link pose hasn't changed, there's no need for a pose update)
         const auto worldPoseMath3d = ignition::math::eigen3::convert(
             frameData.pose);
-        // if ((this->linkWorldPoses.find(_entity) == this->linkWorldPoses.end())
-        //     || !this->pose3Eql(this->linkWorldPoses[_entity], worldPoseMath3d))
-        // {
+        if ((this->linkWorldPoses.find(_entity) == this->linkWorldPoses.end())
+            || !this->pose3Eql(this->linkWorldPoses[_entity], worldPoseMath3d))
+        {
           // cache the updated link pose to check if the link pose has changed
           // during the next iteration
           this->linkWorldPoses[_entity] = worldPoseMath3d;
 
           linkFrameData[_entity] = frameData;
-        // }
+        }
 
         return true;
       });
@@ -2177,9 +2190,137 @@ std::map<Entity, physics::FrameData3d> PhysicsPrivate::ChangedLinks(
 }
 
 //////////////////////////////////////////////////
+void PhysicsPrivate::UpdateModelPose(const Entity _model,
+    const Entity _canonicalLink, EntityComponentManager &_ecm,
+    std::map<Entity, physics::FrameData3d> &_linkFrameData)
+{
+  std::optional<math::Pose3d> parentWorldPose;
+
+  // If this model is nested, the pose of the parent model has already
+  // been updated since we iterate through the modified links in
+  // topological order. We expect to find the updated pose in
+  // this->modelWorldPoses. If not found, this must not be nested, so this
+  // model's pose component would reflect it's absolute pose.
+  auto parentModelPoseIt =
+    this->modelWorldPoses.find(
+        _ecm.Component<components::ParentEntity>(_model)->Data());
+  if (parentModelPoseIt != this->modelWorldPoses.end())
+  {
+    parentWorldPose = parentModelPoseIt->second;
+  }
+
+  // Given the following frame names:
+  // W: World/inertial frame
+  // P: Parent frame (this could be a parent model or the World frame)
+  // M: This model's frame
+  // L: The frame of this model's canonical link
+  //
+  // And the following quantities:
+  // (See http://sdformat.org/tutorials?tut=specify_pose for pose
+  // convention)
+  // parentWorldPose (X_WP): Pose of the parent frame w.r.t the world
+  // linkPoseFromModel (X_ML): Pose of the canonical link frame w.r.t the
+  // model frame
+  // linkWorldPose (X_WL): Pose of the canonical link w.r.t the world
+  // modelWorldPose (X_WM): Pose of this model w.r.t the world
+  //
+  // The Pose component of this model entity stores the pose of M w.r.t P
+  // (X_PM) and is calculated as
+  //   X_PM = (X_WP)^-1 * X_WM
+  //
+  // And X_WM is calculated from X_WL, which is obtained from physics as:
+  //   X_WM = X_WL * (X_ML)^-1
+  auto linkPoseFromModel = this->RelativePose(_model, _canonicalLink, _ecm);
+  const auto &linkWorldPose = _linkFrameData[_canonicalLink].pose;
+  const auto &modelWorldPose =
+      math::eigen3::convert(linkWorldPose) * linkPoseFromModel.Inverse();
+
+  this->modelWorldPoses[_model] = modelWorldPose;
+
+  // update model's pose
+  auto modelPose = _ecm.Component<components::Pose>(_model);
+  if (parentWorldPose)
+  {
+    *modelPose =
+        components::Pose(parentWorldPose->Inverse() * modelWorldPose);
+  }
+  else
+  {
+    // This is a non-nested model and parentWorldPose would be identity
+    // because it would be the pose of the parent (world) w.r.t the world.
+    *modelPose = components::Pose(modelWorldPose);
+  }
+
+  _ecm.SetChanged(_model, components::Pose::typeId,
+                  ComponentState::PeriodicChange);
+
+  // once the model pose has been updated, all descendant link poses of this
+  // model must be updated (whether the link actually changed pose or not)
+  // since link poses are saved w.r.t. their parent model
+  auto model = gazebo::Model(_model);
+  for (const auto &childLink : model.Links(_ecm))
+  {
+    // skip links that are already marked as a link to be updated
+    if (_linkFrameData.find(childLink) != _linkFrameData.end())
+      continue;
+
+    physics::FrameData3d childLinkFrameData;
+    if (!this->GetFrameDataRelativeToWorld(childLink, childLinkFrameData))
+      continue;
+
+    _linkFrameData[childLink] = childLinkFrameData;
+  }
+
+  // since nested model poses are saved w.r.t. the nested model's parent
+  // pose, we must also update any nested models that have a different
+  // canonical link
+  for (const auto &nestedModel : model.Models(_ecm))
+  {
+    auto nestedModelCanonicalLinkComp =
+      _ecm.Component<components::ModelCanonicalLink>(nestedModel);
+    if (!nestedModelCanonicalLinkComp)
+    {
+      ignerr << "Model [" << nestedModel << "] has no canonical link\n";
+      continue;
+    }
+
+    auto nestedCanonicalLink = nestedModelCanonicalLinkComp->Data();
+
+    // skip links that are already marked as a link to be updated
+    if (nestedCanonicalLink == _canonicalLink ||
+        _linkFrameData.find(nestedCanonicalLink) != _linkFrameData.end())
+      continue;
+
+    // mark this canonical link as one that needs to be updated so that all of
+    // the models that have this canonical link are updated
+    physics::FrameData3d canonicalLinkFrameData;
+    if (!this->GetFrameDataRelativeToWorld(nestedCanonicalLink,
+          canonicalLinkFrameData))
+      continue;
+
+    _linkFrameData[nestedCanonicalLink] = canonicalLinkFrameData;
+  }
+}
+
+//////////////////////////////////////////////////
+bool PhysicsPrivate::GetFrameDataRelativeToWorld(const Entity _entity,
+    physics::FrameData3d &_data)
+{
+  auto entityPhys = this->entityLinkMap.Get(_entity);
+  if (nullptr == entityPhys)
+  {
+    ignerr << "Internal error: entity [" << _entity
+           << "] not in entity map" << std::endl;
+    return false;
+  }
+
+  _data = entityPhys->FrameDataRelativeToWorld();
+  return true;
+}
+
+//////////////////////////////////////////////////
 void PhysicsPrivate::UpdateSim(EntityComponentManager &_ecm,
-    const std::map<Entity, physics::FrameData3d> &_linkFrameData,
-    const ignition::gazebo::UpdateInfo &_info)
+    std::map<Entity, physics::FrameData3d> &_linkFrameData)
 {
   IGN_PROFILE("PhysicsPrivate::UpdateSim");
 
@@ -2236,69 +2377,15 @@ void PhysicsPrivate::UpdateSim(EntityComponentManager &_ecm,
     // (linkEntity). Since we have the models in topological order and
     // _linkFrameData stores links in topological order thanks to the ordering
     // of std::map (entity IDs are created in ascending order), this should
-    // properly handle pose updates for nested models
-    for (auto &model : canonicalLinkModels)
-    {
-      std::optional<math::Pose3d> parentWorldPose;
-
-      // If this model is nested, the pose of the parent model has already
-      // been updated since we iterate through the modified links in
-      // topological order. We expect to find the updated pose in
-      // this->modelWorldPoses. If not found, this must not be nested, so this
-      // model's pose component would reflect it's absolute pose.
-      auto parentModelPoseIt =
-        this->modelWorldPoses.find(
-            _ecm.Component<components::ParentEntity>(model)->Data());
-      if (parentModelPoseIt != this->modelWorldPoses.end())
-      {
-        parentWorldPose = parentModelPoseIt->second;
-      }
-
-      // Given the following frame names:
-      // W: World/inertial frame
-      // P: Parent frame (this could be a parent model or the World frame)
-      // M: This model's frame
-      // L: The frame of this model's canonical link
-      //
-      // And the following quantities:
-      // (See http://sdformat.org/tutorials?tut=specify_pose for pose
-      // convention)
-      // parentWorldPose (X_WP): Pose of the parent frame w.r.t the world
-      // linkPoseFromModel (X_ML): Pose of the canonical link frame w.r.t the
-      // model frame
-      // linkWorldPose (X_WL): Pose of the canonical link w.r.t the world
-      // modelWorldPose (X_WM): Pose of this model w.r.t the world
-      //
-      // The Pose component of this model entity stores the pose of M w.r.t P
-      // (X_PM) and is calculated as
-      //   X_PM = (X_WP)^-1 * X_WM
-      //
-      // And X_WM is calculated from X_WL, which is obtained from physics as:
-      //   X_WM = X_WL * (X_ML)^-1
-      auto linkPoseFromModel = this->RelativePose(model, linkEntity, _ecm);
-      const auto &linkWorldPose = frameData.pose;
-      const auto &modelWorldPose =
-          math::eigen3::convert(linkWorldPose) * linkPoseFromModel.Inverse();
-
-      this->modelWorldPoses[model] = modelWorldPose;
-
-      // update model's pose
-      auto modelPose = _ecm.Component<components::Pose>(model);
-      if (parentWorldPose)
-      {
-        *modelPose =
-            components::Pose(parentWorldPose->Inverse() * modelWorldPose);
-      }
-      else
-      {
-        // This is a non-nested model and parentWorldPose would be identity
-        // because it would be the pose of the parent (world) w.r.t the world.
-        *modelPose = components::Pose(modelWorldPose);
-      }
-
-      _ecm.SetChanged(model, components::Pose::typeId,
-                      ComponentState::PeriodicChange);
-    }
+    // properly handle pose updates for nested models that share the same
+    // canonical link.
+    //
+    // Nested models that don't share the same canonical link will also need to
+    // be updated since these nested models have their pose saved w.r.t. their
+    // parent model, which just experienced a pose update. The UpdateModelPose
+    // method also handles this case.
+    for (auto &modelEnt : canonicalLinkModels)
+      this->UpdateModelPose(modelEnt, linkEntity, _ecm, _linkFrameData);
   }
   IGN_PROFILE_END();
 
@@ -2468,37 +2555,6 @@ void PhysicsPrivate::UpdateSim(EntityComponentManager &_ecm,
     }
   }
   IGN_PROFILE_END();
-
-  // history of applied joint forces (commands)
-  _ecm.Each<components::Joint,
-            components::JointForceCmd,
-            components::HistoryOfAppliedJointForces>(
-       [&](const Entity& /*_entity*/,
-           components::Joint* /*_joint*/,
-           components::JointForceCmd* _forceCmd,
-           components::HistoryOfAppliedJointForces* _history) -> bool
-  {
-      // Since the operation is an append, we have to perform it only when
-      // the physics step is actually performed
-      if (_info.paused)
-      {
-          return true;
-      }
-
-      // Get the history queue
-      auto& history = _history->Data();
-
-      // Get the data from the component
-      auto jointForceCmdData = _forceCmd->Data();
-
-      // Append values to the queue
-      for (const auto& jointForceCmd : jointForceCmdData)
-      {
-        history.push(jointForceCmd);
-      }
-
-      return true;
-  });
 
   // pose/velocity/acceleration of non-link entities such as sensors /
   // collisions. These get updated only if another system has created a
@@ -2712,41 +2768,6 @@ void PhysicsPrivate::UpdateSim(EntityComponentManager &_ecm,
         }
         return true;
       });
-
-  // Update joint accelerations
-  _ecm.Each<components::Joint, components::JointAcceleration>(
-      [&](const Entity& _entity,
-          components::Joint*,
-          components::JointAcceleration* _jointAcc) -> bool
-  {
-    if (auto jointPhys = this->entityJointMap.Get(_entity))
-    {
-      _jointAcc->Data().resize(jointPhys->GetDegreesOfFreedom());
-      for (std::size_t i = 0; i < jointPhys->GetDegreesOfFreedom(); ++i)
-      {
-        _jointAcc->Data()[i] = jointPhys->GetAcceleration(i);
-      }
-    }
-    return true;
-  });
-
-  // Update joint forces
-  _ecm.Each<components::Joint, components::JointForce>(
-      [&](const Entity& _entity,
-          components::Joint*,
-          components::JointForce* _jointForce) -> bool
-  {
-    if (auto jointPhys = this->entityJointMap.Get(_entity))
-    {
-      _jointForce->Data().resize(jointPhys->GetDegreesOfFreedom());
-      for (std::size_t i = 0; i < jointPhys->GetDegreesOfFreedom(); ++i)
-      {
-          _jointForce->Data()[i] = jointPhys->GetForce(i);
-      }
-    }
-    return true;
-  });
-
   IGN_PROFILE_END();
 
   // TODO(louise) Skip this if there are no collision features
@@ -2766,24 +2787,6 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
   // capture the world Entity in a Configure call
   Entity worldEntity = _ecm.EntityByComponents(components::World());
 
-  // Check if there is at least one collision that requires contact data.
-  // The previous check does not block the scenario where all the collisions
-  // start enabled and then get disabled.
-  bool hasContactSensorData = false;
-  _ecm.Each<components::ContactSensorData, components::Collision>(
-      [&](const Entity&,
-          components::ContactSensorData*,
-          components::Collision*) -> bool
-  {
-    hasContactSensorData = true;
-    return false;
-  });
-
-  // Quit early if the ContactData component was created and then removed.
-  // This means there are no systems that need contact information.
-  if (!hasContactSensorData)
-    return;
-
   if (worldEntity == kNullEntity)
   {
     ignerr << "Missing world entity.\n";
@@ -2797,7 +2800,7 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
   }
 
   auto worldCollisionFeature =
-      this->entityWorldMap.EntityCast<CollisionFeatureList>(worldEntity);
+      this->entityWorldMap.EntityCast<ContactFeatureList>(worldEntity);
   if (!worldCollisionFeature)
   {
     static bool informed{false};
@@ -2812,19 +2815,12 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
     return;
   }
 
-  // Struct containing pointer of contact data
-  struct AllContactData
-  {
-      const WorldShapeType::ContactPoint *point;
-      const WorldShapeType::ExtraContactData *extra;
-  };
-
   // Each contact object we get from ign-physics contains the EntityPtrs of the
   // two colliding entities and other data about the contact such as the
   // position. This map groups contacts so that it is easy to query all the
   // contacts of one entity.
   using EntityContactMap = std::unordered_map<Entity,
-      std::deque<AllContactData>>;
+      std::deque<const WorldShapeType::ContactPoint *>>;
 
   // This data structure is essentially a mapping between a pair of entities and
   // a list of pointers to their contact object. We use a map inside a map to
@@ -2837,32 +2833,17 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
   auto allContacts = worldCollisionFeature->GetContactsFromLastStep();
   for (const auto &contactComposite : allContacts)
   {
-    // Get the RequireData
     const auto &contact = contactComposite.Get<WorldShapeType::ContactPoint>();
     auto coll1Entity =
       this->entityCollisionMap.Get(ShapePtrType(contact.collision1));
     auto coll2Entity =
       this->entityCollisionMap.Get(ShapePtrType(contact.collision2));
 
-    // Check the ExpectData
-    const auto* extraContactData =
-        contactComposite.Query<WorldShapeType::ExtraContactData>();
 
     if (coll1Entity != kNullEntity && coll2Entity != kNullEntity)
     {
-      AllContactData allContactData;
-      allContactData.point = &contact;
-
-      if (extraContactData)
-        allContactData.extra = extraContactData;
-
-      // Note that the ExtraContactData is valid only when the first
-      // collision is the first body. Quantities like the force and
-      // the normal must be flipped in the second case.
-      entityContactMap[coll1Entity][coll2Entity].push_back(
-        allContactData);
-      entityContactMap[coll2Entity][coll1Entity].push_back(
-        allContactData);
+      entityContactMap[coll1Entity][coll2Entity].push_back(&contact);
+      entityContactMap[coll2Entity][coll1Entity].push_back(&contact);
     }
   }
 
@@ -2893,73 +2874,12 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
           msgs::Contact *contactMsg = contactsComp.add_contact();
           contactMsg->mutable_collision1()->set_id(_collEntity1);
           contactMsg->mutable_collision2()->set_id(collEntity2);
-
           for (const auto &contact : contactData)
           {
             auto *position = contactMsg->add_position();
-            position->set_x(contact.point->point.x());
-            position->set_y(contact.point->point.y());
-            position->set_z(contact.point->point.z());
-
-            if (contact.extra)
-            {
-              // Add the penetration depth
-              contactMsg->add_depth(contact.extra->depth);
-
-              // Get the name of the collisions
-              auto collisionName1 =
-                  _ecm.Component<components::Name>(_collEntity1)->Data();
-              auto collisionName2 =
-                  _ecm.Component<components::Name>(collEntity2)->Data();
-
-              // Add the wrench (only the force component)
-              auto* wrench = contactMsg->add_wrench();
-              wrench->set_body_1_name(collisionName1);
-              wrench->set_body_2_name(collisionName2);
-              auto* wrench1 = wrench->mutable_body_1_wrench();
-              auto* wrench2 = wrench->mutable_body_2_wrench();
-
-              auto* force1 = wrench1->mutable_force();
-              auto* force2 = wrench2->mutable_force();
-              auto* torque1 = wrench1->mutable_torque();
-              auto* torque2 = wrench2->mutable_torque();
-
-              // The same ContactPoint and ExtraContactData are
-              // used for the contact between collision1 and
-              // collision2. In those structures there is some
-              // data, like the force and normal, that cannot
-              // commute.
-              if (_collEntity1 == this->entityCollisionMap.Get(
-                      ShapePtrType(contact.point->collision1)))
-              {
-                assert(collEntity2 == this->entityCollisionMap.Get(
-                        ShapePtrType(contact.point->collision2)));
-                // Use the data as it is
-                *force1 = msgs::Convert(math::eigen3::convert(contact.extra->force));
-                *force2 = msgs::Convert(-math::eigen3::convert(contact.extra->force));
-                // Add the wrench normal
-                auto* normal = contactMsg->add_normal();
-                normal->set_x(contact.extra->normal.x());
-                normal->set_y(contact.extra->normal.y());
-                normal->set_z(contact.extra->normal.z());
-              }
-              else
-              {
-                assert(collEntity2 == this->entityCollisionMap.Get(
-                        ShapePtrType(contact.point->collision1)));
-                // Flip the force
-                *force1 = msgs::Convert(-math::eigen3::convert(contact.extra->force));
-                *force2 = msgs::Convert(math::eigen3::convert(contact.extra->force));
-                // Flip the normal
-                auto* normal = contactMsg->add_normal();
-                normal->set_x(-contact.extra->normal.x());
-                normal->set_y(-contact.extra->normal.y());
-                normal->set_z(-contact.extra->normal.z());
-              }
-
-              *torque1 = msgs::Convert(math::Vector3d::Zero);
-              *torque2 = msgs::Convert(math::Vector3d::Zero);
-            }
+            position->set_x(contact->point.x());
+            position->set_y(contact->point.y());
+            position->set_z(contact->point.z());
           }
         }
 
@@ -2989,4 +2909,3 @@ IGNITION_ADD_PLUGIN(Physics,
                     Physics::ISystemUpdate)
 
 IGNITION_ADD_PLUGIN_ALIAS(Physics, "ignition::gazebo::systems::Physics")
-IGNITION_ADD_PLUGIN_ALIAS(Physics, "scenario::plugins::gazebo::Physics")
