@@ -48,6 +48,7 @@
 #include <ignition/physics/RequestEngine.hh>
 
 #include <ignition/physics/BoxShape.hh>
+#include <ignition/physics/ContactJointProperties.hh>
 #include <ignition/physics/CylinderShape.hh>
 #include <ignition/physics/ForwardStep.hh>
 #include <ignition/physics/FrameSemantics.hh>
@@ -128,6 +129,9 @@
 #include "ignition/gazebo/components/ThreadPitch.hh"
 #include "ignition/gazebo/components/World.hh"
 #include "ignition/gazebo/components/HaltMotion.hh"
+
+// Events
+#include "ignition/gazebo/PhysicsEvents.hh"
 
 #include "CanonicalLinkModelTracker.hh"
 #include "EntityFeatureMap.hh"
@@ -294,6 +298,14 @@ class ignition::gazebo::systems::PhysicsPrivate
   public: ignition::math::Pose3d RelativePose(const Entity &_from,
       const Entity &_to, const EntityComponentManager &_ecm) const;
 
+  /// \brief Enable contact surface customization for the given world.
+  /// \param[in] _world The world to enable it for.
+  public: void EnableContactSurfaceCustomization(const Entity &_world);
+
+  /// \brief Disable contact surface customization for the given world.
+  /// \param[in] _world The world to disable it for.
+  public: void DisableContactSurfaceCustomization(const Entity &_world);
+
   /// \brief Cache the top-level model for each entity.
   /// The key is an entity and the value is its top level model.
   public: std::unordered_map<Entity, Entity> topLevelModelMap;
@@ -323,6 +335,9 @@ class ignition::gazebo::systems::PhysicsPrivate
   /// \brief Entities whose pose commands have been processed and should be
   /// deleted the following iteration.
   public: std::unordered_set<Entity> worldPoseCmdsToRemove;
+
+  /// \brief IDs of the ContactSurfaceHandler callbacks registered for worlds
+  public: std::unordered_map<Entity, std::string> worldContactCallbackIDs;
 
   /// \brief used to store whether physics objects have been created.
   public: bool initialized = false;
@@ -437,6 +452,12 @@ class ignition::gazebo::systems::PhysicsPrivate
             ignition::physics::GetContactsFromLastStepFeature,
             ignition::physics::sdf::ConstructSdfCollision>{};
 
+  /// \brief Feature list to change contacts before they are applied to physics.
+  public: struct SetContactJointPropertiesCallbackFeatureList :
+            ignition::physics::FeatureList<
+              CollisionFeatureList,
+              ignition::physics::SetContactJointPropertiesCallbackFeature>{};
+
   /// \brief Collision type with collision features.
   public: using ShapePtrType = ignition::physics::ShapePtr<
             ignition::physics::FeaturePolicy3d, CollisionFeatureList>;
@@ -529,6 +550,7 @@ class ignition::gazebo::systems::PhysicsPrivate
           CollisionFeatureList,
           NestedModelFeatureList,
           CollisionDetectorFeatureList,
+          SetContactJointPropertiesCallbackFeatureList,
           SolverFeatureList>;
 
   /// \brief A map between world entity ids in the ECM to World Entities in
@@ -596,6 +618,15 @@ class ignition::gazebo::systems::PhysicsPrivate
   /// in ign-physics.
   public: EntityFreeGroupMap entityFreeGroupMap;
 
+  /// \brief Event manager from simulation runner.
+  public: EventManager *eventManager = nullptr;
+
+  /// \brief Keep track of what entities use customized contact surfaces.
+  /// Map keys are expected to be world entities so that we keep a set of
+  /// entities with customizations per world.
+  public: std::unordered_map<Entity, std::unordered_set<Entity>>
+    customContactSurfaceEntities;
+
   /// \brief Boolean value that is true only the first call of Configure and
   /// PreUpdate.
   bool firstRun = true;
@@ -610,7 +641,7 @@ Physics::Physics() : System(), dataPtr(std::make_unique<PhysicsPrivate>())
 void Physics::Configure(const Entity &_entity,
     const std::shared_ptr<const sdf::Element> &_sdf,
     EntityComponentManager &_ecm,
-    EventManager &/*_eventMgr*/)
+    EventManager &_eventMgr)
 {
   std::string pluginLib;
 
@@ -716,7 +747,10 @@ void Physics::Configure(const Entity &_entity,
     ignerr << "Failed to load a valid physics engine from [" << pathToLib
            << "]."
            << std::endl;
+    return;
   }
+
+  this->dataPtr->eventManager = &_eventMgr;
 }
 
 //////////////////////////////////////////////////
@@ -1099,7 +1133,7 @@ void PhysicsPrivate::CreateLinkEntities(const EntityComponentManager &_ecm)
 //////////////////////////////////////////////////
 void PhysicsPrivate::CreateCollisionEntities(const EntityComponentManager &_ecm)
 {
-  auto processEntities =
+  auto processCollisionEntities =
       [&](const Entity &_entity,
           const components::Collision *,
           const components::Name *_name,
@@ -1284,6 +1318,36 @@ void PhysicsPrivate::CreateCollisionEntities(const EntityComponentManager &_ecm)
         return true;
       };
 
+  auto processContactEntities =
+      [&](const Entity & _entity,
+          const components::EnableContactSurfaceCustomization *_enable,
+          const components::Collision */*_collision*/,
+          const components::Name *_name) -> bool
+      {
+        const auto world = worldEntity(_entity, _ecm);
+        if (_enable)
+        {
+          if (this->customContactSurfaceEntities[world].empty())
+          {
+            this->EnableContactSurfaceCustomization(world);
+          }
+          this->customContactSurfaceEntities[world].insert(_entity);
+          ignmsg << "Enabling contact surface customization for collision ["
+                 << _name->Data() << "]" << std::endl;
+        }
+        else
+        {
+          this->customContactSurfaceEntities[world].erase(_entity);
+          ignmsg << "Disabling contact surface customization for collision ["
+                 << _name->Data() << "]" << std::endl;
+          if (this->customContactSurfaceEntities[world].empty())
+          {
+            this->DisableContactSurfaceCustomization(world);
+          }
+        }
+        return true;
+      };
+
   if (this->firstRun)
   {
     _ecm.Each<components::Collision,
@@ -1291,7 +1355,10 @@ void PhysicsPrivate::CreateCollisionEntities(const EntityComponentManager &_ecm)
               components::Pose,
               components::Geometry,
               components::CollisionElement,
-              components::ParentEntity>(processEntities);
+              components::ParentEntity>(processCollisionEntities);
+    _ecm.Each<components::EnableContactSurfaceCustomization,
+              components::Collision,
+              components::Name>(processContactEntities);
   }
   else
   {
@@ -1300,7 +1367,10 @@ void PhysicsPrivate::CreateCollisionEntities(const EntityComponentManager &_ecm)
                  components::Pose,
                  components::Geometry,
                  components::CollisionElement,
-                 components::ParentEntity>(processEntities);
+                 components::ParentEntity>(processCollisionEntities);
+    _ecm.EachNew<components::EnableContactSurfaceCustomization,
+                 components::Collision,
+                 components::Name>(processContactEntities);
   }
 }
 
@@ -1538,6 +1608,7 @@ void PhysicsPrivate::RemovePhysicsEntities(const EntityComponentManager &_ecm)
       [&](const Entity &_entity, const components::Model *
           /* _model */) -> bool
       {
+        const auto world = _ecm.EntityByComponents(components::World());
         // Remove model if found
         if (auto modelPtrPhys = this->entityModelMap.Get(_entity))
         {
@@ -1550,6 +1621,7 @@ void PhysicsPrivate::RemovePhysicsEntities(const EntityComponentManager &_ecm)
             {
               this->entityCollisionMap.Remove(childCollision);
               this->topLevelModelMap.erase(childCollision);
+              this->customContactSurfaceEntities[world].erase(childCollision);
             }
             this->entityLinkMap.Remove(childLink);
             this->topLevelModelMap.erase(childLink);
@@ -2883,6 +2955,20 @@ void PhysicsPrivate::UpdateSim(EntityComponentManager &_ecm,
     _ecm.RemoveComponent<components::JointVelocityReset>(entity);
   }
 
+  std::vector<Entity> entitiesCustomContactSurface;
+  _ecm.Each<components::EnableContactSurfaceCustomization>(
+      [&](const Entity &_entity,
+      components::EnableContactSurfaceCustomization *) -> bool
+      {
+        entitiesCustomContactSurface.push_back(_entity);
+        return true;
+      });
+
+  for (const auto entity : entitiesCustomContactSurface)
+  {
+    _ecm.RemoveComponent<components::EnableContactSurfaceCustomization>(entity);
+  }
+
   // Clear pending commands
   _ecm.Each<components::JointForceCmd>(
       [&](const Entity &, components::JointForceCmd *_force) -> bool
@@ -3225,6 +3311,7 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
       });
 }
 
+//////////////////////////////////////////////////
 physics::FrameData3d PhysicsPrivate::LinkFrameDataAtOffset(
       const LinkPtrType &_link, const math::Pose3d &_pose) const
 {
@@ -3232,6 +3319,98 @@ physics::FrameData3d PhysicsPrivate::LinkFrameDataAtOffset(
   parent.pose = math::eigen3::convert(_pose);
   physics::RelativeFrameData3d relFrameData(_link->GetFrameID(), parent);
   return this->engine->Resolve(relFrameData, physics::FrameID::World());
+}
+
+//////////////////////////////////////////////////
+void PhysicsPrivate::EnableContactSurfaceCustomization(const Entity &_world)
+{
+  // allow customization of contact joint surface parameters
+  auto setContactJointPropertiesCallbackFeature =
+    this->entityWorldMap.EntityCast<
+      SetContactJointPropertiesCallbackFeatureList>(_world);
+  if (!setContactJointPropertiesCallbackFeature)
+    return;
+
+  using Policy = physics::FeaturePolicy3d;
+  using Feature = physics::SetContactJointPropertiesCallbackFeature;
+  using FeatureList = SetContactJointPropertiesCallbackFeatureList;
+  using FeatureWorld = Feature::World<Policy, FeatureList>;
+  using GCFeature = physics::GetContactsFromLastStepFeature;
+  using GCFeatureWorld = GCFeature::World<Policy, FeatureList>;
+  using ContactPoint = GCFeatureWorld::ContactPoint;
+  using ExtraContactData = GCFeature::ExtraContactDataT<Policy>;
+
+  const auto callbackID = "ignition::gazebo::systems::Physics";
+  setContactJointPropertiesCallbackFeature->AddContactJointPropertiesCallback(
+    callbackID,
+    [&, _world](const FeatureWorld::Contact &_contact,
+      const size_t _numContactsOnCollision,
+      Feature::ContactSurfaceParams<Policy> &_params)
+      {
+        const auto &contact = _contact.Get<ContactPoint>();
+        auto coll1Entity = this->entityCollisionMap.Get(
+          ShapePtrType(contact.collision1));
+        auto coll2Entity = this->entityCollisionMap.Get(
+          ShapePtrType(contact.collision2));
+
+        // check if at least one of the entities wants contact surface
+        // customization
+        if (this->customContactSurfaceEntities[_world].find(coll1Entity) ==
+          this->customContactSurfaceEntities[_world].end() &&
+          this->customContactSurfaceEntities[_world].find(coll2Entity) ==
+          this->customContactSurfaceEntities[_world].end())
+        {
+          return;
+        }
+
+        std::optional<math::Vector3d> force;
+        std::optional<math::Vector3d> normal;
+        std::optional<double> depth;
+        const auto* extraData = _contact.Query<ExtraContactData>();
+        if (extraData != nullptr)
+        {
+          force = math::eigen3::convert(extraData->force);
+          normal = math::eigen3::convert(extraData->normal);
+          depth = extraData->depth;
+        }
+
+        // broadcast the event that we want to collect the customized
+        // contact surface properties; each connected client should
+        // filter in the callback to treat just the entities it knows
+        this->eventManager->
+          Emit<events::CollectContactSurfaceProperties>(
+            coll1Entity, coll2Entity, math::eigen3::convert(contact.point),
+            force, normal, depth, _numContactsOnCollision, _params);
+      }
+  );
+
+  this->worldContactCallbackIDs[_world] = callbackID;
+
+  ignmsg << "Enabled contact surface customization for world entity [" << _world
+         << "]" << std::endl;
+}
+
+
+//////////////////////////////////////////////////
+void PhysicsPrivate::DisableContactSurfaceCustomization(const Entity &_world)
+{
+  if (this->worldContactCallbackIDs.find(_world) ==
+      this->worldContactCallbackIDs.end())
+  {
+    return;
+  }
+
+  auto setContactJointPropertiesCallbackFeature =
+    this->entityWorldMap.EntityCast<
+      SetContactJointPropertiesCallbackFeatureList>(_world);
+  if (!setContactJointPropertiesCallbackFeature)
+    return;
+
+  setContactJointPropertiesCallbackFeature->
+   RemoveContactJointPropertiesCallback(this->worldContactCallbackIDs[_world]);
+
+  ignmsg << "Disabled contact surface customization for world entity ["
+         << _world << "]" << std::endl;
 }
 
 IGNITION_ADD_PLUGIN(Physics,
