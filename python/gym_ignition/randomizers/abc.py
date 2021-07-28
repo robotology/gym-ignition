@@ -3,16 +3,15 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
+
 import gym_ignition.base.task
+
 from scenario import core as scenario_core
 
 
 class TaskRandomizer(abc.ABC):
-
     @abc.abstractmethod
-    def randomize_task(self,
-                       task: gym_ignition.base.task.Task,
-                       **kwargs) -> None:
+    def randomize_task(self, task: gym_ignition.base.task.Task, **kwargs) -> None:
         """
         Randomize a :py:class:`~gym_ignition.base.task.Task` instance.
 
@@ -101,10 +100,10 @@ class PhysicsRandomizer(abc.ABC):
 
 
 class ModelRandomizer(abc.ABC):
-
     @abc.abstractmethod
-    def randomize_model(self, task: gym_ignition.base.task.Task, **kwargs) \
-            -> scenario_core.Model:
+    def randomize_model(
+        self, task: gym_ignition.base.task.Task, **kwargs
+    ) -> scenario_core.Model:
         """
         Randomize the model.
 
@@ -118,10 +117,10 @@ class ModelRandomizer(abc.ABC):
 
 
 class ModelDescriptionRandomizer(abc.ABC):
-
     @abc.abstractmethod
-    def randomize_model_description(self, task: gym_ignition.base.task.Task, **kwargs) \
-            -> str:
+    def randomize_model_description(
+        self, task: gym_ignition.base.task.Task, **kwargs
+    ) -> str:
         """
         Randomize the model description.
 
