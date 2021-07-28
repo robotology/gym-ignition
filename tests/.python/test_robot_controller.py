@@ -59,14 +59,16 @@ def test_joint_controller():
     model_ok = gazebo.insertModel(model_data, plugin_data)
     assert model_ok, "Failed to insert the model in the simulation"
 
-    assert bindings.RobotSingleton_get().exists(robot_name), \
-        "The robot interface was not registered in the singleton"
+    assert bindings.RobotSingleton_get().exists(
+        robot_name
+    ), "The robot interface was not registered in the singleton"
 
     # Extract the robot interface from the singleton
     robot_weak_ptr = bindings.RobotSingleton_get().getRobot(robot_name)
     assert not robot_weak_ptr.expired(), "The Robot object has expired"
-    assert robot_weak_ptr.lock(), \
-        "The returned Robot object does not contain a valid interface"
+    assert (
+        robot_weak_ptr.lock()
+    ), "The returned Robot object does not contain a valid interface"
     assert robot_weak_ptr.lock().valid(), "The Robot object is not valid"
 
     # Get the pointer to the robot interface
@@ -91,7 +93,8 @@ def test_joint_controller():
     # Generate the cart trajectory
     cart_ref = np.fromiter(
         (0.2 * np.sin(2 * np.pi * 0.5 * t) for t in np.arange(0, 5, 1 / agent_rate)),
-        dtype=np.float)
+        dtype=np.float,
+    )
 
     # Initialize the cart position buffer
     pos_cart_buffer = np.zeros(np.shape(cart_ref))
@@ -108,5 +111,6 @@ def test_joint_controller():
         pos_cart_buffer[i] = robot.jointPosition("linear")
 
     # Check that the trajectory was followed correctly
-    assert np.abs(pos_cart_buffer - cart_ref).sum() / cart_ref.size < 5E-3, \
-        "The reference trajectory was not tracked correctly"
+    assert (
+        np.abs(pos_cart_buffer - cart_ref).sum() / cart_ref.size < 5e-3
+    ), "The reference trajectory was not tracked correctly"

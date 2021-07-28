@@ -4,8 +4,8 @@
 
 import os
 import sys
+from enum import Enum, auto
 from pathlib import Path
-from enum import auto, Enum
 
 
 class InstallMode(Enum):
@@ -16,6 +16,7 @@ class InstallMode(Enum):
 def detect_install_mode() -> InstallMode:
 
     import scenario.bindings.core
+
     install_prefix = scenario.bindings.core.get_install_prefix()
     return InstallMode.User if install_prefix == "" else InstallMode.Developer
 
@@ -46,6 +47,7 @@ def preload_tensorflow_shared_libraries() -> None:
 
     # Check if tensorflow is installed
     import importlib.util
+
     spec = importlib.util.find_spec("tensorflow")
 
     if spec is None:
@@ -53,6 +55,7 @@ def preload_tensorflow_shared_libraries() -> None:
 
     # Get the tensorflow __init__ location
     import pathlib
+
     init = pathlib.Path(spec.origin)
 
     # Get the tensorflow top-level folder
@@ -66,11 +69,13 @@ def preload_tensorflow_shared_libraries() -> None:
     # Load the main shared library
     for lib in tensorflow_dir.glob("*tensorflow*.so*"):
         import ctypes
+
         ctypes.CDLL(str(lib))
 
     # Load all the shared libraries inside tensorflow/python
     for lib in tensorflow_python_dir.glob("_*.so"):
         import ctypes
+
         ctypes.CDLL(str(lib))
 
 
@@ -78,6 +83,7 @@ def pre_import_gym() -> None:
 
     # Check if gym is installed
     import importlib.util
+
     spec = importlib.util.find_spec("gym")
 
     if spec is None:
@@ -105,7 +111,7 @@ def import_gazebo() -> None:
     # Import SWIG bindings
     # See https://github.com/robotology/gym-ignition/issues/7
     #     https://stackoverflow.com/a/45473441/12150968
-    if sys.platform.startswith('linux') or sys.platform.startswith('darwin'):
+    if sys.platform.startswith("linux") or sys.platform.startswith("darwin"):
 
         # Update the dlopen flags
         dlopen_flags = sys.getdlopenflags()
@@ -123,9 +129,10 @@ def import_gazebo() -> None:
 def create_home_dot_folder() -> None:
 
     # Make sure that the dot folder in the user's home exists
-    Path("~/.ignition/gazebo").expanduser().mkdir(mode=0o755,
-                                                  parents=True,
-                                                  exist_ok=True)
+    Path("~/.ignition/gazebo").expanduser().mkdir(
+        mode=0o755, parents=True, exist_ok=True
+    )
+
 
 # ===================
 # Import the bindings

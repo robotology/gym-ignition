@@ -3,8 +3,9 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import os
-from typing import List
 from os.path import exists, isfile
+from typing import List
+
 from gym_ignition.utils import logger
 
 GYM_IGNITION_DATA_PATH = []
@@ -17,7 +18,9 @@ def get_search_paths() -> List[str]:
 
 def add_path(data_path: str) -> None:
     if not exists(data_path):
-        logger.warn(f"The path '{data_path}' does not exist. Not added to the data path.")
+        logger.warn(
+            f"The path '{data_path}' does not exist. Not added to the data path."
+        )
         return
 
     global GYM_IGNITION_DATA_PATH
@@ -40,7 +43,7 @@ def add_path_from_env_var(env_variable: str) -> None:
     env_var_content = os.environ[env_variable]
 
     # Remove leading ':' characters
-    if env_var_content[0] == ':':
+    if env_var_content[0] == ":":
         env_var_content = env_var_content[1:]
 
     # Split multiple value
@@ -67,7 +70,7 @@ def find_resource(file_name: str) -> str:
     # Handle if the path is relative
     for path in GYM_IGNITION_DATA_PATH:
         logger.debug(f"  Exploring folder '{path}'")
-        path_with_slash = path if path[-1] == '/' else path + "/"
+        path_with_slash = path if path[-1] == "/" else path + "/"
         candidate_abs_path = path_with_slash + file_name
 
         if isfile(candidate_abs_path):

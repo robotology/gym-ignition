@@ -3,15 +3,18 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from typing import Union
-from gym_ignition_environments import tasks
-from gym_ignition_environments.models import cartpole
+
 from gym_ignition.randomizers import gazebo_env_randomizer
 from gym_ignition.randomizers.gazebo_env_randomizer import MakeEnvCallable
+from gym_ignition_environments import tasks
+from gym_ignition_environments.models import cartpole
 
 # Tasks that are supported by this randomizer. Used for type hinting.
-SupportedTasks = Union[tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing,
-                       tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup,
-                       tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing]
+SupportedTasks = Union[
+    tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing,
+    tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup,
+    tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing,
+]
 
 
 class CartpoleEnvNoRandomizations(gazebo_env_randomizer.GazeboEnvRandomizer):

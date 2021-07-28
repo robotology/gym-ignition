@@ -3,24 +3,26 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+
 pytestmark = pytest.mark.scenario
 
-import numpy as np
-from scenario import core
 import gym_ignition_models
-from ..common import utils
-from scenario import gazebo as scenario
+import numpy as np
 from gym_ignition.context.gazebo import controllers
+
+from scenario import core
+from scenario import gazebo as scenario
+
+from ..common import utils
 from ..common.utils import gazebo_fixture as gazebo
 
 # Set the verbosity
 scenario.set_verbosity(scenario.Verbosity_debug)
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 5.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 5.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_computed_torque_fixed_base(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
@@ -51,13 +53,15 @@ def test_computed_torque_fixed_base(gazebo: scenario.GazeboSimulator):
     panda.set_controller_period(step_size)
 
     # Insert the controller
-    assert panda.insert_model_plugin(*controllers.ComputedTorqueFixedBase(
-        kp=[10.0] * panda.dofs(),
-        ki=[0.0] * panda.dofs(),
-        kd=[3.0] * panda.dofs(),
-        urdf=panda_urdf,
-        joints=panda.joint_names(),
-    ).args())
+    assert panda.insert_model_plugin(
+        *controllers.ComputedTorqueFixedBase(
+            kp=[10.0] * panda.dofs(),
+            ki=[0.0] * panda.dofs(),
+            kd=[3.0] * panda.dofs(),
+            urdf=panda_urdf,
+            joints=panda.joint_names(),
+        ).args()
+    )
 
     # Set the references
     assert panda.set_joint_position_targets([0.0] * panda.dofs())
@@ -83,19 +87,25 @@ def test_computed_torque_fixed_base(gazebo: scenario.GazeboSimulator):
         gazebo.run()
 
     # Check that the the references have been reached
-    assert panda.joint_positions() == pytest.approx(panda.joint_position_targets(),
-                                                    abs=np.deg2rad(1))
-    assert panda.joint_velocities() == pytest.approx(panda.joint_velocity_targets(),
-                                                     abs=0.05)
+    assert panda.joint_positions() == pytest.approx(
+        panda.joint_position_targets(), abs=np.deg2rad(1)
+    )
+    assert panda.joint_velocities() == pytest.approx(
+        panda.joint_velocity_targets(), abs=0.05
+    )
 
     # Apply an external force
-    assert panda.get_link("panda_link4").to_gazebo().apply_world_force([100.0, 0, 0], 0.5)
+    assert (
+        panda.get_link("panda_link4").to_gazebo().apply_world_force([100.0, 0, 0], 0.5)
+    )
 
     for _ in range(4000):
         assert gazebo.run()
 
     # Check that the the references have been reached
-    assert panda.joint_positions() == pytest.approx(panda.joint_position_targets(),
-                                                    abs=np.deg2rad(1))
-    assert panda.joint_velocities() == pytest.approx(panda.joint_velocity_targets(),
-                                                     abs=0.05)
+    assert panda.joint_positions() == pytest.approx(
+        panda.joint_position_targets(), abs=np.deg2rad(1)
+    )
+    assert panda.joint_velocities() == pytest.approx(
+        panda.joint_velocity_targets(), abs=0.05
+    )

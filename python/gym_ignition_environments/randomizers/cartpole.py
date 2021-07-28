@@ -4,26 +4,31 @@
 
 import abc
 from typing import Union
-from gym_ignition import utils
-from gym_ignition.utils import misc
-from gym_ignition import randomizers
-from scenario import gazebo as scenario
-from gym_ignition_environments import tasks
-from gym_ignition_environments.models import cartpole
+
+from gym_ignition import randomizers, utils
 from gym_ignition.randomizers import gazebo_env_randomizer
 from gym_ignition.randomizers.gazebo_env_randomizer import MakeEnvCallable
-from gym_ignition.randomizers.model.sdf import Method, Distribution, UniformParams
+from gym_ignition.randomizers.model.sdf import Distribution, Method, UniformParams
+from gym_ignition.utils import misc
+from gym_ignition_environments import tasks
+from gym_ignition_environments.models import cartpole
+
+from scenario import gazebo as scenario
 
 # Tasks that are supported by this randomizer. Used for type hinting.
-SupportedTasks = Union[tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing,
-                       tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup,
-                       tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing]
+SupportedTasks = Union[
+    tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing,
+    tasks.cartpole_continuous_swingup.CartPoleContinuousSwingup,
+    tasks.cartpole_continuous_balancing.CartPoleContinuousBalancing,
+]
 
 
-class CartpoleRandomizersMixin(randomizers.abc.TaskRandomizer,
-                               randomizers.abc.PhysicsRandomizer,
-                               randomizers.abc.ModelDescriptionRandomizer,
-                               abc.ABC):
+class CartpoleRandomizersMixin(
+    randomizers.abc.TaskRandomizer,
+    randomizers.abc.PhysicsRandomizer,
+    randomizers.abc.ModelDescriptionRandomizer,
+    abc.ABC,
+):
     """
     Mixin that collects the implementation of task, model and physics randomizations for
     cartpole environments.
@@ -34,7 +39,8 @@ class CartpoleRandomizersMixin(randomizers.abc.TaskRandomizer,
         # Initialize base classes
         randomizers.abc.TaskRandomizer.__init__(self)
         randomizers.abc.PhysicsRandomizer.__init__(
-            self, randomize_after_rollouts_num=randomize_physics_after_rollouts)
+            self, randomize_after_rollouts_num=randomize_physics_after_rollouts
+        )
         randomizers.abc.ModelDescriptionRandomizer.__init__(self)
 
         # SDF randomizer
@@ -97,8 +103,9 @@ class CartpoleRandomizersMixin(randomizers.abc.TaskRandomizer,
     # Private Methods
     # ===============
 
-    def _get_sdf_randomizer(self, task: SupportedTasks) -> \
-            randomizers.model.sdf.SDFRandomizer:
+    def _get_sdf_randomizer(
+        self, task: SupportedTasks
+    ) -> randomizers.model.sdf.SDFRandomizer:
 
         if self._sdf_randomizer is not None:
             return self._sdf_randomizer
@@ -119,12 +126,11 @@ class CartpoleRandomizersMixin(randomizers.abc.TaskRandomizer,
         sdf_randomizer.rng = task.np_random
 
         # Randomize the mass of all links
-        sdf_randomizer.new_randomization() \
-            .at_xpath("*/link/inertial/mass") \
-            .method(Method.Additive) \
-            .sampled_from(Distribution.Uniform, UniformParams(low=-0.2, high=0.2)) \
-            .force_positive() \
-            .add()
+        sdf_randomizer.new_randomization().at_xpath("*/link/inertial/mass").method(
+            Method.Additive
+        ).sampled_from(
+            Distribution.Uniform, UniformParams(low=-0.2, high=0.2)
+        ).force_positive().add()
 
         # Process the randomization
         sdf_randomizer.process_data()
@@ -148,27 +154,27 @@ class CartpoleRandomizersMixin(randomizers.abc.TaskRandomizer,
 
         # Insert a new cartpole.
         # It will create a unique name if there are clashing.
-        model = cartpole.CartPole(world=task.world,
-                                  model_file=cartpole_model)
+        model = cartpole.CartPole(world=task.world, model_file=cartpole_model)
 
         # Store the model name in the task
         task.model_name = model.name()
 
 
-class CartpoleEnvRandomizer(gazebo_env_randomizer.GazeboEnvRandomizer,
-                            CartpoleRandomizersMixin):
+class CartpoleEnvRandomizer(
+    gazebo_env_randomizer.GazeboEnvRandomizer, CartpoleRandomizersMixin
+):
     """
     Concrete implementation of cartpole environments randomization.
     """
 
-    def __init__(self,
-                 env: MakeEnvCallable,
-                 num_physics_rollouts: int = 0):
+    def __init__(self, env: MakeEnvCallable, num_physics_rollouts: int = 0):
 
         # Initialize the mixin
         CartpoleRandomizersMixin.__init__(
-            self, randomize_physics_after_rollouts=num_physics_rollouts)
+            self, randomize_physics_after_rollouts=num_physics_rollouts
+        )
 
         # Initialize the environment randomizer
         gazebo_env_randomizer.GazeboEnvRandomizer.__init__(
-            self, env=env, physics_randomizer=self)
+            self, env=env, physics_randomizer=self
+        )

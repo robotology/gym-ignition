@@ -3,21 +3,26 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
+from typing import Tuple
+
 import gym
 import numpy as np
-from typing import Tuple
 from gym_ignition.base import task
+from gym_ignition.utils.typing import (
+    Action,
+    ActionSpace,
+    Observation,
+    ObservationSpace,
+    Reward,
+)
+
 from scenario import core as scenario
-from gym_ignition.utils.typing import Action, Reward, Observation
-from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 
 
 class CartPoleDiscreteBalancing(task.Task, abc.ABC):
-
-    def __init__(self,
-                 agent_rate: float,
-                 reward_cart_at_center: bool = True,
-                 **kwargs) -> None:
+    def __init__(
+        self, agent_rate: float, reward_cart_at_center: bool = True, **kwargs
+    ) -> None:
 
         # Initialize the Task base class
         task.Task.__init__(self, agent_rate=agent_rate)
@@ -44,23 +49,23 @@ class CartPoleDiscreteBalancing(task.Task, abc.ABC):
         action_space = gym.spaces.Discrete(2)
 
         # Configure reset limits
-        high = np.array([
-            self._x_threshold,   # x
-            self._dx_threshold,  # dx
-            self._q_threshold,   # q
-            self._dq_threshold   # dq
-        ])
+        high = np.array(
+            [
+                self._x_threshold,  # x
+                self._dx_threshold,  # dx
+                self._q_threshold,  # q
+                self._dq_threshold,  # dq
+            ]
+        )
 
         # Configure the reset space
-        self.reset_space = gym.spaces.Box(low=-high,
-                                          high=high,
-                                          dtype=np.float32)
+        self.reset_space = gym.spaces.Box(low=-high, high=high, dtype=np.float32)
 
         # Configure the observation space
         obs_high = high.copy() * 1.2
-        observation_space = gym.spaces.Box(low=-obs_high,
-                                           high=obs_high,
-                                           dtype=np.float32)
+        observation_space = gym.spaces.Box(
+            low=-obs_high, high=obs_high, dtype=np.float32
+        )
 
         return action_space, observation_space
 
@@ -101,10 +106,12 @@ class CartPoleDiscreteBalancing(task.Task, abc.ABC):
             # Get the observation
             x, dx, _, _ = self.get_observation()
 
-            reward = reward \
-                - 0.10 * np.abs(x) \
-                - 0.10 * np.abs(dx) \
+            reward = (
+                reward
+                - 0.10 * np.abs(x)
+                - 0.10 * np.abs(dx)
                 - 10.0 * (x >= 0.9 * self._x_threshold)
+            )
 
         return reward
 
@@ -137,8 +144,12 @@ class CartPoleDiscreteBalancing(task.Task, abc.ABC):
         x, dx, q, dq = self.np_random.uniform(low=-0.05, high=0.05, size=(4,))
 
         # Reset the cartpole state
-        ok_reset_pos = model.to_gazebo().reset_joint_positions([x, q], ["linear", "pivot"])
-        ok_reset_vel = model.to_gazebo().reset_joint_velocities([dx, dq], ["linear", "pivot"])
+        ok_reset_pos = model.to_gazebo().reset_joint_positions(
+            [x, q], ["linear", "pivot"]
+        )
+        ok_reset_vel = model.to_gazebo().reset_joint_velocities(
+            [dx, dq], ["linear", "pivot"]
+        )
 
         if not (ok_reset_pos and ok_reset_vel):
             raise RuntimeError("Failed to reset the cartpole state")

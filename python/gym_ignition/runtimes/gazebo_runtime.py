@@ -7,6 +7,7 @@ from gym_ignition import base, utils
 from gym_ignition.base import runtime
 from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
+
 from scenario import gazebo as scenario
 
 
@@ -30,19 +31,22 @@ class GazeboRuntime(runtime.Runtime):
         physics, a new simulator should be created.
     """
 
-    metadata = {'render.modes': ['human']}
+    metadata = {"render.modes": ["human"]}
 
-    def __init__(self,
-                 task_cls: type,
-                 agent_rate: float,
-                 physics_rate: float,
-                 real_time_factor: float,
-                 physics_engine = scenario.PhysicsEngine_dart,
-                 world: str = None,
-                 **kwargs):
+    def __init__(
+        self,
+        task_cls: type,
+        agent_rate: float,
+        physics_rate: float,
+        real_time_factor: float,
+        physics_engine=scenario.PhysicsEngine_dart,
+        world: str = None,
+        **kwargs,
+    ):
 
         if gym.logger.MIN_LEVEL <= gym.logger.DEBUG:
             import inspect
+
             frame = inspect.currentframe()
             args, _, _, values = inspect.getargvalues(frame)
             gym.logger.debug(f"{dict({arg: values[arg] for arg in args})}")
@@ -145,9 +149,9 @@ class GazeboRuntime(runtime.Runtime):
 
         return Observation(observation)
 
-    def render(self, mode: str = 'human', **kwargs) -> None:
+    def render(self, mode: str = "human", **kwargs) -> None:
 
-        if mode != 'human':
+        if mode != "human":
             raise ValueError(f"Render mode '{mode}' not supported")
 
         gui_ok = self.gazebo.gui()
@@ -191,13 +195,16 @@ class GazeboRuntime(runtime.Runtime):
         num_of_steps_per_run = self._physics_rate / self.agent_rate
 
         if num_of_steps_per_run != int(num_of_steps_per_run):
-            logger.warn("Rounding the number of iterations to {} from the nominal {}"
-                        .format(int(num_of_steps_per_run), num_of_steps_per_run))
+            logger.warn(
+                "Rounding the number of iterations to {} from the nominal {}".format(
+                    int(num_of_steps_per_run), num_of_steps_per_run
+                )
+            )
 
         # Create the simulator
-        gazebo = scenario.GazeboSimulator(1.0 / self._physics_rate,
-                                          self._real_time_factor,
-                                          int(num_of_steps_per_run))
+        gazebo = scenario.GazeboSimulator(
+            1.0 / self._physics_rate, self._real_time_factor, int(num_of_steps_per_run)
+        )
 
         # Store the simulator
         self._gazebo = gazebo
@@ -256,7 +263,8 @@ class GazeboRuntime(runtime.Runtime):
 
             # Insert the ground plane
             ok_ground = world.insert_model(
-                gym_ignition_models.get_model_file("ground_plane"))
+                gym_ignition_models.get_model_file("ground_plane")
+            )
 
             if not ok_ground:
                 raise RuntimeError("Failed to insert the ground plane")

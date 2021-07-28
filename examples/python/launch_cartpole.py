@@ -2,9 +2,10 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import gym
-import time
 import functools
+import time
+
+import gym
 from gym_ignition.utils import logger
 from gym_ignition_environments import randomizers
 
@@ -21,6 +22,7 @@ env_id = "CartPoleDiscreteBalancing-Gazebo-v0"
 def make_env_from_id(env_id: str, **kwargs) -> gym.Env:
     import gym
     import gym_ignition_environments
+
     return gym.make(env_id, **kwargs)
 
 

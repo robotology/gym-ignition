@@ -2,8 +2,9 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import pytest
 import numpy as np
+import pytest
+
 from . import utils
 
 
@@ -80,8 +81,9 @@ def test_robot_floating_to_fixed(simulator_name: str):
     ok_fixed_base = robot.set_as_floating_base(False)
     assert ok_fixed_base, "Failed to set the robot as fixed base"
 
-    ok_reset_base_pose = robot.reset_base_pose(current_base_position,
-                                               current_base_orientation)
+    ok_reset_base_pose = robot.reset_base_pose(
+        current_base_position, current_base_orientation
+    )
     assert ok_reset_base_pose, "Failed to reset the base pose"
 
     # Robot should now not fall due to gravity

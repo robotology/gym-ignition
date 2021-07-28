@@ -3,11 +3,11 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
+
 from scenario import core as scenario
 
 
 class ModelWrapper(scenario.Model, abc.ABC):
-
     def __init__(self, model: scenario.Model):
 
         # No need to call scenario.Model.__init__()!

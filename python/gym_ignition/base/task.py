@@ -3,13 +3,21 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
+from typing import Dict, Tuple
+
 import gym
 import numpy as np
-from scenario import core
 from gym.utils import seeding
-from typing import Dict, Tuple
-from gym_ignition.utils.typing import ActionSpace, ObservationSpace
-from gym_ignition.utils.typing import Action, Observation, Reward, SeedList
+from gym_ignition.utils.typing import (
+    Action,
+    ActionSpace,
+    Observation,
+    ObservationSpace,
+    Reward,
+    SeedList,
+)
+
+from scenario import core
 
 
 class Task(abc.ABC):
@@ -224,7 +232,7 @@ class Task(abc.ABC):
         """
 
         # Create the seed if not passed
-        seed = np.random.randint(2**32 - 1) if seed is None else seed
+        seed = np.random.randint(2 ** 32 - 1) if seed is None else seed
 
         # Get an instance of the random number generator from gym utils.
         # This is necessary to have an independent rng for each environment.

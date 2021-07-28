@@ -3,23 +3,28 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+
 pytestmark = pytest.mark.scenario
 
-import numpy as np
 from typing import Tuple
-from scenario import core
-from ..common import utils
+
 import gym_ignition_models
+import numpy as np
+
+from scenario import core
 from scenario import gazebo as scenario
-from ..common.utils import gazebo_fixture as gazebo
+
+from ..common import utils
 from ..common.utils import default_world_fixture as default_world
+from ..common.utils import gazebo_fixture as gazebo
 
 # Set the verbosity
 scenario.set_verbosity(scenario.Verbosity_debug)
 
 
-def get_model(gazebo: scenario.GazeboSimulator,
-              gym_ignition_models_name: str) -> scenario.Model:
+def get_model(
+    gazebo: scenario.GazeboSimulator, gym_ignition_models_name: str
+) -> scenario.Model:
 
     # Get the world and cast it to a Gazebo world
     world = gazebo.get_world().to_gazebo()
@@ -28,9 +33,9 @@ def get_model(gazebo: scenario.GazeboSimulator,
 
     model_urdf = gym_ignition_models.get_model_file(gym_ignition_models_name)
 
-    assert world.insert_model(model_urdf,
-                              core.Pose_identity(),
-                              gym_ignition_models_name)
+    assert world.insert_model(
+        model_urdf, core.Pose_identity(), gym_ignition_models_name
+    )
 
     # Get the model and cast it to a Gazebo model
     model = world.get_model(gym_ignition_models_name).to_gazebo()
@@ -40,10 +45,9 @@ def get_model(gazebo: scenario.GazeboSimulator,
     return model
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_model_core_api(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
@@ -62,10 +66,9 @@ def test_model_core_api(gazebo: scenario.GazeboSimulator):
     assert model.controller_period() == 0.42
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_model_joints(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
@@ -100,20 +103,23 @@ def test_model_joints(gazebo: scenario.GazeboSimulator):
     assert model.reset_joint_positions([-0.4] * len(joint_subset), joint_subset)
     assert model.reset_joint_velocities([3.0] * len(joint_subset), joint_subset)
     gazebo.run(paused=True)
-    assert model.joint_positions(joint_subset) == \
-        pytest.approx([-0.4] * len(joint_subset))
-    assert model.joint_velocities(joint_subset) == \
-        pytest.approx([3.0] * len(joint_subset))
+    assert model.joint_positions(joint_subset) == pytest.approx(
+        [-0.4] * len(joint_subset)
+    )
+    assert model.joint_velocities(joint_subset) == pytest.approx(
+        [3.0] * len(joint_subset)
+    )
     assert model.joint_positions() == pytest.approx(
-        [-0.4] * len(joint_subset) + [0.0] * (model.dofs() - len(joint_subset)))
+        [-0.4] * len(joint_subset) + [0.0] * (model.dofs() - len(joint_subset))
+    )
     assert model.joint_velocities() == pytest.approx(
-        [3.0] * len(joint_subset) + [0.0] * (model.dofs() - len(joint_subset)))
+        [3.0] * len(joint_subset) + [0.0] * (model.dofs() - len(joint_subset))
+    )
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_model_base_pose(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
@@ -133,7 +139,9 @@ def test_model_base_pose(gazebo: scenario.GazeboSimulator):
 
     # Reset the base pose
     new_base_pose = dict(position=[5, 5, 0], orientation=[0, 1, 0, 0])
-    assert model.reset_base_pose(new_base_pose['position'], new_base_pose['orientation'])
+    assert model.reset_base_pose(
+        new_base_pose["position"], new_base_pose["orientation"]
+    )
 
     # Before stepping the simulation the pose should be the initial one
     assert model.base_position() == pytest.approx([0, 0, 0])
@@ -141,16 +149,16 @@ def test_model_base_pose(gazebo: scenario.GazeboSimulator):
 
     # Step the simulator and check that the pose changes
     gazebo.run(paused=True)
-    assert model.base_position() == pytest.approx(new_base_pose['position'])
-    assert model.base_orientation() == pytest.approx(new_base_pose['orientation'])
+    assert model.base_position() == pytest.approx(new_base_pose["position"])
+    assert model.base_orientation() == pytest.approx(new_base_pose["orientation"])
 
 
-@pytest.mark.parametrize("default_world",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "default_world", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_model_base_velocity(
-        default_world: Tuple[scenario.GazeboSimulator, scenario.World]):
+    default_world: Tuple[scenario.GazeboSimulator, scenario.World]
+):
 
     # Get the simulator and the world
     gazebo, world = default_world
@@ -202,22 +210,25 @@ def test_model_base_velocity(
     assert model2.base_world_angular_velocity() == pytest.approx(ang_velocity, abs=0.01)
 
     # The velocity of the base link must be the same
-    assert model1.get_link("support").world_linear_velocity() == \
-           pytest.approx(lin_velocity, abs=0.01)
-    assert model1.get_link("support").world_angular_velocity() == \
-           pytest.approx(ang_velocity, abs=0.01)
+    assert model1.get_link("support").world_linear_velocity() == pytest.approx(
+        lin_velocity, abs=0.01
+    )
+    assert model1.get_link("support").world_angular_velocity() == pytest.approx(
+        ang_velocity, abs=0.01
+    )
 
     # The velocity of the base link must be the same
-    assert model2.get_link("support").world_linear_velocity() == \
-           pytest.approx(lin_velocity, abs=0.01)
-    assert model2.get_link("support").world_angular_velocity() == \
-           pytest.approx(ang_velocity, abs=0.01)
+    assert model2.get_link("support").world_linear_velocity() == pytest.approx(
+        lin_velocity, abs=0.01
+    )
+    assert model2.get_link("support").world_angular_velocity() == pytest.approx(
+        ang_velocity, abs=0.01
+    )
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_model_references(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
@@ -263,7 +274,8 @@ def test_model_references(gazebo: scenario.GazeboSimulator):
 
 @pytest.mark.parametrize("default_world", [(1.0 / 1_000, 1.0, 1)], indirect=True)
 def test_history_of_joint_forces(
-        default_world: Tuple[scenario.GazeboSimulator, scenario.World]):
+    default_world: Tuple[scenario.GazeboSimulator, scenario.World]
+):
 
     # Get the simulator and the world
     gazebo, world = default_world
@@ -296,7 +308,8 @@ def test_history_of_joint_forces(
         gazebo.run()
 
         history_last_three_runs = np.concatenate((history_last_three_runs, torques))
-        history_last_three_runs = history_last_three_runs[-panda.dofs() * 3:]
+        history_last_three_runs = history_last_three_runs[-panda.dofs() * 3 :]
 
-        assert panda.history_of_applied_joint_forces() == \
-            pytest.approx(history_last_three_runs)
+        assert panda.history_of_applied_joint_forces() == pytest.approx(
+            history_last_three_runs
+        )

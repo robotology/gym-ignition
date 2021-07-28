@@ -2,12 +2,13 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import gym
-import warnings
 import contextlib
+import warnings
+
+import gym
 from gym import logger
+from gym.logger import debug, error, info
 from gym.utils import colorize
-from gym.logger import debug, info, error
 
 
 def custom_formatwarning(msg, *args, **kwargs):
@@ -29,7 +30,7 @@ def warn(msg: str, *args) -> None:
     """
 
     if logger.MIN_LEVEL <= logger.WARN:
-        warnings.warn(colorize('%s: %s' % ('WARN', msg % args), 'yellow'), stacklevel=2)
+        warnings.warn(colorize("%s: %s" % ("WARN", msg % args), "yellow"), stacklevel=2)
 
 
 # Monkey patch warning formatting

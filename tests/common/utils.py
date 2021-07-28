@@ -2,11 +2,13 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import pytest
 import dataclasses
 from typing import Tuple
+
 import gym_ignition_models
+import pytest
 from gym_ignition.utils import misc
+
 from scenario import gazebo as scenario
 
 
@@ -145,6 +147,7 @@ def get_cube_sdf_string() -> str:
         </model>
     </sdf>
     """
+
 
 def get_cube_urdf_string() -> str:
 

@@ -3,11 +3,11 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
-from typing import Tuple
 from dataclasses import dataclass, field
+from typing import Tuple
 
 # Default SDF version used in the serialized XML context
-SDF_VERSION=1.7
+SDF_VERSION = 1.7
 
 # Read the following for more information about dataclasses internals:
 # https://florimond.dev/blog/articles/2018/10/reconciling-dataclasses-and-properties-in-python/
@@ -57,9 +57,11 @@ class GazeboPlugin(abc.ABC):
         Returns:
             A tuple with the args required to insert the plugin.
         """
-        return str(self._plugin_name), \
-               str(self._plugin_class), \
-               GazeboPlugin.wrap_in_sdf(self.to_xml())
+        return (
+            str(self._plugin_name),
+            str(self._plugin_class),
+            GazeboPlugin.wrap_in_sdf(self.to_xml()),
+        )
 
     @staticmethod
     def wrap_in_sdf(context: str) -> str:

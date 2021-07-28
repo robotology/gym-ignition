@@ -7,8 +7,9 @@ import pytest
 pytestmark = pytest.mark.scenario
 
 from scenario import core
-from ..common import utils
 from scenario import gazebo as scenario
+
+from ..common import utils
 from ..common.utils import gazebo_fixture as gazebo
 
 # Set the verbosity
