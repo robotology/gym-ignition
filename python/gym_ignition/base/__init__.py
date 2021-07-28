@@ -3,5 +3,4 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 # Abstract classes
-from . import task
-from . import runtime
+from . import runtime, task

@@ -3,6 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
+
 import gym
 from gym_ignition import base
 
