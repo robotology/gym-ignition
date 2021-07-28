@@ -9,7 +9,7 @@ jobs:
 
   clang-format:
 
-    name: "clang-format"
+    name: clang-format
     runs-on: ubuntu-latest
 
     steps:
@@ -32,3 +32,23 @@ jobs:
       - name: "🔍️ Inspect style diff"
         if: failure()
         run: printf "${{ steps.format.outputs.diff }}" | colordiff
+
+  black:
+
+    name: black
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: "🔀 Checkout repository"
+        uses: actions/checkout@v2
+
+      - name: '🐍 Initialize Python'
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: "📝 Black Code Formatter"
+        uses: psf/black@stable
+        with:
+          options: --check --diff --color
