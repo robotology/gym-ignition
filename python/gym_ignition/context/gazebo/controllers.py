@@ -2,9 +2,10 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from gym_ignition.context import gazebo
-from typing import Iterable, List, Tuple
 from dataclasses import dataclass, field
+from typing import Iterable, List, Tuple
+
+from gym_ignition.context import gazebo
 
 GRAVITY = (0, 0, -9.80665)
 
@@ -22,9 +23,9 @@ class ComputedTorqueFixedBase(gazebo.plugin.GazeboPlugin):
     # Private fields
     _name: str = field(init=False, repr=False, default="ComputedTorqueFixedBase")
     _plugin_name: str = field(init=False, repr=False, default="ControllerRunner")
-    _plugin_class: str = field(init=False,
-                               repr=False,
-                               default="scenario::plugins::gazebo::ControllerRunner")
+    _plugin_class: str = field(
+        init=False, repr=False, default="scenario::plugins::gazebo::ControllerRunner"
+    )
 
     def to_xml(self) -> str:
         xml = f"""
