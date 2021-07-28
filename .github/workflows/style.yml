@@ -52,3 +52,23 @@ jobs:
         uses: psf/black@stable
         with:
           options: --check --diff --color
+
+  isort:
+
+    name: isort
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: "🔀 Checkout repository"
+        uses: actions/checkout@v2
+
+      - name: '🐍 Initialize Python'
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: "📝 isort"
+        uses: isort/isort-action@master
+        with:
+          configuration: --check --diff --color
