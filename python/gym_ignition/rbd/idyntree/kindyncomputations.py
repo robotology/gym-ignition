@@ -2,29 +2,32 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import numpy as np
 from typing import List, Tuple
+
 import idyntree.bindings as idt
-from scenario import core as scenario_core
+import numpy as np
 from gym_ignition.rbd import conversions
 from gym_ignition.rbd.idyntree import numpy
+
+from scenario import core as scenario_core
+
 from .helpers import FrameVelocityRepresentation, iDynTreeHelpers
 
 
 class KinDynComputations:
-
-    def __init__(self,
-                 model_file: str,
-                 considered_joints: List[str] = None,
-                 world_gravity: np.ndarray = np.array([0, 0, -9.806]),
-                 velocity_representation: FrameVelocityRepresentation =
-                    FrameVelocityRepresentation.MIXED_REPRESENTATION) -> None:
+    def __init__(
+        self,
+        model_file: str,
+        considered_joints: List[str] = None,
+        world_gravity: np.ndarray = np.array([0, 0, -9.806]),
+        velocity_representation: FrameVelocityRepresentation = FrameVelocityRepresentation.MIXED_REPRESENTATION,
+    ) -> None:
 
         self.velocity_representation = velocity_representation
 
-        self.kindyn = iDynTreeHelpers.get_kindyncomputations(model_file,
-                                                             considered_joints,
-                                                             velocity_representation)
+        self.kindyn = iDynTreeHelpers.get_kindyncomputations(
+            model_file, considered_joints, velocity_representation
+        )
 
         self.world_gravity = np.array(world_gravity)
         self.dofs = self.kindyn.getNrOfDegreesOfFreedom()
@@ -42,12 +45,14 @@ class KinDynComputations:
 
         return self._considered_joints
 
-    def set_robot_state(self,
-                        s: np.ndarray,
-                        ds: np.ndarray,
-                        world_H_base: np.ndarray = np.eye(4),
-                        base_velocity: np.ndarray = np.zeros(6),
-                        world_gravity: np.ndarray = None) -> None:
+    def set_robot_state(
+        self,
+        s: np.ndarray,
+        ds: np.ndarray,
+        world_H_base: np.ndarray = np.eye(4),
+        base_velocity: np.ndarray = np.zeros(6),
+        world_gravity: np.ndarray = None,
+    ) -> None:
 
         gravity = world_gravity if world_gravity is not None else self.world_gravity
 
@@ -69,28 +74,30 @@ class KinDynComputations:
         s_idyntree = numpy.FromNumPy.to_idyntree_dyn_vector(array=s)
         ds_idyntree = numpy.FromNumPy.to_idyntree_dyn_vector(array=ds)
 
-        world_gravity_idyntree = \
-            numpy.FromNumPy.to_idyntree_fixed_vector(array=gravity)
+        world_gravity_idyntree = numpy.FromNumPy.to_idyntree_fixed_vector(array=gravity)
 
         world_H_base_idyntree = numpy.FromNumPy.to_idyntree_transform(
-            position=world_H_base[0:3, 3], rotation=world_H_base[0:3, 0:3])
+            position=world_H_base[0:3, 3], rotation=world_H_base[0:3, 0:3]
+        )
 
         base_velocity_idyntree = numpy.FromNumPy.to_idyntree_twist(
-            linear_velocity=base_velocity[0:3], angular_velocity=base_velocity[3:6])
+            linear_velocity=base_velocity[0:3], angular_velocity=base_velocity[3:6]
+        )
 
-        ok_state = self.kindyn.setRobotState(world_H_base_idyntree,
-                                             s_idyntree,
-                                             base_velocity_idyntree,
-                                             ds_idyntree,
-                                             world_gravity_idyntree)
+        ok_state = self.kindyn.setRobotState(
+            world_H_base_idyntree,
+            s_idyntree,
+            base_velocity_idyntree,
+            ds_idyntree,
+            world_gravity_idyntree,
+        )
 
         if not ok_state:
             raise RuntimeError("Failed to set the robot state")
 
-    def set_robot_state_from_model(self,
-                                   model: scenario_core.Model,
-                                   world_gravity: np.ndarray = None) \
-            -> None:
+    def set_robot_state_from_model(
+        self, model: scenario_core.Model, world_gravity: np.ndarray = None
+    ) -> None:
 
         s = np.array(model.joint_positions(self.joint_serialization()))
         ds = np.array(model.joint_velocities(self.joint_serialization()))
@@ -117,14 +124,17 @@ class KinDynComputations:
 
         # Pack the data structures
         world_H_base = conversions.Transform.from_position_and_quaternion(
-            position=world_o_base, quaternion=world_quat_base)
+            position=world_o_base, quaternion=world_quat_base
+        )
         base_velocity_6d = np.concatenate((base_linear_velocity, base_angular_velocity))
 
-        self.set_robot_state(s=s,
-                             ds=ds,
-                             world_H_base=world_H_base,
-                             base_velocity=base_velocity_6d,
-                             world_gravity=world_gravity)
+        self.set_robot_state(
+            s=s,
+            ds=ds,
+            world_H_base=world_H_base,
+            base_velocity=base_velocity_6d,
+            world_gravity=world_gravity,
+        )
 
     def get_floating_base(self) -> str:
 
@@ -175,9 +185,9 @@ class KinDynComputations:
 
         return numpy.ToNumPy.from_idyntree_transform(transform=H)
 
-    def get_relative_transform(self,
-                               ref_frame_name: str,
-                               frame_name: str) -> np.ndarray:
+    def get_relative_transform(
+        self, ref_frame_name: str, frame_name: str
+    ) -> np.ndarray:
 
         if self.kindyn.getFrameIndex(ref_frame_name) < 0:
             raise ValueError(f"Frame '{ref_frame_name}' does not exist")
@@ -185,8 +195,9 @@ class KinDynComputations:
         if self.kindyn.getFrameIndex(frame_name) < 0:
             raise ValueError(f"Frame '{frame_name}' does not exist")
 
-        ref_H_other: idt.Transform = self.kindyn.getRelativeTransform(ref_frame_name,
-                                                                      frame_name)
+        ref_H_other: idt.Transform = self.kindyn.getRelativeTransform(
+            ref_frame_name, frame_name
+        )
 
         return ref_H_other.asHomogeneousTransform().toNumPy()
 
@@ -195,16 +206,20 @@ class KinDynComputations:
         W_H_B: idt.Transform = self.kindyn.getWorldBaseTransform()
         return W_H_B.asHomogeneousTransform().toNumPy()
 
-    def get_relative_transform_explicit(self,
-                                        ref_frame_origin: str,
-                                        ref_frame_orientation: str,
-                                        frame_origin: str,
-                                        frame_orientation: str) -> np.ndarray:
+    def get_relative_transform_explicit(
+        self,
+        ref_frame_origin: str,
+        ref_frame_orientation: str,
+        frame_origin: str,
+        frame_orientation: str,
+    ) -> np.ndarray:
 
-        for frame in {ref_frame_origin,
-                      ref_frame_orientation,
-                      frame_origin,
-                      frame_orientation}:
+        for frame in {
+            ref_frame_origin,
+            ref_frame_orientation,
+            frame_origin,
+            frame_orientation,
+        }:
 
             if frame != "world" and self.kindyn.getFrameIndex(frame) < 0:
                 raise ValueError(f"Frame '{frame}' does not exist")
@@ -227,10 +242,8 @@ class KinDynComputations:
         frameD_index = self.kindyn.getFrameIndex(frameName=frameD)
 
         ref_H_other: idt.Transform = self.kindyn.getRelativeTransformExplicit(
-            frameA_index,
-            frameB_index,
-            frameC_index,
-            frameD_index)
+            frameA_index, frameB_index, frameC_index, frameD_index
+        )
 
         AB_H_CD = ref_H_other
 
@@ -250,22 +263,28 @@ class KinDynComputations:
 
         return AB_H_CD.asHomogeneousTransform().toNumPy()
 
-    def get_relative_adjoint_wrench_transform_explicit(self,
-                                                       ref_frame_origin: str,
-                                                       ref_frame_orientation: str,
-                                                       frame_origin: str,
-                                                       frame_orientation: str) \
-            -> np.ndarray:
+    def get_relative_adjoint_wrench_transform_explicit(
+        self,
+        ref_frame_origin: str,
+        ref_frame_orientation: str,
+        frame_origin: str,
+        frame_orientation: str,
+    ) -> np.ndarray:
 
         AB_H_CD = self.get_relative_transform_explicit(
             ref_frame_origin=ref_frame_origin,
             ref_frame_orientation=ref_frame_orientation,
             frame_origin=frame_origin,
-            frame_orientation=frame_orientation)
+            frame_orientation=frame_orientation,
+        )
 
-        return numpy.FromNumPy.to_idyntree_transform(
-            position=AB_H_CD[0:3, 3], rotation=AB_H_CD[0:3, 0:3]) \
-            .asAdjointTransformWrench().toNumPy()
+        return (
+            numpy.FromNumPy.to_idyntree_transform(
+                position=AB_H_CD[0:3, 3], rotation=AB_H_CD[0:3, 0:3]
+            )
+            .asAdjointTransformWrench()
+            .toNumPy()
+        )
 
     def get_mass_matrix(self) -> np.ndarray:
 
@@ -286,8 +305,9 @@ class KinDynComputations:
         base_wrench: idt.Wrench = g.baseWrench()
         joint_torques: idt.JointDOFsDoubleArray = g.jointTorques()
 
-        return np.concatenate([base_wrench.toNumPy().flatten(),
-                               joint_torques.toNumPy().flatten()])
+        return np.concatenate(
+            [base_wrench.toNumPy().flatten(), joint_torques.toNumPy().flatten()]
+        )
 
     def get_bias_forces(self) -> np.ndarray:
 
@@ -299,8 +319,9 @@ class KinDynComputations:
         base_wrench: idt.Wrench = h.baseWrench()
         joint_torques: idt.JointDOFsDoubleArray = h.jointTorques()
 
-        return np.concatenate([base_wrench.toNumPy().flatten(),
-                               joint_torques.toNumPy().flatten()])
+        return np.concatenate(
+            [base_wrench.toNumPy().flatten(), joint_torques.toNumPy().flatten()]
+        )
 
     def get_momentum(self) -> Tuple[np.ndarray, np.ndarray]:
 
@@ -340,7 +361,9 @@ class KinDynComputations:
 
             # Get the transform of the base frame
             W_H_B = self.kindyn.getWorldBaseTransform()
-            _, W_R_B = numpy.ToNumPy.from_idyntree_transform(transform=W_H_B, split=True)
+            _, W_R_B = numpy.ToNumPy.from_idyntree_transform(
+                transform=W_H_B, split=True
+            )
 
             # Get the rotation between world and base frame
             B_R_W = np.linalg.inv(W_R_B)

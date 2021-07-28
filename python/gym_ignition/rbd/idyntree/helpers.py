@@ -2,10 +2,11 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import os
 import abc
-from typing import List
+import os
 from enum import Enum, auto
+from typing import List
+
 import idyntree.bindings as idt
 from gym_ignition.utils import resource_finder
 
@@ -22,14 +23,16 @@ class FrameVelocityRepresentation(Enum):
             return idt.MIXED_REPRESENTATION
         elif self.value == FrameVelocityRepresentation.BODY_FIXED_REPRESENTATION.value:
             return idt.BODY_FIXED_REPRESENTATION
-        elif self.value == FrameVelocityRepresentation.INERTIAL_FIXED_REPRESENTATION.value:
+        elif (
+            self.value
+            == FrameVelocityRepresentation.INERTIAL_FIXED_REPRESENTATION.value
+        ):
             return idt.INERTIAL_FIXED_REPRESENTATION
         else:
             raise ValueError(self.value)
 
 
 class iDynTreeHelpers(abc.ABC):
-
     @staticmethod
     def get_model_loader(model_file: str, considered_joints: List[str] = None):
 
@@ -59,10 +62,10 @@ class iDynTreeHelpers(abc.ABC):
 
     @staticmethod
     def get_kindyncomputations(
-            model_file: str,
-            considered_joints: List[str] = None,
-            velocity_representation: FrameVelocityRepresentation =
-                FrameVelocityRepresentation.MIXED_REPRESENTATION):
+        model_file: str,
+        considered_joints: List[str] = None,
+        velocity_representation: FrameVelocityRepresentation = FrameVelocityRepresentation.MIXED_REPRESENTATION,
+    ):
 
         # Get the model loader
         model_loader = iDynTreeHelpers.get_model_loader(model_file, considered_joints)
@@ -76,7 +79,9 @@ class iDynTreeHelpers(abc.ABC):
 
         # Configure the velocity representation
         velocity_representation_idyntree = velocity_representation.to_idyntree()
-        ok_repr = kindyn.setFrameVelocityRepresentation(velocity_representation_idyntree)
+        ok_repr = kindyn.setFrameVelocityRepresentation(
+            velocity_representation_idyntree
+        )
 
         if not ok_repr:
             raise RuntimeError("Failed to set the velocity representation")

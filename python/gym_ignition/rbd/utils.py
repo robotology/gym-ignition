@@ -53,9 +53,7 @@ def vee(matrix3x3: np.ndarray) -> np.ndarray:
 
     skew_symmetric = extract_skew(matrix3x3)
 
-    return np.array([skew_symmetric[2, 1],
-                     skew_symmetric[0, 2],
-                     skew_symmetric[1, 0]])
+    return np.array([skew_symmetric[2, 1], skew_symmetric[0, 2], skew_symmetric[1, 0]])
 
 
 def extract_skew(matrix: np.ndarray) -> np.ndarray:

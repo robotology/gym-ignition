@@ -1,12 +1,12 @@
 import abc
+from typing import Tuple, Union
+
+import idyntree.bindings as idt
 import numpy as np
 from gym_ignition import rbd
-from typing import Tuple, Union
-import idyntree.bindings as idt
 
 
 class FromNumPy(abc.ABC):
-
     @staticmethod
     def to_idyntree_dyn_vector(array: np.ndarray) -> idt.VectorDynSize:
 
@@ -54,9 +54,9 @@ class FromNumPy(abc.ABC):
         return R
 
     @staticmethod
-    def to_idyntree_transform(position: np.ndarray,
-                              quaternion: np.ndarray = None,
-                              rotation: np.ndarray = None) -> idt.Transform:
+    def to_idyntree_transform(
+        position: np.ndarray, quaternion: np.ndarray = None, rotation: np.ndarray = None
+    ) -> idt.Transform:
 
         if quaternion is None and rotation is None:
             raise ValueError("You must pass either a quaternion or a rotation")
@@ -77,8 +77,9 @@ class FromNumPy(abc.ABC):
         return H
 
     @staticmethod
-    def to_idyntree_twist(linear_velocity: np.ndarray,
-                          angular_velocity: np.ndarray) -> idt.Twist:
+    def to_idyntree_twist(
+        linear_velocity: np.ndarray, angular_velocity: np.ndarray
+    ) -> idt.Twist:
 
         if linear_velocity.size != 3:
             raise ValueError("The linear velocity must have 3 elements")
@@ -94,7 +95,6 @@ class FromNumPy(abc.ABC):
 
 
 class ToNumPy(abc.ABC):
-
     @staticmethod
     def from_idyntree_vector(vector) -> np.ndarray:
 
@@ -115,8 +115,9 @@ class ToNumPy(abc.ABC):
         return np.array(vector.toNumPy())
 
     @staticmethod
-    def from_idyntree_transform(transform: idt.Transform, split: bool = False) \
-            -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
+    def from_idyntree_transform(
+        transform: idt.Transform, split: bool = False
+    ) -> Union[Tuple[np.ndarray, np.ndarray], np.ndarray]:
 
         if not isinstance(transform, idt.Transform):
             raise ValueError(transform)
