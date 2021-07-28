@@ -3,17 +3,23 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
+from typing import Tuple
+
 import gym
 import numpy as np
-from typing import Tuple
 from gym_ignition.base import task
+from gym_ignition.utils.typing import (
+    Action,
+    ActionSpace,
+    Observation,
+    ObservationSpace,
+    Reward,
+)
+
 from scenario import core as scenario
-from gym_ignition.utils.typing import Action, Observation, Reward
-from gym_ignition.utils.typing import ActionSpace, ObservationSpace
 
 
 class PendulumSwingUp(task.Task, abc.ABC):
-
     def __init__(self, agent_rate: float, **kwargs):
 
         # Initialize the Task base class
@@ -28,16 +34,11 @@ class PendulumSwingUp(task.Task, abc.ABC):
 
     def create_spaces(self) -> Tuple[ActionSpace, ObservationSpace]:
 
-        action_space = gym.spaces.Box(low=-self._max_torque,
-                                      high=self._max_torque,
-                                      shape=(1,),
-                                      dtype=np.float32)
+        action_space = gym.spaces.Box(
+            low=-self._max_torque, high=self._max_torque, shape=(1,), dtype=np.float32
+        )
 
-        high = np.array([
-             1.0,  # cos(theta)
-             1.0,  # sin(theta)
-             self._max_speed
-        ])
+        high = np.array([1.0, 1.0, self._max_speed])  # cos(theta)  # sin(theta)
 
         observation_space = gym.spaces.Box(low=-high, high=high, dtype=np.float32)
 
