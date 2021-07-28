@@ -5,11 +5,14 @@
 # Workaround for https://github.com/osrf/sdformat/issues/227.
 # It has to be done before loading the bindings.
 import gym_ignition_models
+
 gym_ignition_models.setup_environment()
 
 # Add IGN_GAZEBO_RESOURCE_PATH to the default search path
 import os
+
 from gym_ignition.utils import resource_finder
+
 if "IGN_GAZEBO_RESOURCE_PATH" in os.environ:
     resource_finder.add_path_from_env_var("IGN_GAZEBO_RESOURCE_PATH")
 
@@ -17,16 +20,19 @@ if "IGN_GAZEBO_RESOURCE_PATH" in os.environ:
 def initialize_verbosity() -> None:
 
     import gym
-    import scenario
     import gym_ignition.utils.logger
 
+    import scenario
+
     if scenario.detect_install_mode() is scenario.InstallMode.Developer:
-        gym_ignition.utils.logger.set_level(level=gym.logger.INFO,
-                                            scenario_level=gym.logger.WARN)
+        gym_ignition.utils.logger.set_level(
+            level=gym.logger.INFO, scenario_level=gym.logger.WARN
+        )
 
     elif scenario.detect_install_mode() is scenario.InstallMode.User:
-        gym_ignition.utils.logger.set_level(level=gym.logger.WARN,
-                                            scenario_level=gym.logger.WARN)
+        gym_ignition.utils.logger.set_level(
+            level=gym.logger.WARN, scenario_level=gym.logger.WARN
+        )
 
     else:
         raise ValueError(scenario.detect_install_mode())
