@@ -6,14 +6,15 @@ import abc
 from typing import Callable, Dict, Optional, Union, cast
 
 import gym
-from gym_ignition import randomizers
+from gym_ignition.randomizers.abc import PhysicsRandomizer, TaskRandomizer
+from gym_ignition.randomizers.physics import dart
 from gym_ignition.runtimes import gazebo_runtime
 from gym_ignition.utils import typing
 
 MakeEnvCallable = Callable[[Optional[Dict]], gym.Env]
 
 
-class GazeboEnvRandomizer(gym.Wrapper, randomizers.abc.TaskRandomizer, abc.ABC):
+class GazeboEnvRandomizer(gym.Wrapper, TaskRandomizer, abc.ABC):
     """
     Base class to implement an environment randomizer for Ignition Gazebo.
 
@@ -47,7 +48,7 @@ class GazeboEnvRandomizer(gym.Wrapper, randomizers.abc.TaskRandomizer, abc.ABC):
     def __init__(
         self,
         env: Union[str, MakeEnvCallable],
-        physics_randomizer: randomizers.abc.PhysicsRandomizer = randomizers.physics.dart.DART(),
+        physics_randomizer: PhysicsRandomizer = dart.DART(),
         **kwargs,
     ):
 

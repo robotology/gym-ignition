@@ -5,13 +5,13 @@
 from dataclasses import dataclass, field
 from typing import Iterable, List, Tuple
 
-from gym_ignition.context import gazebo
+from gym_ignition.context.gazebo import plugin
 
 GRAVITY = (0, 0, -9.80665)
 
 
 @dataclass
-class ComputedTorqueFixedBase(gazebo.plugin.GazeboPlugin):
+class ComputedTorqueFixedBase(plugin.GazeboPlugin):
 
     urdf: str
     kp: List[float]
