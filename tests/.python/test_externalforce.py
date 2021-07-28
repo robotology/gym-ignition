@@ -3,7 +3,9 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import tempfile
+
 import numpy as np
+
 from . import utils
 
 
@@ -12,8 +14,9 @@ def test_external_force():
     gazebo = utils.Gazebo(physics_rate=1000, iterations=1, rtf=100)
 
     # Create the first cube and insert it in the simulation
-    cube = utils.CubeGazeboRobot(gazebo=gazebo.simulator,
-                                 initial_position=np.array([0, 0, 1.0]))
+    cube = utils.CubeGazeboRobot(
+        gazebo=gazebo.simulator, initial_position=np.array([0, 0, 1.0])
+    )
 
     # Execute the first simulation step
     gazebo.step()
@@ -26,11 +29,12 @@ def test_external_force():
     # Apply a force for 1 second
     num_steps = 100
     f_x = 50.0
-    f_y = - f_x / 10
+    f_y = -f_x / 10
 
     for _ in range(num_steps):
         ok_w = cube.apply_external_force(
-            "cube", np.array([f_x, f_y, 0]), np.array([0.0, 0, 0]))
+            "cube", np.array([f_x, f_y, 0]), np.array([0.0, 0, 0])
+        )
         assert ok_w
 
         # Step the simulation

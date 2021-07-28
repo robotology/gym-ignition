@@ -6,12 +6,13 @@ import pytest
 
 pytestmark = pytest.mark.scenario
 
-from ..common import utils
+from pathlib import Path
+
 from scenario import core
 from scenario import gazebo as scenario
-from ..common.utils import gazebo_fixture as gazebo
 
-from pathlib import Path
+from ..common import utils
+from ..common.utils import gazebo_fixture as gazebo
 
 # Set the verbosity
 scenario.set_verbosity(scenario.Verbosity_debug)

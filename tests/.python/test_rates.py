@@ -2,14 +2,16 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import time
-import pytest
 import itertools
-import numpy as np
-from . import utils
+import time
 from typing import List, Tuple
-from gym_ignition.utils import logger
+
+import numpy as np
+import pytest
 from gym_ignition.base.robot.robot_joints import JointControlMode
+from gym_ignition.utils import logger
+
+from . import utils
 
 
 def almost_equal(first, second, epsilon=None) -> bool:
@@ -24,17 +26,18 @@ def almost_equal(first, second, epsilon=None) -> bool:
         print("----------------")
         print(f"#1={first}")
         print(f"#2={second}")
-        print("Error={}".format(np.abs(first-second)))
+        print("Error={}".format(np.abs(first - second)))
         print(f"Tolerance={epsilon}")
         print("----------------")
 
     return res
 
 
-def template_test(rtf: float,
-                  physics_rate: float,
-                  agent_rate: float,
-                  ) -> None:
+def template_test(
+    rtf: float,
+    physics_rate: float,
+    agent_rate: float,
+) -> None:
 
     # Get the simulator
     iterations = int(physics_rate / agent_rate)
@@ -58,9 +61,12 @@ def template_test(rtf: float,
     # Generate the cart trajectory. This is analogous of setting an action containing
     # the cart references, hence it is related to the agent rate.
     cart_ref = np.fromiter(
-        (0.2 * np.sin(2 * np.pi * 0.5 * t) for t in np.arange(0, tot_simulated_seconds,
-                                                              trajectory_dt)),
-        dtype=np.float)
+        (
+            0.2 * np.sin(2 * np.pi * 0.5 * t)
+            for t in np.arange(0, tot_simulated_seconds, trajectory_dt)
+        ),
+        dtype=np.float,
+    )
 
     avg_time_per_step = 0.0
     start = time.time()
@@ -95,14 +101,18 @@ def template_test(rtf: float,
     print()
 
     # Check if the average time per step matches what expected
-    assert almost_equal(first=avg_time_per_step,
-                        second=simulation_dt * physics_iterations_per_run,
-                        epsilon=avg_time_per_step * 0.5)
+    assert almost_equal(
+        first=avg_time_per_step,
+        second=simulation_dt * physics_iterations_per_run,
+        epsilon=avg_time_per_step * 0.5,
+    )
 
     # Check if the total time of the simulation matched what expected
-    assert almost_equal(first=elapsed_time,
-                        second=number_of_actions * simulation_dt * physics_iterations_per_run,
-                        epsilon=elapsed_time * 0.5)
+    assert almost_equal(
+        first=elapsed_time,
+        second=number_of_actions * simulation_dt * physics_iterations_per_run,
+        epsilon=elapsed_time * 0.5,
+    )
 
     # Terminate simulation
     gazebo.close()

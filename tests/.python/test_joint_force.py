@@ -2,8 +2,9 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from . import utils
 from gym_ignition.base.robot.robot_joints import JointControlMode
+
+from . import utils
 
 
 def test_joint_force():

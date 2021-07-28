@@ -29,9 +29,13 @@ def template_run_environment(env_name):
     env.close()
 
 
-@pytest.mark.parametrize("env_name",
-                         ["CartPoleDiscrete-Gazebo-v0",
-                          "CartPoleContinuous-Gazebo-v0",
-                          "Pendulum-Gazebo-v0"])
+@pytest.mark.parametrize(
+    "env_name",
+    [
+        "CartPoleDiscrete-Gazebo-v0",
+        "CartPoleContinuous-Gazebo-v0",
+        "Pendulum-Gazebo-v0",
+    ],
+)
 def test_environment(env_name: str):
     template_run_environment(env_name)

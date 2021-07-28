@@ -3,26 +3,33 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+
 pytestmark = pytest.mark.scenario
 
-from ..common import utils
 import gym_ignition_models
+
 from scenario import gazebo as scenario
+
+from ..common import utils
 from ..common.utils import gazebo_fixture as gazebo
 
 # Set the verbosity
 scenario.set_verbosity(scenario.Verbosity_debug)
 
 
-@pytest.mark.parametrize("gazebo",
-                         [
-                             (0.001, 1.0, 1),
-                             (0.1, 5.0, 5),
-                             (0.001, 0.0, 1),
-                             (0.001, -1.0, 1),
-                             (0.001, 1.0, 0),
-                             (0, 1.0, 1),
-                         ], indirect=True, ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo",
+    [
+        (0.001, 1.0, 1),
+        (0.1, 5.0, 5),
+        (0.001, 0.0, 1),
+        (0.001, -1.0, 1),
+        (0.001, 1.0, 0),
+        (0, 1.0, 1),
+    ],
+    indirect=True,
+    ids=utils.id_gazebo_fn,
+)
 def test_initialization(gazebo: scenario.GazeboSimulator):
 
     ok = gazebo.initialize()
@@ -51,10 +58,9 @@ def test_initialization(gazebo: scenario.GazeboSimulator):
         assert gazebo.initialized()
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_run(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
@@ -62,10 +68,9 @@ def test_run(gazebo: scenario.GazeboSimulator):
     assert gazebo.run()
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_pause(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
@@ -86,10 +91,9 @@ def test_pause(gazebo: scenario.GazeboSimulator):
     assert gazebo.pause()
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_paused_step(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
@@ -106,10 +110,10 @@ def test_paused_step(gazebo: scenario.GazeboSimulator):
     assert "ground_plane" not in world.model_names()
     assert world.time() == 0.0
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def test_load_default_world(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()

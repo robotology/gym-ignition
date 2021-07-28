@@ -3,24 +3,26 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+
 pytestmark = pytest.mark.scenario
 
-import numpy as np
-from ..common import utils
 import gym_ignition_models
+import numpy as np
 from gym_ignition.utils import misc
+
 from scenario import core as scenario_core
 from scenario import gazebo as scenario_gazebo
+
+from ..common import utils
 from ..common.utils import gazebo_fixture as gazebo
 
 # Set the verbosity
 scenario_gazebo.set_verbosity(scenario_gazebo.Verbosity_debug)
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def _test_insert_multiple_worlds(gazebo: scenario_gazebo.GazeboSimulator):
 
     empty_world_sdf = utils.get_empty_world_sdf()
@@ -41,10 +43,9 @@ def _test_insert_multiple_worlds(gazebo: scenario_gazebo.GazeboSimulator):
     assert my_world2.name() == "myWorld2"
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def _test_insert_multiple_world(gazebo: scenario_gazebo.GazeboSimulator):
 
     multi_world_sdf = utils.get_multi_world_sdf_file()
@@ -64,10 +65,9 @@ def _test_insert_multiple_world(gazebo: scenario_gazebo.GazeboSimulator):
     assert world1.id() != world2.id()
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def _test_insert_multiple_world_rename(gazebo: scenario_gazebo.GazeboSimulator):
 
     multi_world_sdf = utils.get_multi_world_sdf_file()
@@ -88,10 +88,9 @@ def _test_insert_multiple_world_rename(gazebo: scenario_gazebo.GazeboSimulator):
     assert world1.id() != world2.id()
 
 
-@pytest.mark.parametrize("gazebo",
-                         [(0.001, 1.0, 1)],
-                         indirect=True,
-                         ids=utils.id_gazebo_fn)
+@pytest.mark.parametrize(
+    "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
+)
 def _test_insert_world_multiple_calls(gazebo: scenario_gazebo.GazeboSimulator):
 
     single_world_sdf = utils.get_empty_world_sdf()

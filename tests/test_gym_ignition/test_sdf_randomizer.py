@@ -3,16 +3,21 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+
 pytestmark = pytest.mark.gym_ignition
 
-from lxml import etree
 import gym_ignition_models
+from gym_ignition.randomizers.model import sdf
+from gym_ignition.randomizers.model.sdf import (
+    Distribution,
+    GaussianParams,
+    Method,
+    UniformParams,
+)
 from gym_ignition.utils import misc
+from lxml import etree
 
 from scenario import gazebo as scenario
-from gym_ignition.randomizers.model import sdf
-from gym_ignition.randomizers.model.sdf import Distribution, Method
-from gym_ignition.randomizers.model.sdf import UniformParams, GaussianParams
 
 
 def test_sdf_randomizer():
@@ -34,18 +39,18 @@ def test_sdf_randomizer():
 
     with pytest.raises(ValueError):
         # Setting wrong distribution
-        randomizer.new_randomization() \
-            .at_xpath("*/link[@name='pole']/inertial/inertia/ixx") \
-            .method(Method.Additive) \
-            .sampled_from(Distribution.Uniform, GaussianParams(mean=0, variance=0.1)) \
-            .add()
+        randomizer.new_randomization().at_xpath(
+            "*/link[@name='pole']/inertial/inertia/ixx"
+        ).method(Method.Additive).sampled_from(
+            Distribution.Uniform, GaussianParams(mean=0, variance=0.1)
+        ).add()
 
     # Add a uniform randomization
-    randomizer.new_randomization() \
-        .at_xpath("*/link[@name='pole']/inertial/inertia/ixx") \
-        .method(Method.Additive) \
-        .sampled_from(Distribution.Gaussian, GaussianParams(mean=0, variance=0.1)) \
-        .add()
+    randomizer.new_randomization().at_xpath(
+        "*/link[@name='pole']/inertial/inertia/ixx"
+    ).method(Method.Additive).sampled_from(
+        Distribution.Gaussian, GaussianParams(mean=0, variance=0.1)
+    ).add()
 
     randomizer.process_data()
     assert len(randomizer.get_active_randomizations()) == 1
@@ -58,11 +63,9 @@ def test_sdf_randomizer():
     assert randomizer.sample(pretty_print=True) == orig_model
 
     # Add a multi-match randomization
-    randomizer.new_randomization() \
-        .at_xpath("*/link/inertial/inertia/ixx") \
-        .method(Method.Coefficient) \
-        .sampled_from(Distribution.Uniform, UniformParams(low=0.8, high=1.2)) \
-        .add()
+    randomizer.new_randomization().at_xpath("*/link/inertial/inertia/ixx").method(
+        Method.Coefficient
+    ).sampled_from(Distribution.Uniform, UniformParams(low=0.8, high=1.2)).add()
 
     assert len(randomizer.get_active_randomizations()) == 1
 
@@ -99,28 +102,25 @@ def test_randomizer_reproducibility():
     randomizer2.seed(42)
 
     # Add randomizations for #1
-    randomizer1.new_randomization() \
-        .at_xpath("*/link/collision/surface/friction/ode/mu") \
-        .method(Method.Absolute) \
-        .sampled_from(Distribution.Uniform,
-                      UniformParams(low=0, high=100)) \
-        .add()
+    randomizer1.new_randomization().at_xpath(
+        "*/link/collision/surface/friction/ode/mu"
+    ).method(Method.Absolute).sampled_from(
+        Distribution.Uniform, UniformParams(low=0, high=100)
+    ).add()
 
     # Add randomizations for #2
-    randomizer2.new_randomization() \
-        .at_xpath("*/link/collision/surface/friction/ode/mu") \
-        .method(Method.Absolute) \
-        .sampled_from(Distribution.Uniform,
-                      UniformParams(low=0, high=100)) \
-        .add()
+    randomizer2.new_randomization().at_xpath(
+        "*/link/collision/surface/friction/ode/mu"
+    ).method(Method.Absolute).sampled_from(
+        Distribution.Uniform, UniformParams(low=0, high=100)
+    ).add()
 
     # Add randomizations for #3
-    randomizer3.new_randomization() \
-        .at_xpath("*/link/collision/surface/friction/ode/mu") \
-        .method(Method.Absolute) \
-        .sampled_from(Distribution.Uniform,
-                      UniformParams(low=0, high=100)) \
-        .add()
+    randomizer3.new_randomization().at_xpath(
+        "*/link/collision/surface/friction/ode/mu"
+    ).method(Method.Absolute).sampled_from(
+        Distribution.Uniform, UniformParams(low=0, high=100)
+    ).add()
 
     # Process the randomizations
     randomizer1.process_data()
@@ -153,12 +153,11 @@ def test_randomize_missing_element():
     # Try to randomize a missing element
     with pytest.raises(RuntimeError):
         # The ode/mu elements are missing
-        randomizer.new_randomization() \
-            .at_xpath("*/link/collision/surface/friction/ode/mu") \
-            .method(Method.Absolute) \
-            .sampled_from(Distribution.Uniform,
-                          UniformParams(low=0, high=100)) \
-            .add()
+        randomizer.new_randomization().at_xpath(
+            "*/link/collision/surface/friction/ode/mu"
+        ).method(Method.Absolute).sampled_from(
+            Distribution.Uniform, UniformParams(low=0, high=100)
+        ).add()
 
     # Add the missing friction/ode/mu element. We assume that friction exists.
     frictions = randomizer.find_xpath("*/link/collision/surface/friction")
@@ -179,13 +178,13 @@ def test_randomize_missing_element():
         mu.text = str(0)
 
     # Apply the same randomization
-    randomizer.new_randomization() \
-        .at_xpath("*/link/collision/surface/friction/ode/mu") \
-        .method(Method.Absolute) \
-        .sampled_from(Distribution.Uniform,
-                      UniformParams(low=0, high=100)) \
-        .ignore_zeros(False) \
-        .add()
+    randomizer.new_randomization().at_xpath(
+        "*/link/collision/surface/friction/ode/mu"
+    ).method(Method.Absolute).sampled_from(
+        Distribution.Uniform, UniformParams(low=0, high=100)
+    ).ignore_zeros(
+        False
+    ).add()
 
     # Process the randomization and sample a model
     randomizer.process_data()
@@ -228,62 +227,62 @@ def test_full_panda_randomization():
     randomization_config = {
         "*/link/inertial/mass": {
             # mass + U(-0.5, 0.5)
-            'method': Method.Additive,
-            'distribution': Distribution.Uniform,
-            'params': UniformParams(low=-0.5, high=0.5),
-            'ignore_zeros': True,
-            'force_positive': True,
+            "method": Method.Additive,
+            "distribution": Distribution.Uniform,
+            "params": UniformParams(low=-0.5, high=0.5),
+            "ignore_zeros": True,
+            "force_positive": True,
         },
         "*/link/inertial/inertia/ixx": {
             # inertia * N(1, 0.2)
-            'method': Method.Coefficient,
-            'distribution': Distribution.Gaussian,
-            'params': GaussianParams(mean=1.0, variance=0.2),
-            'ignore_zeros': True,
-            'force_positive': True,
+            "method": Method.Coefficient,
+            "distribution": Distribution.Gaussian,
+            "params": GaussianParams(mean=1.0, variance=0.2),
+            "ignore_zeros": True,
+            "force_positive": True,
         },
         "*/link/inertial/inertia/iyy": {
-            'method': Method.Coefficient,
-            'distribution': Distribution.Gaussian,
-            'params': GaussianParams(mean=1.0, variance=0.2),
-            'ignore_zeros': True,
-            'force_positive': True,
+            "method": Method.Coefficient,
+            "distribution": Distribution.Gaussian,
+            "params": GaussianParams(mean=1.0, variance=0.2),
+            "ignore_zeros": True,
+            "force_positive": True,
         },
         "*/link/inertial/inertia/izz": {
-            'method': Method.Coefficient,
-            'distribution': Distribution.Gaussian,
-            'params': GaussianParams(mean=1.0, variance=0.2),
-            'ignore_zeros': True,
-            'force_positive': True,
+            "method": Method.Coefficient,
+            "distribution": Distribution.Gaussian,
+            "params": GaussianParams(mean=1.0, variance=0.2),
+            "ignore_zeros": True,
+            "force_positive": True,
         },
         "*/joint/axis/dynamics/friction": {
             # friction in [0, 5]
-            'method': Method.Absolute,
-            'distribution': Distribution.Uniform,
-            'params': UniformParams(low=0, high=5),
-            'ignore_zeros': False,  # We initialized the value as 0
-            'force_positive': True,
+            "method": Method.Absolute,
+            "distribution": Distribution.Uniform,
+            "params": UniformParams(low=0, high=5),
+            "ignore_zeros": False,  # We initialized the value as 0
+            "force_positive": True,
         },
         "*/joint/axis/dynamics/damping": {
             # damping (= 3.0) * [0.8, 1.2]
-            'method': Method.Coefficient,
-            'distribution': Distribution.Uniform,
-            'params': UniformParams(low=0.8, high=1.2),
-            'ignore_zeros': True,
-            'force_positive': True,
+            "method": Method.Coefficient,
+            "distribution": Distribution.Uniform,
+            "params": UniformParams(low=0.8, high=1.2),
+            "ignore_zeros": True,
+            "force_positive": True,
         },
         # TODO: */joint/axis/limit/effort
     }
 
     for xpath, config in randomization_config.items():
 
-        randomizer.new_randomization() \
-            .at_xpath(xpath) \
-            .method(config["method"]) \
-            .sampled_from(config["distribution"], config['params']) \
-            .force_positive(config["distribution"]) \
-            .ignore_zeros(config["ignore_zeros"]) \
-            .add()
+        randomizer.new_randomization().at_xpath(xpath).method(
+            config["method"]
+        ).sampled_from(config["distribution"], config["params"]).force_positive(
+            config["distribution"]
+        ).ignore_zeros(
+            config["ignore_zeros"]
+        ).add()
 
     randomizer.process_data()
     assert len(randomizer.get_active_randomizations()) > 0

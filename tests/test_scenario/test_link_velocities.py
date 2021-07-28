@@ -3,17 +3,21 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+
 pytestmark = pytest.mark.scenario
 
-import numpy as np
-from scenario import core
-from ..common import utils
-import gym_ignition_models
 from typing import Callable, Tuple
-from scenario import gazebo as scenario
-from scipy.spatial.transform import Rotation
-from ..common.utils import default_world_fixture as default_world
+
+import gym_ignition_models
+import numpy as np
 from gym_ignition.utils.scenario import get_joint_positions_space
+from scipy.spatial.transform import Rotation
+
+from scenario import core
+from scenario import gazebo as scenario
+
+from ..common import utils
+from ..common.utils import default_world_fixture as default_world
 
 # Set the verbosity
 scenario.set_verbosity(scenario.Verbosity_debug)
@@ -41,8 +45,9 @@ def to_matrix(quaternion: Tuple[float, float, float, float]) -> np.ndarray:
     return Rotation.from_quat(quaternion_xyzw).as_matrix()
 
 
-def get_random_panda(gazebo: scenario.GazeboSimulator,
-                     world: scenario.World) -> core.Model:
+def get_random_panda(
+    gazebo: scenario.GazeboSimulator, world: scenario.World
+) -> core.Model:
 
     panda_urdf = gym_ignition_models.get_model_file("panda")
     assert world.insert_model(panda_urdf)
@@ -63,10 +68,9 @@ def get_random_panda(gazebo: scenario.GazeboSimulator,
     return panda
 
 
-def get_cube(gazebo: scenario.GazeboSimulator,
-             world: scenario.World) -> core.Model:
+def get_cube(gazebo: scenario.GazeboSimulator, world: scenario.World) -> core.Model:
 
-    quaternion = to_wxyz(Rotation.from_euler('x', 45, degrees=True).as_quat())
+    quaternion = to_wxyz(Rotation.from_euler("x", 45, degrees=True).as_quat())
     initial_pose = core.Pose([0, 0, 0.5], quaternion.tolist())
 
     cube_urdf = utils.get_cube_urdf()
@@ -83,15 +87,19 @@ def get_cube(gazebo: scenario.GazeboSimulator,
 
 
 # 1. VELOCITY LINEAR
-@pytest.mark.parametrize("default_world, get_model, link_name", [
-                          ((1.0 / 10_000, 1.0, 1), get_random_panda, "panda_link7"),
-                          ((1.0 / 10_000, 1.0, 1), get_cube, "cube"),
-                          ],
-                         indirect=["default_world"])
+@pytest.mark.parametrize(
+    "default_world, get_model, link_name",
+    [
+        ((1.0 / 10_000, 1.0, 1), get_random_panda, "panda_link7"),
+        ((1.0 / 10_000, 1.0, 1), get_cube, "cube"),
+    ],
+    indirect=["default_world"],
+)
 def test_linear_velocity(
-        default_world: Tuple[scenario.GazeboSimulator, scenario.World],
-        get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
-        link_name: str):
+    default_world: Tuple[scenario.GazeboSimulator, scenario.World],
+    get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
+    link_name: str,
+):
 
     # Get the simulator and the world
     gazebo, world = default_world
@@ -128,7 +136,7 @@ def test_linear_velocity(
         world_velocity = (position_new - position_old) / dt
 
         # Test the world velocity (MIXED)
-        assert world_velocity == pytest.approx(world_linear_velocity(), abs=1E-2)
+        assert world_velocity == pytest.approx(world_linear_velocity(), abs=1e-2)
 
         # Eq 18
         # Test the BODY velocity
@@ -140,15 +148,19 @@ def test_linear_velocity(
 
 
 # 2. VELOCITY ANGULAR
-@pytest.mark.parametrize("default_world, get_model, link_name", [
-                          ((1.0 / 10_000, 1.0, 1), get_random_panda, "panda_link7"),
-                          ((1.0 / 10_000, 1.0, 1), get_cube, "cube"),
-                          ],
-                         indirect=["default_world"])
+@pytest.mark.parametrize(
+    "default_world, get_model, link_name",
+    [
+        ((1.0 / 10_000, 1.0, 1), get_random_panda, "panda_link7"),
+        ((1.0 / 10_000, 1.0, 1), get_cube, "cube"),
+    ],
+    indirect=["default_world"],
+)
 def test_angular_velocity(
-        default_world: Tuple[scenario.GazeboSimulator, scenario.World],
-        get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
-        link_name: str):
+    default_world: Tuple[scenario.GazeboSimulator, scenario.World],
+    get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
+    link_name: str,
+):
 
     # Get the simulator and the world
     gazebo, world = default_world
@@ -174,7 +186,7 @@ def test_angular_velocity(
         world_angular_velocity = model.base_world_angular_velocity
 
     skew = lambda matrix: (matrix - matrix.transpose()) / 2
-    vee = lambda matrix: [matrix[2, 1], matrix[0,2], matrix[1, 0]]
+    vee = lambda matrix: [matrix[2, 1], matrix[0, 2], matrix[1, 0]]
 
     for _ in range(int(0.5 / dt)):
 
@@ -186,25 +198,31 @@ def test_angular_velocity(
         world_velocity = dot_rotation_matrix @ W_R_L_new.transpose()
 
         # Test the world velocity (MIXED)
-        assert vee(skew(world_velocity)) == pytest.approx(world_angular_velocity(),
-                                                          abs=0.005)
+        assert vee(skew(world_velocity)) == pytest.approx(
+            world_angular_velocity(), abs=0.005
+        )
 
         # Test the BODY velocity
         body_velocity = W_R_L_new.transpose() @ dot_rotation_matrix
-        assert vee(skew(body_velocity)) == pytest.approx(body_angular_velocity(),
-                                                         abs=0.005)
+        assert vee(skew(body_velocity)) == pytest.approx(
+            body_angular_velocity(), abs=0.005
+        )
 
 
 # 3. ACCELERATION LINEAR
-@pytest.mark.parametrize("default_world, get_model, link_name", [
-                          ((1.0 / 10_000, 1.0, 1), get_random_panda, "panda_link7"),
-                          # ((1.0 / 10_000, 1.0, 1), get_cube, "cube"),  # TODO
-                          ],
-                         indirect=["default_world"])
+@pytest.mark.parametrize(
+    "default_world, get_model, link_name",
+    [
+        ((1.0 / 10_000, 1.0, 1), get_random_panda, "panda_link7"),
+        # ((1.0 / 10_000, 1.0, 1), get_cube, "cube"),  # TODO
+    ],
+    indirect=["default_world"],
+)
 def test_linear_acceleration(
-        default_world: Tuple[scenario.GazeboSimulator, scenario.World],
-        get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
-        link_name: str):
+    default_world: Tuple[scenario.GazeboSimulator, scenario.World],
+    get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
+    link_name: str,
+):
 
     # Get the simulator and the world
     gazebo, world = default_world
@@ -259,15 +277,19 @@ def test_linear_acceleration(
 
 
 # 2. ACCELERATION ANGULAR
-@pytest.mark.parametrize("default_world, get_model, link_name", [
-                          ((1.0 / 10_000, 1.0, 1), get_random_panda, "panda_link7"),
-                          # ((1.0 / 10_000, 1.0, 1), get_cube, "cube"),  # TODO
-                          ],
-                         indirect=["default_world"])
+@pytest.mark.parametrize(
+    "default_world, get_model, link_name",
+    [
+        ((1.0 / 10_000, 1.0, 1), get_random_panda, "panda_link7"),
+        # ((1.0 / 10_000, 1.0, 1), get_cube, "cube"),  # TODO
+    ],
+    indirect=["default_world"],
+)
 def test_angular_acceleration(
-        default_world: Tuple[scenario.GazeboSimulator, scenario.World],
-        get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
-        link_name: str):
+    default_world: Tuple[scenario.GazeboSimulator, scenario.World],
+    get_model: Callable[[scenario.GazeboSimulator, scenario.World], core.Model],
+    link_name: str,
+):
 
     # Get the simulator and the world
     gazebo, world = default_world
@@ -309,8 +331,9 @@ def test_angular_acceleration(
             continue
 
         # Test the world acceleration (MIXED)
-        assert world_acceleration == pytest.approx(world_angular_acceleration(),
-                                                   abs=0.2)
+        assert world_acceleration == pytest.approx(
+            world_angular_acceleration(), abs=0.2
+        )
 
         # Note: https://github.com/ignitionrobotics/ign-gazebo/issues/87
         W_R_L = to_matrix(orientation())
