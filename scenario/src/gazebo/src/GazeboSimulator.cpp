@@ -33,7 +33,6 @@
 #include "scenario/gazebo/components/Timestamp.h"
 #include "scenario/gazebo/helpers.h"
 #include "scenario/gazebo/utils.h"
-#include "scenario/plugins/gazebo/ECMSingleton.h"
 
 #include <ignition/fuel_tools.hh>
 #include <ignition/gazebo/Server.hh>

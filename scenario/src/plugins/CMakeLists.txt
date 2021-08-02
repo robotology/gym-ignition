@@ -23,17 +23,5 @@
 #  limitations under the License.
 
 add_subdirectory(Physics)
-add_subdirectory(ECMProvider)
 add_subdirectory(JointController)
 add_subdirectory(ControllerRunner)
-
-install_basic_package_files(ScenarioGazeboPlugins
-    COMPONENT ScenarioGazeboPlugins
-    VERSION ${PROJECT_VERSION}
-    COMPATIBILITY AnyNewerVersion
-    EXPORT ScenarioGazeboPluginsExport
-    DEPENDENCIES ${ignition-gazebo}
-    NAMESPACE ScenarioGazeboPlugins::
-    NO_CHECK_REQUIRED_COMPONENTS_MACRO
-    INSTALL_DESTINATION
-    ${SCENARIO_INSTALL_LIBDIR}/cmake/ScenarioGazeboPlugins)
