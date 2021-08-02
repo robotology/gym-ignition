@@ -9,7 +9,6 @@
 #include "scenario/gazebo/Model.h"
 #include "scenario/gazebo/utils.h"
 #include "scenario/gazebo/World.h"
-#include "scenario/plugins/gazebo/ECMSingleton.h"
 #include <cstdint>
 %}
 
@@ -59,7 +58,6 @@ namespace scenario::gazebo::utils {
 %rename("") Verbosity;
 %rename("") JointLimit;
 %rename("") ContactPoint;
-%rename("") ECMSingleton;
 %rename("") GazeboEntity;
 %rename("") PhysicsEngine;
 %rename("") GazeboSimulator;
@@ -105,10 +103,3 @@ namespace scenario::gazebo::utils {
 
 // GazeboSimulator
 %include "scenario/gazebo/GazeboSimulator.h"
-
-// ECMSingleton
-%ignore scenario::plugins::gazebo::ECMSingleton::clean;
-%ignore scenario::plugins::gazebo::ECMSingleton::getECM;
-%ignore scenario::plugins::gazebo::ECMSingleton::getEventManager;
-%ignore scenario::plugins::gazebo::ECMSingleton::storePtrs;
-%include "scenario/plugins/gazebo/ECMSingleton.h"
