@@ -46,19 +46,6 @@ def get_unique_model_name(world: scenario.World, model_name: str) -> str:
     return model_name_tentative
 
 
-def get_unique_world_name(world_name: str) -> str:
-
-    postfix = 0
-    world_name_tentative = f"{world_name}"
-    ecm_singleton = scenario.ECMSingleton_instance()
-
-    while world_name_tentative in ecm_singleton.world_names():
-        postfix += 1
-        world_name_tentative = f"{world_name}{postfix}"
-
-    return world_name_tentative
-
-
 def init_gazebo_sim(
     step_size: float = 0.001, real_time_factor: float = 1.0, steps_per_run: int = 1
 ) -> Tuple[scenario.GazeboSimulator, Union[scenario.World, core.World]]:

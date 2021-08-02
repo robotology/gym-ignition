@@ -2,8 +2,10 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+from typing import Optional
+
 import gym_ignition_models
-from gym_ignition import base, utils
+from gym_ignition import base
 from gym_ignition.base import runtime
 from gym_ignition.utils import logger
 from gym_ignition.utils.typing import *
@@ -52,7 +54,7 @@ class GazeboRuntime(runtime.Runtime):
             gym.logger.debug(f"{dict({arg: values[arg] for arg in args})}")
 
         # Gazebo attributes
-        self._gazebo = None
+        self._gazebo: Optional[scenario.GazeboSimulator] = None
         self._physics_rate = physics_rate
         self._real_time_factor = real_time_factor
 
@@ -225,18 +227,14 @@ class GazeboRuntime(runtime.Runtime):
         if self._gazebo is None:
             raise RuntimeError("Gazebo has not yet been created")
 
-        # Help type hinting
-        self._gazebo: scenario.GazeboSimulator
-
         if self._gazebo.initialized():
             raise RuntimeError("Gazebo was already initialized, cannot insert world")
 
         if self._world_sdf is None:
             self._world_sdf = ""
-            self._world_name = utils.scenario.get_unique_world_name("default")
+            self._world_name = "default"
         else:
-            sdf_world_name = scenario.get_world_name_from_sdf(self._world_sdf)
-            self._world_name = utils.scenario.get_unique_world_name(sdf_world_name)
+            self._world_name = scenario.get_world_name_from_sdf(self._world_sdf)
 
         # Load the world
         ok_world = self._gazebo.insert_world_from_sdf(self._world_sdf, self._world_name)
