@@ -37,6 +37,7 @@
 #include <ignition/fuel_tools.hh>
 #include <ignition/gazebo/Server.hh>
 #include <ignition/gazebo/ServerConfig.hh>
+#include <ignition/gazebo/Util.hh>
 #include <ignition/gazebo/components/Name.hh>
 #include <ignition/gazebo/components/Physics.hh>
 #include <ignition/gazebo/components/PhysicsCmd.hh>
@@ -51,6 +52,7 @@
 #include <chrono>
 #include <cmath>
 #include <csignal>
+#include <functional>
 #include <limits>
 #include <optional>
 #include <thread>
@@ -59,7 +61,13 @@
 using namespace scenario::gazebo;
 
 namespace scenario::gazebo::detail {
+    class ECMProvider;
     struct PhysicsData;
+    struct SimulationResources
+    {
+        ignition::gazebo::EventManager* eventMgr = nullptr;
+        ignition::gazebo::EntityComponentManager* ecm = nullptr;
+    };
 } // namespace scenario::gazebo::detail
 
 struct detail::PhysicsData
@@ -71,13 +79,32 @@ struct detail::PhysicsData
     bool valid() const { return this->rtf > 0 && this->maxStepSize > 0; }
 };
 
+class scenario::gazebo::detail::ECMProvider final
+    : public ignition::gazebo::System
+    , public ignition::gazebo::ISystemConfigure
+{
+public:
+    ECMProvider()
+        : ignition::gazebo::System()
+    {}
+
+    void Configure(const ignition::gazebo::Entity& entity,
+                   const std::shared_ptr<const sdf::Element>& /*sdf*/,
+                   ignition::gazebo::EntityComponentManager& ecm,
+                   ignition::gazebo::EventManager& eventMgr);
+
+    std::string worldName;
+    ignition::gazebo::EventManager* eventMgr = nullptr;
+    ignition::gazebo::EntityComponentManager* ecm = nullptr;
+};
+
 // ==============
 // Implementation
 // ==============
 
 class GazeboSimulator::Impl
 {
-public: // attributes
+public:
     sdf::ElementPtr sdfElement = nullptr;
 
     struct
@@ -90,14 +117,16 @@ public: // attributes
 
     using WorldName = std::string;
     using GazeboWorldPtr = std::shared_ptr<scenario::gazebo::World>;
-    std::unordered_map<WorldName, GazeboWorldPtr> worlds;
 
-public: // methods
+    std::unordered_map<WorldName, GazeboWorldPtr> worlds;
+    std::unordered_map<WorldName, detail::SimulationResources> resources;
+
     bool insertSDFWorld(const sdf::World& world);
     std::shared_ptr<ignition::gazebo::Server> getServer();
 
     static std::shared_ptr<World>
-    CreateGazeboWorld(const std::string& worldName);
+    CreateGazeboWorld(const std::string& worldName,
+                      const detail::SimulationResources& resources);
 
     bool sceneBroadcasterActive(const std::string& worldName);
 };
@@ -242,18 +271,14 @@ bool GazeboSimulator::run(const bool paused)
     // Here below we force all the Pose components to be streamed by manually
     // setting them as changed.
     if (paused) {
-        // Get the singleton
-        auto& ecmSingleton =
-            scenario::plugins::gazebo::ECMSingleton::Instance();
 
         // Process all worlds
         for (const auto& worldName : this->worldNames()) {
-            assert(ecmSingleton.hasWorld(worldName));
-            assert(ecmSingleton.valid(worldName));
-            assert(ecmSingleton.getECM(worldName));
 
             // Get the ECM
-            auto* ecm = ecmSingleton.getECM(worldName);
+            assert(this->pImpl->resources.find(worldName)
+                   != this->pImpl->resources.end());
+            auto* ecm = this->pImpl->resources.at(worldName).ecm;
 
             // Mark all all entities with Pose component as Changed
             ecm->Each<ignition::gazebo::components::Pose>(
@@ -377,21 +402,6 @@ bool GazeboSimulator::close()
     // Pause the simulator before tearing it down
     if (pImpl->gazebo.server && this->running()) {
         this->pause();
-    }
-
-    // Remove the resources of the handled worlds from the singleton
-    if (this->initialized()) {
-        try {
-            for (const auto& worldName : this->worldNames()) {
-                plugins::gazebo::ECMSingleton::Instance().clean(worldName);
-            }
-        }
-        // This happens while tearing down everything. The ECMProvider plugin
-        // sometimes is destroyed before the simulator.
-        catch (std::runtime_error) {
-            sWarning << "Failed to clean the singleton from the worlds"
-                     << std::endl;
-        }
     }
 
     // Delete the simulator
@@ -539,11 +549,13 @@ std::vector<std::string> GazeboSimulator::worldNames() const
         return {};
     }
 
-    if (!scenario::plugins::gazebo::ECMSingleton::Instance().valid()) {
-        throw std::runtime_error("The ECM singleton is not valid");
+    std::vector<std::string> worldNames;
+
+    for (const auto& [name, _] : this->pImpl->worlds) {
+        worldNames.push_back(name);
     }
 
-    return scenario::plugins::gazebo::ECMSingleton::Instance().worldNames();
+    return worldNames;
 }
 
 std::shared_ptr<scenario::gazebo::World>
@@ -588,6 +600,29 @@ GazeboSimulator::getWorld(const std::string& worldName) const
 // ==============
 // Implementation
 // ==============
+
+void detail::ECMProvider::Configure(
+    const ignition::gazebo::Entity& entity,
+    const std::shared_ptr<const sdf::Element>&,
+    ignition::gazebo::EntityComponentManager& ecm,
+    ignition::gazebo::EventManager& eventMgr)
+{
+    if (!ecm.EntityHasComponentType(
+            entity, ignition::gazebo::components::World::typeId)) {
+        sError << "The ECMProvider system was not inserted "
+               << "in a world element" << std::endl;
+        return;
+    }
+
+    this->worldName = utils::getExistingComponentData< //
+        ignition::gazebo::components::Name>(&ecm, entity);
+
+    this->ecm = &ecm;
+    this->eventMgr = &eventMgr;
+
+    sDebug << "World '" << this->worldName
+           << "' successfully processed by ECMProvider" << std::endl;
+}
 
 bool GazeboSimulator::Impl::insertSDFWorld(const sdf::World& world)
 {
@@ -643,17 +678,6 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
             return nullptr;
         }
 
-        // Get the plugin info of the ECM provider
-        auto getECMPluginInfo = [](const std::string& worldName) {
-            ignition::gazebo::ServerConfig::PluginInfo pluginInfo;
-            pluginInfo.SetFilename("ECMProvider");
-            pluginInfo.SetName("scenario::plugins::gazebo::ECMProvider");
-            pluginInfo.SetEntityType("world");
-            pluginInfo.SetEntityName(worldName);
-
-            return pluginInfo;
-        };
-
         // Check if there are sdf parsing errors
         assert(utils::sdfStringValid(root.Element()->Clone()->ToString("")));
 
@@ -663,26 +687,52 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
             std::cout << root.Element()->ToString("") << std::endl;
         }
 
-        ignition::gazebo::ServerConfig config;
+        // Set the following environment variable to disable loading the default
+        // server plugins, which include upstream's Physics.
+        // https://github.com/ignitionrobotics/ign-gazebo/pull/281
+        // TODO: this will not likely work in Windows.
+        std::string value;
+        if (!ignition::common::env(
+                ignition::gazebo::kServerConfigPathEnv, value, true)
+            && !ignition::common::setenv(ignition::gazebo::kServerConfigPathEnv,
+                                         "")) {
+            sError << "Failed to set " << ignition::gazebo::kServerConfigPathEnv
+                   << std::endl;
+            return nullptr;
+        }
 
+        ignition::gazebo::ServerConfig config;
         config.SetSeed(0);
         config.SetUseLevels(false);
         config.SetSdfString(root.Element()->ToString(""));
 
-        // Add the ECMProvider plugin for all worlds
-        for (size_t worldIdx = 0; worldIdx < root.WorldCount(); ++worldIdx) {
-            auto worldName = root.WorldByIndex(worldIdx)->Name();
-            config.AddPlugin(getECMPluginInfo(worldName));
-        }
-
         // Create the server.
         // The worlds are initialized with the physics parameters
-        // (rtf and physics step) defined in the SDF. They get overridden below.
+        // (rtf and physics step) defined in the SDF. They get overridden
+        // below.
         auto server = std::make_shared<ignition::gazebo::Server>(config);
         assert(server);
 
+        // Add a Configure-only system to get the ECM pointer
+        for (size_t worldIdx = 0; worldIdx < root.WorldCount(); ++worldIdx) {
+
+            auto provider = std::make_shared<detail::ECMProvider>();
+            if (const auto ok = server->AddSystem(provider, worldIdx); !ok) {
+                sError << "Failed to insert ECMProvider to world " << worldIdx
+                       << std::endl;
+                return nullptr;
+            }
+
+            // Get the ECM and EventManager pointers
+            detail::SimulationResources resources;
+            resources.ecm = provider->ecm;
+            resources.eventMgr = provider->eventMgr;
+            this->resources[provider->worldName] = resources;
+        }
+
         sDebug << "Starting the gazebo server" << std::endl;
 
+        // TODO: is this redundant now?
         if (!server->RunOnce(/*paused=*/true)) {
             sError << "Failed to initialize the first gazebo server run"
                    << std::endl;
@@ -694,24 +744,19 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
             return nullptr;
         }
 
-        // Get the ECM singleton
-        auto& singleton = scenario::plugins::gazebo::ECMSingleton::Instance();
-
         // Set the Physics parameters.
         // Note: all worlds must share the same parameters.
-        for (const auto& worldName : singleton.worldNames()) {
-
-            // Get the resources needed by the world
-            auto* ecm = singleton.getECM(worldName);
+        for (const auto& [worldName, resources] : this->resources) {
 
             // Get the world entity
-            const auto worldEntity = ecm->EntityByComponents(
+            const auto worldEntity = resources.ecm->EntityByComponents(
                 ignition::gazebo::components::World(),
                 ignition::gazebo::components::Name(worldName));
 
             // Create a new PhysicsCmd component
-            auto& physics = utils::getComponentData< //
-                ignition::gazebo::components::PhysicsCmd>(ecm, worldEntity);
+            auto& physics = utils::getComponentData<
+                ignition::gazebo::components::PhysicsCmd>(resources.ecm,
+                                                          worldEntity);
 
             // Store the physics parameters.
             // They are processed the next simulator step.
@@ -739,11 +784,12 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
                    << std::endl;
 
             // Create the world object.
-            // Note: performing this operation is important because the World
-            //       objects are created and cached. During the first
+            // Note: performing this operation is important because the
+            //       World objects are created and cached. During the first
             //       initialization, the World objects create important
             //       componentes like Timestamp and SimulatedTime.
-            const auto& world = Impl::CreateGazeboWorld(worldName);
+            const auto& world =
+                Impl::CreateGazeboWorld(worldName, this->resources[worldName]);
 
             if (!(world && world->valid())) {
                 sError << "Failed to create world " << worldName << std::endl;
@@ -762,35 +808,19 @@ std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
     return gazebo.server;
 }
 
-std::shared_ptr<World>
-GazeboSimulator::Impl::CreateGazeboWorld(const std::string& worldName)
+std::shared_ptr<World> GazeboSimulator::Impl::CreateGazeboWorld(
+    const std::string& worldName,
+    const detail::SimulationResources& resources)
 {
-    auto& ecmSingleton = scenario::plugins::gazebo::ECMSingleton::Instance();
-
-    if (!ecmSingleton.hasWorld(worldName)) {
-        sError << "Failed to find world in the singleton" << std::endl;
-        return nullptr;
-    }
-
-    if (!ecmSingleton.valid(worldName)) {
-        sError << "Resources of world " << worldName << " not valid"
-               << std::endl;
-        return nullptr;
-    }
-
-    // Get the resources needed by the world
-    auto* ecm = ecmSingleton.getECM(worldName);
-    auto* eventManager = ecmSingleton.getEventManager(worldName);
-
     // Get the world entity
-    const auto worldEntity =
-        ecm->EntityByComponents(ignition::gazebo::components::World(),
-                                ignition::gazebo::components::Name(worldName));
+    const auto worldEntity = resources.ecm->EntityByComponents(
+        ignition::gazebo::components::World(),
+        ignition::gazebo::components::Name(worldName));
 
     // Create the world object
     auto world = std::make_shared<scenario::gazebo::World>();
 
-    if (!world->initialize(worldEntity, ecm, eventManager)) {
+    if (!world->initialize(worldEntity, resources.ecm, resources.eventMgr)) {
         sError << "Failed to initialize the world" << std::endl;
         return nullptr;
     }
