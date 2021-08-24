@@ -23,7 +23,7 @@
 
     
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../_static/sphinx-book-theme.e8e5499552300ddf5d7adccae7cc3b70.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/sphinx-book-theme.5f77b4aec8189eecf79907ce328c390d.css" type="text/css" />
     <link rel="stylesheet" type="text/css" href="../_static/tabs.css" />
     
   <link rel="preload" as="script" href="../_static/js/index.1c5a1a01449ed65a7b51.js">
@@ -467,63 +467,63 @@ You can use <a class="reference internal" href="../apidoc/scenario/scenario.bind
 <div class="section" id="c">
 <span id="getting-started-scenario-cpp"></span><h2>C++<a class="headerlink" href="#c" title="Permalink to this headline">¶</a></h2>
 <div class="sphinx-tabs docutils container">
-<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-ZXhhbXBsZS5jcHA=" aria-selected="true" class="sphinx-tabs-tab group-tab" id="tab-1-ZXhhbXBsZS5jcHA=" name="ZXhhbXBsZS5jcHA=" role="tab" tabindex="0">example.cpp</button><button aria-controls="panel-1-Q01ha2VMaXN0cy50eHQ=" aria-selected="false" class="sphinx-tabs-tab group-tab" id="tab-1-Q01ha2VMaXN0cy50eHQ=" name="Q01ha2VMaXN0cy50eHQ=" role="tab" tabindex="-1">CMakeLists.txt</button></div><div aria-labelledby="tab-1-ZXhhbXBsZS5jcHA=" class="sphinx-tabs-panel group-tab" id="panel-1-ZXhhbXBsZS5jcHA=" name="ZXhhbXBsZS5jcHA=" role="tabpanel" tabindex="0"><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;scenario/gazebo/GazeboSimulator.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;scenario/gazebo/Joint.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;scenario/gazebo/Model.h&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;scenario/gazebo/World.h&gt;</span><span class="cp"></span>
+<div aria-label="Tabbed content" class="closeable" role="tablist"><button aria-controls="panel-1-ZXhhbXBsZS5jcHA=" aria-selected="true" class="sphinx-tabs-tab group-tab" id="tab-1-ZXhhbXBsZS5jcHA=" name="ZXhhbXBsZS5jcHA=" role="tab" tabindex="0">example.cpp</button><button aria-controls="panel-1-Q01ha2VMaXN0cy50eHQ=" aria-selected="false" class="sphinx-tabs-tab group-tab" id="tab-1-Q01ha2VMaXN0cy50eHQ=" name="Q01ha2VMaXN0cy50eHQ=" role="tab" tabindex="-1">CMakeLists.txt</button></div><div aria-labelledby="tab-1-ZXhhbXBsZS5jcHA=" class="sphinx-tabs-panel group-tab" id="panel-1-ZXhhbXBsZS5jcHA=" name="ZXhhbXBsZS5jcHA=" role="tabpanel" tabindex="0"><div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;scenario/gazebo/GazeboSimulator.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;scenario/gazebo/Joint.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;scenario/gazebo/Model.h&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;scenario/gazebo/World.h&gt;</span><span class="cp"></span>
 
-<span class="cp">#include</span> <span class="cpf">&lt;chrono&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;string&gt;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&lt;thread&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;chrono&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;string&gt;</span><span class="cp"></span>
+<span class="cp">#include</span><span class="w"> </span><span class="cpf">&lt;thread&gt;</span><span class="cp"></span>
 
-<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
-<span class="p">{</span>
-    <span class="c1">// Create the simulator</span>
-    <span class="k">auto</span> <span class="n">gazebo</span> <span class="o">=</span> <span class="n">scenario</span><span class="o">::</span><span class="n">gazebo</span><span class="o">::</span><span class="n">GazeboSimulator</span><span class="p">(</span>
-        <span class="cm">/*stepSize=*/</span><span class="mf">0.001</span><span class="p">,</span> <span class="cm">/*rtf=*/</span><span class="mf">1.0</span><span class="p">,</span> <span class="cm">/*stepsPerRun=*/</span><span class="mi">1</span><span class="p">);</span>
+<span class="kt">int</span><span class="w"> </span><span class="nf">main</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">argc</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">argv</span><span class="p">[])</span><span class="w"></span>
+<span class="p">{</span><span class="w"></span>
+<span class="w">    </span><span class="c1">// Create the simulator</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">gazebo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">scenario</span><span class="o">::</span><span class="n">gazebo</span><span class="o">::</span><span class="n">GazeboSimulator</span><span class="p">(</span><span class="w"></span>
+<span class="w">        </span><span class="cm">/*stepSize=*/</span><span class="mf">0.001</span><span class="p">,</span><span class="w"> </span><span class="cm">/*rtf=*/</span><span class="mf">1.0</span><span class="p">,</span><span class="w"> </span><span class="cm">/*stepsPerRun=*/</span><span class="mi">1</span><span class="p">);</span><span class="w"></span>
 
-    <span class="c1">// Initialize the simulator</span>
-    <span class="n">gazebo</span><span class="p">.</span><span class="n">initialize</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Initialize the simulator</span>
+<span class="w">    </span><span class="n">gazebo</span><span class="p">.</span><span class="n">initialize</span><span class="p">();</span><span class="w"></span>
 
-    <span class="c1">// Get the default world</span>
-    <span class="k">auto</span> <span class="n">world</span> <span class="o">=</span> <span class="n">gazebo</span><span class="p">.</span><span class="n">getWorld</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Get the default world</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">world</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">gazebo</span><span class="p">.</span><span class="n">getWorld</span><span class="p">();</span><span class="w"></span>
 
-    <span class="c1">// Insert the ground plane</span>
-    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">groundPlaneSDF</span> <span class="o">=</span> <span class="s">&quot;ground_plane.sdf&quot;</span><span class="p">;</span>
-    <span class="n">world</span><span class="o">-&gt;</span><span class="n">insertModel</span><span class="p">(</span><span class="n">groundPlaneSDF</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Insert the ground plane</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">groundPlaneSDF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;ground_plane.sdf&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">world</span><span class="o">-&gt;</span><span class="n">insertModel</span><span class="p">(</span><span class="n">groundPlaneSDF</span><span class="p">);</span><span class="w"></span>
 
-    <span class="c1">// Select the physics engine</span>
-    <span class="n">world</span><span class="o">-&gt;</span><span class="n">setPhysicsEngine</span><span class="p">(</span><span class="n">scenario</span><span class="o">::</span><span class="n">gazebo</span><span class="o">::</span><span class="n">PhysicsEngine</span><span class="o">::</span><span class="n">Dart</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Select the physics engine</span>
+<span class="w">    </span><span class="n">world</span><span class="o">-&gt;</span><span class="n">setPhysicsEngine</span><span class="p">(</span><span class="n">scenario</span><span class="o">::</span><span class="n">gazebo</span><span class="o">::</span><span class="n">PhysicsEngine</span><span class="o">::</span><span class="n">Dart</span><span class="p">);</span><span class="w"></span>
 
-    <span class="c1">// Open the GUI</span>
-    <span class="n">gazebo</span><span class="p">.</span><span class="n">gui</span><span class="p">();</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">seconds</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
-    <span class="n">gazebo</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="cm">/*paused=*/</span><span class="nb">true</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Open the GUI</span>
+<span class="w">    </span><span class="n">gazebo</span><span class="p">.</span><span class="n">gui</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">seconds</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span><span class="w"></span>
+<span class="w">    </span><span class="n">gazebo</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="cm">/*paused=*/</span><span class="nb">true</span><span class="p">);</span><span class="w"></span>
 
-    <span class="c1">// Insert a pendulum</span>
-    <span class="k">const</span> <span class="n">std</span><span class="o">::</span><span class="n">string</span> <span class="n">pendulumURDF</span> <span class="o">=</span> <span class="s">&quot;pendulum.urdf&quot;</span><span class="p">;</span>
-    <span class="n">world</span><span class="o">-&gt;</span><span class="n">insertModel</span><span class="p">(</span><span class="cm">/*modelFile=*/</span><span class="n">pendulumURDF</span><span class="p">);</span>
-    <span class="n">gazebo</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="cm">/*paused=*/</span><span class="nb">true</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Insert a pendulum</span>
+<span class="w">    </span><span class="k">const</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">string</span><span class="w"> </span><span class="n">pendulumURDF</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;pendulum.urdf&quot;</span><span class="p">;</span><span class="w"></span>
+<span class="w">    </span><span class="n">world</span><span class="o">-&gt;</span><span class="n">insertModel</span><span class="p">(</span><span class="cm">/*modelFile=*/</span><span class="n">pendulumURDF</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">gazebo</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="cm">/*paused=*/</span><span class="nb">true</span><span class="p">);</span><span class="w"></span>
 
-    <span class="c1">// Get the pendulum</span>
-    <span class="k">auto</span> <span class="n">pendulum</span> <span class="o">=</span> <span class="n">world</span><span class="o">-&gt;</span><span class="n">getModel</span><span class="p">(</span><span class="cm">/*modelName=*/</span><span class="s">&quot;pendulum&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Get the pendulum</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pendulum</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">world</span><span class="o">-&gt;</span><span class="n">getModel</span><span class="p">(</span><span class="cm">/*modelName=*/</span><span class="s">&quot;pendulum&quot;</span><span class="p">);</span><span class="w"></span>
 
-    <span class="c1">// Reset the pole position</span>
-    <span class="k">auto</span> <span class="n">pivot</span> <span class="o">=</span> <span class="n">pendulum</span><span class="o">-&gt;</span><span class="n">getJoint</span><span class="p">(</span><span class="s">&quot;pivot&quot;</span><span class="p">);</span>
-    <span class="k">auto</span> <span class="n">pivotGazebo</span> <span class="o">=</span> <span class="n">std</span><span class="o">::</span><span class="n">static_pointer_cast</span><span class="o">&lt;</span><span class="n">scenario</span><span class="o">::</span><span class="n">gazebo</span><span class="o">::</span><span class="n">Joint</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pivot</span><span class="p">);</span>
-    <span class="n">pivotGazebo</span><span class="o">-&gt;</span><span class="n">resetPosition</span><span class="p">(</span><span class="mf">0.001</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Reset the pole position</span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pivot</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">pendulum</span><span class="o">-&gt;</span><span class="n">getJoint</span><span class="p">(</span><span class="s">&quot;pivot&quot;</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="k">auto</span><span class="w"> </span><span class="n">pivotGazebo</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">std</span><span class="o">::</span><span class="n">static_pointer_cast</span><span class="o">&lt;</span><span class="n">scenario</span><span class="o">::</span><span class="n">gazebo</span><span class="o">::</span><span class="n">Joint</span><span class="o">&gt;</span><span class="p">(</span><span class="n">pivot</span><span class="p">);</span><span class="w"></span>
+<span class="w">    </span><span class="n">pivotGazebo</span><span class="o">-&gt;</span><span class="n">resetPosition</span><span class="p">(</span><span class="mf">0.001</span><span class="p">);</span><span class="w"></span>
 
-    <span class="c1">// Simulate 30 seconds</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kt">size_t</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mf">30.0</span> <span class="o">/</span> <span class="n">gazebo</span><span class="p">.</span><span class="n">stepSize</span><span class="p">();</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
-        <span class="n">gazebo</span><span class="p">.</span><span class="n">run</span><span class="p">();</span>
-    <span class="p">}</span>
+<span class="w">    </span><span class="c1">// Simulate 30 seconds</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">size_t</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mf">30.0</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">gazebo</span><span class="p">.</span><span class="n">stepSize</span><span class="p">();</span><span class="w"> </span><span class="o">++</span><span class="n">i</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w"></span>
+<span class="w">        </span><span class="n">gazebo</span><span class="p">.</span><span class="n">run</span><span class="p">();</span><span class="w"></span>
+<span class="w">    </span><span class="p">}</span><span class="w"></span>
 
-    <span class="c1">// Close the simulator</span>
-    <span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">seconds</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span>
-    <span class="n">gazebo</span><span class="p">.</span><span class="n">close</span><span class="p">();</span>
+<span class="w">    </span><span class="c1">// Close the simulator</span>
+<span class="w">    </span><span class="n">std</span><span class="o">::</span><span class="n">this_thread</span><span class="o">::</span><span class="n">sleep_for</span><span class="p">(</span><span class="n">std</span><span class="o">::</span><span class="n">chrono</span><span class="o">::</span><span class="n">seconds</span><span class="p">(</span><span class="mi">3</span><span class="p">));</span><span class="w"></span>
+<span class="w">    </span><span class="n">gazebo</span><span class="p">.</span><span class="n">close</span><span class="p">();</span><span class="w"></span>
 
-    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
-<span class="p">}</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">0</span><span class="p">;</span><span class="w"></span>
+<span class="p">}</span><span class="w"></span>
 </pre></div>
 </div>
 </div><div aria-labelledby="tab-1-Q01ha2VMaXN0cy50eHQ=" class="sphinx-tabs-panel group-tab" hidden="true" id="panel-1-Q01ha2VMaXN0cy50eHQ=" name="Q01ha2VMaXN0cy50eHQ=" role="tabpanel" tabindex="0"><div class="highlight-cmake notranslate"><div class="highlight"><pre><span></span><span class="nb">cmake_minimum_required</span><span class="p">(</span><span class="s">VERSION</span> <span class="s">3.16</span><span class="p">)</span>
