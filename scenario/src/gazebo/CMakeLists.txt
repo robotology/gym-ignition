@@ -127,7 +127,6 @@ target_link_libraries(GazeboSimulator
     ScenarioCore::CoreUtils
     ScenarioGazebo::ScenarioGazebo
     ScenarioGazebo::ExtraComponents
-    ScenarioGazeboPlugins::ECMSingleton
     ${ignition-fuel_tools.ignition-fuel_tools})
 
 set_target_properties(GazeboSimulator PROPERTIES
