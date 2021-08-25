@@ -21,7 +21,7 @@ jobs:
         run: sudo apt-get install -y --no-install-recommends colordiff
 
       - name: "📝 Format C++"
-        uses: diegoferigo/gh-action-clang-format@v0.1
+        uses: diegoferigo/gh-action-clang-format@main
         id: format
         with:
           style: file
