@@ -171,7 +171,7 @@ install_basic_package_files(ScenarioGazebo
     VERSION ${PROJECT_VERSION}
     COMPATIBILITY AnyNewerVersion
     EXPORT ScenarioGazeboExport
-    DEPENDENCIES ScenarioCore ScenarioGazeboPlugins ${ignition-gazebo} ${ignition-common}
+    DEPENDENCIES ScenarioCore ${ignition-gazebo} ${ignition-common}
     NAMESPACE ScenarioGazebo::
     NO_CHECK_REQUIRED_COMPONENTS_MACRO
     INSTALL_DESTINATION
