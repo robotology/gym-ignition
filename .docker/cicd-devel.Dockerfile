@@ -5,7 +5,7 @@ RUN pip3 install vcstool colcon-common-extensions &&\
     rm -r $HOME/.cache/pip
 
 ARG CMAKE_BUILD_TYPE="Release"
-ARG ignition_codename="edifice"
+ARG ignition_codename="fortress"
 ARG IGNITION_DEFAULT_CHANNEL="stable"
 
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-${IGNITION_DEFAULT_CHANNEL} `lsb_release -cs` main" > \
