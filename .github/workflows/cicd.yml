@@ -22,8 +22,8 @@ jobs:
       matrix:
         ignition:
           # - dome
-          - edifice
-          # - fortress
+          # - edifice
+          - fortress
     env:
       CCACHE_DIR: ${{ github.workspace }}/.ccache
     steps:
@@ -133,8 +133,8 @@ jobs:
           - Developer
         ignition:
           # - dome
-          - edifice
-          # - fortress
+          # - edifice
+          - fortress
         python:
           - 3.8
           - 3.9
@@ -250,13 +250,13 @@ jobs:
 
       # User installation
       - name: '[👤|user] Create wheel (default ignition)'
-        if: matrix.type == 'User' && matrix.ignition == 'edifice'
+        if: matrix.type == 'User' && matrix.ignition == 'fortress'
         shell: bash -i -e {0}
         run: pip wheel --use-feature=in-tree-build -v -w dist/ ./scenario
       # Note: Calling "pip wheel" with "--global-option" forces all dependencies to be built from their sdist.
       #       Since it's very slow, we create the wheel from setup.py without isolation (requires system deps).
       - name: '[👤|user] Create wheel (custom ignition)'
-        if: matrix.type == 'User' && matrix.ignition != 'edifice'
+        if: matrix.type == 'User' && matrix.ignition != 'fortress'
         shell: bash -i -e {0}
         run: |
           pip install wheel setuptools-scm cmake-build-extension
@@ -331,7 +331,7 @@ jobs:
 
       - name: '⬆️ Upload artifacts'
         uses: actions/upload-artifact@v2
-        if: matrix.type == 'User' && matrix.ignition == 'edifice'
+        if: matrix.type == 'User' && matrix.ignition == 'fortress'
         with:
           path: dist/*
           name: dist
@@ -371,7 +371,7 @@ jobs:
 
       - name: '⬆️ Upload website folder'
         uses: actions/upload-artifact@v2
-        if: matrix.type == 'User' && matrix.ignition == 'edifice' && contains(matrix.os, 'ubuntu')
+        if: matrix.type == 'User' && matrix.ignition == 'fortress' && contains(matrix.os, 'ubuntu')
         with:
           path: build/html
           name: website
