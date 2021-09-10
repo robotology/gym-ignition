@@ -131,7 +131,6 @@ public:
 
         {
             // Check that the model name is correct
-            assert(modelSdfRoot->ModelCount() == 1);
             std::string modelNameSDF = modelSdfRoot->Model()->Name();
             std::string modelNameEntity = utils::getExistingComponentData< //
                 ignition::gazebo::components::Name>(world.m_ecm, modelEntity);
