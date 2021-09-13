@@ -250,6 +250,9 @@ panda = gym_ignition_environments.models.panda.Panda(
     world=world, position=[-0.1, 0, 1.0]
 )
 
+# Disable joint velocity limits
+_ = [j.to_gazebo().set_velocity_limit(1_000) for j in panda.joints()]
+
 # Enable contacts only for the finger links
 panda.get_link("panda_leftfinger").to_gazebo().enable_contact_detection(True)
 panda.get_link("panda_rightfinger").to_gazebo().enable_contact_detection(True)
