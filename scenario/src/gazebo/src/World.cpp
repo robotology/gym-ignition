@@ -229,6 +229,15 @@ bool World::createECMResources()
            << "step=" << physics.MaxStepSize() << std::endl
            << "type=" << physics.EngineType() << std::endl;
 
+    // Create required model resources
+    sMessage << "Models:" << std::endl;
+    for (const auto& model : this->models()) {
+        if (!std::static_pointer_cast<Model>(model)->createECMResources()) {
+            sError << "Failed to initialize ECM model resources" << std::endl;
+            return false;
+        }
+    }
+
     return true;
 }
 
