@@ -72,6 +72,16 @@ public:
      * @return The model if it is part of the world, ``nullptr`` otherwise.
      */
     virtual ModelPtr getModel(const std::string& modelName) const = 0;
+
+    /**
+     * Get the models of the world.
+     *
+     * @param modelNames Optional vector of considered models. By default,
+     * ``World::modelNames`` is used.
+     * @return A vector of pointers to the model objects.
+     */
+    virtual std::vector<ModelPtr> models( //
+        const std::vector<std::string>& modelNames = {}) const = 0;
 };
 
 #endif // SCENARIO_CORE_WORLD_H
