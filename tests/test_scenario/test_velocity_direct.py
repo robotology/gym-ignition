@@ -76,8 +76,11 @@ def test_velocity_direct(
     # Check again
     assert pivot.velocity() == pytest.approx(np.pi)
 
-    # Change direction abruptly
+    # Change direction abruptly.
+    # Due to existing joint velocity limits, it takes two steps to reach the target.
+    # Note: even by increasing the limit to its maximum value, two steps are necessary.
     assert pivot.set_velocity_target(velocity=-np.pi)
+    assert gazebo.run()
     assert gazebo.run()
     assert pivot.velocity() == pytest.approx(-np.pi)
 
