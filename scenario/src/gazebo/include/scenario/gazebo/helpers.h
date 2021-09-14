@@ -318,17 +318,17 @@ namespace scenario::gazebo::utils {
                                  curSimTime)
         {}
 
-        inline ignition::msgs::Vector3d force() const
+        const ignition::msgs::Vector3d& force() const
         {
             return m_wrench.force();
         }
 
-        inline ignition::msgs::Vector3d torque() const
+        const ignition::msgs::Vector3d& torque() const
         {
             return m_wrench.torque();
         }
 
-        inline std::chrono::steady_clock::duration expiration()
+        const std::chrono::steady_clock::duration& expiration()
         {
             return m_expiration;
         }
@@ -348,6 +348,8 @@ namespace scenario::gazebo::utils {
     {
     public:
         LinkWrenchCmd() = default;
+
+        bool empty() const { return m_wrenches.empty(); }
 
         inline void addWorldWrench(const WrenchWithDuration& wrench)
         {
@@ -375,14 +377,19 @@ namespace scenario::gazebo::utils {
             return totalWrench;
         }
 
-        inline void cleanExpired(const std::chrono::steady_clock::duration& now)
+        void cleanExpired(const std::chrono::steady_clock::duration& now)
         {
-            auto end = std::remove_if(
-                m_wrenches.begin(),
-                m_wrenches.end(),
-                [&](const WrenchWithDuration& w) { return w.expired(now); });
+            if (m_wrenches.empty())
+                return;
 
-            m_wrenches.erase(end, m_wrenches.end());
+            // Remove the expired wrenches
+            m_wrenches.erase( //
+                std::remove_if(m_wrenches.begin(),
+                               m_wrenches.end(),
+                               [&](const WrenchWithDuration& w) {
+                                   return w.expired(now);
+                               }),
+                m_wrenches.end());
         }
 
     private:
