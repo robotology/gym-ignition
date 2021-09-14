@@ -376,6 +376,21 @@ scenario::core::ModelPtr World::getModel(const std::string& modelName) const
     return pImpl->models[modelName];
 }
 
+std::vector<scenario::core::ModelPtr>
+World::models(const std::vector<std::string>& modelNames) const
+{
+    const std::vector<std::string>& modelSerialization =
+        modelNames.empty() ? this->modelNames() : modelNames;
+
+    std::vector<core::ModelPtr> models;
+
+    for (const auto& modelName : modelSerialization) {
+        models.push_back(this->getModel(modelName));
+    }
+
+    return models;
+}
+
 bool World::insertModel(const std::string& modelFile,
                         const core::Pose& pose,
                         const std::string& overrideModelName)
