@@ -228,13 +228,17 @@ class InverseKinematicsNLP:
         self,
         frame_name: str,
         target_type: TargetType,
-        weight: Union[float, Tuple[float, float]] = 1.0,
+        weight: Union[float, Tuple[float, float]] = None,
         as_constraint: bool = False,
     ) -> None:
 
         # Check the type of the 'weight' argument
         float_target_types = {TargetType.ROTATION, TargetType.POSITION}
         weight_type = float if target_type in float_target_types else tuple
+
+        # Set the default weight if not specified
+        default_weight = 1.0 if target_type in float_target_types else (1.0, 1.0)
+        weight = weight if weight is not None else default_weight
 
         if not isinstance(weight, weight_type):
             raise ValueError(f"The weight must be {weight_type} for this target")
