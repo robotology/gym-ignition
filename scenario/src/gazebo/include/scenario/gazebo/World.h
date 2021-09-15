@@ -202,6 +202,9 @@ public:
     scenario::core::ModelPtr
     getModel(const std::string& modelName) const override;
 
+    std::vector<core::ModelPtr> models( //
+        const std::vector<std::string>& modelNames = {}) const override;
+
 private:
     class Impl;
     std::unique_ptr<Impl> pImpl;

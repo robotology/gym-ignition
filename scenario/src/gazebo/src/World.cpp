@@ -229,6 +229,15 @@ bool World::createECMResources()
            << "step=" << physics.MaxStepSize() << std::endl
            << "type=" << physics.EngineType() << std::endl;
 
+    // Create required model resources
+    sMessage << "Models:" << std::endl;
+    for (const auto& model : this->models()) {
+        if (!std::static_pointer_cast<Model>(model)->createECMResources()) {
+            sError << "Failed to initialize ECM model resources" << std::endl;
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -374,6 +383,21 @@ scenario::core::ModelPtr World::getModel(const std::string& modelName) const
 
     pImpl->models[modelName] = model;
     return pImpl->models[modelName];
+}
+
+std::vector<scenario::core::ModelPtr>
+World::models(const std::vector<std::string>& modelNames) const
+{
+    const std::vector<std::string>& modelSerialization =
+        modelNames.empty() ? this->modelNames() : modelNames;
+
+    std::vector<core::ModelPtr> models;
+
+    for (const auto& modelName : modelSerialization) {
+        models.push_back(this->getModel(modelName));
+    }
+
+    return models;
 }
 
 bool World::insertModel(const std::string& modelFile,
