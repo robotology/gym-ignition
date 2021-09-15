@@ -236,6 +236,11 @@ class InverseKinematicsNLP:
         float_target_types = {TargetType.ROTATION, TargetType.POSITION}
         weight_type = float if target_type in float_target_types else tuple
 
+        # Backward compatibility: if the target type is POSE and the weight is a float,
+        # we apply the same weight to both target components
+        if target_type is TargetType.POSE and isinstance(weight, float):
+            weight = (weight, weight)
+
         # Set the default weight if not specified
         default_weight = 1.0 if target_type in float_target_types else (1.0, 1.0)
         weight = weight if weight is not None else default_weight
