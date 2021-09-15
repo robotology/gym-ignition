@@ -653,158 +653,163 @@ bool GazeboSimulator::Impl::insertSDFWorld(const sdf::World& world)
 std::shared_ptr<ignition::gazebo::Server> GazeboSimulator::Impl::getServer()
 {
     // Lazy initialization of the server
-    if (!gazebo.server) {
-
-        if (gazebo.numOfIterations == 0) {
-            sError << "Non-deterministic mode (iterations=0) is not "
-                   << "currently supported" << std::endl;
-            return nullptr;
-        }
-
-        sdf::Root root;
-
-        if (!sdfElement) {
-            sMessage << "Using default empty world" << std::endl;
-            auto errors = root.LoadSdfString(utils::getEmptyWorld());
-            assert(errors.empty()); // TODO
-        }
-        else {
-            auto errors = root.LoadSdfString(sdfElement->ToString(""));
-            assert(errors.empty()); // TODO
-        }
-
-        if (root.WorldCount() == 0) {
-            sError << "Failed to find a world in the SDF root" << std::endl;
-            return nullptr;
-        }
-
-        // Check if there are sdf parsing errors
-        assert(utils::sdfStringValid(root.Element()->Clone()->ToString("")));
-
-        if (utils::verboseFromEnvironment()) {
-            sDebug << "Loading the following SDF file in the gazebo server:"
-                   << std::endl;
-            std::cout << root.Element()->ToString("") << std::endl;
-        }
-
-        // Set the following environment variable to disable loading the default
-        // server plugins, which include upstream's Physics.
-        // https://github.com/ignitionrobotics/ign-gazebo/pull/281
-        // TODO: this will not likely work in Windows.
-        std::string value;
-        if (!ignition::common::env(
-                ignition::gazebo::kServerConfigPathEnv, value, true)
-            && !ignition::common::setenv(ignition::gazebo::kServerConfigPathEnv,
-                                         "")) {
-            sError << "Failed to set " << ignition::gazebo::kServerConfigPathEnv
-                   << std::endl;
-            return nullptr;
-        }
-
-        ignition::gazebo::ServerConfig config;
-        config.SetSeed(0);
-        config.SetUseLevels(false);
-        config.SetSdfString(root.Element()->ToString(""));
-
-        // Create the server.
-        // The worlds are initialized with the physics parameters
-        // (rtf and physics step) defined in the SDF. They get overridden
-        // below.
-        auto server = std::make_shared<ignition::gazebo::Server>(config);
-        assert(server);
-
-        // Add a Configure-only system to get the ECM pointer
-        for (size_t worldIdx = 0; worldIdx < root.WorldCount(); ++worldIdx) {
-
-            auto provider = std::make_shared<detail::ECMProvider>();
-            if (const auto ok = server->AddSystem(provider, worldIdx); !ok) {
-                sError << "Failed to insert ECMProvider to world " << worldIdx
-                       << std::endl;
-                return nullptr;
-            }
-
-            // Get the ECM and EventManager pointers
-            detail::SimulationResources resources;
-            resources.ecm = provider->ecm;
-            resources.eventMgr = provider->eventMgr;
-            this->resources[provider->worldName] = resources;
-        }
-
-        sDebug << "Starting the gazebo server" << std::endl;
-
-        // TODO: is this redundant now?
-        if (!server->RunOnce(/*paused=*/true)) {
-            sError << "Failed to initialize the first gazebo server run"
-                   << std::endl;
-            return nullptr;
-        }
-
-        if (!gazebo.physics.valid()) {
-            sError << "The physics parameters are not valid" << std::endl;
-            return nullptr;
-        }
-
-        // Set the Physics parameters.
-        // Note: all worlds must share the same parameters.
-        for (const auto& [worldName, resources] : this->resources) {
-
-            // Get the world entity
-            const auto worldEntity = resources.ecm->EntityByComponents(
-                ignition::gazebo::components::World(),
-                ignition::gazebo::components::Name(worldName));
-
-            // Create a new PhysicsCmd component
-            auto& physics = utils::getComponentData<
-                ignition::gazebo::components::PhysicsCmd>(resources.ecm,
-                                                          worldEntity);
-
-            // Store the physics parameters.
-            // They are processed the next simulator step.
-            physics.set_max_step_size(gazebo.physics.maxStepSize);
-            physics.set_real_time_factor(gazebo.physics.rtf);
-            physics.set_real_time_update_rate(
-                gazebo.physics.realTimeUpdateRate);
-        }
-
-        // Step the server to process the physics parameters.
-        // This call executes SimulationRunner::SetStepSize, updating the
-        // rate at which all systems are called.
-        // Note: it processes only the parameters of the first world.
-        if (!server->RunOnce(/*paused=*/true)) {
-            sError << "Failed to step the server to configure the physics"
-                   << std::endl;
-            return nullptr;
-        }
-
-        for (size_t worldIdx = 0; worldIdx < root.WorldCount(); ++worldIdx) {
-            // Get the world name
-            const auto& worldName = root.WorldByIndex(worldIdx)->Name();
-
-            sDebug << "Creating and caching World '" << worldName << "'"
-                   << std::endl;
-
-            // Create the world object.
-            // Note: performing this operation is important because the
-            //       World objects are created and cached. During the first
-            //       initialization, the World objects create important
-            //       componentes like Timestamp and SimulatedTime.
-            const auto& world =
-                Impl::CreateGazeboWorld(worldName, this->resources[worldName]);
-
-            if (!(world && world->valid())) {
-                sError << "Failed to create world " << worldName << std::endl;
-                return nullptr;
-            }
-
-            // Cache the world object
-            assert(this->worlds.find(worldName) == this->worlds.end());
-            this->worlds[worldName] = world;
-        }
-
-        // Store the server
-        gazebo.server = server;
+    if (gazebo.server) {
+        return gazebo.server;
     }
 
+    // =================
+    // Create the server
+    // =================
+
+    if (gazebo.numOfIterations == 0) {
+        sError << "Non-deterministic mode (iterations=0) is not "
+               << "currently supported" << std::endl;
+        return nullptr;
+    }
+
+    sdf::Root root;
+
+    if (!sdfElement) {
+        sMessage << "Using default empty world" << std::endl;
+        auto errors = root.LoadSdfString(utils::getEmptyWorld());
+        assert(errors.empty()); // TODO
+    }
+    else {
+        auto errors = root.LoadSdfString(sdfElement->ToString(""));
+        assert(errors.empty()); // TODO
+    }
+
+    if (root.WorldCount() == 0) {
+        sError << "Failed to find a world in the SDF root" << std::endl;
+        return nullptr;
+    }
+
+    // Check if there are sdf parsing errors
+    assert(utils::sdfStringValid(root.Element()->Clone()->ToString("")));
+
+    if (utils::verboseFromEnvironment()) {
+        sDebug << "Loading the following SDF file in the gazebo server:"
+               << std::endl;
+        std::cout << root.Element()->ToString("") << std::endl;
+    }
+
+    // Set the following environment variable to disable loading the default
+    // server plugins, which include upstream's Physics that is not compatible.
+    // https://github.com/ignitionrobotics/ign-gazebo/pull/281
+    // TODO: this will not likely work in Windows.
+    std::string value;
+    if (!ignition::common::env(
+            ignition::gazebo::kServerConfigPathEnv, value, true)
+        && !ignition::common::setenv(ignition::gazebo::kServerConfigPathEnv,
+                                     "")) {
+        sError << "Failed to set " << ignition::gazebo::kServerConfigPathEnv
+               << std::endl;
+        return nullptr;
+    }
+
+    ignition::gazebo::ServerConfig config;
+    config.SetSeed(0);
+    config.SetUseLevels(false);
+    config.SetSdfString(root.Element()->ToString(""));
+
+    // Create the server.
+    // The worlds are initialized with the physics parameters
+    // (rtf and physics step) defined in the SDF.
+    // They get overridden below.
+    auto server = std::make_shared<ignition::gazebo::Server>(config);
+    assert(server);
+
+    // Add a Configure-only system to get the ECM pointer
+    for (size_t worldIdx = 0; worldIdx < root.WorldCount(); ++worldIdx) {
+
+        auto provider = std::make_shared<detail::ECMProvider>();
+        if (const auto ok = server->AddSystem(provider, worldIdx); !ok) {
+            sError << "Failed to insert ECMProvider to world " << worldIdx
+                   << std::endl;
+            return nullptr;
+        }
+
+        // Get the ECM and EventManager pointers
+        detail::SimulationResources resources;
+        resources.ecm = provider->ecm;
+        resources.eventMgr = provider->eventMgr;
+        this->resources[provider->worldName] = resources;
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(3));
+
+    sDebug << "Starting the gazebo server" << std::endl;
+
+    // TODO: is this redundant now?
+    if (!server->RunOnce(/*paused=*/true)) {
+        sError << "Failed to initialize the first gazebo server run"
+               << std::endl;
+        return nullptr;
+    }
+
+    if (!gazebo.physics.valid()) {
+        sError << "The physics parameters are not valid" << std::endl;
+        return nullptr;
+    }
+
+    // Set the Physics parameters.
+    // Note: all worlds must share the same parameters.
+    for (const auto& [worldName, resources] : this->resources) {
+
+        // Get the world entity
+        const auto worldEntity = resources.ecm->EntityByComponents(
+            ignition::gazebo::components::World(),
+            ignition::gazebo::components::Name(worldName));
+
+        // Create a new PhysicsCmd component
+        auto& physics =
+            utils::getComponentData<ignition::gazebo::components::PhysicsCmd>(
+                resources.ecm, worldEntity);
+
+        // Store the physics parameters.
+        // They are processed the next simulator step.
+        physics.set_max_step_size(gazebo.physics.maxStepSize);
+        physics.set_real_time_factor(gazebo.physics.rtf);
+        physics.set_real_time_update_rate(gazebo.physics.realTimeUpdateRate);
+    }
+
+    // Step the server to process the physics parameters.
+    // This call executes SimulationRunner::SetStepSize, updating the
+    // rate at which all systems are called.
+    // Note: it processes only the parameters of the first world.
+    if (!server->RunOnce(/*paused=*/true)) {
+        sError << "Failed to step the server to configure the physics"
+               << std::endl;
+        return nullptr;
+    }
+
+    for (size_t worldIdx = 0; worldIdx < root.WorldCount(); ++worldIdx) {
+        // Get the world name
+        const auto& worldName = root.WorldByIndex(worldIdx)->Name();
+
+        sDebug << "Creating and caching World '" << worldName << "'"
+               << std::endl;
+
+        // Create the world object.
+        // Note: performing this operation is important because the
+        //       World objects are created and cached. During the first
+        //       initialization, the World objects create important
+        //       componentes like Timestamp and SimulatedTime.
+        const auto& world =
+            Impl::CreateGazeboWorld(worldName, this->resources[worldName]);
+
+        if (!(world && world->valid())) {
+            sError << "Failed to create world " << worldName << std::endl;
+            return nullptr;
+        }
+
+        // Cache the world object
+        assert(this->worlds.find(worldName) == this->worlds.end());
+        this->worlds[worldName] = world;
+    }
+
+    // Store and return the server
+    gazebo.server = server;
     return gazebo.server;
 }
 
