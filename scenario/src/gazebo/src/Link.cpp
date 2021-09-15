@@ -63,16 +63,10 @@ class Link::Impl
 public:
     ignition::gazebo::Link link;
 
-    static bool IsCanonical(const Link& link)
-    {
-        return link.ecm()->EntityHasComponentType(
-            link.entity(), ignition::gazebo::components::CanonicalLink::typeId);
-    }
-
     static ignition::math::Pose3d GetWorldPose(const Link& link,
                                                const Link::Impl& impl)
     {
-        if (!Impl::IsCanonical(link)) {
+        if (!impl.link.IsCanonical(*link.ecm())) {
             const auto& linkPoseOptional = impl.link.WorldPose(*link.ecm());
 
             if (!linkPoseOptional.has_value()) {
