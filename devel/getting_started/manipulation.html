@@ -433,21 +433,19 @@ trajectory planning and it does not avoid self collisions, which are not enabled
 There are cube positions where the joint configuration changes a lot from the previous, generating an abrupt movement
 of the manipulator. When these situations occur, grasping might fail.</p>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">enum</span>
-<span class="kn">import</span> <span class="nn">time</span>
-<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
-<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
-
-<span class="kn">import</span> <span class="nn">gym_ignition</span>
-<span class="kn">import</span> <span class="nn">gym_ignition_environments</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">enum</span>
 <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">from</span> <span class="nn">gym_ignition.context.gazebo</span> <span class="kn">import</span> <span class="n">controllers</span>
+<span class="kn">import</span> <span class="nn">gym_ignition</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">functools</span> <span class="kn">import</span> <span class="n">partial</span>
+<span class="kn">import</span> <span class="nn">gym_ignition_environments</span>
 <span class="kn">from</span> <span class="nn">gym_ignition.rbd</span> <span class="kn">import</span> <span class="n">conversions</span>
-<span class="kn">from</span> <span class="nn">gym_ignition.rbd.idyntree</span> <span class="kn">import</span> <span class="n">inverse_kinematics_nlp</span>
-<span class="kn">from</span> <span class="nn">scipy.spatial.transform</span> <span class="kn">import</span> <span class="n">Rotation</span> <span class="k">as</span> <span class="n">R</span>
-
 <span class="kn">from</span> <span class="nn">scenario</span> <span class="kn">import</span> <span class="n">core</span> <span class="k">as</span> <span class="n">scenario_core</span>
 <span class="kn">from</span> <span class="nn">scenario</span> <span class="kn">import</span> <span class="n">gazebo</span> <span class="k">as</span> <span class="n">scenario_gazebo</span>
+<span class="kn">from</span> <span class="nn">scipy.spatial.transform</span> <span class="kn">import</span> <span class="n">Rotation</span> <span class="k">as</span> <span class="n">R</span>
+<span class="kn">from</span> <span class="nn">gym_ignition.context.gazebo</span> <span class="kn">import</span> <span class="n">controllers</span>
+<span class="kn">from</span> <span class="nn">gym_ignition.rbd.idyntree</span> <span class="kn">import</span> <span class="n">inverse_kinematics_nlp</span>
 
 <span class="c1"># Configure verbosity</span>
 <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">set_verbosity</span><span class="p">(</span><span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">Verbosity_error</span><span class="p">)</span>
@@ -456,31 +454,26 @@ of the manipulator. When these situations occur, grasping might fail.</p>
 <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">suppress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">add_panda_controller</span><span class="p">(</span>
-    <span class="n">panda</span><span class="p">:</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">,</span> <span class="n">controller_period</span><span class="p">:</span> <span class="nb">float</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">add_panda_controller</span><span class="p">(</span><span class="n">panda</span><span class="p">:</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">,</span>
+                         <span class="n">controller_period</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
     <span class="c1"># Set the controller period</span>
     <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_controller_period</span><span class="p">(</span><span class="n">period</span><span class="o">=</span><span class="n">controller_period</span><span class="p">)</span>
 
     <span class="c1"># Increase the max effort of the fingers</span>
-    <span class="n">panda</span><span class="o">.</span><span class="n">get_joint</span><span class="p">(</span>
-        <span class="n">joint_name</span><span class="o">=</span><span class="s2">&quot;panda_finger_joint1&quot;</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span><span class="n">set_max_generalized_force</span><span class="p">(</span><span class="n">max_force</span><span class="o">=</span><span class="mf">500.0</span><span class="p">)</span>
-    <span class="n">panda</span><span class="o">.</span><span class="n">get_joint</span><span class="p">(</span>
-        <span class="n">joint_name</span><span class="o">=</span><span class="s2">&quot;panda_finger_joint2&quot;</span>
-    <span class="p">)</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span><span class="n">set_max_generalized_force</span><span class="p">(</span><span class="n">max_force</span><span class="o">=</span><span class="mf">500.0</span><span class="p">)</span>
+    <span class="n">panda</span><span class="o">.</span><span class="n">get_joint</span><span class="p">(</span><span class="n">joint_name</span><span class="o">=</span><span class="s2">&quot;panda_finger_joint1&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span> \
+        <span class="n">set_max_generalized_force</span><span class="p">(</span><span class="n">max_force</span><span class="o">=</span><span class="mf">500.0</span><span class="p">)</span>
+    <span class="n">panda</span><span class="o">.</span><span class="n">get_joint</span><span class="p">(</span><span class="n">joint_name</span><span class="o">=</span><span class="s2">&quot;panda_finger_joint2&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span> \
+        <span class="n">set_max_generalized_force</span><span class="p">(</span><span class="n">max_force</span><span class="o">=</span><span class="mf">500.0</span><span class="p">)</span>
 
     <span class="c1"># Insert the ComputedTorqueFixedBase controller</span>
-    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span><span class="n">insert_model_plugin</span><span class="p">(</span>
-        <span class="o">*</span><span class="n">controllers</span><span class="o">.</span><span class="n">ComputedTorqueFixedBase</span><span class="p">(</span>
-            <span class="n">kp</span><span class="o">=</span><span class="p">[</span><span class="mf">100.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">dofs</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mf">10000.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">ki</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">panda</span><span class="o">.</span><span class="n">dofs</span><span class="p">(),</span>
-            <span class="n">kd</span><span class="o">=</span><span class="p">[</span><span class="mf">17.5</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">dofs</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
-            <span class="n">urdf</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">get_model_file</span><span class="p">(),</span>
-            <span class="n">joints</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_names</span><span class="p">(),</span>
-        <span class="p">)</span><span class="o">.</span><span class="n">args</span><span class="p">()</span>
-    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span><span class="n">insert_model_plugin</span><span class="p">(</span><span class="o">*</span><span class="n">controllers</span><span class="o">.</span><span class="n">ComputedTorqueFixedBase</span><span class="p">(</span>
+        <span class="n">kp</span><span class="o">=</span><span class="p">[</span><span class="mf">100.0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">dofs</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mf">10000.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">ki</span><span class="o">=</span><span class="p">[</span><span class="mf">0.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">panda</span><span class="o">.</span><span class="n">dofs</span><span class="p">(),</span>
+        <span class="n">kd</span><span class="o">=</span><span class="p">[</span><span class="mf">17.5</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">dofs</span><span class="p">()</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">urdf</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">get_model_file</span><span class="p">(),</span>
+        <span class="n">joints</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_names</span><span class="p">(),</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">args</span><span class="p">())</span>
 
     <span class="c1"># Initialize the controller to the current state</span>
     <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_position_targets</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_positions</span><span class="p">())</span>
@@ -488,40 +481,34 @@ of the manipulator. When these situations occur, grasping might fail.</p>
     <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_acceleration_targets</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_accelerations</span><span class="p">())</span>
 
 
-<span class="k">def</span> <span class="nf">get_panda_ik</span><span class="p">(</span>
-    <span class="n">panda</span><span class="p">:</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">,</span> <span class="n">optimized_joints</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">inverse_kinematics_nlp</span><span class="o">.</span><span class="n">InverseKinematicsNLP</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">get_panda_ik</span><span class="p">(</span><span class="n">panda</span><span class="p">:</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">,</span>
+                 <span class="n">optimized_joints</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> \
+    <span class="n">inverse_kinematics_nlp</span><span class="o">.</span><span class="n">InverseKinematicsNLP</span><span class="p">:</span>
 
     <span class="c1"># Create IK</span>
     <span class="n">ik</span> <span class="o">=</span> <span class="n">inverse_kinematics_nlp</span><span class="o">.</span><span class="n">InverseKinematicsNLP</span><span class="p">(</span>
         <span class="n">urdf_filename</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">get_model_file</span><span class="p">(),</span>
         <span class="n">considered_joints</span><span class="o">=</span><span class="n">optimized_joints</span><span class="p">,</span>
-        <span class="n">joint_serialization</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_names</span><span class="p">(),</span>
-    <span class="p">)</span>
+        <span class="n">joint_serialization</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_names</span><span class="p">())</span>
 
     <span class="c1"># Initialize IK</span>
-    <span class="n">ik</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span>
-        <span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-        <span class="n">floating_base</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-        <span class="n">cost_tolerance</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
-        <span class="n">constraints_tolerance</span><span class="o">=</span><span class="mf">1e-8</span><span class="p">,</span>
-        <span class="n">base_frame</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">base_frame</span><span class="p">(),</span>
-    <span class="p">)</span>
+    <span class="n">ik</span><span class="o">.</span><span class="n">initialize</span><span class="p">(</span><span class="n">verbosity</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                  <span class="n">floating_base</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                  <span class="n">cost_tolerance</span><span class="o">=</span><span class="mf">1E-8</span><span class="p">,</span>
+                  <span class="n">constraints_tolerance</span><span class="o">=</span><span class="mf">1E-8</span><span class="p">,</span>
+                  <span class="n">base_frame</span><span class="o">=</span><span class="n">panda</span><span class="o">.</span><span class="n">base_frame</span><span class="p">())</span>
 
     <span class="c1"># Set the current configuration</span>
     <span class="n">ik</span><span class="o">.</span><span class="n">set_current_robot_configuration</span><span class="p">(</span>
         <span class="n">base_position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">base_position</span><span class="p">()),</span>
         <span class="n">base_quaternion</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">base_orientation</span><span class="p">()),</span>
-        <span class="n">joint_configuration</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_positions</span><span class="p">()),</span>
-    <span class="p">)</span>
+        <span class="n">joint_configuration</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">panda</span><span class="o">.</span><span class="n">joint_positions</span><span class="p">()))</span>
 
     <span class="c1"># Add the cartesian target of the end effector</span>
     <span class="n">end_effector</span> <span class="o">=</span> <span class="s2">&quot;end_effector_frame&quot;</span>
-    <span class="n">ik</span><span class="o">.</span><span class="n">add_target</span><span class="p">(</span>
-        <span class="n">frame_name</span><span class="o">=</span><span class="n">end_effector</span><span class="p">,</span>
-        <span class="n">target_type</span><span class="o">=</span><span class="n">inverse_kinematics_nlp</span><span class="o">.</span><span class="n">TargetType</span><span class="o">.</span><span class="n">POSE</span><span class="p">,</span>
-        <span class="n">as_constraint</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">ik</span><span class="o">.</span><span class="n">add_target</span><span class="p">(</span><span class="n">frame_name</span><span class="o">=</span><span class="n">end_effector</span><span class="p">,</span>
+                  <span class="n">target_type</span><span class="o">=</span><span class="n">inverse_kinematics_nlp</span><span class="o">.</span><span class="n">TargetType</span><span class="o">.</span><span class="n">POSE</span><span class="p">,</span>
+                  <span class="n">as_constraint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">ik</span>
 
@@ -533,20 +520,17 @@ of the manipulator. When these situations occur, grasping might fail.</p>
 
     <span class="c1"># Download the cube SDF file</span>
     <span class="n">bucket_sdf</span> <span class="o">=</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">get_model_file_from_fuel</span><span class="p">(</span>
-        <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">(</span>
-            <span class="n">org</span><span class="o">=</span><span class="s2">&quot;GoogleResearch&quot;</span><span class="p">,</span>
-            <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Threshold_Basket_Natural_Finish_Fabric_Liner_Small&quot;</span><span class="p">,</span>
-        <span class="p">),</span>
-        <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
-    <span class="p">)</span>
+        <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s2">&quot;GoogleResearch&quot;</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Threshold_Basket_Natural_Finish_Fabric_Liner_Small&quot;</span><span class="p">),</span>
+        <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Assign a custom name to the model</span>
     <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;bucket&quot;</span>
 
     <span class="c1"># Insert the model</span>
-    <span class="k">assert</span> <span class="n">world</span><span class="o">.</span><span class="n">insert_model</span><span class="p">(</span>
-        <span class="n">bucket_sdf</span><span class="p">,</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">Pose</span><span class="p">([</span><span class="mf">0.68</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span> <span class="n">model_name</span>
-    <span class="p">)</span>
+    <span class="k">assert</span> <span class="n">world</span><span class="o">.</span><span class="n">insert_model</span><span class="p">(</span><span class="n">bucket_sdf</span><span class="p">,</span>
+                              <span class="n">scenario_core</span><span class="o">.</span><span class="n">Pose</span><span class="p">([</span><span class="mf">0.68</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.02</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]),</span>
+                              <span class="n">model_name</span><span class="p">)</span>
 
     <span class="c1"># Return the model</span>
     <span class="k">return</span> <span class="n">world</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
@@ -559,61 +543,56 @@ of the manipulator. When these situations occur, grasping might fail.</p>
 
     <span class="c1"># Download the cube SDF file</span>
     <span class="n">bucket_sdf</span> <span class="o">=</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">get_model_file_from_fuel</span><span class="p">(</span>
-        <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s2">&quot;OpenRobotics&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Table&quot;</span><span class="p">),</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span>
-    <span class="p">)</span>
+        <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s2">&quot;OpenRobotics&quot;</span><span class="p">,</span>
+                <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Table&quot;</span><span class="p">),</span>
+        <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Assign a custom name to the model</span>
     <span class="n">model_name</span> <span class="o">=</span> <span class="s2">&quot;table&quot;</span>
 
     <span class="c1"># Insert the model</span>
-    <span class="k">assert</span> <span class="n">world</span><span class="o">.</span><span class="n">insert_model</span><span class="p">(</span><span class="n">bucket_sdf</span><span class="p">,</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">Pose_identity</span><span class="p">(),</span> <span class="n">model_name</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">world</span><span class="o">.</span><span class="n">insert_model</span><span class="p">(</span><span class="n">bucket_sdf</span><span class="p">,</span>
+                              <span class="n">scenario_core</span><span class="o">.</span><span class="n">Pose_identity</span><span class="p">(),</span>
+                              <span class="n">model_name</span><span class="p">)</span>
 
     <span class="c1"># Return the model</span>
     <span class="k">return</span> <span class="n">world</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">insert_cube_in_operating_area</span><span class="p">(</span>
-    <span class="n">world</span><span class="p">:</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">World</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">Model</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">insert_cube_in_operating_area</span><span class="p">(</span><span class="n">world</span><span class="p">:</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">World</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">Model</span><span class="p">:</span>
 
     <span class="c1"># Insert objects from Fuel</span>
     <span class="n">uri</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">org</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;https://fuel.ignitionrobotics.org/</span><span class="si">{</span><span class="n">org</span><span class="si">}</span><span class="s2">/models/</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span>
 
     <span class="c1"># Download the cube SDF file</span>
     <span class="n">cube_sdf</span> <span class="o">=</span> <span class="n">scenario_gazebo</span><span class="o">.</span><span class="n">get_model_file_from_fuel</span><span class="p">(</span>
-        <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s2">&quot;openrobotics&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;wood cube 5cm&quot;</span><span class="p">),</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span>
-    <span class="p">)</span>
+        <span class="n">uri</span><span class="o">=</span><span class="n">uri</span><span class="p">(</span><span class="n">org</span><span class="o">=</span><span class="s2">&quot;openrobotics&quot;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;wood cube 5cm&quot;</span><span class="p">),</span> <span class="n">use_cache</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
     <span class="c1"># Sample a random position</span>
     <span class="n">random_position</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=</span><span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">],</span> <span class="n">high</span><span class="o">=</span><span class="p">[</span><span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">])</span>
 
     <span class="c1"># Get a unique name</span>
     <span class="n">model_name</span> <span class="o">=</span> <span class="n">gym_ignition</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">get_unique_model_name</span><span class="p">(</span>
-        <span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;cube&quot;</span>
-    <span class="p">)</span>
+        <span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="p">,</span> <span class="n">model_name</span><span class="o">=</span><span class="s2">&quot;cube&quot;</span><span class="p">)</span>
 
     <span class="c1"># Insert the model</span>
     <span class="k">assert</span> <span class="n">world</span><span class="o">.</span><span class="n">insert_model</span><span class="p">(</span>
-        <span class="n">cube_sdf</span><span class="p">,</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">Pose</span><span class="p">(</span><span class="n">random_position</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">model_name</span>
-    <span class="p">)</span>
+        <span class="n">cube_sdf</span><span class="p">,</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">Pose</span><span class="p">(</span><span class="n">random_position</span><span class="p">,</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span> <span class="n">model_name</span><span class="p">)</span>
 
     <span class="c1"># Return the model</span>
     <span class="k">return</span> <span class="n">world</span><span class="o">.</span><span class="n">get_model</span><span class="p">(</span><span class="n">model_name</span><span class="o">=</span><span class="n">model_name</span><span class="p">)</span>
 
 
-<span class="k">def</span> <span class="nf">solve_ik</span><span class="p">(</span>
-    <span class="n">target_position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">target_orientation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
-    <span class="n">ik</span><span class="p">:</span> <span class="n">inverse_kinematics_nlp</span><span class="o">.</span><span class="n">InverseKinematicsNLP</span><span class="p">,</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">solve_ik</span><span class="p">(</span><span class="n">target_position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+             <span class="n">target_orientation</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+             <span class="n">ik</span><span class="p">:</span> <span class="n">inverse_kinematics_nlp</span><span class="o">.</span><span class="n">InverseKinematicsNLP</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 
     <span class="n">quat_xyzw</span> <span class="o">=</span> <span class="n">R</span><span class="o">.</span><span class="n">from_euler</span><span class="p">(</span><span class="n">seq</span><span class="o">=</span><span class="s2">&quot;y&quot;</span><span class="p">,</span> <span class="n">angles</span><span class="o">=</span><span class="mi">90</span><span class="p">,</span> <span class="n">degrees</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">as_quat</span><span class="p">()</span>
 
     <span class="n">ik</span><span class="o">.</span><span class="n">update_transform_target</span><span class="p">(</span>
         <span class="n">target_name</span><span class="o">=</span><span class="n">ik</span><span class="o">.</span><span class="n">get_active_target_names</span><span class="p">()[</span><span class="mi">0</span><span class="p">],</span>
         <span class="n">position</span><span class="o">=</span><span class="n">target_position</span><span class="p">,</span>
-        <span class="n">quaternion</span><span class="o">=</span><span class="n">conversions</span><span class="o">.</span><span class="n">Quaternion</span><span class="o">.</span><span class="n">to_wxyz</span><span class="p">(</span><span class="n">xyzw</span><span class="o">=</span><span class="n">quat_xyzw</span><span class="p">),</span>
-    <span class="p">)</span>
+        <span class="n">quaternion</span><span class="o">=</span><span class="n">conversions</span><span class="o">.</span><span class="n">Quaternion</span><span class="o">.</span><span class="n">to_wxyz</span><span class="p">(</span><span class="n">xyzw</span><span class="o">=</span><span class="n">quat_xyzw</span><span class="p">))</span>
 
     <span class="c1"># Run the IK</span>
     <span class="n">ik</span><span class="o">.</span><span class="n">solve</span><span class="p">()</span>
@@ -621,21 +600,17 @@ of the manipulator. When these situations occur, grasping might fail.</p>
     <span class="k">return</span> <span class="n">ik</span><span class="o">.</span><span class="n">get_reduced_solution</span><span class="p">()</span><span class="o">.</span><span class="n">joint_configuration</span>
 
 
-<span class="k">def</span> <span class="nf">end_effector_reached</span><span class="p">(</span>
-    <span class="n">position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
-    <span class="n">end_effector_link</span><span class="p">:</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">Link</span><span class="p">,</span>
-    <span class="n">max_error_pos</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
-    <span class="n">max_error_vel</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
-    <span class="n">mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]),</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">end_effector_reached</span><span class="p">(</span><span class="n">position</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">,</span>
+                         <span class="n">end_effector_link</span><span class="p">:</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">Link</span><span class="p">,</span>
+                         <span class="n">max_error_pos</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.01</span><span class="p">,</span>
+                         <span class="n">max_error_vel</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+                         <span class="n">mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">1.</span><span class="p">]))</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 
     <span class="n">masked_target</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">*</span> <span class="n">position</span>
     <span class="n">masked_current</span> <span class="o">=</span> <span class="n">mask</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">end_effector_link</span><span class="o">.</span><span class="n">position</span><span class="p">())</span>
 
-    <span class="k">return</span> <span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">masked_current</span> <span class="o">-</span> <span class="n">masked_target</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">max_error_pos</span>
-        <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">end_effector_link</span><span class="o">.</span><span class="n">world_linear_velocity</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">max_error_vel</span>
-    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">masked_current</span> <span class="o">-</span> <span class="n">masked_target</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">max_error_pos</span> <span class="ow">and</span> \
+           <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">end_effector_link</span><span class="o">.</span><span class="n">world_linear_velocity</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">max_error_vel</span>
 
 
 <span class="k">def</span> <span class="nf">get_unload_position</span><span class="p">(</span><span class="n">bucket</span><span class="p">:</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">Model</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
@@ -649,9 +624,8 @@ of the manipulator. When these situations occur, grasping might fail.</p>
     <span class="n">CLOSE</span> <span class="o">=</span> <span class="n">enum</span><span class="o">.</span><span class="n">auto</span><span class="p">()</span>
 
 
-<span class="k">def</span> <span class="nf">move_fingers</span><span class="p">(</span>
-    <span class="n">panda</span><span class="p">:</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">,</span> <span class="n">action</span><span class="p">:</span> <span class="n">FingersAction</span>
-<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="k">def</span> <span class="nf">move_fingers</span><span class="p">(</span><span class="n">panda</span><span class="p">:</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">,</span>
+                 <span class="n">action</span><span class="p">:</span> <span class="n">FingersAction</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 
     <span class="c1"># Get the joints of the fingers</span>
     <span class="n">finger1</span> <span class="o">=</span> <span class="n">panda</span><span class="o">.</span><span class="n">get_joint</span><span class="p">(</span><span class="n">joint_name</span><span class="o">=</span><span class="s2">&quot;panda_finger_joint1&quot;</span><span class="p">)</span>
@@ -672,8 +646,7 @@ of the manipulator. When these situations occur, grasping might fail.</p>
 
 <span class="c1"># Get the simulator and the world</span>
 <span class="n">gazebo</span><span class="p">,</span> <span class="n">world</span> <span class="o">=</span> <span class="n">gym_ignition</span><span class="o">.</span><span class="n">utils</span><span class="o">.</span><span class="n">scenario</span><span class="o">.</span><span class="n">init_gazebo_sim</span><span class="p">(</span>
-    <span class="n">step_size</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">real_time_factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">steps_per_run</span><span class="o">=</span><span class="mi">1</span>
-<span class="p">)</span>
+    <span class="n">step_size</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">real_time_factor</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">steps_per_run</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="c1"># Open the GUI</span>
 <span class="n">gazebo</span><span class="o">.</span><span class="n">gui</span><span class="p">()</span>
@@ -682,11 +655,7 @@ of the manipulator. When these situations occur, grasping might fail.</p>
 
 <span class="c1"># Insert the Panda manipulator</span>
 <span class="n">panda</span> <span class="o">=</span> <span class="n">gym_ignition_environments</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">panda</span><span class="o">.</span><span class="n">Panda</span><span class="p">(</span>
-    <span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>
-<span class="p">)</span>
-
-<span class="c1"># Disable joint velocity limits</span>
-<span class="n">_</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span><span class="n">set_velocity_limit</span><span class="p">(</span><span class="mi">1_000</span><span class="p">)</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">panda</span><span class="o">.</span><span class="n">joints</span><span class="p">()]</span>
+    <span class="n">world</span><span class="o">=</span><span class="n">world</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
 
 <span class="c1"># Enable contacts only for the finger links</span>
 <span class="n">panda</span><span class="o">.</span><span class="n">get_link</span><span class="p">(</span><span class="s2">&quot;panda_leftfinger&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_gazebo</span><span class="p">()</span><span class="o">.</span><span class="n">enable_contact_detection</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
@@ -708,9 +677,7 @@ of the manipulator. When these situations occur, grasping might fail.</p>
 <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">paused</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 
 <span class="c1"># Create and configure IK for the panda</span>
-<span class="n">ik_joints</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="n">j</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">panda</span><span class="o">.</span><span class="n">joints</span><span class="p">()</span> <span class="k">if</span> <span class="n">j</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">JointType_fixed</span>
-<span class="p">]</span>
+<span class="n">ik_joints</span> <span class="o">=</span> <span class="p">[</span><span class="n">j</span><span class="o">.</span><span class="n">name</span><span class="p">()</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">panda</span><span class="o">.</span><span class="n">joints</span><span class="p">()</span> <span class="k">if</span> <span class="n">j</span><span class="o">.</span><span class="n">type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="n">scenario_core</span><span class="o">.</span><span class="n">JointType_fixed</span> <span class="p">]</span>
 <span class="n">ik</span> <span class="o">=</span> <span class="n">get_panda_ik</span><span class="p">(</span><span class="n">panda</span><span class="o">=</span><span class="n">panda</span><span class="p">,</span> <span class="n">optimized_joints</span><span class="o">=</span><span class="n">ik_joints</span><span class="p">)</span>
 
 <span class="c1"># Get some manipulator links</span>
@@ -737,8 +704,7 @@ of the manipulator. When these situations occur, grasping might fail.</p>
     <span class="n">over_joint_configuration</span> <span class="o">=</span> <span class="n">solve_ik</span><span class="p">(</span>
         <span class="n">target_position</span><span class="o">=</span><span class="n">position_over_cube</span><span class="p">,</span>
         <span class="n">target_orientation</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">base_orientation</span><span class="p">()),</span>
-        <span class="n">ik</span><span class="o">=</span><span class="n">ik</span><span class="p">,</span>
-    <span class="p">)</span>
+        <span class="n">ik</span><span class="o">=</span><span class="n">ik</span><span class="p">)</span>
 
     <span class="c1"># Set the joint references</span>
     <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_position_targets</span><span class="p">(</span><span class="n">over_joint_configuration</span><span class="p">,</span> <span class="n">ik_joints</span><span class="p">)</span>
@@ -747,12 +713,10 @@ of the manipulator. When these situations occur, grasping might fail.</p>
     <span class="n">panda</span><span class="o">.</span><span class="n">open_fingers</span><span class="p">()</span>
 
     <span class="c1"># Run the simulation until the EE reached the desired position</span>
-    <span class="k">while</span> <span class="ow">not</span> <span class="n">end_effector_reached</span><span class="p">(</span>
-        <span class="n">position</span><span class="o">=</span><span class="n">position_over_cube</span><span class="p">,</span>
-        <span class="n">end_effector_link</span><span class="o">=</span><span class="n">end_effector_frame</span><span class="p">,</span>
-        <span class="n">max_error_pos</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
-        <span class="n">max_error_vel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">end_effector_reached</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">position_over_cube</span><span class="p">,</span>
+                                   <span class="n">end_effector_link</span><span class="o">=</span><span class="n">end_effector_frame</span><span class="p">,</span>
+                                   <span class="n">max_error_pos</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+                                   <span class="n">max_error_vel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
         <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
     <span class="c1"># Wait a bit more</span>
@@ -768,8 +732,7 @@ of the manipulator. When these situations occur, grasping might fail.</p>
     <span class="n">over_joint_configuration</span> <span class="o">=</span> <span class="n">solve_ik</span><span class="p">(</span>
         <span class="n">target_position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">base_position</span><span class="p">())</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">]),</span>
         <span class="n">target_orientation</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">base_orientation</span><span class="p">()),</span>
-        <span class="n">ik</span><span class="o">=</span><span class="n">ik</span><span class="p">,</span>
-    <span class="p">)</span>
+        <span class="n">ik</span><span class="o">=</span><span class="n">ik</span><span class="p">)</span>
 
     <span class="c1"># Set the joint references</span>
     <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_position_targets</span><span class="p">(</span><span class="n">over_joint_configuration</span><span class="p">,</span> <span class="n">ik_joints</span><span class="p">)</span>
@@ -777,9 +740,8 @@ of the manipulator. When these situations occur, grasping might fail.</p>
 
     <span class="c1"># Run the simulation until the EE reached the desired position</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="n">end_effector_reached</span><span class="p">(</span>
-        <span class="n">position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">base_position</span><span class="p">())</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">]),</span>
-        <span class="n">end_effector_link</span><span class="o">=</span><span class="n">end_effector_frame</span><span class="p">,</span>
-    <span class="p">):</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">base_position</span><span class="p">())</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.04</span><span class="p">]),</span>
+            <span class="n">end_effector_link</span><span class="o">=</span><span class="n">end_effector_frame</span><span class="p">):</span>
 
         <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
@@ -796,10 +758,8 @@ of the manipulator. When these situations occur, grasping might fail.</p>
     <span class="n">panda</span><span class="o">.</span><span class="n">close_fingers</span><span class="p">()</span>
 
     <span class="c1"># Detect a graps reading the contact wrenches of the finger links</span>
-    <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span>
-        <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">finger_left</span><span class="o">.</span><span class="n">contact_wrench</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="mf">50.0</span>
-        <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">finger_right</span><span class="o">.</span><span class="n">contact_wrench</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="mf">50.0</span>
-    <span class="p">):</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">finger_left</span><span class="o">.</span><span class="n">contact_wrench</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="mf">50.0</span> <span class="ow">and</span>
+               <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">finger_right</span><span class="o">.</span><span class="n">contact_wrench</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="mf">50.0</span><span class="p">):</span>
         <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
     <span class="c1"># =============</span>
@@ -815,19 +775,16 @@ of the manipulator. When these situations occur, grasping might fail.</p>
     <span class="n">over_joint_configuration</span> <span class="o">=</span> <span class="n">solve_ik</span><span class="p">(</span>
         <span class="n">target_position</span><span class="o">=</span><span class="n">position_over_cube</span><span class="p">,</span>
         <span class="n">target_orientation</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cube</span><span class="o">.</span><span class="n">base_orientation</span><span class="p">()),</span>
-        <span class="n">ik</span><span class="o">=</span><span class="n">ik</span><span class="p">,</span>
-    <span class="p">)</span>
+        <span class="n">ik</span><span class="o">=</span><span class="n">ik</span><span class="p">)</span>
 
     <span class="c1"># Set the joint references</span>
     <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_position_targets</span><span class="p">(</span><span class="n">over_joint_configuration</span><span class="p">,</span> <span class="n">ik_joints</span><span class="p">)</span>
 
     <span class="c1"># Run the simulation until the EE reached the desired position</span>
-    <span class="k">while</span> <span class="ow">not</span> <span class="n">end_effector_reached</span><span class="p">(</span>
-        <span class="n">position</span><span class="o">=</span><span class="n">position_over_cube</span><span class="p">,</span>
-        <span class="n">end_effector_link</span><span class="o">=</span><span class="n">end_effector_frame</span><span class="p">,</span>
-        <span class="n">max_error_pos</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
-        <span class="n">max_error_vel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
-    <span class="p">):</span>
+    <span class="k">while</span> <span class="ow">not</span> <span class="n">end_effector_reached</span><span class="p">(</span><span class="n">position</span><span class="o">=</span><span class="n">position_over_cube</span><span class="p">,</span>
+                                   <span class="n">end_effector_link</span><span class="o">=</span><span class="n">end_effector_frame</span><span class="p">,</span>
+                                   <span class="n">max_error_pos</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+                                   <span class="n">max_error_vel</span><span class="o">=</span><span class="mf">0.5</span><span class="p">):</span>
         <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
     <span class="c1"># Wait a bit more</span>
@@ -843,21 +800,20 @@ of the manipulator. When these situations occur, grasping might fail.</p>
     <span class="n">unload_joint_configuration</span> <span class="o">=</span> <span class="n">solve_ik</span><span class="p">(</span>
         <span class="n">target_position</span><span class="o">=</span><span class="n">get_unload_position</span><span class="p">(</span><span class="n">bucket</span><span class="o">=</span><span class="n">bucket</span><span class="p">),</span>
         <span class="n">target_orientation</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
-        <span class="n">ik</span><span class="o">=</span><span class="n">ik</span><span class="p">,</span>
-    <span class="p">)</span>
+        <span class="n">ik</span><span class="o">=</span><span class="n">ik</span><span class="p">)</span>
 
     <span class="c1"># Set the joint references</span>
-    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_position_targets</span><span class="p">(</span><span class="n">unload_joint_configuration</span><span class="p">,</span> <span class="n">ik_joints</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">panda</span><span class="o">.</span><span class="n">set_joint_position_targets</span><span class="p">(</span><span class="n">unload_joint_configuration</span><span class="p">,</span>
+                                            <span class="n">ik_joints</span><span class="p">)</span>
 
     <span class="c1"># Run the simulation until the EE reached the desired position</span>
     <span class="k">while</span> <span class="ow">not</span> <span class="n">end_effector_reached</span><span class="p">(</span>
-        <span class="n">position</span><span class="o">=</span><span class="n">get_unload_position</span><span class="p">(</span><span class="n">bucket</span><span class="o">=</span><span class="n">bucket</span><span class="p">)</span>
-        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
-        <span class="n">end_effector_link</span><span class="o">=</span><span class="n">end_effector_frame</span><span class="p">,</span>
-        <span class="n">max_error_pos</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
-        <span class="n">max_error_vel</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
-        <span class="n">mask</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]),</span>
-    <span class="p">):</span>
+            <span class="n">position</span><span class="o">=</span><span class="n">get_unload_position</span><span class="p">(</span><span class="n">bucket</span><span class="o">=</span><span class="n">bucket</span><span class="p">)</span> <span class="o">+</span>
+                     <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">),</span>
+            <span class="n">end_effector_link</span><span class="o">=</span><span class="n">end_effector_frame</span><span class="p">,</span>
+            <span class="n">max_error_pos</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+            <span class="n">max_error_vel</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+            <span class="n">mask</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])):</span>
 
         <span class="n">gazebo</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
 
