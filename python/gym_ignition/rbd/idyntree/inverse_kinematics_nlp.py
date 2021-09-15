@@ -5,7 +5,7 @@
 import os
 from dataclasses import dataclass
 from enum import Enum, auto
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import idyntree.bindings as idt
 import numpy as np
@@ -30,7 +30,7 @@ class TransformTargetData:
 class TargetData:
 
     type: TargetType
-    weight: float
+    weight: Union[float, Tuple[float, float]]
     data: Union[np.ndarray, TransformTargetData]
 
 
@@ -228,9 +228,25 @@ class InverseKinematicsNLP:
         self,
         frame_name: str,
         target_type: TargetType,
-        weight: float = 1.0,
+        weight: Union[float, Tuple[float, float]] = None,
         as_constraint: bool = False,
     ) -> None:
+
+        # Check the type of the 'weight' argument
+        float_target_types = {TargetType.ROTATION, TargetType.POSITION}
+        weight_type = float if target_type in float_target_types else tuple
+
+        # Backward compatibility: if the target type is POSE and the weight is a float,
+        # we apply the same weight to both target components
+        if target_type is TargetType.POSE and isinstance(weight, float):
+            weight = (weight, weight)
+
+        # Set the default weight if not specified
+        default_weight = 1.0 if target_type in float_target_types else (1.0, 1.0)
+        weight = weight if weight is not None else default_weight
+
+        if not isinstance(weight, weight_type):
+            raise ValueError(f"The weight must be {weight_type} for this target")
 
         if target_type == TargetType.ROTATION:
             # Add the target
@@ -257,7 +273,7 @@ class InverseKinematicsNLP:
         elif target_type == TargetType.POSE:
             # Add the target
             ok_target = self._ik.addTarget(
-                frame_name, idt.Transform.Identity(), weight, weight
+                frame_name, idt.Transform.Identity(), weight[0], weight[1]
             )
 
             # Create the transform target data
