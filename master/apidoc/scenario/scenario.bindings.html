@@ -4227,6 +4227,24 @@ have as many elements as the considered joint DoFs.</p></li>
 </dd></dl>
 
 <dl class="py method">
+<dt id="scenario.bindings.core.World.models">
+<code class="sig-name descname"><span class="pre">models</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.World.models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the models of the world.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>modelNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered models. By default,
+<code class="docutils literal notranslate"><span class="pre">World::modelNames</span></code> is used.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>std::vector&lt; scenario::core::ModelPtr,std::allocator&lt; scenario::core::ModelPtr &gt; &gt;</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A vector of pointers to the model objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
 <dt id="scenario.bindings.core.World.name">
 <code class="sig-name descname"><span class="pre">name</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.core.World.name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the name of the world.</p>
@@ -7534,6 +7552,24 @@ be executed. It could either be a paused or unpaused step.</p>
 </dd>
 <dt class="field-even">Returns</dt>
 <dd class="field-even"><p>The list of model names.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt id="scenario.bindings.gazebo.World.models">
+<code class="sig-name descname"><span class="pre">models</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.bindings.gazebo.World.models" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the models of the world.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>modelNames</strong> (<em>Tuple</em><em>[</em><em>string</em><em>]</em>) – Optional vector of considered models. By default,
+<code class="docutils literal notranslate"><span class="pre">World::modelNames</span></code> is used.</p>
+</dd>
+<dt class="field-even">Return type</dt>
+<dd class="field-even"><p>std::vector&lt; scenario::core::ModelPtr,std::allocator&lt; scenario::core::ModelPtr &gt; &gt;</p>
+</dd>
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A vector of pointers to the model objects.</p>
 </dd>
 </dl>
 </dd></dl>
