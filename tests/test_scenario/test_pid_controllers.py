@@ -45,14 +45,18 @@ def test_position_pid(default_world: Tuple[scenario.GazeboSimulator, scenario.Wo
     assert world.insert_model(panda_urdf)
     assert "panda" in world.model_names()
 
+    # Get the model and cast it to Gazebo
+    panda = world.get_model("panda").to_gazebo()
+
+    # Disable any velocity and torque limits of the model
+    _ = [j.set_velocity_limit(np.finfo(float).max) for j in panda.joints()]
+    _ = [j.set_max_generalized_force(np.finfo(float).max) for j in panda.joints()]
+
     # Show the GUI
     # import time
     # gazebo.gui()
     # gazebo.run(paused=True)
     # time.sleep(3)
-
-    # Get the model and cast it to Gazebo
-    panda = world.get_model("panda").to_gazebo()
 
     # Reset joint1 to its middle position
     joint1 = panda.get_joint("panda_joint1").to_gazebo()

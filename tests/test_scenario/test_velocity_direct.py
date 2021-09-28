@@ -38,6 +38,11 @@ def test_velocity_direct(
     # Get the model and cast it to Gazebo
     pendulum = world.get_model("pendulum").to_gazebo()
 
+    # Disable any velocity (and torque) limits of the model, otherwise the velocity
+    # cannot change too abruptly
+    _ = [j.set_velocity_limit(np.finfo(float).max) for j in pendulum.joints()]
+    _ = [j.set_max_generalized_force(np.finfo(float).max) for j in pendulum.joints()]
+
     # Add some friction
     assert pendulum.get_joint("pivot").to_gazebo().set_coulomb_friction(value=0.01)
     assert pendulum.get_joint("pivot").to_gazebo().set_viscous_friction(value=0.2)
@@ -76,11 +81,8 @@ def test_velocity_direct(
     # Check again
     assert pivot.velocity() == pytest.approx(np.pi)
 
-    # Change direction abruptly.
-    # Due to existing joint velocity limits, it takes two steps to reach the target.
-    # Note: even by increasing the limit to its maximum value, two steps are necessary.
+    # Change direction abruptly
     assert pivot.set_velocity_target(velocity=-np.pi)
-    assert gazebo.run()
     assert gazebo.run()
     assert pivot.velocity() == pytest.approx(-np.pi)
 
