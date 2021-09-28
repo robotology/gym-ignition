@@ -22,13 +22,13 @@
       
 
     
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e8f53015daec13862f6db5e763c41738.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     
   <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
@@ -61,7 +61,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   What
  </span>
@@ -78,7 +78,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Why
  </span>
@@ -105,7 +105,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Installation (How)
  </span>
@@ -132,7 +132,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Getting Started
  </span>
@@ -154,7 +154,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   ScenarIO C++ API:
  </span>
@@ -171,7 +171,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Python Packages
  </span>
@@ -298,7 +298,7 @@
   </ul>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Information
  </span>
@@ -447,19 +447,19 @@
 <div class="section" id="module-gym_ignition.utils.logger">
 <span id="gym-ignition-utils-logger"></span><h2>gym_ignition.utils.logger<a class="headerlink" href="#module-gym_ignition.utils.logger" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="gym_ignition.utils.logger.custom_formatwarning">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.logger.</span></code><code class="sig-name descname"><span class="pre">custom_formatwarning</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.custom_formatwarning" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.logger.custom_formatwarning">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.logger.</span></span><span class="sig-name descname"><span class="pre">custom_formatwarning</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.custom_formatwarning" title="Permalink to this definition">¶</a></dt>
 <dd><p>Custom format that overrides <code class="xref py py-func docutils literal notranslate"><span class="pre">warnings.formatwarning()</span></code>.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="gym_ignition.utils.logger.gym_verbosity">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.logger.</span></code><code class="sig-name descname"><span class="pre">gym_verbosity</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.gym_verbosity" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.logger.gym_verbosity">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.logger.</span></span><span class="sig-name descname"><span class="pre">gym_verbosity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.gym_verbosity" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py function">
-<dt id="gym_ignition.utils.logger.set_level">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.logger.</span></code><code class="sig-name descname"><span class="pre">set_level</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.set_level" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.logger.set_level">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.logger.</span></span><span class="sig-name descname"><span class="pre">set_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">level</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scenario_level</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.set_level" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the verbosity level of both <code class="xref py py-mod docutils literal notranslate"><span class="pre">gym</span></code> and <a class="reference internal" href="gym_ignition.html#module-gym_ignition" title="gym_ignition"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gym_ignition</span></code></a>.</p>
 <p>Accepted values:</p>
 <ul class="simple">
@@ -483,8 +483,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="gym_ignition.utils.logger.warn">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.logger.</span></code><code class="sig-name descname"><span class="pre">warn</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.warn" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.logger.warn">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.logger.</span></span><span class="sig-name descname"><span class="pre">warn</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">msg</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.logger.warn" title="Permalink to this definition">¶</a></dt>
 <dd><p>Custom definition of <code class="xref py py-func docutils literal notranslate"><span class="pre">gym.logger.warn()</span></code> function.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -497,8 +497,8 @@
 <div class="section" id="module-gym_ignition.utils.math">
 <span id="gym-ignition-utils-math"></span><h2>gym_ignition.utils.math<a class="headerlink" href="#module-gym_ignition.utils.math" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="gym_ignition.utils.math.denormalize">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.math.</span></code><code class="sig-name descname"><span class="pre">denormalize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.math.denormalize" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.math.denormalize">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.math.</span></span><span class="sig-name descname"><span class="pre">denormalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.math.denormalize" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
@@ -507,8 +507,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="gym_ignition.utils.math.normalize">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.math.</span></code><code class="sig-name descname"><span class="pre">normalize</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.math.normalize" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.math.normalize">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.math.</span></span><span class="sig-name descname"><span class="pre">normalize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">low</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">high</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.math.normalize" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">Number</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">ndarray</span></code>]</p>
@@ -520,8 +520,8 @@
 <div class="section" id="module-gym_ignition.utils.misc">
 <span id="gym-ignition-utils-misc"></span><h2>gym_ignition.utils.misc<a class="headerlink" href="#module-gym_ignition.utils.misc" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="gym_ignition.utils.misc.string_to_file">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.misc.</span></code><code class="sig-name descname"><span class="pre">string_to_file</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.misc.string_to_file" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.misc.string_to_file">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.misc.</span></span><span class="sig-name descname"><span class="pre">string_to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">string</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.misc.string_to_file" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
@@ -533,8 +533,8 @@
 <div class="section" id="module-gym_ignition.utils.resource_finder">
 <span id="gym-ignition-utils-resource-finder"></span><h2>gym_ignition.utils.resource_finder<a class="headerlink" href="#module-gym_ignition.utils.resource_finder" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="gym_ignition.utils.resource_finder.add_path">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.resource_finder.</span></code><code class="sig-name descname"><span class="pre">add_path</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.add_path" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.resource_finder.add_path">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.resource_finder.</span></span><span class="sig-name descname"><span class="pre">add_path</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_path</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.add_path" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -543,8 +543,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="gym_ignition.utils.resource_finder.add_path_from_env_var">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.resource_finder.</span></code><code class="sig-name descname"><span class="pre">add_path_from_env_var</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_variable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.add_path_from_env_var" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.resource_finder.add_path_from_env_var">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.resource_finder.</span></span><span class="sig-name descname"><span class="pre">add_path_from_env_var</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env_variable</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.add_path_from_env_var" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -553,8 +553,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="gym_ignition.utils.resource_finder.find_resource">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.resource_finder.</span></code><code class="sig-name descname"><span class="pre">find_resource</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.find_resource" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.resource_finder.find_resource">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.resource_finder.</span></span><span class="sig-name descname"><span class="pre">find_resource</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.find_resource" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
@@ -563,8 +563,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="gym_ignition.utils.resource_finder.get_search_paths">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.resource_finder.</span></code><code class="sig-name descname"><span class="pre">get_search_paths</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.get_search_paths" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.resource_finder.get_search_paths">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.resource_finder.</span></span><span class="sig-name descname"><span class="pre">get_search_paths</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.resource_finder.get_search_paths" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]</p>
@@ -576,8 +576,8 @@
 <div class="section" id="module-gym_ignition.utils.scenario">
 <span id="gym-ignition-utils-scenario"></span><h2>gym_ignition.utils.scenario<a class="headerlink" href="#module-gym_ignition.utils.scenario" title="Permalink to this headline">¶</a></h2>
 <dl class="py function">
-<dt id="gym_ignition.utils.scenario.get_joint_positions_space">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.scenario.</span></code><code class="sig-name descname"><span class="pre">get_joint_positions_space</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">considered_joints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.scenario.get_joint_positions_space" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.scenario.get_joint_positions_space">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.scenario.</span></span><span class="sig-name descname"><span class="pre">get_joint_positions_space</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">considered_joints</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.scenario.get_joint_positions_space" title="Permalink to this definition">¶</a></dt>
 <dd><p>Build a Box space from the joint position limits.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -597,8 +597,8 @@ of joints and to enforce a custom joint serialization.</p></li>
 </dd></dl>
 
 <dl class="py function">
-<dt id="gym_ignition.utils.scenario.get_unique_model_name">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.scenario.</span></code><code class="sig-name descname"><span class="pre">get_unique_model_name</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.scenario.get_unique_model_name" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.scenario.get_unique_model_name">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.scenario.</span></span><span class="sig-name descname"><span class="pre">get_unique_model_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.scenario.get_unique_model_name" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get a unique model name given a world configuration.</p>
 <p>This function find the first available model name starting from the argument and
 appending a integer postfix until the resulting name is unique in the world.</p>
@@ -623,8 +623,8 @@ appending a integer postfix until the resulting name is unique in the world.</p>
 </dd></dl>
 
 <dl class="py function">
-<dt id="gym_ignition.utils.scenario.init_gazebo_sim">
-<code class="sig-prename descclassname"><span class="pre">gym_ignition.utils.scenario.</span></code><code class="sig-name descname"><span class="pre">init_gazebo_sim</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_time_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps_per_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.scenario.init_gazebo_sim" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.utils.scenario.init_gazebo_sim">
+<span class="sig-prename descclassname"><span class="pre">gym_ignition.utils.scenario.</span></span><span class="sig-name descname"><span class="pre">init_gazebo_sim</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">step_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">real_time_factor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">steps_per_run</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.utils.scenario.init_gazebo_sim" title="Permalink to this definition">¶</a></dt>
 <dd><p>Initialize a Gazebo simulation with an empty world and default physics.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -689,7 +689,7 @@ appending a integer postfix until the resulting name is unique in the world.</p>
         
         </div>
     </div>
-    <footer class="footer mt-5 mt-md-0">
+    <footer class="footer">
     <div class="container">
       <p>
         

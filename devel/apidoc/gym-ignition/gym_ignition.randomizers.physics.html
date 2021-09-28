@@ -22,13 +22,13 @@
       
 
     
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e8f53015daec13862f6db5e763c41738.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     
   <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
@@ -61,7 +61,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   What
  </span>
@@ -78,7 +78,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Why
  </span>
@@ -105,7 +105,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Installation (How)
  </span>
@@ -132,7 +132,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Getting Started
  </span>
@@ -154,7 +154,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   ScenarIO C++ API:
  </span>
@@ -171,7 +171,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Python Packages
  </span>
@@ -298,7 +298,7 @@
   </ul>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Information
  </span>
@@ -422,8 +422,8 @@
 <div class="section" id="module-gym_ignition.randomizers.physics.dart">
 <span id="gym-ignition-randomizers-physics-dart"></span><h2>gym_ignition.randomizers.physics.dart<a class="headerlink" href="#module-gym_ignition.randomizers.physics.dart" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="gym_ignition.randomizers.physics.dart.DART">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition.randomizers.physics.dart.</span></code><code class="sig-name descname"><span class="pre">DART</span></code><a class="headerlink" href="#gym_ignition.randomizers.physics.dart.DART" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.randomizers.physics.dart.DART">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gym_ignition.randomizers.physics.dart.</span></span><span class="sig-name descname"><span class="pre">DART</span></span><a class="headerlink" href="#gym_ignition.randomizers.physics.dart.DART" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="gym_ignition.randomizers.html#gym_ignition.randomizers.abc.PhysicsRandomizer" title="gym_ignition.randomizers.abc.PhysicsRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.randomizers.abc.PhysicsRandomizer</span></code></a></p>
 <p>Class that configures the Gazebo World of a Task to use the DART physics engine.</p>
 <div class="admonition note">
@@ -431,8 +431,8 @@
 <p>This class does not apply any physics randomization.</p>
 </div>
 <dl class="py method">
-<dt id="gym_ignition.randomizers.physics.dart.DART.get_engine">
-<code class="sig-name descname"><span class="pre">get_engine</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.physics.dart.DART.get_engine" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.randomizers.physics.dart.DART.get_engine">
+<span class="sig-name descname"><span class="pre">get_engine</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.physics.dart.DART.get_engine" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the physics engine to use for the rollout.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
@@ -449,8 +449,8 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="gym_ignition.randomizers.physics.dart.DART.randomize_physics">
-<code class="sig-name descname"><span class="pre">randomize_physics</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.physics.dart.DART.randomize_physics" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.randomizers.physics.dart.DART.randomize_physics">
+<span class="sig-name descname"><span class="pre">randomize_physics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">task</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.randomizers.physics.dart.DART.randomize_physics" title="Permalink to this definition">¶</a></dt>
 <dd><p>Method that insert and configures the physics of a Task’s world.</p>
 <p>By default this method loads a plugin that uses DART with no randomizations.
 Randomizing physics engine parameters or changing physics engine backend could be
@@ -504,7 +504,7 @@ done by redefining this method and passing it to
         
         </div>
     </div>
-    <footer class="footer mt-5 mt-md-0">
+    <footer class="footer">
     <div class="container">
       <p>
         

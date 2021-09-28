@@ -22,13 +22,13 @@
       
 
     
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e8f53015daec13862f6db5e763c41738.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     
   <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
@@ -59,7 +59,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Motivations
  </span>
@@ -71,7 +71,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Installation
  </span>
@@ -98,7 +98,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Getting Started
  </span>
@@ -120,7 +120,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   ScenarI/O C++ API:
  </span>
@@ -137,7 +137,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Python Packages
  </span>
@@ -264,7 +264,7 @@
   </ul>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Information
  </span>
@@ -373,25 +373,25 @@
   <div class="section" id="module-scenario">
 <span id="scenario"></span><h1>scenario<a class="headerlink" href="#module-scenario" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="scenario.InstallMode">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">scenario.</span></code><code class="sig-name descname"><span class="pre">InstallMode</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.InstallMode" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="scenario.InstallMode">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">scenario.</span></span><span class="sig-name descname"><span class="pre">InstallMode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#scenario.InstallMode" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">enum.Enum</span></code></p>
 <p>An enumeration.</p>
 <dl class="py attribute">
-<dt id="scenario.InstallMode.Developer">
-<code class="sig-name descname"><span class="pre">Developer</span></code><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#scenario.InstallMode.Developer" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="scenario.InstallMode.Developer">
+<span class="sig-name descname"><span class="pre">Developer</span></span><em class="property"> <span class="pre">=</span> <span class="pre">2</span></em><a class="headerlink" href="#scenario.InstallMode.Developer" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="scenario.InstallMode.User">
-<code class="sig-name descname"><span class="pre">User</span></code><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#scenario.InstallMode.User" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="scenario.InstallMode.User">
+<span class="sig-name descname"><span class="pre">User</span></span><em class="property"> <span class="pre">=</span> <span class="pre">1</span></em><a class="headerlink" href="#scenario.InstallMode.User" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py function">
-<dt id="scenario.create_home_dot_folder">
-<code class="sig-prename descclassname"><span class="pre">scenario.</span></code><code class="sig-name descname"><span class="pre">create_home_dot_folder</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.create_home_dot_folder" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="scenario.create_home_dot_folder">
+<span class="sig-prename descclassname"><span class="pre">scenario.</span></span><span class="sig-name descname"><span class="pre">create_home_dot_folder</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.create_home_dot_folder" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -400,8 +400,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="scenario.detect_install_mode">
-<code class="sig-prename descclassname"><span class="pre">scenario.</span></code><code class="sig-name descname"><span class="pre">detect_install_mode</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.detect_install_mode" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="scenario.detect_install_mode">
+<span class="sig-prename descclassname"><span class="pre">scenario.</span></span><span class="sig-name descname"><span class="pre">detect_install_mode</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.detect_install_mode" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><a class="reference internal" href="#scenario.InstallMode" title="scenario.InstallMode"><code class="xref py py-class docutils literal notranslate"><span class="pre">InstallMode</span></code></a></p>
@@ -410,8 +410,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="scenario.import_gazebo">
-<code class="sig-prename descclassname"><span class="pre">scenario.</span></code><code class="sig-name descname"><span class="pre">import_gazebo</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.import_gazebo" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="scenario.import_gazebo">
+<span class="sig-prename descclassname"><span class="pre">scenario.</span></span><span class="sig-name descname"><span class="pre">import_gazebo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.import_gazebo" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -420,8 +420,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="scenario.pre_import_gym">
-<code class="sig-prename descclassname"><span class="pre">scenario.</span></code><code class="sig-name descname"><span class="pre">pre_import_gym</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.pre_import_gym" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="scenario.pre_import_gym">
+<span class="sig-prename descclassname"><span class="pre">scenario.</span></span><span class="sig-name descname"><span class="pre">pre_import_gym</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.pre_import_gym" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -430,8 +430,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="scenario.preload_tensorflow_shared_libraries">
-<code class="sig-prename descclassname"><span class="pre">scenario.</span></code><code class="sig-name descname"><span class="pre">preload_tensorflow_shared_libraries</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.preload_tensorflow_shared_libraries" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="scenario.preload_tensorflow_shared_libraries">
+<span class="sig-prename descclassname"><span class="pre">scenario.</span></span><span class="sig-name descname"><span class="pre">preload_tensorflow_shared_libraries</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.preload_tensorflow_shared_libraries" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -440,8 +440,8 @@
 </dd></dl>
 
 <dl class="py function">
-<dt id="scenario.setup_gazebo_environment">
-<code class="sig-prename descclassname"><span class="pre">scenario.</span></code><code class="sig-name descname"><span class="pre">setup_gazebo_environment</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.setup_gazebo_environment" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="scenario.setup_gazebo_environment">
+<span class="sig-prename descclassname"><span class="pre">scenario.</span></span><span class="sig-name descname"><span class="pre">setup_gazebo_environment</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#scenario.setup_gazebo_environment" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></p>
@@ -475,7 +475,7 @@
         
         </div>
     </div>
-    <footer class="footer mt-5 mt-md-0">
+    <footer class="footer">
     <div class="container">
       <p>
         

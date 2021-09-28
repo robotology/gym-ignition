@@ -22,13 +22,13 @@
       
 
     
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e8f53015daec13862f6db5e763c41738.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     
   <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
@@ -61,7 +61,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Motivations
  </span>
@@ -73,7 +73,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Installation
  </span>
@@ -100,7 +100,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Getting Started
  </span>
@@ -122,7 +122,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   ScenarI/O C++ API:
  </span>
@@ -139,7 +139,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Python Packages
  </span>
@@ -266,7 +266,7 @@
   </ul>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Information
  </span>
@@ -405,12 +405,12 @@
 <div class="section" id="module-gym_ignition_environments.models.cartpole">
 <span id="gym-ignition-environments-models-cartpole"></span><h2>gym_ignition_environments.models.cartpole<a class="headerlink" href="#module-gym_ignition_environments.models.cartpole" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="gym_ignition_environments.models.cartpole.CartPole">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.cartpole.</span></code><code class="sig-name descname"><span class="pre">CartPole</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.cartpole.CartPole" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.cartpole.CartPole">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.cartpole.</span></span><span class="sig-name descname"><span class="pre">CartPole</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.cartpole.CartPole" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_wrapper.ModelWrapper" title="gym_ignition.scenario.model_wrapper.ModelWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_wrapper.ModelWrapper</span></code></a>, <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_with_file.ModelWithFile" title="gym_ignition.scenario.model_with_file.ModelWithFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_with_file.ModelWithFile</span></code></a></p>
 <dl class="py method">
-<dt id="gym_ignition_environments.models.cartpole.CartPole.get_model_file">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get_model_file</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.cartpole.CartPole.get_model_file" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.cartpole.CartPole.get_model_file">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_model_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.cartpole.CartPole.get_model_file" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
@@ -424,12 +424,12 @@
 <div class="section" id="module-gym_ignition_environments.models.icub">
 <span id="gym-ignition-environments-models-icub"></span><h2>gym_ignition_environments.models.icub<a class="headerlink" href="#module-gym_ignition_environments.models.icub" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="gym_ignition_environments.models.icub.ICubGazebo">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.icub.</span></code><code class="sig-name descname"><span class="pre">ICubGazebo</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.572)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazebo" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.icub.ICubGazebo">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.icub.</span></span><span class="sig-name descname"><span class="pre">ICubGazebo</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.572)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazebo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#gym_ignition_environments.models.icub.ICubGazeboABC" title="gym_ignition_environments.models.icub.ICubGazeboABC"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition_environments.models.icub.ICubGazeboABC</span></code></a></p>
 <dl class="py method">
-<dt id="gym_ignition_environments.models.icub.ICubGazebo.get_model_file">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get_model_file</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazebo.get_model_file" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.icub.ICubGazebo.get_model_file">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_model_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazebo.get_model_file" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
@@ -440,38 +440,38 @@
 </dd></dl>
 
 <dl class="py class">
-<dt id="gym_ignition_environments.models.icub.ICubGazeboABC">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.icub.</span></code><code class="sig-name descname"><span class="pre">ICubGazeboABC</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboABC" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.icub.ICubGazeboABC">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.icub.</span></span><span class="sig-name descname"><span class="pre">ICubGazeboABC</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboABC" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_wrapper.ModelWrapper" title="gym_ignition.scenario.model_wrapper.ModelWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_wrapper.ModelWrapper</span></code></a>, <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_with_file.ModelWithFile" title="gym_ignition.scenario.model_with_file.ModelWithFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_with_file.ModelWithFile</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <dl class="py attribute">
-<dt id="gym_ignition_environments.models.icub.ICubGazeboABC.DOFS">
-<code class="sig-name descname"><span class="pre">DOFS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">32</span></em><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboABC.DOFS" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.icub.ICubGazeboABC.DOFS">
+<span class="sig-name descname"><span class="pre">DOFS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">32</span></em><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboABC.DOFS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="gym_ignition_environments.models.icub.ICubGazeboABC.NUM_JOINTS">
-<code class="sig-name descname"><span class="pre">NUM_JOINTS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">32</span></em><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboABC.NUM_JOINTS" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.icub.ICubGazeboABC.NUM_JOINTS">
+<span class="sig-name descname"><span class="pre">NUM_JOINTS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">32</span></em><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboABC.NUM_JOINTS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="gym_ignition_environments.models.icub.ICubGazeboABC.NUM_LINKS">
-<code class="sig-name descname"><span class="pre">NUM_LINKS</span></code><em class="property"> <span class="pre">=</span> <span class="pre">39</span></em><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboABC.NUM_LINKS" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.icub.ICubGazeboABC.NUM_LINKS">
+<span class="sig-name descname"><span class="pre">NUM_LINKS</span></span><em class="property"> <span class="pre">=</span> <span class="pre">39</span></em><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboABC.NUM_LINKS" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="gym_ignition_environments.models.icub.ICubGazeboABC.initial_positions">
-<code class="sig-name descname"><span class="pre">initial_positions</span></code><em class="property"> <span class="pre">=</span> <span class="pre">{'l_ankle_pitch':</span> <span class="pre">-0.57,</span> <span class="pre">'l_ankle_roll':</span> <span class="pre">-0.024,</span> <span class="pre">'l_elbow':</span> <span class="pre">0.54,</span> <span class="pre">'l_hip_pitch':</span> <span class="pre">0.48,</span> <span class="pre">'l_hip_roll':</span> <span class="pre">0.023,</span> <span class="pre">'l_hip_yaw':</span> <span class="pre">-0.005,</span> <span class="pre">'l_knee':</span> <span class="pre">-1.05,</span> <span class="pre">'l_shoulder_pitch':</span> <span class="pre">-0.159,</span> <span class="pre">'l_shoulder_roll':</span> <span class="pre">0.435,</span> <span class="pre">'l_shoulder_yaw':</span> <span class="pre">0.183,</span> <span class="pre">'l_wrist_pitch':</span> <span class="pre">0.0,</span> <span class="pre">'l_wrist_prosup':</span> <span class="pre">0.0,</span> <span class="pre">'l_wrist_yaw':</span> <span class="pre">0.0,</span> <span class="pre">'neck_pitch':</span> <span class="pre">0.0,</span> <span class="pre">'neck_roll':</span> <span class="pre">0.0,</span> <span class="pre">'neck_yaw':</span> <span class="pre">0.0,</span> <span class="pre">'r_ankle_pitch':</span> <span class="pre">-0.57,</span> <span class="pre">'r_ankle_roll':</span> <span class="pre">-0.024,</span> <span class="pre">'r_elbow':</span> <span class="pre">0.54,</span> <span class="pre">'r_hip_pitch':</span> <span class="pre">0.48,</span> <span class="pre">'r_hip_roll':</span> <span class="pre">0.023,</span> <span class="pre">'r_hip_yaw':</span> <span class="pre">-0.005,</span> <span class="pre">'r_knee':</span> <span class="pre">-1.05,</span> <span class="pre">'r_shoulder_pitch':</span> <span class="pre">-0.159,</span> <span class="pre">'r_shoulder_roll':</span> <span class="pre">0.435,</span> <span class="pre">'r_shoulder_yaw':</span> <span class="pre">0.183,</span> <span class="pre">'r_wrist_pitch':</span> <span class="pre">0.0,</span> <span class="pre">'r_wrist_prosup':</span> <span class="pre">0.0,</span> <span class="pre">'r_wrist_yaw':</span> <span class="pre">0.0,</span> <span class="pre">'torso_pitch':</span> <span class="pre">0.1,</span> <span class="pre">'torso_roll':</span> <span class="pre">0.0,</span> <span class="pre">'torso_yaw':</span> <span class="pre">0.0}</span></em><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboABC.initial_positions" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.icub.ICubGazeboABC.initial_positions">
+<span class="sig-name descname"><span class="pre">initial_positions</span></span><em class="property"> <span class="pre">=</span> <span class="pre">{'l_ankle_pitch':</span> <span class="pre">-0.57,</span> <span class="pre">'l_ankle_roll':</span> <span class="pre">-0.024,</span> <span class="pre">'l_elbow':</span> <span class="pre">0.54,</span> <span class="pre">'l_hip_pitch':</span> <span class="pre">0.48,</span> <span class="pre">'l_hip_roll':</span> <span class="pre">0.023,</span> <span class="pre">'l_hip_yaw':</span> <span class="pre">-0.005,</span> <span class="pre">'l_knee':</span> <span class="pre">-1.05,</span> <span class="pre">'l_shoulder_pitch':</span> <span class="pre">-0.159,</span> <span class="pre">'l_shoulder_roll':</span> <span class="pre">0.435,</span> <span class="pre">'l_shoulder_yaw':</span> <span class="pre">0.183,</span> <span class="pre">'l_wrist_pitch':</span> <span class="pre">0.0,</span> <span class="pre">'l_wrist_prosup':</span> <span class="pre">0.0,</span> <span class="pre">'l_wrist_yaw':</span> <span class="pre">0.0,</span> <span class="pre">'neck_pitch':</span> <span class="pre">0.0,</span> <span class="pre">'neck_roll':</span> <span class="pre">0.0,</span> <span class="pre">'neck_yaw':</span> <span class="pre">0.0,</span> <span class="pre">'r_ankle_pitch':</span> <span class="pre">-0.57,</span> <span class="pre">'r_ankle_roll':</span> <span class="pre">-0.024,</span> <span class="pre">'r_elbow':</span> <span class="pre">0.54,</span> <span class="pre">'r_hip_pitch':</span> <span class="pre">0.48,</span> <span class="pre">'r_hip_roll':</span> <span class="pre">0.023,</span> <span class="pre">'r_hip_yaw':</span> <span class="pre">-0.005,</span> <span class="pre">'r_knee':</span> <span class="pre">-1.05,</span> <span class="pre">'r_shoulder_pitch':</span> <span class="pre">-0.159,</span> <span class="pre">'r_shoulder_roll':</span> <span class="pre">0.435,</span> <span class="pre">'r_shoulder_yaw':</span> <span class="pre">0.183,</span> <span class="pre">'r_wrist_pitch':</span> <span class="pre">0.0,</span> <span class="pre">'r_wrist_prosup':</span> <span class="pre">0.0,</span> <span class="pre">'r_wrist_yaw':</span> <span class="pre">0.0,</span> <span class="pre">'torso_pitch':</span> <span class="pre">0.1,</span> <span class="pre">'torso_roll':</span> <span class="pre">0.0,</span> <span class="pre">'torso_yaw':</span> <span class="pre">0.0}</span></em><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboABC.initial_positions" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
 
 <dl class="py class">
-<dt id="gym_ignition_environments.models.icub.ICubGazeboSimpleCollisions">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.icub.</span></code><code class="sig-name descname"><span class="pre">ICubGazeboSimpleCollisions</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.572)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboSimpleCollisions" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.icub.ICubGazeboSimpleCollisions">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.icub.</span></span><span class="sig-name descname"><span class="pre">ICubGazeboSimpleCollisions</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.572)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">1.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboSimpleCollisions" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#gym_ignition_environments.models.icub.ICubGazeboABC" title="gym_ignition_environments.models.icub.ICubGazeboABC"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition_environments.models.icub.ICubGazeboABC</span></code></a></p>
 <dl class="py method">
-<dt id="gym_ignition_environments.models.icub.ICubGazeboSimpleCollisions.get_model_file">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get_model_file</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboSimpleCollisions.get_model_file" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.icub.ICubGazeboSimpleCollisions.get_model_file">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_model_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.icub.ICubGazeboSimpleCollisions.get_model_file" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
@@ -485,12 +485,12 @@
 <div class="section" id="module-gym_ignition_environments.models.panda">
 <span id="gym-ignition-environments-models-panda"></span><h2>gym_ignition_environments.models.panda<a class="headerlink" href="#module-gym_ignition_environments.models.panda" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="gym_ignition_environments.models.panda.Panda">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.panda.</span></code><code class="sig-name descname"><span class="pre">Panda</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.panda.Panda" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.panda.Panda">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.panda.</span></span><span class="sig-name descname"><span class="pre">Panda</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.panda.Panda" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_wrapper.ModelWrapper" title="gym_ignition.scenario.model_wrapper.ModelWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_wrapper.ModelWrapper</span></code></a>, <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_with_file.ModelWithFile" title="gym_ignition.scenario.model_with_file.ModelWithFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_with_file.ModelWithFile</span></code></a></p>
 <dl class="py method">
-<dt id="gym_ignition_environments.models.panda.Panda.get_model_file">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get_model_file</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.panda.Panda.get_model_file" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.panda.Panda.get_model_file">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_model_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.panda.Panda.get_model_file" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
@@ -504,12 +504,12 @@
 <div class="section" id="module-gym_ignition_environments.models.pendulum">
 <span id="gym-ignition-environments-models-pendulum"></span><h2>gym_ignition_environments.models.pendulum<a class="headerlink" href="#module-gym_ignition_environments.models.pendulum" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="gym_ignition_environments.models.pendulum.Pendulum">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.pendulum.</span></code><code class="sig-name descname"><span class="pre">Pendulum</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.pendulum.Pendulum" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.pendulum.Pendulum">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gym_ignition_environments.models.pendulum.</span></span><span class="sig-name descname"><span class="pre">Pendulum</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">world</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">position</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(0.0,</span> <span class="pre">0.0,</span> <span class="pre">0.0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">orientation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">(1.0,</span> <span class="pre">0,</span> <span class="pre">0,</span> <span class="pre">0)</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_file</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.pendulum.Pendulum" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_wrapper.ModelWrapper" title="gym_ignition.scenario.model_wrapper.ModelWrapper"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_wrapper.ModelWrapper</span></code></a>, <a class="reference internal" href="../gym-ignition/gym_ignition.scenario.html#gym_ignition.scenario.model_with_file.ModelWithFile" title="gym_ignition.scenario.model_with_file.ModelWithFile"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.scenario.model_with_file.ModelWithFile</span></code></a></p>
 <dl class="py method">
-<dt id="gym_ignition_environments.models.pendulum.Pendulum.get_model_file">
-<em class="property"><span class="pre">classmethod</span> </em><code class="sig-name descname"><span class="pre">get_model_file</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.pendulum.Pendulum.get_model_file" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition_environments.models.pendulum.Pendulum.get_model_file">
+<em class="property"><span class="pre">classmethod</span> </em><span class="sig-name descname"><span class="pre">get_model_file</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition_environments.models.pendulum.Pendulum.get_model_file" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
 <dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></p>
@@ -555,7 +555,7 @@
         
         </div>
     </div>
-    <footer class="footer mt-5 mt-md-0">
+    <footer class="footer">
     <div class="container">
       <p>
         

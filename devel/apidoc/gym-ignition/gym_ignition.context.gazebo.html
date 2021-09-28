@@ -22,13 +22,13 @@
       
 
     
-    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
-    <link rel="stylesheet" href="../../_static/sphinx-book-theme.e8f53015daec13862f6db5e763c41738.css" type="text/css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-book-theme.css?digest=c3fdc42140077d1ad13ad2f1588a4309" />
     <link rel="stylesheet" type="text/css" href="../../_static/tabs.css" />
     
   <link rel="preload" as="script" href="../../_static/js/index.1c5a1a01449ed65a7b51.js">
 
-    <script id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
     <script src="../../_static/jquery.js"></script>
     <script src="../../_static/underscore.js"></script>
     <script src="../../_static/doctools.js"></script>
@@ -61,7 +61,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   What
  </span>
@@ -78,7 +78,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Why
  </span>
@@ -105,7 +105,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Installation (How)
  </span>
@@ -132,7 +132,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Getting Started
  </span>
@@ -154,7 +154,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   ScenarIO C++ API:
  </span>
@@ -171,7 +171,7 @@
   </a>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Python Packages
  </span>
@@ -298,7 +298,7 @@
   </ul>
  </li>
 </ul>
-<p class="caption">
+<p class="caption" role="heading">
  <span class="caption-text">
   Information
  </span>
@@ -427,37 +427,37 @@
 <div class="section" id="module-gym_ignition.context.gazebo.controllers">
 <span id="gym-ignition-context-gazebo-controllers"></span><h2>gym_ignition.context.gazebo.controllers<a class="headerlink" href="#module-gym_ignition.context.gazebo.controllers" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition.context.gazebo.controllers.</span></code><code class="sig-name descname"><span class="pre">ComputedTorqueFixedBase</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="pre">urdf</span></em>, <em class="sig-param"><span class="pre">kp</span></em>, <em class="sig-param"><span class="pre">ki</span></em>, <em class="sig-param"><span class="pre">kd</span></em>, <em class="sig-param"><span class="pre">joints</span></em>, <em class="sig-param"><span class="pre">gravity=&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gym_ignition.context.gazebo.controllers.</span></span><span class="sig-name descname"><span class="pre">ComputedTorqueFixedBase</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="pre">urdf</span></em>, <em class="sig-param"><span class="pre">kp</span></em>, <em class="sig-param"><span class="pre">ki</span></em>, <em class="sig-param"><span class="pre">kd</span></em>, <em class="sig-param"><span class="pre">joints</span></em>, <em class="sig-param"><span class="pre">gravity=&lt;factory&gt;</span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <a class="reference internal" href="#gym_ignition.context.gazebo.plugin.GazeboPlugin" title="gym_ignition.context.gazebo.plugin.GazeboPlugin"><code class="xref py py-class docutils literal notranslate"><span class="pre">gym_ignition.context.gazebo.plugin.GazeboPlugin</span></code></a></p>
 <dl class="py attribute">
-<dt id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.gravity">
-<code class="sig-name descname"><span class="pre">gravity</span></code><em class="property"><span class="pre">:</span> <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.gravity" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.gravity">
+<span class="sig-name descname"><span class="pre">gravity</span></span><em class="property"><span class="pre">:</span> <span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">,</span> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.gravity" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.joints">
-<code class="sig-name descname"><span class="pre">joints</span></code><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.joints" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.joints">
+<span class="sig-name descname"><span class="pre">joints</span></span><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.joints" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.kd">
-<code class="sig-name descname"><span class="pre">kd</span></code><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.kd" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.kd">
+<span class="sig-name descname"><span class="pre">kd</span></span><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.kd" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.ki">
-<code class="sig-name descname"><span class="pre">ki</span></code><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.ki" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.ki">
+<span class="sig-name descname"><span class="pre">ki</span></span><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.ki" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py attribute">
-<dt id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.kp">
-<code class="sig-name descname"><span class="pre">kp</span></code><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.kp" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.kp">
+<span class="sig-name descname"><span class="pre">kp</span></span><em class="property"><span class="pre">:</span> <span class="pre">List</span><span class="p"><span class="pre">[</span></span><span class="pre">float</span><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.kp" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="py method">
-<dt id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.to_xml">
-<code class="sig-name descname"><span class="pre">to_xml</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.to_xml" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.to_xml">
+<span class="sig-name descname"><span class="pre">to_xml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.to_xml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the XML plugin content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -470,8 +470,8 @@
 </dd></dl>
 
 <dl class="py attribute">
-<dt id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.urdf">
-<code class="sig-name descname"><span class="pre">urdf</span></code><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.urdf" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.urdf">
+<span class="sig-name descname"><span class="pre">urdf</span></span><em class="property"><span class="pre">:</span> <span class="pre">str</span></em><a class="headerlink" href="#gym_ignition.context.gazebo.controllers.ComputedTorqueFixedBase.urdf" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -480,8 +480,8 @@
 <div class="section" id="module-gym_ignition.context.gazebo.plugin">
 <span id="gym-ignition-context-gazebo-plugin"></span><h2>gym_ignition.context.gazebo.plugin<a class="headerlink" href="#module-gym_ignition.context.gazebo.plugin" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
-<dt id="gym_ignition.context.gazebo.plugin.GazeboPlugin">
-<em class="property"><span class="pre">class</span> </em><code class="sig-prename descclassname"><span class="pre">gym_ignition.context.gazebo.plugin.</span></code><code class="sig-name descname"><span class="pre">GazeboPlugin</span></code><a class="headerlink" href="#gym_ignition.context.gazebo.plugin.GazeboPlugin" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.plugin.GazeboPlugin">
+<em class="property"><span class="pre">class</span> </em><span class="sig-prename descclassname"><span class="pre">gym_ignition.context.gazebo.plugin.</span></span><span class="sig-name descname"><span class="pre">GazeboPlugin</span></span><a class="headerlink" href="#gym_ignition.context.gazebo.plugin.GazeboPlugin" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">abc.ABC</span></code></p>
 <p>Base class of all World and Model plugins for Ignition Gazebo.</p>
 <p>The Plugin abstract class provides boilerplate code that simplifies and streamlines
@@ -501,8 +501,8 @@ or Model objects.</p>
 </pre></div>
 </div>
 <dl class="py method">
-<dt id="gym_ignition.context.gazebo.plugin.GazeboPlugin.args">
-<code class="sig-name descname"><span class="pre">args</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.context.gazebo.plugin.GazeboPlugin.args" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.plugin.GazeboPlugin.args">
+<span class="sig-name descname"><span class="pre">args</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.context.gazebo.plugin.GazeboPlugin.args" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the arguments passed to the ScenarI/O methods used to insert plugins.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -515,8 +515,8 @@ or Model objects.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="gym_ignition.context.gazebo.plugin.GazeboPlugin.to_xml">
-<code class="sig-name descname"><span class="pre">to_xml</span></code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.context.gazebo.plugin.GazeboPlugin.to_xml" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.plugin.GazeboPlugin.to_xml">
+<span class="sig-name descname"><span class="pre">to_xml</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.context.gazebo.plugin.GazeboPlugin.to_xml" title="Permalink to this definition">¶</a></dt>
 <dd><p>Get the XML plugin content.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Return type</dt>
@@ -529,8 +529,8 @@ or Model objects.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="gym_ignition.context.gazebo.plugin.GazeboPlugin.wrap_in_sdf">
-<em class="property"><span class="pre">static</span> </em><code class="sig-name descname"><span class="pre">wrap_in_sdf</span></code><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.context.gazebo.plugin.GazeboPlugin.wrap_in_sdf" title="Permalink to this definition">¶</a></dt>
+<dt class="sig sig-object py" id="gym_ignition.context.gazebo.plugin.GazeboPlugin.wrap_in_sdf">
+<em class="property"><span class="pre">static</span> </em><span class="sig-name descname"><span class="pre">wrap_in_sdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">context</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.context.gazebo.plugin.GazeboPlugin.wrap_in_sdf" title="Permalink to this definition">¶</a></dt>
 <dd><p>Wrap the XML context inside a SDF root.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
@@ -583,7 +583,7 @@ or Model objects.</p>
         
         </div>
     </div>
-    <footer class="footer mt-5 mt-md-0">
+    <footer class="footer">
     <div class="container">
       <p>
         
