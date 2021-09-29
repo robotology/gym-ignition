@@ -15,7 +15,6 @@
  *
  */
 
-// clang-format off
 #include "Physics.hh"
 
 #include <ignition/msgs/contact.pb.h>
@@ -117,6 +116,7 @@
 #include "ignition/gazebo/components/ParentEntity.hh"
 #include "ignition/gazebo/components/ParentLinkName.hh"
 #include "ignition/gazebo/components/ExternalWorldWrenchCmd.hh"
+#include "ignition/gazebo/components/JointTransmittedWrench.hh"
 #include "ignition/gazebo/components/JointForceCmd.hh"
 #include "ignition/gazebo/components/Physics.hh"
 #include "ignition/gazebo/components/PhysicsEnginePlugin.hh"
@@ -131,13 +131,6 @@
 
 #include "CanonicalLinkModelTracker.hh"
 #include "EntityFeatureMap.hh"
-
-// Extra components
-#include "scenario/gazebo/components/ExternalWorldWrenchCmdWithDuration.h"
-#include "scenario/gazebo/components/HistoryOfAppliedJointForces.h"
-#include "scenario/gazebo/components/JointAcceleration.h"
-#include <ignition/gazebo/components/JointForce.hh>
-#include "scenario/gazebo/components/SimulatedTime.h"
 
 using namespace ignition;
 using namespace ignition::gazebo;
@@ -219,8 +212,7 @@ class ignition::gazebo::systems::PhysicsPrivate
 
   /// \brief Update physics from components
   /// \param[in] _ecm Mutable reference to ECM.
-  public: void UpdatePhysics(EntityComponentManager &_ecm,
-                             const ignition::gazebo::UpdateInfo& _info);
+  public: void UpdatePhysics(EntityComponentManager &_ecm);
 
   /// \brief Step the simulation for each world
   /// \param[in] _dt Duration
@@ -272,8 +264,7 @@ class ignition::gazebo::systems::PhysicsPrivate
   /// most recent physics step. The key is the entity of the link, and the
   /// value is the updated frame data corresponding to that entity.
   public: void UpdateSim(EntityComponentManager &_ecm,
-              std::map<Entity, physics::FrameData3d> &_linkFrameData,
-              const ignition::gazebo::UpdateInfo &_info);
+              std::map<Entity, physics::FrameData3d> &_linkFrameData);
 
   /// \brief Update collision components from physics simulation
   /// \param[in] _ecm Mutable reference to ECM.
@@ -389,6 +380,19 @@ class ignition::gazebo::systems::PhysicsPrivate
                       }
                       return true;
                     }};
+  /// \brief msgs::Contacts equality comparison function.
+  public: std::function<bool(const msgs::Wrench &, const msgs::Wrench &)>
+          wrenchEql{
+          [](const msgs::Wrench &_a, const msgs::Wrench &_b)
+          {
+            return math::equal(_a.torque().x(), _b.torque().x(), 1e-6) &&
+                   math::equal(_a.torque().y(), _b.torque().y(), 1e-6) &&
+                   math::equal(_a.torque().z(), _b.torque().z(), 1e-6) &&
+
+                   math::equal(_a.force().x(), _b.force().x(), 1e-6) &&
+                   math::equal(_a.force().y(), _b.force().y(), 1e-6) &&
+                   math::equal(_a.force().z(), _b.force().z(), 1e-6);
+          }};
 
   /// \brief Environment variable which holds paths to look for engine plugins
   public: std::string pluginPathEnv = "IGN_GAZEBO_PHYSICS_ENGINE_PATH";
@@ -429,13 +433,23 @@ class ignition::gazebo::systems::PhysicsPrivate
             physics::SetJointTransformFromParentFeature>{};
 
   //////////////////////////////////////////////////
+  // Joint transmitted wrench
+  /// \brief Feature list for getting joint transmitted wrenches.
+  public: struct JointGetTransmittedWrenchFeatureList : physics::FeatureList<
+            physics::GetJointTransmittedWrench>{};
+
+  //////////////////////////////////////////////////
   // Collisions
 
   /// \brief Feature list to handle collisions.
   public: struct CollisionFeatureList : ignition::physics::FeatureList<
             MinimumFeatureList,
-            ignition::physics::GetContactsFromLastStepFeature,
             ignition::physics::sdf::ConstructSdfCollision>{};
+
+  /// \brief Feature list to handle contacts information.
+  public: struct ContactFeatureList : ignition::physics::FeatureList<
+            CollisionFeatureList,
+            ignition::physics::GetContactsFromLastStepFeature>{};
 
   /// \brief Collision type with collision features.
   public: using ShapePtrType = ignition::physics::ShapePtr<
@@ -443,7 +457,7 @@ class ignition::gazebo::systems::PhysicsPrivate
 
   /// \brief World type with just the minimum features. Non-pointer.
   public: using WorldShapeType = ignition::physics::World<
-            ignition::physics::FeaturePolicy3d, CollisionFeatureList>;
+            ignition::physics::FeaturePolicy3d, ContactFeatureList>;
 
   //////////////////////////////////////////////////
   // Collision filtering with bitmasks
@@ -527,6 +541,7 @@ class ignition::gazebo::systems::PhysicsPrivate
           physics::World,
           MinimumFeatureList,
           CollisionFeatureList,
+          ContactFeatureList,
           NestedModelFeatureList,
           CollisionDetectorFeatureList,
           SolverFeatureList>;
@@ -566,7 +581,8 @@ class ignition::gazebo::systems::PhysicsPrivate
             physics::Joint,
             JointFeatureList,
             DetachableJointFeatureList,
-            JointVelocityCommandFeatureList
+            JointVelocityCommandFeatureList,
+            JointGetTransmittedWrenchFeatureList
             >;
 
   /// \brief A map between joint entity ids in the ECM to Joint Entities in
@@ -577,6 +593,7 @@ class ignition::gazebo::systems::PhysicsPrivate
   public: using EntityCollisionMap = EntityFeatureMap3d<
             physics::Shape,
             CollisionFeatureList,
+            ContactFeatureList,
             CollisionMaskFeatureList,
             FrictionPyramidSlipComplianceFeatureList
             >;
@@ -595,10 +612,6 @@ class ignition::gazebo::systems::PhysicsPrivate
   /// \brief A map between collision entity ids in the ECM to FreeGroup Entities
   /// in ign-physics.
   public: EntityFreeGroupMap entityFreeGroupMap;
-
-  /// \brief Boolean value that is true only the first call of Configure and
-  /// PreUpdate.
-  bool firstRun = true;
 };
 
 //////////////////////////////////////////////////
@@ -671,10 +684,13 @@ void Physics::Configure(const Entity &_entity,
     return;
   }
 
-  auto classNames = pluginLoader.AllPlugins();
+  auto classNames = pluginLoader.PluginsImplementing<
+      physics::ForwardStep::Implementation<
+      physics::FeaturePolicy3d>>();
   if (classNames.empty())
   {
-    ignerr << "No plugins found in library [" << pathToLib << "]." << std::endl;
+    ignerr << "No physics plugins found in library [" << pathToLib << "]."
+           << std::endl;
     return;
   }
 
@@ -684,7 +700,11 @@ void Physics::Configure(const Entity &_entity,
     auto plugin = pluginLoader.Instantiate(className);
 
     if (!plugin)
+    {
+      ignwarn << "Failed to instantiate [" << className << "] from ["
+              << pathToLib << "]" << std::endl;
       continue;
+    }
 
     this->dataPtr->engine = ignition::physics::RequestEngine<
       ignition::physics::FeaturePolicy3d,
@@ -735,22 +755,10 @@ void Physics::Update(const UpdateInfo &_info, EntityComponentManager &_ecm)
         << "s]. System may not work properly." << std::endl;
   }
 
-  // Update the component with the time in seconds that the simulation
-  // will have after the step
-  _ecm.Each<components::World, components::SimulatedTime>(
-              [&](const Entity& worldEntity,
-              const components::World*,
-              components::SimulatedTime*) {
-
-      scenario::gazebo::utils::setExistingComponentData<
-              components::SimulatedTime>(&_ecm, worldEntity, _info.simTime);
-      return true;
-  });
-
   if (this->dataPtr->engine)
   {
     this->dataPtr->CreatePhysicsEntities(_ecm);
-    this->dataPtr->UpdatePhysics(_ecm, _info);
+    this->dataPtr->UpdatePhysics(_ecm);
     ignition::physics::ForwardStep::Output stepOutput;
     // Only step if not paused.
     if (!_info.paused)
@@ -758,7 +766,7 @@ void Physics::Update(const UpdateInfo &_info, EntityComponentManager &_ecm)
       stepOutput = this->dataPtr->Step(_info.dt);
     }
     auto changedLinks = this->dataPtr->ChangedLinks(_ecm, stepOutput);
-    this->dataPtr->UpdateSim(_ecm, changedLinks, _info);
+    this->dataPtr->UpdateSim(_ecm, changedLinks);
 
     // Entities scheduled to be removed should be removed from physics after the
     // simulation step. Otherwise, since the to-be-removed entity still shows up
@@ -777,20 +785,13 @@ void PhysicsPrivate::CreatePhysicsEntities(const EntityComponentManager &_ecm)
   this->CreateCollisionEntities(_ecm);
   this->CreateJointEntities(_ecm);
   this->CreateBatteryEntities(_ecm);
-
-  // Make sure that entities are processed by the plugin
-  // in the first iteration. This is necessary because
-  // the physics plugin can be loaded programmatically
-  // after the simulation has started and stepped.
-  if (this->firstRun)
-    this->firstRun = false;
 }
 
 //////////////////////////////////////////////////
 void PhysicsPrivate::CreateWorldEntities(const EntityComponentManager &_ecm)
 {
   // Get all the new worlds
-  auto processEntities =
+  _ecm.EachNew<components::World, components::Name, components::Gravity>(
       [&](const Entity &_entity,
         const components::World * /* _world */,
         const components::Name *_name,
@@ -864,24 +865,14 @@ void PhysicsPrivate::CreateWorldEntities(const EntityComponentManager &_ecm)
         }
 
         return true;
-      };
-
-  if (this->firstRun)
-  {
-    _ecm.Each<components::World, components::Name, components::Gravity>(
-      processEntities);
-  }
-  else
-  {
-    _ecm.EachNew<components::World, components::Name, components::Gravity>(
-      processEntities);
-  }
+      });
 }
 
 //////////////////////////////////////////////////
 void PhysicsPrivate::CreateModelEntities(const EntityComponentManager &_ecm)
 {
-  auto processEntities =
+  _ecm.EachNew<components::Model, components::Name, components::Pose,
+            components::ParentEntity>(
       [&](const Entity &_entity,
           const components::Model *,
           const components::Name *_name,
@@ -1006,28 +997,14 @@ void PhysicsPrivate::CreateModelEntities(const EntityComponentManager &_ecm)
         }
 
         return true;
-      };
-
-  if (this->firstRun)
-  {
-    _ecm.Each<components::Model,
-              components::Name,
-              components::Pose,
-              components::ParentEntity>(processEntities);
-  }
-  else
-  {
-    _ecm.EachNew<components::Model,
-                 components::Name,
-                 components::Pose,
-                 components::ParentEntity>(processEntities);
-  }
+      });
 }
 
 //////////////////////////////////////////////////
 void PhysicsPrivate::CreateLinkEntities(const EntityComponentManager &_ecm)
 {
-  auto processEntities =
+  _ecm.EachNew<components::Link, components::Name, components::Pose,
+            components::ParentEntity>(
       [&](const Entity &_entity,
         const components::Link * /* _link */,
         const components::Name *_name,
@@ -1078,28 +1055,15 @@ void PhysicsPrivate::CreateLinkEntities(const EntityComponentManager &_ecm)
             topLevelModel(_entity, _ecm)));
 
         return true;
-      };
-
-  if (this->firstRun)
-  {
-    _ecm.Each<components::Link,
-              components::Name,
-              components::Pose,
-              components::ParentEntity>(processEntities);
-  }
-  else
-  {
-    _ecm.EachNew<components::Link,
-                 components::Name,
-                 components::Pose,
-                 components::ParentEntity>(processEntities);
-  }
+      });
 }
 
 //////////////////////////////////////////////////
 void PhysicsPrivate::CreateCollisionEntities(const EntityComponentManager &_ecm)
 {
-  auto processEntities =
+  _ecm.EachNew<components::Collision, components::Name, components::Pose,
+            components::Geometry, components::CollisionElement,
+            components::ParentEntity>(
       [&](const Entity &_entity,
           const components::Collision *,
           const components::Name *_name,
@@ -1282,32 +1246,16 @@ void PhysicsPrivate::CreateCollisionEntities(const EntityComponentManager &_ecm)
         this->topLevelModelMap.insert(std::make_pair(_entity,
             topLevelModel(_entity, _ecm)));
         return true;
-      };
-
-  if (this->firstRun)
-  {
-    _ecm.Each<components::Collision,
-              components::Name,
-              components::Pose,
-              components::Geometry,
-              components::CollisionElement,
-              components::ParentEntity>(processEntities);
-  }
-  else
-  {
-    _ecm.EachNew<components::Collision,
-                 components::Name,
-                 components::Pose,
-                 components::Geometry,
-                 components::CollisionElement,
-                 components::ParentEntity>(processEntities);
-  }
+      });
 }
 
 //////////////////////////////////////////////////
 void PhysicsPrivate::CreateJointEntities(const EntityComponentManager &_ecm)
 {
-  auto processJointEntities =
+  _ecm.EachNew<components::Joint, components::Name, components::JointType,
+               components::Pose, components::ThreadPitch,
+               components::ParentEntity, components::ParentLinkName,
+               components::ChildLinkName>(
       [&](const Entity &_entity,
           const components::Joint * /* _joint */,
           const components::Name *_name,
@@ -1386,10 +1334,10 @@ void PhysicsPrivate::CreateJointEntities(const EntityComponentManager &_ecm)
               topLevelModel(_entity, _ecm)));
         }
         return true;
-      };
+      });
 
   // Detachable joints
-  auto processDetachableJointEntities =
+  _ecm.EachNew<components::DetachableJoint>(
       [&](const Entity &_entity,
           const components::DetachableJoint *_jointInfo) -> bool
       {
@@ -1474,54 +1422,20 @@ void PhysicsPrivate::CreateJointEntities(const EntityComponentManager &_ecm)
           ignwarn << "DetachableJoint could not be created." << std::endl;
         }
         return true;
-      };
-
-  if (this->firstRun)
-  {
-    _ecm.Each<components::Joint,
-              components::Name,
-              components::JointType,
-              components::Pose,
-              components::ThreadPitch,
-              components::ParentEntity,
-              components::ParentLinkName,
-              components::ChildLinkName>(processJointEntities);
-    _ecm.Each<components::DetachableJoint>(processDetachableJointEntities);
-  }
-  else
-  {
-    _ecm.EachNew<components::Joint,
-                 components::Name,
-                 components::JointType,
-                 components::Pose,
-                 components::ThreadPitch,
-                 components::ParentEntity,
-                 components::ParentLinkName,
-                 components::ChildLinkName>(processJointEntities);
-   _ecm.EachNew<components::DetachableJoint>(processDetachableJointEntities);
-  }
+      });
 }
 
 //////////////////////////////////////////////////
 void PhysicsPrivate::CreateBatteryEntities(const EntityComponentManager &_ecm)
 {
-  auto processEntities =
+  _ecm.EachNew<components::BatterySoC>(
       [&](const Entity & _entity, const components::BatterySoC *)->bool
       {
         // Parent entity of battery is model entity
         this->entityOffMap.insert(std::make_pair(
           _ecm.ParentEntity(_entity), false));
         return true;
-      };
-
-  if (this->firstRun)
-  {
-    _ecm.Each<components::BatterySoC>(processEntities);
-  }
-  else
-  {
-    _ecm.EachNew<components::BatterySoC>(processEntities);
-  }
+      });
 }
 
 //////////////////////////////////////////////////
@@ -1612,8 +1526,7 @@ void PhysicsPrivate::RemovePhysicsEntities(const EntityComponentManager &_ecm)
 }
 
 //////////////////////////////////////////////////
-void PhysicsPrivate::UpdatePhysics(EntityComponentManager &_ecm,
-                                   const ignition::gazebo::UpdateInfo &_info)
+void PhysicsPrivate::UpdatePhysics(EntityComponentManager &_ecm)
 {
   IGN_PROFILE("PhysicsPrivate::UpdatePhysics");
   // Battery state
@@ -1820,54 +1733,6 @@ void PhysicsPrivate::UpdatePhysics(EntityComponentManager &_ecm,
 
         return true;
       });
-
-  // Link wrenches with duration
-  if (!_info.paused)
-  {
-    _ecm.Each<components::ExternalWorldWrenchCmdWithDuration>(
-        [&](const Entity& _entity,
-            components::ExternalWorldWrenchCmdWithDuration*
-                _wrenchWithDurComp)
-    {
-      if (!this->entityLinkMap.HasEntity(_entity))
-      {
-        ignwarn << "Failed to find link [" << _entity << "]."
-                << std::endl;
-        return true;
-      }
-
-      auto linkForceFeature =
-           this->entityLinkMap.EntityCast<LinkForceFeatureList>(_entity);
-      if (!linkForceFeature) {
-          static bool informed{false};
-          if (!informed)
-          {
-            igndbg << "Attempting to apply a wrench, but the physics "
-                   << "engine doesn't support feature "
-                   << "[AddLinkExternalForceTorque]. Wrench will be ignored."
-                   << std::endl;
-            informed = true;
-          }
-
-          // Break Each call since no ExternalWorldWrenchCmd's can be processed
-          return false;
-      }
-
-      const auto& totalWrench =  _wrenchWithDurComp->Data().totalWrench();
-      const math::Vector3 force = msgs::Convert(totalWrench.force());
-      const math::Vector3 torque = msgs::Convert(totalWrench.torque());
-
-      linkForceFeature->AddExternalForce(math::eigen3::convert(force));
-      linkForceFeature->AddExternalTorque(math::eigen3::convert(torque));
-
-      // NOTE: Cleaning could be moved to UpdateSim, but let's
-      //       keep things all together for now
-      auto simTimeAfterStep = _info.simTime;
-      _wrenchWithDurComp->Data().cleanExpired(simTimeAfterStep);
-
-      return true;
-    });
-  }
 
   // Update model pose
   auto olderWorldPoseCmdsToRemove = std::move(this->worldPoseCmdsToRemove);
@@ -2213,7 +2078,7 @@ void PhysicsPrivate::UpdatePhysics(EntityComponentManager &_ecm,
         math::AxisAlignedBox bbox =
             math::eigen3::convert(bbModel->GetAxisAlignedBoundingBox());
         auto state = _bbox->SetData(bbox, this->axisAlignedBoxEql) ?
-            ComponentState::OneTimeChange :
+            ComponentState::PeriodicChange :
             ComponentState::NoChange;
         _ecm.SetChanged(_entity, components::AxisAlignedBox::typeId, state);
 
@@ -2443,7 +2308,9 @@ void PhysicsPrivate::UpdateModelPose(const Entity _model,
       _ecm.Component<components::ModelCanonicalLink>(nestedModel);
     if (!nestedModelCanonicalLinkComp)
     {
-      ignerr << "Model [" << nestedModel << "] has no canonical link\n";
+      auto staticComp = _ecm.Component<components::Static>(nestedModel);
+      if (!staticComp || !staticComp->Data())
+        ignerr << "Model [" << nestedModel << "] has no canonical link\n";
       continue;
     }
 
@@ -2483,8 +2350,7 @@ bool PhysicsPrivate::GetFrameDataRelativeToWorld(const Entity _entity,
 
 //////////////////////////////////////////////////
 void PhysicsPrivate::UpdateSim(EntityComponentManager &_ecm,
-    std::map<Entity, physics::FrameData3d> &_linkFrameData,
-    const ignition::gazebo::UpdateInfo &_info)
+    std::map<Entity, physics::FrameData3d> &_linkFrameData)
 {
   IGN_PROFILE("PhysicsPrivate::UpdateSim");
 
@@ -2720,37 +2586,6 @@ void PhysicsPrivate::UpdateSim(EntityComponentManager &_ecm,
   }
   IGN_PROFILE_END();
 
-  // history of applied joint forces (commands)
-  _ecm.Each<components::Joint,
-            components::JointForceCmd,
-            components::HistoryOfAppliedJointForces>(
-       [&](const Entity& /*_entity*/,
-           components::Joint* /*_joint*/,
-           components::JointForceCmd* _forceCmd,
-           components::HistoryOfAppliedJointForces* _history) -> bool
-  {
-      // Since the operation is an append, we have to perform it only when
-      // the physics step is actually performed
-      if (_info.paused)
-      {
-          return true;
-      }
-
-      // Get the history queue
-      auto& history = _history->Data();
-
-      // Get the data from the component
-      auto jointForceCmdData = _forceCmd->Data();
-
-      // Append values to the queue
-      for (const auto& jointForceCmd : jointForceCmdData)
-      {
-        history.push(jointForceCmd);
-      }
-
-      return true;
-  });
-
   // pose/velocity/acceleration of non-link entities such as sensors /
   // collisions. These get updated only if another system has created a
   // components::WorldPose component for the entity.
@@ -2963,42 +2798,47 @@ void PhysicsPrivate::UpdateSim(EntityComponentManager &_ecm,
         }
         return true;
       });
-
-  // Update joint accelerations
-  _ecm.Each<components::Joint, components::JointAcceleration>(
-      [&](const Entity& _entity,
-          components::Joint*,
-          components::JointAcceleration* _jointAcc) -> bool
-  {
-    if (auto jointPhys = this->entityJointMap.Get(_entity))
-    {
-      _jointAcc->Data().resize(jointPhys->GetDegreesOfFreedom());
-      for (std::size_t i = 0; i < jointPhys->GetDegreesOfFreedom(); ++i)
-      {
-        _jointAcc->Data()[i] = jointPhys->GetAcceleration(i);
-      }
-    }
-    return true;
-  });
-
-  // Update joint forces
-  _ecm.Each<components::Joint, components::JointForce>(
-      [&](const Entity& _entity,
-          components::Joint*,
-          components::JointForce* _jointForce) -> bool
-  {
-    if (auto jointPhys = this->entityJointMap.Get(_entity))
-    {
-      _jointForce->Data().resize(jointPhys->GetDegreesOfFreedom());
-      for (std::size_t i = 0; i < jointPhys->GetDegreesOfFreedom(); ++i)
-      {
-          _jointForce->Data()[i] = jointPhys->GetForce(i);
-      }
-    }
-    return true;
-  });
-
   IGN_PROFILE_END();
+
+  // Update joint transmitteds
+  _ecm.Each<components::Joint, components::JointTransmittedWrench>(
+      [&](const Entity &_entity, components::Joint *,
+          components::JointTransmittedWrench *_wrench) -> bool
+      {
+        auto jointPhys =
+            this->entityJointMap
+                .EntityCast<JointGetTransmittedWrenchFeatureList>(_entity);
+        if (jointPhys)
+        {
+          const auto &jointWrench = jointPhys->GetTransmittedWrench();
+
+          msgs::Wrench wrenchData;
+          msgs::Set(wrenchData.mutable_torque(),
+                    math::eigen3::convert(jointWrench.torque));
+          msgs::Set(wrenchData.mutable_force(),
+                    math::eigen3::convert(jointWrench.force));
+          const auto state =
+              _wrench->SetData(wrenchData, this->wrenchEql)
+                  ? ComponentState::PeriodicChange
+                  : ComponentState::NoChange;
+          _ecm.SetChanged(_entity, components::JointTransmittedWrench::typeId,
+                          state);
+        }
+        else
+        {
+          static bool informed{false};
+          if (!informed)
+          {
+            igndbg
+                << "Attempting to get joint transmitted wrenches, but the "
+                   "physics engine doesn't support this feature. Values in the "
+                   "JointTransmittedWrench component will not be meaningful."
+                << std::endl;
+            informed = true;
+          }
+        }
+        return true;
+      });
 
   // TODO(louise) Skip this if there are no collision features
   this->UpdateCollisions(_ecm);
@@ -3017,24 +2857,6 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
   // capture the world Entity in a Configure call
   Entity worldEntity = _ecm.EntityByComponents(components::World());
 
-  // Check if there is at least one collision that requires contact data.
-  // The previous check does not block the scenario where all the collisions
-  // start enabled and then get disabled.
-  bool hasContactSensorData = false;
-  _ecm.Each<components::ContactSensorData, components::Collision>(
-      [&](const Entity&,
-          components::ContactSensorData*,
-          components::Collision*) -> bool
-  {
-    hasContactSensorData = true;
-    return false;
-  });
-
-  // Quit early if the ContactData component was created and then removed.
-  // This means there are no systems that need contact information.
-  if (!hasContactSensorData)
-    return;
-
   if (worldEntity == kNullEntity)
   {
     ignerr << "Missing world entity.\n";
@@ -3048,7 +2870,7 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
   }
 
   auto worldCollisionFeature =
-      this->entityWorldMap.EntityCast<CollisionFeatureList>(worldEntity);
+      this->entityWorldMap.EntityCast<ContactFeatureList>(worldEntity);
   if (!worldCollisionFeature)
   {
     static bool informed{false};
@@ -3063,19 +2885,12 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
     return;
   }
 
-  // Struct containing pointer of contact data
-  struct AllContactData
-  {
-      const WorldShapeType::ContactPoint *point;
-      const WorldShapeType::ExtraContactData *extra;
-  };
-
   // Each contact object we get from ign-physics contains the EntityPtrs of the
   // two colliding entities and other data about the contact such as the
   // position. This map groups contacts so that it is easy to query all the
   // contacts of one entity.
   using EntityContactMap = std::unordered_map<Entity,
-      std::deque<AllContactData>>;
+      std::deque<const WorldShapeType::ContactPoint *>>;
 
   // This data structure is essentially a mapping between a pair of entities and
   // a list of pointers to their contact object. We use a map inside a map to
@@ -3088,32 +2903,17 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
   auto allContacts = worldCollisionFeature->GetContactsFromLastStep();
   for (const auto &contactComposite : allContacts)
   {
-    // Get the RequireData
     const auto &contact = contactComposite.Get<WorldShapeType::ContactPoint>();
     auto coll1Entity =
       this->entityCollisionMap.Get(ShapePtrType(contact.collision1));
     auto coll2Entity =
       this->entityCollisionMap.Get(ShapePtrType(contact.collision2));
 
-    // Check the ExpectData
-    const auto* extraContactData =
-        contactComposite.Query<WorldShapeType::ExtraContactData>();
 
     if (coll1Entity != kNullEntity && coll2Entity != kNullEntity)
     {
-      AllContactData allContactData;
-      allContactData.point = &contact;
-
-      if (extraContactData)
-        allContactData.extra = extraContactData;
-
-      // Note that the ExtraContactData is valid only when the first
-      // collision is the first body. Quantities like the force and
-      // the normal must be flipped in the second case.
-      entityContactMap[coll1Entity][coll2Entity].push_back(
-        allContactData);
-      entityContactMap[coll2Entity][coll1Entity].push_back(
-        allContactData);
+      entityContactMap[coll1Entity][coll2Entity].push_back(&contact);
+      entityContactMap[coll2Entity][coll1Entity].push_back(&contact);
     }
   }
 
@@ -3130,7 +2930,7 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
           // Clear the last contact data
           auto state = _contacts->SetData(contactsComp,
             this->contactsEql) ?
-            ComponentState::OneTimeChange :
+            ComponentState::PeriodicChange :
             ComponentState::NoChange;
           _ecm.SetChanged(
             _collEntity1, components::ContactSensorData::typeId, state);
@@ -3144,79 +2944,18 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
           msgs::Contact *contactMsg = contactsComp.add_contact();
           contactMsg->mutable_collision1()->set_id(_collEntity1);
           contactMsg->mutable_collision2()->set_id(collEntity2);
-
           for (const auto &contact : contactData)
           {
             auto *position = contactMsg->add_position();
-            position->set_x(contact.point->point.x());
-            position->set_y(contact.point->point.y());
-            position->set_z(contact.point->point.z());
-
-            if (contact.extra)
-            {
-              // Add the penetration depth
-              contactMsg->add_depth(contact.extra->depth);
-
-              // Get the name of the collisions
-              auto collisionName1 =
-                  _ecm.Component<components::Name>(_collEntity1)->Data();
-              auto collisionName2 =
-                  _ecm.Component<components::Name>(collEntity2)->Data();
-
-              // Add the wrench (only the force component)
-              auto* wrench = contactMsg->add_wrench();
-              wrench->set_body_1_name(collisionName1);
-              wrench->set_body_2_name(collisionName2);
-              auto* wrench1 = wrench->mutable_body_1_wrench();
-              auto* wrench2 = wrench->mutable_body_2_wrench();
-
-              auto* force1 = wrench1->mutable_force();
-              auto* force2 = wrench2->mutable_force();
-              auto* torque1 = wrench1->mutable_torque();
-              auto* torque2 = wrench2->mutable_torque();
-
-              // The same ContactPoint and ExtraContactData are
-              // used for the contact between collision1 and
-              // collision2. In those structures there is some
-              // data, like the force and normal, that cannot
-              // commute.
-              if (_collEntity1 == this->entityCollisionMap.Get(
-                      ShapePtrType(contact.point->collision1)))
-              {
-                assert(collEntity2 == this->entityCollisionMap.Get(
-                        ShapePtrType(contact.point->collision2)));
-                // Use the data as it is
-                *force1 = msgs::Convert(math::eigen3::convert(contact.extra->force));
-                *force2 = msgs::Convert(-math::eigen3::convert(contact.extra->force));
-                // Add the wrench normal
-                auto* normal = contactMsg->add_normal();
-                normal->set_x(contact.extra->normal.x());
-                normal->set_y(contact.extra->normal.y());
-                normal->set_z(contact.extra->normal.z());
-              }
-              else
-              {
-                assert(collEntity2 == this->entityCollisionMap.Get(
-                        ShapePtrType(contact.point->collision1)));
-                // Flip the force
-                *force1 = msgs::Convert(-math::eigen3::convert(contact.extra->force));
-                *force2 = msgs::Convert(math::eigen3::convert(contact.extra->force));
-                // Flip the normal
-                auto* normal = contactMsg->add_normal();
-                normal->set_x(-contact.extra->normal.x());
-                normal->set_y(-contact.extra->normal.y());
-                normal->set_z(-contact.extra->normal.z());
-              }
-
-              *torque1 = msgs::Convert(math::Vector3d::Zero);
-              *torque2 = msgs::Convert(math::Vector3d::Zero);
-            }
+            position->set_x(contact->point.x());
+            position->set_y(contact->point.y());
+            position->set_z(contact->point.z());
           }
         }
 
         auto state = _contacts->SetData(contactsComp,
           this->contactsEql) ?
-          ComponentState::OneTimeChange :
+          ComponentState::PeriodicChange :
           ComponentState::NoChange;
         _ecm.SetChanged(
           _collEntity1, components::ContactSensorData::typeId, state);
@@ -3240,4 +2979,3 @@ IGNITION_ADD_PLUGIN(Physics,
                     Physics::ISystemUpdate)
 
 IGNITION_ADD_PLUGIN_ALIAS(Physics, "ignition::gazebo::systems::Physics")
-IGNITION_ADD_PLUGIN_ALIAS(Physics, "scenario::plugins::gazebo::Physics")
