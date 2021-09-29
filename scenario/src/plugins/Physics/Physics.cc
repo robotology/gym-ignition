@@ -117,6 +117,7 @@
 #include "ignition/gazebo/components/ParentEntity.hh"
 #include "ignition/gazebo/components/ParentLinkName.hh"
 #include "ignition/gazebo/components/ExternalWorldWrenchCmd.hh"
+#include "ignition/gazebo/components/JointTransmittedWrench.hh"
 #include "ignition/gazebo/components/JointForceCmd.hh"
 #include "ignition/gazebo/components/Physics.hh"
 #include "ignition/gazebo/components/PhysicsEnginePlugin.hh"
@@ -389,6 +390,19 @@ class ignition::gazebo::systems::PhysicsPrivate
                       }
                       return true;
                     }};
+  /// \brief msgs::Contacts equality comparison function.
+  public: std::function<bool(const msgs::Wrench &, const msgs::Wrench &)>
+          wrenchEql{
+          [](const msgs::Wrench &_a, const msgs::Wrench &_b)
+          {
+            return math::equal(_a.torque().x(), _b.torque().x(), 1e-6) &&
+                   math::equal(_a.torque().y(), _b.torque().y(), 1e-6) &&
+                   math::equal(_a.torque().z(), _b.torque().z(), 1e-6) &&
+
+                   math::equal(_a.force().x(), _b.force().x(), 1e-6) &&
+                   math::equal(_a.force().y(), _b.force().y(), 1e-6) &&
+                   math::equal(_a.force().z(), _b.force().z(), 1e-6);
+          }};
 
   /// \brief Environment variable which holds paths to look for engine plugins
   public: std::string pluginPathEnv = "IGN_GAZEBO_PHYSICS_ENGINE_PATH";
@@ -427,6 +441,12 @@ class ignition::gazebo::systems::PhysicsPrivate
             physics::AttachFixedJointFeature,
             physics::DetachJointFeature,
             physics::SetJointTransformFromParentFeature>{};
+
+  //////////////////////////////////////////////////
+  // Joint transmitted wrench
+  /// \brief Feature list for getting joint transmitted wrenches.
+  public: struct JointGetTransmittedWrenchFeatureList : physics::FeatureList<
+            physics::GetJointTransmittedWrench>{};
 
   //////////////////////////////////////////////////
   // Collisions
@@ -566,7 +586,8 @@ class ignition::gazebo::systems::PhysicsPrivate
             physics::Joint,
             JointFeatureList,
             DetachableJointFeatureList,
-            JointVelocityCommandFeatureList
+            JointVelocityCommandFeatureList,
+            JointGetTransmittedWrenchFeatureList
             >;
 
   /// \brief A map between joint entity ids in the ECM to Joint Entities in
@@ -671,10 +692,13 @@ void Physics::Configure(const Entity &_entity,
     return;
   }
 
-  auto classNames = pluginLoader.AllPlugins();
+  auto classNames = pluginLoader.PluginsImplementing<
+      physics::ForwardStep::Implementation<
+      physics::FeaturePolicy3d>>();
   if (classNames.empty())
   {
-    ignerr << "No plugins found in library [" << pathToLib << "]." << std::endl;
+    ignerr << "No physics plugins found in library [" << pathToLib << "]."
+           << std::endl;
     return;
   }
 
@@ -684,7 +708,11 @@ void Physics::Configure(const Entity &_entity,
     auto plugin = pluginLoader.Instantiate(className);
 
     if (!plugin)
+    {
+      ignwarn << "Failed to instantiate [" << className << "] from ["
+              << pathToLib << "]" << std::endl;
       continue;
+    }
 
     this->dataPtr->engine = ignition::physics::RequestEngine<
       ignition::physics::FeaturePolicy3d,
@@ -1853,10 +1881,16 @@ void PhysicsPrivate::UpdatePhysics(EntityComponentManager &_ecm,
           return false;
       }
 
+      // Skip the application if there is no wrench to apply
+      if (_wrenchWithDurComp->Data().empty())
+          return true;
+
+      // Compute the total wrench
       const auto& totalWrench =  _wrenchWithDurComp->Data().totalWrench();
       const math::Vector3 force = msgs::Convert(totalWrench.force());
       const math::Vector3 torque = msgs::Convert(totalWrench.torque());
 
+      // Apply the wrench
       linkForceFeature->AddExternalForce(math::eigen3::convert(force));
       linkForceFeature->AddExternalTorque(math::eigen3::convert(torque));
 
@@ -2213,7 +2247,7 @@ void PhysicsPrivate::UpdatePhysics(EntityComponentManager &_ecm,
         math::AxisAlignedBox bbox =
             math::eigen3::convert(bbModel->GetAxisAlignedBoundingBox());
         auto state = _bbox->SetData(bbox, this->axisAlignedBoxEql) ?
-            ComponentState::OneTimeChange :
+            ComponentState::PeriodicChange :
             ComponentState::NoChange;
         _ecm.SetChanged(_entity, components::AxisAlignedBox::typeId, state);
 
@@ -2443,7 +2477,9 @@ void PhysicsPrivate::UpdateModelPose(const Entity _model,
       _ecm.Component<components::ModelCanonicalLink>(nestedModel);
     if (!nestedModelCanonicalLinkComp)
     {
-      ignerr << "Model [" << nestedModel << "] has no canonical link\n";
+      auto staticComp = _ecm.Component<components::Static>(nestedModel);
+      if (!staticComp || !staticComp->Data())
+        ignerr << "Model [" << nestedModel << "] has no canonical link\n";
       continue;
     }
 
@@ -3000,6 +3036,46 @@ void PhysicsPrivate::UpdateSim(EntityComponentManager &_ecm,
 
   IGN_PROFILE_END();
 
+  // Update joint transmitteds
+  _ecm.Each<components::Joint, components::JointTransmittedWrench>(
+      [&](const Entity &_entity, components::Joint *,
+          components::JointTransmittedWrench *_wrench) -> bool
+      {
+        auto jointPhys =
+            this->entityJointMap
+                .EntityCast<JointGetTransmittedWrenchFeatureList>(_entity);
+        if (jointPhys)
+        {
+          const auto &jointWrench = jointPhys->GetTransmittedWrench();
+
+          msgs::Wrench wrenchData;
+          msgs::Set(wrenchData.mutable_torque(),
+                    math::eigen3::convert(jointWrench.torque));
+          msgs::Set(wrenchData.mutable_force(),
+                    math::eigen3::convert(jointWrench.force));
+          const auto state =
+              _wrench->SetData(wrenchData, this->wrenchEql)
+                  ? ComponentState::PeriodicChange
+                  : ComponentState::NoChange;
+          _ecm.SetChanged(_entity, components::JointTransmittedWrench::typeId,
+                          state);
+        }
+        else
+        {
+          static bool informed{false};
+          if (!informed)
+          {
+            igndbg
+                << "Attempting to get joint transmitted wrenches, but the "
+                   "physics engine doesn't support this feature. Values in the "
+                   "JointTransmittedWrench component will not be meaningful."
+                << std::endl;
+            informed = true;
+          }
+        }
+        return true;
+      });
+
   // TODO(louise) Skip this if there are no collision features
   this->UpdateCollisions(_ecm);
 }
@@ -3130,7 +3206,7 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
           // Clear the last contact data
           auto state = _contacts->SetData(contactsComp,
             this->contactsEql) ?
-            ComponentState::OneTimeChange :
+            ComponentState::PeriodicChange :
             ComponentState::NoChange;
           _ecm.SetChanged(
             _collEntity1, components::ContactSensorData::typeId, state);
@@ -3216,7 +3292,7 @@ void PhysicsPrivate::UpdateCollisions(EntityComponentManager &_ecm)
 
         auto state = _contacts->SetData(contactsComp,
           this->contactsEql) ?
-          ComponentState::OneTimeChange :
+          ComponentState::PeriodicChange :
           ComponentState::NoChange;
         _ecm.SetChanged(
           _collEntity1, components::ContactSensorData::typeId, state);
