@@ -531,7 +531,7 @@ bool Link::applyWorldWrench(const std::array<double, 3>& force,
     assert(entityWithSimTime != ignition::gazebo::kNullEntity);
 
     // Get the current simulated time
-    auto& now = utils::getExistingComponentData<
+    const auto& now = utils::getExistingComponentData<
         ignition::gazebo::components::SimulatedTime>(m_ecm, entityWithSimTime);
 
     // Create a new wrench with duration
