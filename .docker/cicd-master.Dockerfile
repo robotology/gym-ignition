@@ -2,7 +2,7 @@ ARG from=diegoferigo/gym-ignition:base
 FROM ${from}
 
 # Install ignition gazebo
-ARG ignition_codename="edifice"
+ARG ignition_codename="fortress"
 RUN echo "deb http://packages.osrfoundation.org/gazebo/ubuntu-stable `lsb_release -cs` main" \
         > /etc/apt/sources.list.d/gazebo-stable.list &&\
     wget http://packages.osrfoundation.org/gazebo.key -O - | apt-key add - &&\
