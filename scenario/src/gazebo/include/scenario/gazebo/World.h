@@ -50,6 +50,9 @@ namespace scenario::gazebo {
         /// The physics engine included in the Dynamic Animation and Robotics
         /// Toolkit.
         Dart,
+
+        /// The physics engine included in Bullet Physics SDK.
+        Bullet,
     };
 } // namespace scenario::gazebo
 

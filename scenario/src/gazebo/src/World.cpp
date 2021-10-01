@@ -257,6 +257,12 @@ bool World::setPhysicsEngine(const PhysicsEngine engine)
                 return "ignition-physics"
                        + std::to_string(IGNITION_PHYSICS_MAJOR_VERSION)
                        + "-dartsim-plugin";
+            case PhysicsEngine::Bullet:
+                sWarning << "The bullet support is still experimental and the "
+                         << "simulation could behave strangely" << std::endl;
+                return "ignition-physics"
+                       + std::to_string(IGNITION_PHYSICS_MAJOR_VERSION)
+                       + "-bullet-plugin";
         }
         return "";
     }();
