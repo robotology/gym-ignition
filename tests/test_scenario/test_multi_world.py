@@ -6,11 +6,11 @@ import pytest
 
 pytestmark = pytest.mark.scenario
 
-import gym_ignition_models
-import numpy as np
-from gym_ignition.utils import misc
+# import gym_ignition_models
+# import numpy as np
+# from gym_ignition.utils import misc
 
-from scenario import core as scenario_core
+# from scenario import core as scenario_core
 from scenario import gazebo as scenario_gazebo
 
 from ..common import utils
