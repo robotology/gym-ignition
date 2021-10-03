@@ -7,6 +7,24 @@ import sys
 from enum import Enum, auto
 from pathlib import Path
 
+import packaging.specifiers
+import packaging.version
+
+
+def supported_versions_specifier_set() -> packaging.specifiers.SpecifierSet:
+
+    # If 6 is the Ignition distribution major version, the following specifier enables
+    # the compatibility with all the following versions:
+    #
+    # 6.Y.Z.devK
+    # 6.Y.Z.alphaK
+    # 6.Y.Z.betaK
+    # 6.Y.Z.rcK
+    # 6.Y.Z.preK
+    # 6.Y.Z.postK
+    #
+    return packaging.specifiers.SpecifierSet("~=6.0.0.dev")
+
 
 class InstallMode(Enum):
     User = auto()
@@ -92,6 +110,42 @@ def pre_import_gym() -> None:
     import gym
 
 
+def check_gazebo_installation() -> None:
+
+    import subprocess
+
+    try:
+        command = ["ign", "gazebo", "--versions"]
+        result = subprocess.run(command, capture_output=True, text=True, check=True)
+    except FileNotFoundError:
+        msg = "Failed to find the 'ign' command in your PATH. "
+        msg += "Make sure that Ignition is installed "
+        msg += "and your environment is properly configured."
+        raise RuntimeError(msg)
+    except subprocess.CalledProcessError:
+        raise RuntimeError(f"Failed to execute command: {' '.join(command)}")  # noqa
+
+    gazebo_version_string = result.stdout.strip()
+
+    # Get the gazebo version from the command line.
+    # Since the releases could be in the "6.0.0~preK" form, we replace '~' with '.' to
+    # be compatible with the 'packaging' package.
+    gazebo_version_string_normalized = gazebo_version_string.replace("~", ".")
+
+    try:
+        # Parse the gazebo version
+        gazebo_version_parsed = packaging.version.Version(
+            gazebo_version_string_normalized
+        )
+    except:
+        raise RuntimeError(f"Failed to parse the output of: {' '.join(command)}")
+
+    if not gazebo_version_parsed in supported_versions_specifier_set():
+        msg = f"Failed to find Ignition Gazebo {supported_versions_specifier_set()} "
+        msg += f"(found incompatible {gazebo_version_parsed})"
+        raise RuntimeError(msg)
+
+
 def import_gazebo() -> None:
 
     # Check the the module was never loaded by someone else
@@ -140,6 +194,7 @@ def create_home_dot_folder() -> None:
 
 try:
     import_gazebo()
+    check_gazebo_installation()
     create_home_dot_folder()
     setup_gazebo_environment()
     from .bindings import gazebo
