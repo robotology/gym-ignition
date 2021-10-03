@@ -297,9 +297,6 @@ class SDFRandomizer:
             else:
                 raise ValueError("Distribution not recognized")
 
-            if data.force_positive:
-                sample = max(sample, 0.0)
-
             # Update the value
             if data.method is Method.Absolute:
 
@@ -317,6 +314,9 @@ class SDFRandomizer:
 
             else:
                 raise ValueError("Method not recognized")
+
+            if data.force_positive:
+                data.element.text = str(max(float(data.element.text), 0.0))
 
         return etree.tostring(self._root, pretty_print=pretty_print).decode()
 
