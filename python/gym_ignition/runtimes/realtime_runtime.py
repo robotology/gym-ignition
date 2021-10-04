@@ -3,29 +3,26 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from gym_ignition.base import runtime, task
-from gym_ignition.utils.typing import State, Action, Observation, Done, Info
+from gym_ignition.utils.typing import Action, Done, Info, Observation, State
 
 
 class RealTimeRuntime(runtime.Runtime):
     """
-     Implementation of :py:class:`~gym_ignition.base.runtime.Runtime` for real-time
-     execution.
+    Implementation of :py:class:`~gym_ignition.base.runtime.Runtime` for real-time
+    execution.
 
-     Warning:
-         This class is not yet complete.
+    Warning:
+        This class is not yet complete.
     """
 
-    def __init__(self,
-                 task_cls: type,
-                 robot_cls: type,
-                 agent_rate: float,
-                 **kwargs):
+    def __init__(self, task_cls: type, robot_cls: type, agent_rate: float, **kwargs):
 
         # Build the environment
         task_object = task_cls(**kwargs)
 
-        assert isinstance(task_object, task.Task), \
-            "'task_cls' object must inherit from Task"
+        assert isinstance(
+            task_object, task.Task
+        ), "'task_cls' object must inherit from Task"
 
         super().__init__(task=task_object, agent_rate=agent_rate)
 
@@ -46,8 +43,10 @@ class RealTimeRuntime(runtime.Runtime):
     def step(self, action: Action) -> State:
 
         # Validate action and robot
-        assert self.action_space.contains(action), \
-            "%r (%s) invalid" % (action, type(action))
+        assert self.action_space.contains(action), "%r (%s) invalid" % (
+            action,
+            type(action),
+        )
 
         # Set the action
         ok_action = self.task.set_action(action)
@@ -57,8 +56,10 @@ class RealTimeRuntime(runtime.Runtime):
 
         # Get the observation
         observation = self.task.get_observation()
-        assert self.observation_space.contains(observation), \
-            "%r (%s) invalid" % (observation, type(observation))
+        assert self.observation_space.contains(observation), "%r (%s) invalid" % (
+            observation,
+            type(observation),
+        )
 
         # Get the reward
         reward = self.task.get_reward()
@@ -76,7 +77,7 @@ class RealTimeRuntime(runtime.Runtime):
 
         return Observation(observation)
 
-    def render(self, mode: str = 'human', **kwargs) -> None:
+    def render(self, mode: str = "human", **kwargs) -> None:
         raise NotImplementedError
 
     def close(self) -> None:

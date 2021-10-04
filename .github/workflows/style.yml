@@ -1,0 +1,74 @@
+name: Code Style
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+
+  clang-format:
+
+    name: clang-format
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: "🔀 Checkout repository"
+        uses: actions/checkout@v2
+
+      - name: "⬇️️ Install dependencies"
+        run: sudo apt-get install -y --no-install-recommends colordiff
+
+      - name: "📝 Format C++"
+        uses: diegoferigo/gh-action-clang-format@main
+        id: format
+        with:
+          style: file
+          pattern: |
+            *.h
+            *.cpp
+
+      - name: "🔍️ Inspect style diff"
+        if: failure()
+        run: printf "${{ steps.format.outputs.diff }}" | colordiff
+
+  black:
+
+    name: black
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: "🔀 Checkout repository"
+        uses: actions/checkout@v2
+
+      - name: '🐍 Initialize Python'
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: "📝 Black Code Formatter"
+        uses: psf/black@stable
+        with:
+          options: --check --diff --color
+
+  isort:
+
+    name: isort
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: "🔀 Checkout repository"
+        uses: actions/checkout@v2
+
+      - name: '🐍 Initialize Python'
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: "📝 isort"
+        uses: isort/isort-action@master
+        with:
+          configuration: --check --diff --color

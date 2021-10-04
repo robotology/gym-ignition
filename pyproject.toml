@@ -1,6 +1,19 @@
 [build-system]
-requires = ["setuptools>=42", "setuptools_scm[toml]>=3.4", "cmake-build-extension","wheel", "idyntree"]
 build-backend = "setuptools.build_meta"
+requires = [
+    "wheel",
+    "setuptools>=45",
+    "setuptools_scm[toml]>=6.0",
+    "cmake-build-extension",
+]
 
 [tool.setuptools_scm]
 local_scheme = "dirty-tag"
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+

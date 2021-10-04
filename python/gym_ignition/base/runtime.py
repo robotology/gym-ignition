@@ -3,8 +3,9 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
+
 import gym
-from gym_ignition import base
+from gym_ignition.base.task import Task
 
 
 class Runtime(gym.Env, abc.ABC):
@@ -59,10 +60,10 @@ class Runtime(gym.Env, abc.ABC):
         Runtimes can handle only one :py:class:`~gym_ignition.base.task.Task` object.
     """
 
-    def __init__(self, task: base.task.Task, agent_rate: float):
+    def __init__(self, task: Task, agent_rate: float):
 
         #: Task handled by the runtime.
-        self.task: base.task.Task = task
+        self.task: Task = task
 
         #: Rate of environment execution.
         self.agent_rate = agent_rate

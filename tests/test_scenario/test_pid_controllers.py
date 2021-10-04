@@ -3,13 +3,17 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+
 pytestmark = pytest.mark.scenario
 
-import numpy as np
 from typing import Tuple
+
 import gym_ignition_models
+import numpy as np
+
 from scenario import core
 from scenario import gazebo as scenario
+
 from ..common.utils import default_world_fixture as default_world
 
 # Set the verbosity
@@ -18,15 +22,15 @@ scenario.set_verbosity(scenario.Verbosity_debug)
 # Panda PID gains
 # https://github.com/mkrizmancic/franka_gazebo/blob/master/config/default.yaml
 panda_pid_gains_1000Hz = {
-    'panda_joint1': core.PID(50,    0,  20),
-    'panda_joint2': core.PID(10000, 0, 500),
-    'panda_joint3': core.PID(100,   0,  10),
-    'panda_joint4': core.PID(1000,  0,  50),
-    'panda_joint5': core.PID(100,   0,  10),
-    'panda_joint6': core.PID(100,   0,  10),
-    'panda_joint7': core.PID(10,    0.5, 0.1),
-    'panda_finger_joint1': core.PID(100, 0, 50),
-    'panda_finger_joint2': core.PID(100, 0, 50),
+    "panda_joint1": core.PID(50, 0, 20),
+    "panda_joint2": core.PID(10000, 0, 500),
+    "panda_joint3": core.PID(100, 0, 10),
+    "panda_joint4": core.PID(1000, 0, 50),
+    "panda_joint5": core.PID(100, 0, 10),
+    "panda_joint6": core.PID(100, 0, 10),
+    "panda_joint7": core.PID(10, 0.5, 0.1),
+    "panda_finger_joint1": core.PID(100, 0, 50),
+    "panda_finger_joint2": core.PID(100, 0, 50),
 }
 
 
@@ -41,14 +45,18 @@ def test_position_pid(default_world: Tuple[scenario.GazeboSimulator, scenario.Wo
     assert world.insert_model(panda_urdf)
     assert "panda" in world.model_names()
 
+    # Get the model and cast it to Gazebo
+    panda = world.get_model("panda").to_gazebo()
+
+    # Disable any velocity and torque limits of the model
+    _ = [j.set_velocity_limit(np.finfo(float).max) for j in panda.joints()]
+    _ = [j.set_max_generalized_force(np.finfo(float).max) for j in panda.joints()]
+
     # Show the GUI
     # import time
     # gazebo.gui()
     # gazebo.run(paused=True)
     # time.sleep(3)
-
-    # Get the model and cast it to Gazebo
-    panda = world.get_model("panda").to_gazebo()
 
     # Reset joint1 to its middle position
     joint1 = panda.get_joint("panda_joint1").to_gazebo()
@@ -84,18 +92,23 @@ def test_position_pid(default_world: Tuple[scenario.GazeboSimulator, scenario.Wo
         assert gazebo.run()
 
     # Check that it didn't move
-    assert panda.joint_positions() == pytest.approx(panda.joint_position_targets(),
-                                                    abs=np.deg2rad(1))
+    assert panda.joint_positions() == pytest.approx(
+        panda.joint_position_targets(), abs=np.deg2rad(1)
+    )
 
     # joint1 trajectory
     q0_joint1 = joint1.position()
-    q_joint1 = (0.9 * joint1_range / 2 * np.sin(2 * np.pi * 0.33 * t)
-                for t in np.arange(start=0, stop=10.0, step=gazebo.step_size()))
+    q_joint1 = (
+        0.9 * joint1_range / 2 * np.sin(2 * np.pi * 0.33 * t)
+        for t in np.arange(start=0, stop=10.0, step=gazebo.step_size())
+    )
 
     # joint6 trajectory
     q0_joint6 = joint6.position()
-    q_joint6 = (0.9 * joint6_range / 2 * np.sin(2 * np.pi * 0.33 * t)
-                for t in np.arange(start=0, stop=10.0, step=gazebo.step_size()))
+    q_joint6 = (
+        0.9 * joint6_range / 2 * np.sin(2 * np.pi * 0.33 * t)
+        for t in np.arange(start=0, stop=10.0, step=gazebo.step_size())
+    )
 
     for _ in range(5_000):
 

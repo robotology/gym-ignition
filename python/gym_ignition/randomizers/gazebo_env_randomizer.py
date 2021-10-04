@@ -3,19 +3,18 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import abc
+from typing import Callable, Dict, Optional, Union, cast
+
 import gym
-from typing import cast
-from gym_ignition import randomizers
-from gym_ignition.utils import logger, typing
+from gym_ignition.randomizers.abc import PhysicsRandomizer, TaskRandomizer
+from gym_ignition.randomizers.physics import dart
 from gym_ignition.runtimes import gazebo_runtime
-from typing import Callable, Dict, Optional, Union
+from gym_ignition.utils import typing
 
-MakeEnvCallable = Callable[[Optional[Dict]],gym.Env]
+MakeEnvCallable = Callable[[Optional[Dict]], gym.Env]
 
 
-class GazeboEnvRandomizer(gym.Wrapper,
-                          randomizers.abc.TaskRandomizer,
-                          abc.ABC):
+class GazeboEnvRandomizer(gym.Wrapper, TaskRandomizer, abc.ABC):
     """
     Base class to implement an environment randomizer for Ignition Gazebo.
 
@@ -46,11 +45,15 @@ class GazeboEnvRandomizer(gym.Wrapper,
         This operation is demanding, consider randomizing physics at a low rate.
     """
 
-    def __init__(self,
-                 env: Union[str, MakeEnvCallable],
-                 physics_randomizer: randomizers.abc.PhysicsRandomizer =
-                 randomizers.physics.dart.DART(),
-                 **kwargs):
+    def __init__(
+        self,
+        env: Union[str, MakeEnvCallable],
+        physics_randomizer: PhysicsRandomizer = dart.DART(),
+        **kwargs,
+    ):
+
+        # Print the extra kwargs
+        gym.logger.debug(f"GazeboEnvRandomizer: {dict(kwargs=kwargs)}")
 
         # Store the options
         self._env_option = env
@@ -106,9 +109,9 @@ class GazeboEnvRandomizer(gym.Wrapper,
     # Private methods
     # ===============
 
-    def _create_environment(self,
-                            env: Union[str, MakeEnvCallable],
-                            **kwargs) -> gazebo_runtime.GazeboRuntime:
+    def _create_environment(
+        self, env: Union[str, MakeEnvCallable], **kwargs
+    ) -> gazebo_runtime.GazeboRuntime:
 
         if isinstance(env, str):
             env_to_wrap = self._create_from_id(env_id=env, **kwargs)
@@ -125,18 +128,13 @@ class GazeboEnvRandomizer(gym.Wrapper,
         return cast(gazebo_runtime.GazeboRuntime, env_to_wrap)
 
     @staticmethod
-    def _create_from_callable(make_env: MakeEnvCallable,
-                              **kwargs) -> gym.Env:
+    def _create_from_callable(make_env: MakeEnvCallable, **kwargs) -> gym.Env:
 
-        with logger.gym_verbosity(level=gym.logger.WARN):
-            env = make_env(**kwargs)
-
+        env = make_env(**kwargs)
         return env
 
     @staticmethod
     def _create_from_id(env_id: str, **kwargs) -> gym.Env:
 
-        with logger.gym_verbosity(level=gym.logger.WARN):
-            env = gym.make(env_id, **kwargs)
-
+        env = gym.make(env_id, **kwargs)
         return env

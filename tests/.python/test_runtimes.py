@@ -3,77 +3,89 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
-import pytest
 import numpy as np
+import pytest
 from gym.envs import registry
-from gym_ignition.utils import logger
 from gym.envs.registration import register
 from gym_ignition.robots.sim import gazebo, pybullet
-from gym_ignition.tasks.pendulum_swingup import PendulumSwingUp
 from gym_ignition.tasks.cartpole_discrete import CartPoleDiscrete
+from gym_ignition.tasks.pendulum_swingup import PendulumSwingUp
+from gym_ignition.utils import logger
 
 # Set verbosity
 logger.set_level(gym.logger.DEBUG)
 
 if "Pendulum-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
     register(
-        id='Pendulum-Ignition-PyTest-v0',
-        entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
+        id="Pendulum-Ignition-PyTest-v0",
+        entry_point="gym_ignition.runtimes.gazebo_runtime:GazeboRuntime",
         max_episode_steps=1000,
-        kwargs={'task_cls': PendulumSwingUp,
-                'robot_cls': gazebo.pendulum.PendulumGazeboRobot,
-                'model': "Pendulum/Pendulum.urdf",
-                'world': "DefaultEmptyWorld.world",
-                'rtf': 100,
-                'agent_rate': 4000,
-                'physics_rate': 4000,
-                'hard_reset': False,
-                })
+        kwargs={
+            "task_cls": PendulumSwingUp,
+            "robot_cls": gazebo.pendulum.PendulumGazeboRobot,
+            "model": "Pendulum/Pendulum.urdf",
+            "world": "DefaultEmptyWorld.world",
+            "rtf": 100,
+            "agent_rate": 4000,
+            "physics_rate": 4000,
+            "hard_reset": False,
+        },
+    )
 
 if "Pendulum-PyBullet-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
     register(
-        id='Pendulum-PyBullet-PyTest-v0',
-        entry_point='gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime',
+        id="Pendulum-PyBullet-PyTest-v0",
+        entry_point="gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime",
         max_episode_steps=1000,
-        kwargs={'task_cls': PendulumSwingUp,
-                'robot_cls': pybullet.pendulum.PendulumPyBulletRobot,
-                'model': "Pendulum/Pendulum.urdf",
-                'world': "plane_implicit.urdf",
-                'rtf': 100,
-                'agent_rate': 4000,
-                'physics_rate': 4000,  # To keep errors small, pybullet needs a higher rate
-                'hard_reset': False,
-                })
+        kwargs={
+            "task_cls": PendulumSwingUp,
+            "robot_cls": pybullet.pendulum.PendulumPyBulletRobot,
+            "model": "Pendulum/Pendulum.urdf",
+            "world": "plane_implicit.urdf",
+            "rtf": 100,
+            "agent_rate": 4000,
+            "physics_rate": 4000,  # To keep errors small, pybullet needs a higher rate
+            "hard_reset": False,
+        },
+    )
 
-if "CartPoleDiscrete-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
+if "CartPoleDiscrete-Ignition-PyTest-v0" not in [
+    spec.id for spec in list(registry.all())
+]:
     register(
-        id='CartPoleDiscrete-Ignition-PyTest-v0',
-        entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
+        id="CartPoleDiscrete-Ignition-PyTest-v0",
+        entry_point="gym_ignition.runtimes.gazebo_runtime:GazeboRuntime",
         max_episode_steps=500,
-        kwargs={'task_cls': CartPoleDiscrete,
-                'robot_cls': gazebo.cartpole.CartPoleGazeboRobot,
-                'model': "CartPole/CartPole.urdf",
-                'world': "DefaultEmptyWorld.world",
-                'rtf': 100,
-                'agent_rate': 4000,
-                'physics_rate': 4000,
-                'hard_reset': False,
-                })
+        kwargs={
+            "task_cls": CartPoleDiscrete,
+            "robot_cls": gazebo.cartpole.CartPoleGazeboRobot,
+            "model": "CartPole/CartPole.urdf",
+            "world": "DefaultEmptyWorld.world",
+            "rtf": 100,
+            "agent_rate": 4000,
+            "physics_rate": 4000,
+            "hard_reset": False,
+        },
+    )
 
-if "CartPoleDiscrete-PyBullet-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
+if "CartPoleDiscrete-PyBullet-PyTest-v0" not in [
+    spec.id for spec in list(registry.all())
+]:
     register(
-        id='CartPoleDiscrete-PyBullet-PyTest-v0',
-        entry_point='gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime',
+        id="CartPoleDiscrete-PyBullet-PyTest-v0",
+        entry_point="gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime",
         max_episode_steps=500,
-        kwargs={'task_cls': CartPoleDiscrete,
-                'robot_cls': pybullet.cartpole.CartPolePyBulletRobot,
-                'model': "CartPole/CartPole.urdf",
-                'world': "plane_implicit.urdf",
-                'rtf': 100,
-                'agent_rate': 4000,
-                'physics_rate': 4000,
-                'hard_reset': False,
-                })
+        kwargs={
+            "task_cls": CartPoleDiscrete,
+            "robot_cls": pybullet.cartpole.CartPolePyBulletRobot,
+            "model": "CartPole/CartPole.urdf",
+            "world": "plane_implicit.urdf",
+            "rtf": 100,
+            "agent_rate": 4000,
+            "physics_rate": 4000,
+            "hard_reset": False,
+        },
+    )
 
 
 def template_compare_environments(env_name_a: str, env_name_b: str, max_error: float):
@@ -81,8 +93,10 @@ def template_compare_environments(env_name_a: str, env_name_b: str, max_error: f
     env_a = gym.make(env_name_a)
     env_b = gym.make(env_name_b)
 
-    assert env_a.unwrapped.spec._kwargs['agent_rate'] == \
-           env_b.unwrapped.spec._kwargs['agent_rate']
+    assert (
+        env_a.unwrapped.spec._kwargs["agent_rate"]
+        == env_b.unwrapped.spec._kwargs["agent_rate"]
+    )
 
     logger.set_level(gym.logger.DEBUG)
 
@@ -102,8 +116,9 @@ def template_compare_environments(env_name_a: str, env_name_b: str, max_error: f
         observation_a = env_a.reset()
         observation_b = env_b.reset()
 
-        assert np.allclose(observation_a, observation_b), \
-            "Observations after reset don't match"
+        assert np.allclose(
+            observation_a, observation_b
+        ), "Observations after reset don't match"
 
         # Initialize intermediate variables
         iteration = 0
@@ -119,7 +134,9 @@ def template_compare_environments(env_name_a: str, env_name_b: str, max_error: f
             observation_a, _, done_a, _ = env_b.step(action)
             observation_b, _, done_b, _ = env_a.step(action)
 
-            error = np.sum(np.abs(observation_a / range_obs - observation_b / range_obs))
+            error = np.sum(
+                np.abs(observation_a / range_obs - observation_b / range_obs)
+            )
 
             if error > max_error:
                 print("===================")
@@ -137,9 +154,16 @@ def template_compare_environments(env_name_a: str, env_name_b: str, max_error: f
     env_b.close()
 
 
-@pytest.mark.parametrize("env_name_a, env_name_b, max_error", [
-    ("Pendulum-Ignition-PyTest-v0", "Pendulum-PyBullet-PyTest-v0", 0.05),
-    ("CartPoleDiscrete-Ignition-PyTest-v0", "CartPoleDiscrete-PyBullet-PyTest-v0", 0.03),
-])
+@pytest.mark.parametrize(
+    "env_name_a, env_name_b, max_error",
+    [
+        ("Pendulum-Ignition-PyTest-v0", "Pendulum-PyBullet-PyTest-v0", 0.05),
+        (
+            "CartPoleDiscrete-Ignition-PyTest-v0",
+            "CartPoleDiscrete-PyBullet-PyTest-v0",
+            0.03,
+        ),
+    ],
+)
 def test_compare_environments(env_name_a: str, env_name_b: str, max_error: float):
     template_compare_environments(env_name_a, env_name_b, max_error)

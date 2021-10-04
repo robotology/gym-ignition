@@ -3,13 +3,17 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+
 pytestmark = pytest.mark.scenario
 
-import numpy as np
 from typing import Tuple
+
 import gym_ignition_models
+import numpy as np
+
 from scenario import core as scenario_core
 from scenario import gazebo as scenario_gazebo
+
 from ..common.utils import default_world_fixture as default_world
 
 # Set the verbosity
@@ -17,8 +21,9 @@ scenario_gazebo.set_verbosity(scenario_gazebo.Verbosity_debug)
 
 
 @pytest.mark.parametrize("default_world", [(1.0 / 1_000, 1.0, 1)], indirect=True)
-def test_velocity_direct(default_world: Tuple[scenario_gazebo.GazeboSimulator,
-                                              scenario_gazebo.World]):
+def test_velocity_direct(
+    default_world: Tuple[scenario_gazebo.GazeboSimulator, scenario_gazebo.World]
+):
 
     # Get the simulator and the world
     gazebo, world = default_world
@@ -32,6 +37,11 @@ def test_velocity_direct(default_world: Tuple[scenario_gazebo.GazeboSimulator,
 
     # Get the model and cast it to Gazebo
     pendulum = world.get_model("pendulum").to_gazebo()
+
+    # Disable any velocity (and torque) limits of the model, otherwise the velocity
+    # cannot change too abruptly
+    _ = [j.set_velocity_limit(np.finfo(float).max) for j in pendulum.joints()]
+    _ = [j.set_max_generalized_force(np.finfo(float).max) for j in pendulum.joints()]
 
     # Add some friction
     assert pendulum.get_joint("pivot").to_gazebo().set_coulomb_friction(value=0.01)
@@ -54,7 +64,9 @@ def test_velocity_direct(default_world: Tuple[scenario_gazebo.GazeboSimulator,
     assert np.deg2rad(179.7) <= pivot.position() <= np.deg2rad(180.3)
 
     # Control the joint in velocity direct
-    assert pivot.set_control_mode(mode=scenario_core.JointControlMode_velocity_follower_dart)
+    assert pivot.set_control_mode(
+        mode=scenario_core.JointControlMode_velocity_follower_dart
+    )
 
     # Set the velocity reference to 3.14 rad / s
     assert pivot.set_velocity_target(velocity=np.pi)
@@ -79,4 +91,8 @@ def test_velocity_direct(default_world: Tuple[scenario_gazebo.GazeboSimulator,
     [gazebo.run() for _ in range(5_000)]
 
     # It should rest in its stable equilibrium point
-    assert 2*np.pi + np.deg2rad(179.7) <= pivot.position() <= 2*np.pi + np.deg2rad(180.3)
+    assert (
+        2 * np.pi + np.deg2rad(179.7)
+        <= pivot.position()
+        <= 2 * np.pi + np.deg2rad(180.3)
+    )

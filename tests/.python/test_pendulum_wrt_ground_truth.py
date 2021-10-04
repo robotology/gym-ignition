@@ -3,13 +3,13 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import gym
-import pytest
 import numpy as np
+import pytest
 from gym.envs import registry
-from gym_ignition.utils import logger
 from gym.envs.registration import register
 from gym_ignition.robots.sim import gazebo, pybullet
 from gym_ignition.tasks.pendulum_swingup import PendulumSwingUp
+from gym_ignition.utils import logger
 from gym_ignition.utils.typing import Observation, Reward, State
 
 # Set verbosity
@@ -21,7 +21,8 @@ class PendulumEnv(gym.Env):
     Environment that implements the pendulum dynamics from equations.
     It integrates the system with Euler.
     """
-    metadata = {'render.modes': []}
+
+    metadata = {"render.modes": []}
 
     def __init__(self):
         super().__init__()
@@ -52,8 +53,9 @@ class PendulumEnv(gym.Env):
 
     def step(self, action: np.ndarray) -> State:
         tau_m = action[0]
-        theta_ddot = \
-            (self.m * self.g * self.L / 2.0 * np.sin(self.theta) + tau_m) / self.I
+        theta_ddot = (
+            self.m * self.g * self.L / 2.0 * np.sin(self.theta) + tau_m
+        ) / self.I
 
         # Integrate with euler.
         # Note that in this way the ground truth used as comparison implements a very
@@ -70,7 +72,7 @@ class PendulumEnv(gym.Env):
         # Use set_state_from_obs
         pass
 
-    def render(self, mode='human', **kwargs):
+    def render(self, mode="human", **kwargs):
         raise Exception("This runtime does not support rendering")
 
     def seed(self, seed=None):
@@ -84,33 +86,37 @@ def theta_from_obs(observation: np.ndarray) -> float:
 
 if "Pendulum-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
     register(
-        id='Pendulum-Ignition-PyTest-v0',
-        entry_point='gym_ignition.runtimes.gazebo_runtime:GazeboRuntime',
+        id="Pendulum-Ignition-PyTest-v0",
+        entry_point="gym_ignition.runtimes.gazebo_runtime:GazeboRuntime",
         max_episode_steps=1000,
-        kwargs={'task_cls': PendulumSwingUp,
-                'robot_cls': gazebo.pendulum.PendulumGazeboRobot,
-                'model': "Pendulum/Pendulum.urdf",
-                'world': "DefaultEmptyWorld.world",
-                'rtf': 100,
-                'agent_rate': 4000,
-                'physics_rate': 4000,
-                'hard_reset': False,
-                })
+        kwargs={
+            "task_cls": PendulumSwingUp,
+            "robot_cls": gazebo.pendulum.PendulumGazeboRobot,
+            "model": "Pendulum/Pendulum.urdf",
+            "world": "DefaultEmptyWorld.world",
+            "rtf": 100,
+            "agent_rate": 4000,
+            "physics_rate": 4000,
+            "hard_reset": False,
+        },
+    )
 
 if "Pendulum-PyBullet-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
     register(
-        id='Pendulum-PyBullet-PyTest-v0',
-        entry_point='gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime',
+        id="Pendulum-PyBullet-PyTest-v0",
+        entry_point="gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime",
         max_episode_steps=1000,
-        kwargs={'task_cls': PendulumSwingUp,
-                'robot_cls': pybullet.pendulum.PendulumPyBulletRobot,
-                'model': "Pendulum/Pendulum.urdf",
-                'world': "plane_implicit.urdf",
-                'rtf': 100,
-                'agent_rate': 4000,
-                'physics_rate': 4000,  # To keep errors small, pybullet needs higher rate
-                'hard_reset': False,
-                })
+        kwargs={
+            "task_cls": PendulumSwingUp,
+            "robot_cls": pybullet.pendulum.PendulumPyBulletRobot,
+            "model": "Pendulum/Pendulum.urdf",
+            "world": "plane_implicit.urdf",
+            "rtf": 100,
+            "agent_rate": 4000,
+            "physics_rate": 4000,  # To keep errors small, pybullet needs higher rate
+            "hard_reset": False,
+        },
+    )
 
 
 def template_pendulum_wrt_ground_truth(env_name: str, max_error_in_deg: float):
@@ -119,7 +125,7 @@ def template_pendulum_wrt_ground_truth(env_name: str, max_error_in_deg: float):
 
     # Create the environment with the equations and initialize its time step
     env_equation = PendulumEnv()
-    env_equation.dt = 1.0 / env.unwrapped.spec._kwargs['agent_rate']
+    env_equation.dt = 1.0 / env.unwrapped.spec._kwargs["agent_rate"]
 
     # Render the environment
     # env.render('human')
@@ -172,9 +178,12 @@ def template_pendulum_wrt_ground_truth(env_name: str, max_error_in_deg: float):
     env.close()
 
 
-@pytest.mark.parametrize("env_name, max_error_in_deg",
-                         [("Pendulum-Ignition-PyTest-v0", 3.0),
-                          ("Pendulum-PyBullet-PyTest-v0", 3.0),
-                          ])
+@pytest.mark.parametrize(
+    "env_name, max_error_in_deg",
+    [
+        ("Pendulum-Ignition-PyTest-v0", 3.0),
+        ("Pendulum-PyBullet-PyTest-v0", 3.0),
+    ],
+)
 def test_pendulum_ignition(env_name: str, max_error_in_deg: float):
     template_pendulum_wrt_ground_truth(env_name, max_error_in_deg)

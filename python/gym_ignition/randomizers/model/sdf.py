@@ -2,11 +2,12 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+from enum import Enum, auto
+from pathlib import Path
+from typing import Dict, List, NamedTuple, Union
+
 import numpy as np
 from lxml import etree
-from pathlib import Path
-from enum import auto, Enum
-from typing import Dict, List, NamedTuple, Union
 
 
 class Distribution(Enum):
@@ -71,9 +72,9 @@ class RandomizationDataBuilder:
         self.storage["xpath"] = xpath
         return self
 
-    def sampled_from(self,
-                     distribution: Distribution,
-                     parameters: DistributionParameters) -> "RandomizationDataBuilder":
+    def sampled_from(
+        self, distribution: Distribution, parameters: DistributionParameters
+    ) -> "RandomizationDataBuilder":
         """
         Set the distribution associated to the randomization.
 
@@ -88,12 +89,14 @@ class RandomizationDataBuilder:
         self.storage["distribution"] = distribution
         self.storage["parameters"] = parameters
 
-        if self.storage["distribution"] is Distribution.Gaussian and \
-                not isinstance(parameters, GaussianParams):
+        if self.storage["distribution"] is Distribution.Gaussian and not isinstance(
+            parameters, GaussianParams
+        ):
             raise ValueError("Wrong parameters type")
 
-        if self.storage["distribution"] is Distribution.Uniform and \
-                not isinstance(parameters, UniformParams):
+        if self.storage["distribution"] is Distribution.Uniform and not isinstance(
+            parameters, UniformParams
+        ):
             raise ValueError("Wrong parameters type")
 
         return self
@@ -254,7 +257,8 @@ class SDFRandomizer:
 
                 # Update the data
                 complete_data = data._replace(
-                    xpath=element_xpath, element=element, parameters=params)
+                    xpath=element_xpath, element=element, parameters=params
+                )
 
                 expanded_randomizations.append(complete_data)
 
@@ -280,19 +284,18 @@ class SDFRandomizer:
 
             if data.distribution is Distribution.Gaussian:
 
-                sample = self.rng.normal(loc=data.parameters.mean,
-                                         scale=data.parameters.variance)
+                sample = self.rng.normal(
+                    loc=data.parameters.mean, scale=data.parameters.variance
+                )
 
             elif data.distribution is Distribution.Uniform:
 
-                sample = self.rng.uniform(low=data.parameters.low,
-                                          high=data.parameters.high)
+                sample = self.rng.uniform(
+                    low=data.parameters.low, high=data.parameters.high
+                )
 
             else:
                 raise ValueError("Distribution not recognized")
-
-            if data.force_positive:
-                sample = max(sample, 0.0)
 
             # Update the value
             if data.method is Method.Absolute:
@@ -311,6 +314,9 @@ class SDFRandomizer:
 
             else:
                 raise ValueError("Method not recognized")
+
+            if data.force_positive:
+                data.element.text = str(max(float(data.element.text), 0.0))
 
         return etree.tostring(self._root, pretty_print=pretty_print).decode()
 

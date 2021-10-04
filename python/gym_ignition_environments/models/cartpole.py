@@ -3,19 +3,21 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 from typing import List
-from scenario import core as scenario
+
+from gym_ignition.scenario import model_with_file, model_wrapper
 from gym_ignition.utils.scenario import get_unique_model_name
-from gym_ignition.scenario import model_wrapper, model_with_file
+
+from scenario import core as scenario
 
 
-class CartPole(model_wrapper.ModelWrapper,
-               model_with_file.ModelWithFile):
-
-    def __init__(self,
-                 world: scenario.World,
-                 position: List[float] = (0.0, 0.0, 0.0),
-                 orientation: List[float] = (1.0, 0, 0, 0),
-                 model_file: str = None):
+class CartPole(model_wrapper.ModelWrapper, model_with_file.ModelWithFile):
+    def __init__(
+        self,
+        world: scenario.World,
+        position: List[float] = (0.0, 0.0, 0.0),
+        orientation: List[float] = (1.0, 0, 0, 0),
+        model_file: str = None,
+    ):
 
         # Get a unique model name
         model_name = get_unique_model_name(world, "cartpole")
@@ -28,9 +30,7 @@ class CartPole(model_wrapper.ModelWrapper,
             model_file = CartPole.get_model_file()
 
         # Insert the model
-        ok_model = world.to_gazebo().insert_model(model_file,
-                                                  initial_pose,
-                                                  model_name)
+        ok_model = world.to_gazebo().insert_model(model_file, initial_pose, model_name)
 
         if not ok_model:
             raise RuntimeError("Failed to insert model")
@@ -45,4 +45,5 @@ class CartPole(model_wrapper.ModelWrapper,
     def get_model_file(cls) -> str:
 
         import gym_ignition_models
+
         return gym_ignition_models.get_model_file("cartpole")

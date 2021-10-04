@@ -7,8 +7,9 @@ import pytest
 pytestmark = pytest.mark.scenario
 
 from scenario import core
-from ..common import utils
 from scenario import gazebo as scenario
+
+from ..common import utils
 from ..common.utils import gazebo_fixture as gazebo
 
 # Set the verbosity
@@ -89,7 +90,7 @@ def test_world_api(gazebo: scenario.GazeboSimulator):
     assert world.insert_model(cube_urdf)
     assert len(world.model_names()) == 1
 
-    default_model_name = scenario.get_model_name_from_sdf(cube_urdf, 0)
+    default_model_name = scenario.get_model_name_from_sdf(cube_urdf)
     assert default_model_name in world.model_names()
     cube1 = world.get_model(default_model_name)
     # TODO: assert cube1
@@ -146,6 +147,8 @@ def test_world_api(gazebo: scenario.GazeboSimulator):
     assert world.time() == 0.0
 
 
+# See: https://github.com/robotology/gym-ignition/issues/366
+@pytest.mark.xfail(strict=False)
 @pytest.mark.parametrize(
     "gazebo", [(0.001, 1.0, 1)], indirect=True, ids=utils.id_gazebo_fn
 )

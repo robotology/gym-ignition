@@ -4,14 +4,14 @@
 
 import abc
 import tempfile
+
 import numpy as np
-import pybullet_data
 import pybullet as p
-from gym_ignition.robots import sim
-from pybullet_utils import bullet_client
-from gym_ignition.robots import gazebo_robot
-from gym_ignition.utils import resource_finder
+import pybullet_data
 from gym_ignition import gympp_bindings as bindings
+from gym_ignition.robots import gazebo_robot, sim
+from gym_ignition.utils import resource_finder
+from pybullet_utils import bullet_client
 
 
 class Simulator(abc.ABC):
@@ -30,10 +30,12 @@ class Simulator(abc.ABC):
 class Gazebo(Simulator):
     simulator_name = "gazebo"
 
-    def __init__(self,
-                 physics_rate: float,
-                 iterations: int = int(1),
-                 rtf=float(np.finfo(np.float32).max)):
+    def __init__(
+        self,
+        physics_rate: float,
+        iterations: int = int(1),
+        rtf=float(np.finfo(np.float32).max),
+    ):
         self.simulator = bindings.GazeboSimulator(iterations, rtf, physics_rate)
         assert self.simulator
 
@@ -82,13 +84,12 @@ class PyBullet(Simulator):
 def get_pendulum(simulator: Simulator, **kwargs):
     if simulator.simulator_name == "gazebo":
         return sim.gazebo.pendulum.PendulumGazeboRobot(
-            gazebo=simulator.simulator,
-            **kwargs)
+            gazebo=simulator.simulator, **kwargs
+        )
     elif simulator.simulator_name == "pybullet":
         return sim.pybullet.pendulum.PendulumPyBulletRobot(
-            p=simulator.simulator,
-            plane_id=simulator.plane_id,
-            **kwargs)
+            p=simulator.simulator, plane_id=simulator.plane_id, **kwargs
+        )
     else:
         raise Exception(f"Simulator {simulator.simulator_name} not recognized")
 
@@ -96,37 +97,34 @@ def get_pendulum(simulator: Simulator, **kwargs):
 def get_cartpole(simulator: Simulator, **kwargs):
     if simulator.simulator_name == "gazebo":
         return sim.gazebo.cartpole.CartPoleGazeboRobot(
-            gazebo=simulator.simulator,
-            **kwargs)
+            gazebo=simulator.simulator, **kwargs
+        )
     elif simulator.simulator_name == "pybullet":
         return sim.pybullet.cartpole.CartPolePyBulletRobot(
-            p=simulator.simulator,
-            plane_id=simulator.plane_id,
-            **kwargs)
+            p=simulator.simulator, plane_id=simulator.plane_id, **kwargs
+        )
     else:
         raise Exception(f"Simulator {simulator.simulator_name} not recognized")
 
 
 class CubeGazeboRobot(gazebo_robot.GazeboRobot):
-
     def __init__(self, gazebo, initial_position: np.ndarray, model_file: str = None):
 
         if model_file is None:
             # Serialize the cube urdf
             handle, model_file = tempfile.mkstemp()
-            with open(handle, 'w') as f:
+            with open(handle, "w") as f:
                 f.write(get_cube_urdf())
 
         # Initialize base class
-        super().__init__(model_file=model_file,
-                         gazebo=gazebo)
+        super().__init__(model_file=model_file, gazebo=gazebo)
 
         ok_floating = self.set_as_floating_base(True)
         assert ok_floating, "Failed to set the robot as floating base"
 
         # Initial base position and orientation
         base_position = np.array(initial_position)
-        base_orientation = np.array([1., 0., 0., 0.])
+        base_orientation = np.array([1.0, 0.0, 0.0, 0.0])
         ok_base_pose = self.set_initial_base_pose(base_position, base_orientation)
         assert ok_base_pose, "Failed to set base pose"
 

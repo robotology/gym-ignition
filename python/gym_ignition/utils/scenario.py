@@ -2,11 +2,13 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import gym.spaces
-import numpy as np
-from scenario import core
-import gym_ignition_models
 from typing import List, Tuple, Union
+
+import gym.spaces
+import gym_ignition_models
+import numpy as np
+
+from scenario import core
 from scenario import gazebo as scenario
 
 
@@ -44,23 +46,9 @@ def get_unique_model_name(world: scenario.World, model_name: str) -> str:
     return model_name_tentative
 
 
-def get_unique_world_name(world_name: str) -> str:
-
-    postfix = 0
-    world_name_tentative = f"{world_name}"
-    ecm_singleton = scenario.ECMSingleton_instance()
-
-    while world_name_tentative in ecm_singleton.world_names():
-        postfix += 1
-        world_name_tentative = f"{world_name}{postfix}"
-
-    return world_name_tentative
-
-
-def init_gazebo_sim(step_size: float = 0.001,
-                    real_time_factor: float = 1.0,
-                    steps_per_run: int = 1) -> Tuple[scenario.GazeboSimulator,
-                                                     Union[scenario.World, core.World]]:
+def init_gazebo_sim(
+    step_size: float = 0.001, real_time_factor: float = 1.0, steps_per_run: int = 1
+) -> Tuple[scenario.GazeboSimulator, Union[scenario.World, core.World]]:
     """
     Initialize a Gazebo simulation with an empty world and default physics.
 
@@ -103,8 +91,9 @@ def init_gazebo_sim(step_size: float = 0.001,
     return gazebo, world
 
 
-def get_joint_positions_space(model: scenario.Model,
-                              considered_joints: List[str] = None) -> gym.spaces.Box:
+def get_joint_positions_space(
+    model: scenario.Model, considered_joints: List[str] = None
+) -> gym.spaces.Box:
     """
     Build a Box space from the joint position limits.
 
@@ -124,7 +113,8 @@ def get_joint_positions_space(model: scenario.Model,
     joint_limits = model.joint_limits(considered_joints)
 
     # Build the space
-    space = gym.spaces.Box(low=np.array(joint_limits.min),
-                           high=np.array(joint_limits.max))
+    space = gym.spaces.Box(
+        low=np.array(joint_limits.min), high=np.array(joint_limits.max)
+    )
 
     return space

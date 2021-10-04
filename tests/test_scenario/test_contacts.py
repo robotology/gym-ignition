@@ -3,15 +3,19 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import pytest
+
 pytestmark = pytest.mark.scenario
 
-import numpy as np
-from scenario import core
-from ..common import utils
-import gym_ignition_models
 from typing import Callable
+
+import gym_ignition_models
+import numpy as np
 from gym_ignition.utils import misc
+
+from scenario import core
 from scenario import gazebo as scenario
+
+from ..common import utils
 from ..common.utils import gazebo_fixture as gazebo
 
 # Set the verbosity
@@ -55,13 +59,16 @@ def get_cube_urdf_string_double_collision() -> str:
     return cube_urdf
 
 
-@pytest.mark.parametrize("gazebo, get_model_str",
-                         [((0.001, 1.0, 1), utils.get_cube_urdf_string),
-                          ((0.001, 1.0, 1), get_cube_urdf_string_double_collision)],
-                         indirect=["gazebo"],
-                         ids=utils.id_gazebo_fn)
-def test_cube_contact(gazebo: scenario.GazeboSimulator,
-                      get_model_str: Callable):
+@pytest.mark.parametrize(
+    "gazebo, get_model_str",
+    [
+        ((0.001, 1.0, 1), utils.get_cube_urdf_string),
+        ((0.001, 1.0, 1), get_cube_urdf_string_double_collision),
+    ],
+    indirect=["gazebo"],
+    ids=utils.id_gazebo_fn,
+)
+def test_cube_contact(gazebo: scenario.GazeboSimulator, get_model_str: Callable):
 
     assert gazebo.initialize()
     world = gazebo.get_world().to_gazebo()
@@ -75,9 +82,9 @@ def test_cube_contact(gazebo: scenario.GazeboSimulator,
 
     # Insert the cube
     cube_urdf = misc.string_to_file(get_model_str())
-    assert world.insert_model(cube_urdf,
-                              core.Pose([0, 0, 0.15], [1., 0, 0, 0]),
-                              "cube")
+    assert world.insert_model(
+        cube_urdf, core.Pose([0, 0, 0.15], [1.0, 0, 0, 0]), "cube"
+    )
     assert len(world.model_names()) == 2
 
     # Get the cube
@@ -118,17 +125,23 @@ def test_cube_contact(gazebo: scenario.GazeboSimulator,
     assert np.sum(z_forces) == pytest.approx(-5 * world.gravity()[2], abs=0.1)
 
     # Forces of all contact points are combined by the following method
-    assert cube.get_link("cube").contact_wrench() == \
-        pytest.approx([0, 0, np.sum(z_forces), 0, 0, 0])
+    assert cube.get_link("cube").contact_wrench() == pytest.approx(
+        [0, 0, np.sum(z_forces), 0, 0, 0]
+    )
 
 
-@pytest.mark.parametrize("gazebo, get_model_str",
-                         [((0.001, 1.0, 1), utils.get_cube_urdf_string),
-                          ((0.001, 1.0, 1), get_cube_urdf_string_double_collision)],
-                         indirect=["gazebo"],
-                         ids=utils.id_gazebo_fn)
-def test_cube_multiple_contacts(gazebo: scenario.GazeboSimulator,
-                                get_model_str: Callable):
+@pytest.mark.parametrize(
+    "gazebo, get_model_str",
+    [
+        ((0.001, 1.0, 1), utils.get_cube_urdf_string),
+        ((0.001, 1.0, 1), get_cube_urdf_string_double_collision),
+    ],
+    indirect=["gazebo"],
+    ids=utils.id_gazebo_fn,
+)
+def test_cube_multiple_contacts(
+    gazebo: scenario.GazeboSimulator, get_model_str: Callable
+):
 
     assert gazebo.initialize()
     world = gazebo.get_world().to_gazebo()
@@ -142,12 +155,12 @@ def test_cube_multiple_contacts(gazebo: scenario.GazeboSimulator,
 
     # Insert two cubes side to side with a 10cm gap
     cube_urdf = misc.string_to_file(get_model_str())
-    assert world.insert_model(cube_urdf,
-                              core.Pose([0, -0.15, 0.101], [1., 0, 0, 0]),
-                              "cube1")
-    assert world.insert_model(cube_urdf,
-                              core.Pose([0, 0.15, 0.101], [1., 0, 0, 0]),
-                              "cube2")
+    assert world.insert_model(
+        cube_urdf, core.Pose([0, -0.15, 0.101], [1.0, 0, 0, 0]), "cube1"
+    )
+    assert world.insert_model(
+        cube_urdf, core.Pose([0, 0.15, 0.101], [1.0, 0, 0, 0]), "cube2"
+    )
     assert len(world.model_names()) == 3
 
     # Get the cubes
@@ -182,9 +195,9 @@ def test_cube_multiple_contacts(gazebo: scenario.GazeboSimulator,
     assert len(cube2.contacts()) == 1
 
     # Now we make another cube fall above the gap. It will touch both cubes.
-    assert world.insert_model(cube_urdf,
-                              core.Pose([0, 0, 0.301], [1., 0, 0, 0]),
-                              "cube3")
+    assert world.insert_model(
+        cube_urdf, core.Pose([0, 0, 0.301], [1.0, 0, 0, 0]), "cube3"
+    )
     assert len(world.model_names()) == 4
 
     cube3 = world.get_model("cube3")
@@ -216,8 +229,9 @@ def test_cube_multiple_contacts(gazebo: scenario.GazeboSimulator,
     assert contact2.body_b == "cube2::cube"
 
     # Calculate the total contact wrench of cube3
-    assert cube3.get_link("cube").contact_wrench() == pytest.approx([0, 0, 50, 0, 0, 0],
-                                                                    abs=1.1)
+    assert cube3.get_link("cube").contact_wrench() == pytest.approx(
+        [0, 0, 50, 0, 0, 0], abs=1.1
+    )
 
     # Calculate the total contact force of the cubes below.
     # They will have 1.5 their weight from below and -0.5 from above.
