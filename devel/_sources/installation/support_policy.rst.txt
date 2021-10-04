@@ -15,12 +15,11 @@ The table below recaps the project requirements of the :ref:`Stable <installatio
 +-------------+-----------------+--------+----------------------+----------+------------+---------+
 | Channel     |       C++       | Python |      Ignition        |  Ubuntu  | macOS [*]_ | Windows |
 +=============+=================+========+======================+==========+============+=========+
-| **Stable**  | >= gcc8, clang6 | >= 3.8 | `Dome`_ (binary)     | >= 20.04 |     No     |    No   |
+| **Stable**  | >= gcc8, clang6 | >= 3.8 | `Fortress`_ (binary) | >= 20.04 |     No     |    No   |
 +-------------+-----------------+--------+----------------------+----------+------------+---------+
 | **Nightly** | >= gcc8, clang6 | >= 3.8 | `Fortress`_ (source) | >= 20.04 |     No     |    No   |
 +-------------+-----------------+--------+----------------------+----------+------------+---------+
 
-.. _`Dome`: https://ignitionrobotics.org/docs/dome/install
 .. _`Fortress`: https://ignitionrobotics.org/docs/fortress/install
 
 .. [*] Ignition officially supports macOS and also ``gym-ignition`` could be installed on this platform.
