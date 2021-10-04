@@ -5,10 +5,13 @@ on:
     paths:
       - ".docker/*"
       - ".github/workflows/docker.yml"
+    branches: ["**"]
+    tags-ignore: ["**"]
   pull_request:
     paths:
       - ".docker/*"
       - ".github/workflows/docker.yml"
+  workflow_dispatch:
   schedule:
     # Execute a weekly build on Monday at 2AM UTC
     - cron:  '0 2 * * 1'

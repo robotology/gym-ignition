@@ -3,7 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 cmake_minimum_required(VERSION 3.16)
-project(scenario VERSION 1.2.2)
+project(scenario VERSION 1.3.0)
 
 # Add custom functions / macros
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
