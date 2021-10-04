@@ -2,6 +2,8 @@ name: Code Style
 
 on:
   push:
+    branches: ["**"]
+    tags-ignore: ["**"]
   pull_request:
   workflow_dispatch:
 

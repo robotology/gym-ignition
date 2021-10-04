@@ -2,10 +2,12 @@ name: CI/CD
 
 on:
   push:
+    branches: ["**"]
+    tags-ignore: ["**"]
   pull_request:
+  workflow_dispatch:
   release:
-    types:
-      - published
+    types: [published]
 
 jobs:
 
@@ -381,6 +383,7 @@ jobs:
   website-deployment:
 # ===================
     name: 'Website Deployment'
+    if: always() && needs.build-and-test.result == 'success'
     needs: [ build-and-test ]
     runs-on: ubuntu-latest
     steps:
@@ -411,6 +414,7 @@ jobs:
   python-packaging:
 # =================
     name: 'Python packaging'
+    if: always() && needs.build-and-test.result == 'success'
     needs: [ build-and-test ]
     runs-on: ubuntu-latest
     steps:
@@ -461,11 +465,8 @@ jobs:
       - name: '[📦|scenario]️ Create sdist'
         run: python -m build --sdist scenario/ -o dist/
 
-      - name: '[📦|gym-ignition]️ Create sdist'
-        run: python -m build --sdist .
-
-      - name: '[📦|gym-ignition]️ Create wheel'
-        run: python -m build --wheel .
+      - name: '[📦|gym-ignition]️ Create sdist and wheel'
+        run: python -m build .
 
       # ================
       # Upload artifacts
@@ -490,14 +491,21 @@ jobs:
   upload_pypi:
 # ============
     name: Publish to PyPI
+    if: always() && needs.build-and-test.result == 'success' && needs.python-packaging.result == 'success'
     needs:
       - build-and-test
       - python-packaging
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     # Devel branch produces pre-releases.
-    # Tagged versions produce stable releases.
+    # GitHub releases produce stable releases.
 
     steps:
+
+      # Needed only to extract from the git repo the last revision
+      - name: '🔀 Clone repository'
+        uses: actions/checkout@master
+      - name: '🔀 Download all refs'
+        run: git fetch --prune --unshallow
 
       - name: '⬇️ Download Python packages'
         uses: actions/download-artifact@v2
