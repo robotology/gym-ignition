@@ -35,7 +35,7 @@
     <script src="../_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="ScenarI/O" href="../getting_started/scenario.html" />
+    <link rel="next" title="ScenarIO" href="../getting_started/scenario.html" />
     <link rel="prev" title="Nightly" href="nightly.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
@@ -57,25 +57,57 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
+   ScenarIO and gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption" role="heading">
+ <span class="caption-text">
+  What
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../what/what_is_scenario.html">
+   What is ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../what/what_is_gym_ignition.html">
    What is gym-ignition?
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Motivations
+  Why
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../motivations/why_gym_ignition.html">
+  <a class="reference internal" href="../why/motivations.html">
+   Intro
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_scenario.html">
    Why ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_ignition_gazebo.html">
+   Why Ignition Gazebo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_gym_ignition.html">
+   Why gym-ignition
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Installation
+  Installation (How)
  </span>
 </p>
 <ul class="current nav bd-sidenav">
@@ -108,7 +140,7 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../getting_started/scenario.html">
-   ScenarI/O
+   ScenarIO
   </a>
  </li>
  <li class="toctree-l1">
@@ -124,7 +156,7 @@
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  ScenarI/O C++ API:
+  ScenarIO C++ API:
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -292,8 +324,8 @@
       <span class="caption-text">Doc Versions</span>
     </p>
     <ul class="nav bd-sidenav">
-      <li class="toctree-l1"><a class="reference internal" href="../../devel/installation/developer.html">devel</a></li>
       <li class="toctree-l1"><a class="reference internal" href="developer.html">master</a></li>
+      <li class="toctree-l1"><a class="reference internal" href="../../devel/installation/developer.html">devel</a></li>
     </ul>
   </div>
 </nav>
@@ -430,11 +462,10 @@ that you also enable and install the <a class="reference external" href="https:/
 <h2>C++ Project<a class="headerlink" href="#c-project" title="Permalink to this headline">¶</a></h2>
 <p>From the root of the repository and from the branch you are interested, you can configure, compile, and install
 the CMake project as follows:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>mkdir build
-<span class="nb">cd</span> build
-cmake ..
-cmake --build .
-cmake --build . --target install
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> scenario/
+cmake -S . -B build
+cmake --build build/
+cmake --build build/ --target install
 </pre></div>
 </div>
 <div class="admonition note">
@@ -444,9 +475,11 @@ If you want to use a different folder, pass <code class="docutils literal notran
 </div>
 <div class="admonition attention">
 <p class="admonition-title">Attention</p>
-<p>The SWIG bindings are installed in the <a class="reference external" href="https://docs.python.org/3/install/#how-installation-works">site-packages</a> folder of the active Python interpreter.
+<p>The SWIG bindings are installed in the <a class="reference external" href="https://docs.python.org/3/install/#how-installation-works">site-packages</a>
+folder of the active Python interpreter.
 If you have an active virtual environment, it will be automatically detected.
-Visit <a class="reference external" href="https://cmake.org/cmake/help/v3.12/module/FindPython3.html">FindPython3</a> for more details.</p>
+We rely on CMake’s logic for detecting Python,
+visit <a class="reference external" href="https://cmake.org/cmake/help/v3.16/module/FindPython3.html">FindPython3</a> for more details.</p>
 </div>
 </div>
 <div class="section" id="virtual-environment-optional">
@@ -465,12 +498,20 @@ Make sure to execute the next steps in a terminal where the virtual environment 
 <h2>Editable Python Installation<a class="headerlink" href="#editable-python-installation" title="Permalink to this headline">¶</a></h2>
 <p>Install the Python package in <a class="reference external" href="https://pip.pypa.io/en/stable/reference/pip_install/#editable-installs">editable mode</a>.
 From the root of the repository:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -e .
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install -e scenario/
+pip install -e .
 </pre></div>
 </div>
 <p>The editable installation only symlinks the resources of the repository into the active Python installation.
 It allows to develop directly operating on the files of the repository and use the updated package without requiring
 to install it again.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">scenario</span></code> editable installation is just a placeholder.
+It is necessary to prevent the editable installation of <code class="docutils literal notranslate"><span class="pre">gym-ignition</span></code> to override the resources installed by
+the manual CMake execution.
+Otherwise, the <code class="docutils literal notranslate"><span class="pre">scenario</span></code> package from PyPI would be pulled, resulting with a wrong version.</p>
+</div>
 </div>
 <div class="section" id="system-configuration">
 <h2>System Configuration<a class="headerlink" href="#system-configuration" title="Permalink to this headline">¶</a></h2>
@@ -509,7 +550,7 @@ Since we cannot know in advance where you created the workspace, <code class="do
         <a class="right-next" href="../getting_started/scenario.html" title="next page">
             <div class="prevnext-info">
                 <p class="prevnext-label">next</p>
-                <p class="prevnext-title">ScenarI/O</p>
+                <p class="prevnext-title">ScenarIO</p>
             </div>
             <i class="prevnext-label fas fa-angle-right"></i>
         </a>

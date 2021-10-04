@@ -36,7 +36,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Stable" href="stable.html" />
-    <link rel="prev" title="Why ScenarIO" href="../motivations/why_gym_ignition.html" />
+    <link rel="prev" title="Why gym-ignition" href="../why/why_gym_ignition.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -57,25 +57,57 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
+   ScenarIO and gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption" role="heading">
+ <span class="caption-text">
+  What
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../what/what_is_scenario.html">
+   What is ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../what/what_is_gym_ignition.html">
    What is gym-ignition?
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Motivations
+  Why
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../motivations/why_gym_ignition.html">
+  <a class="reference internal" href="../why/motivations.html">
+   Intro
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_scenario.html">
    Why ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_ignition_gazebo.html">
+   Why Ignition Gazebo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_gym_ignition.html">
+   Why gym-ignition
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Installation
+  Installation (How)
  </span>
 </p>
 <ul class="current nav bd-sidenav">
@@ -108,7 +140,7 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../getting_started/scenario.html">
-   ScenarI/O
+   ScenarIO
   </a>
  </li>
  <li class="toctree-l1">
@@ -124,7 +156,7 @@
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  ScenarI/O C++ API:
+  ScenarIO C++ API:
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -292,8 +324,8 @@
       <span class="caption-text">Doc Versions</span>
     </p>
     <ul class="nav bd-sidenav">
-      <li class="toctree-l1"><a class="reference internal" href="../../devel/installation/support_policy.html">devel</a></li>
       <li class="toctree-l1"><a class="reference internal" href="support_policy.html">master</a></li>
+      <li class="toctree-l1"><a class="reference internal" href="../../devel/installation/support_policy.html">devel</a></li>
     </ul>
   </div>
 </nav>
@@ -378,16 +410,16 @@
 dependencies, depending on the installation type you select.</p>
 <p>The project mostly supports all the major operating systems.
 However, we are currently using and testing only GNU/Linux systems.
-We do not yet provide direct support to other operating systems.</p>
+We do not yet provide official support to other operating systems.</p>
 <p>The table below recaps the project requirements of the <a class="reference internal" href="stable.html#installation-stable"><span class="std std-ref">Stable</span></a> and <a class="reference internal" href="nightly.html#installation-nightly"><span class="std std-ref">Nightly</span></a> channels:</p>
 <table class="table">
 <colgroup>
-<col style="width: 15%" />
-<col style="width: 20%" />
-<col style="width: 9%" />
-<col style="width: 21%" />
-<col style="width: 11%" />
 <col style="width: 14%" />
+<col style="width: 19%" />
+<col style="width: 9%" />
+<col style="width: 24%" />
+<col style="width: 11%" />
+<col style="width: 13%" />
 <col style="width: 10%" />
 </colgroup>
 <thead>
@@ -404,7 +436,7 @@ We do not yet provide direct support to other operating systems.</p>
 <tr class="row-even"><td><p><strong>Stable</strong></p></td>
 <td><p>&gt;= gcc8, clang6</p></td>
 <td><p>&gt;= 3.8</p></td>
-<td><p><a class="reference external" href="https://ignitionrobotics.org/docs/dome/install">Dome</a> (binary)</p></td>
+<td><p><a class="reference external" href="https://ignitionrobotics.org/docs/fortress/install">Fortress</a> (binary)</p></td>
 <td><p>&gt;= 20.04</p></td>
 <td><p>No</p></td>
 <td><p>No</p></td>
@@ -412,7 +444,7 @@ We do not yet provide direct support to other operating systems.</p>
 <tr class="row-odd"><td><p><strong>Nightly</strong></p></td>
 <td><p>&gt;= gcc8, clang6</p></td>
 <td><p>&gt;= 3.8</p></td>
-<td><p><a class="reference external" href="https://ignitionrobotics.org/docs/dome/install">Dome</a> (source)</p></td>
+<td><p><a class="reference external" href="https://ignitionrobotics.org/docs/fortress/install">Fortress</a> (source)</p></td>
 <td><p>&gt;= 20.04</p></td>
 <td><p>No</p></td>
 <td><p>No</p></td>
@@ -429,12 +461,12 @@ However, we do not currently test this configuration and we cannot guarantee sup
 <p class="admonition-title">Important</p>
 <p>Our policy is to support Ubuntu from the most recent LTS distribution, currently Ubuntu 20.04 Focal.
 We typically switch to a new LTS when the first minor release <code class="docutils literal notranslate"><span class="pre">YY.MM.1</span></code> is released.</p>
-<p>The Python and compilers policies follow a similar policy, we try to keep them updated as much as
-possible following what includes the supported LTS distribution.</p>
+<p>The Python and compilers policies follow a similar approach, we try to keep them updated as much as
+possible following what the supported LTS distribution includes.</p>
 </div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>External contributions to add the support and provide feedback of other platforms are most welcome.</p>
+<p>External contributions to extend the support and provide feedback about other platforms are most welcome.</p>
 </div>
 <div class="admonition-fun-fact admonition">
 <p class="admonition-title">Fun fact</p>
@@ -453,11 +485,11 @@ possible following what includes the supported LTS distribution.</p>
 <div class='prev-next-bottom'>
     
     <div id="prev">
-        <a class="left-prev" href="../motivations/why_gym_ignition.html" title="previous page">
+        <a class="left-prev" href="../why/why_gym_ignition.html" title="previous page">
             <i class="prevnext-label fas fa-angle-left"></i>
             <div class="prevnext-info">
                 <p class="prevnext-label">previous</p>
-                <p class="prevnext-title">Why ScenarIO</p>
+                <p class="prevnext-title">Why gym-ignition</p>
             </div>
         </a>
     </div>

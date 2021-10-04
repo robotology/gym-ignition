@@ -57,25 +57,57 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
+   ScenarIO and gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption" role="heading">
+ <span class="caption-text">
+  What
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../what/what_is_scenario.html">
+   What is ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../what/what_is_gym_ignition.html">
    What is gym-ignition?
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Motivations
+  Why
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../motivations/why_gym_ignition.html">
+  <a class="reference internal" href="../why/motivations.html">
+   Intro
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_scenario.html">
    Why ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_ignition_gazebo.html">
+   Why Ignition Gazebo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_gym_ignition.html">
+   Why gym-ignition
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Installation
+  Installation (How)
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -108,7 +140,7 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../getting_started/scenario.html">
-   ScenarI/O
+   ScenarIO
   </a>
  </li>
  <li class="toctree-l1">
@@ -124,7 +156,7 @@
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  ScenarI/O C++ API:
+  ScenarIO C++ API:
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -292,8 +324,8 @@
       <span class="caption-text">Doc Versions</span>
     </p>
     <ul class="nav bd-sidenav">
-      <li class="toctree-l1"><a class="reference internal" href="../../devel/info/faq.html">devel</a></li>
       <li class="toctree-l1"><a class="reference internal" href="faq.html">master</a></li>
+      <li class="toctree-l1"><a class="reference internal" href="../../devel/info/faq.html">devel</a></li>
     </ul>
   </div>
 </nav>
@@ -370,6 +402,11 @@
             <nav id="bd-toc-nav" aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
  <li class="toc-h2 nav-item toc-entry">
+  <a class="reference internal nav-link" href="#how-to-give-credit">
+   How to give credit?
+  </a>
+ </li>
+ <li class="toc-h2 nav-item toc-entry">
   <a class="reference internal nav-link" href="#interaction-with-tensorflow">
    Interaction with Tensorflow
   </a>
@@ -397,6 +434,24 @@
                 
   <div class="section" id="faq">
 <h1>FAQ<a class="headerlink" href="#faq" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="how-to-give-credit">
+<span id="faq-citation"></span><h2>How to give credit?<a class="headerlink" href="#how-to-give-credit" title="Permalink to this headline">¶</a></h2>
+<p>If you use <strong>ScenarIO</strong> or <strong>gym-ignition</strong> for your research,
+please cite the following reference:</p>
+<div class="literal-block-wrapper docutils container" id="id1">
+<div class="code-block-caption"><span class="caption-text">BibTeX entry</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="highlight-bibtex notranslate"><div class="highlight"><pre><span></span><span class="nc">@INPROCEEDINGS</span><span class="p">{</span><span class="nl">ferigo2020gymignition</span><span class="p">,</span>
+  <span class="na">title</span><span class="p">=</span><span class="s">{Gym-Ignition: Reproducible Robotic Simulations for Reinforcement Learning}</span><span class="p">,</span>
+  <span class="na">author</span><span class="p">=</span><span class="s">{D. {Ferigo} and S. {Traversaro} and G. {Metta} and D. {Pucci}}</span><span class="p">,</span>
+  <span class="na">booktitle</span><span class="p">=</span><span class="s">{2020 IEEE/SICE International Symposium on System Integration (SII)}</span><span class="p">,</span>
+  <span class="na">year</span><span class="p">=</span><span class="s">{2020}</span><span class="p">,</span>
+  <span class="na">pages</span><span class="p">=</span><span class="s">{885-890}</span><span class="p">,</span>
+  <span class="na">doi</span><span class="p">=</span><span class="s">{10.1109/SII46433.2020.9025951}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+</div>
 <div class="section" id="interaction-with-tensorflow">
 <h2>Interaction with Tensorflow<a class="headerlink" href="#interaction-with-tensorflow" title="Permalink to this headline">¶</a></h2>
 <p>If your Python application imports both <code class="docutils literal notranslate"><span class="pre">scenario</span></code> and <code class="docutils literal notranslate"><span class="pre">tensorflow</span></code>,
@@ -418,7 +473,7 @@ Tensorflow will segfault.</p>
 error like <em>Unable to create the rendering window</em>.
 The reason is that Ignition Gazebo has <a class="reference external" href="https://github.com/OGRECave/ogre-next">ogre-next</a>
 (also known as ogre2) as default rendering engine, and it requires OpenGL greater than 3.3.
-You can find more details <a class="reference external" href="https://github.com/ignitionrobotics/blob/master/docs/dome/install_ubuntu_src.md#unable-to-create-the-rendering-window">here</a>.</p>
+You can find more details <a class="reference external" href="https://github.com/ignitionrobotics/docs/blob/master/fortress/troubleshooting.md#unable-to-create-the-rendering-window">here</a>.</p>
 <p>The workaround we recommend is modifying the file <code class="docutils literal notranslate"><span class="pre">~/.ignition/gazebo/gui.config</span></code> as follows:</p>
 <div class="highlight-diff notranslate"><div class="highlight"><pre><span></span><span class="gd">--- .ignition/gazebo/gui.config 2020-06-04 14:41:33.471804733 +0200</span>
 <span class="gi">+++ .ignition/gazebo/gui.config 2020-06-04 14:42:47.826475035 +0200</span>
@@ -442,18 +497,18 @@ You can find more details <a class="reference external" href="https://github.com
 class uses a default world file that is completely empty, without even the ground plane.
 You can load a custom SDF world using <a class="reference internal" href="../breathe/gazebo.html#_CPPv4N8scenario6gazebo15GazeboSimulator18insertWorldFromSDFERKNSt6stringERKNSt6stringE" title="scenario::gazebo::GazeboSimulator::insertWorldFromSDF"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">insertWorldFromSDF()</span></code></a> and then
 extracting it from the simulator with <a class="reference internal" href="../breathe/gazebo.html#_CPPv4NK8scenario6gazebo15GazeboSimulator8getWorldERKNSt6stringE" title="scenario::gazebo::GazeboSimulator::getWorld"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">getWorld()</span></code></a> using its name.</p>
-<div class="literal-block-wrapper docutils container" id="id1">
-<div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">empty.world</span></code>: use this file as starting point for your custom world</span><a class="headerlink" href="#id1" title="Permalink to this code">¶</a></div>
+<div class="literal-block-wrapper docutils container" id="id2">
+<div class="code-block-caption"><span class="caption-text"><code class="docutils literal notranslate"><span class="pre">empty.world</span></code>: use this file as starting point for your custom world</span><a class="headerlink" href="#id2" title="Permalink to this code">¶</a></div>
 <div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="cp">&lt;?xml version=&quot;1.0&quot; ?&gt;</span>
 <span class="nt">&lt;sdf</span> <span class="na">version=</span><span class="s">&quot;1.7&quot;</span><span class="nt">&gt;</span>
     <span class="nt">&lt;world</span> <span class="na">name=</span><span class="s">&quot;default&quot;</span><span class="nt">&gt;</span>
-        <span class="nt">&lt;physics</span> <span class="na">default=</span><span class="s">&quot;true&quot;</span> <span class="na">type=</span><span class="s">&quot;dart&quot;</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;physics</span> <span class="na">default=</span><span class="s">&quot;true&quot;</span> <span class="na">type=</span><span class="s">&quot;ignored&quot;</span><span class="nt">&gt;</span>
         <span class="nt">&lt;/physics&gt;</span>
         <span class="nt">&lt;light</span> <span class="na">type=</span><span class="s">&quot;directional&quot;</span> <span class="na">name=</span><span class="s">&quot;sun&quot;</span><span class="nt">&gt;</span>
             <span class="nt">&lt;cast_shadows&gt;</span>true<span class="nt">&lt;/cast_shadows&gt;</span>
             <span class="nt">&lt;pose&gt;</span>0 0 10 0 0 0<span class="nt">&lt;/pose&gt;</span>
-            <span class="nt">&lt;diffuse&gt;</span>1 1 1 1<span class="nt">&lt;/diffuse&gt;</span>
-            <span class="nt">&lt;specular&gt;</span>0.5 0.5 0.5 1<span class="nt">&lt;/specular&gt;</span>
+            <span class="nt">&lt;diffuse&gt;</span>0.8 0.8 0.8 1<span class="nt">&lt;/diffuse&gt;</span>
+            <span class="nt">&lt;specular&gt;</span>0.2 0.2 0.2 1<span class="nt">&lt;/specular&gt;</span>
             <span class="nt">&lt;attenuation&gt;</span>
                 <span class="nt">&lt;range&gt;</span>1000<span class="nt">&lt;/range&gt;</span>
                 <span class="nt">&lt;constant&gt;</span>0.9<span class="nt">&lt;/constant&gt;</span>

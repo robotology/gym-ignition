@@ -57,25 +57,57 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
+   ScenarIO and gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption" role="heading">
+ <span class="caption-text">
+  What
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../what/what_is_scenario.html">
+   What is ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../what/what_is_gym_ignition.html">
    What is gym-ignition?
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Motivations
+  Why
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../motivations/why_gym_ignition.html">
+  <a class="reference internal" href="../why/motivations.html">
+   Intro
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_scenario.html">
    Why ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_ignition_gazebo.html">
+   Why Ignition Gazebo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_gym_ignition.html">
+   Why gym-ignition
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Installation
+  Installation (How)
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -108,7 +140,7 @@
 <ul class="current nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="scenario.html">
-   ScenarI/O
+   ScenarIO
   </a>
  </li>
  <li class="toctree-l1">
@@ -124,7 +156,7 @@
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  ScenarI/O C++ API:
+  ScenarIO C++ API:
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -292,8 +324,8 @@
       <span class="caption-text">Doc Versions</span>
     </p>
     <ul class="nav bd-sidenav">
-      <li class="toctree-l1"><a class="reference internal" href="../../devel/getting_started/gym-ignition.html">devel</a></li>
       <li class="toctree-l1"><a class="reference internal" href="gym-ignition.html">master</a></li>
+      <li class="toctree-l1"><a class="reference internal" href="../../devel/getting_started/gym-ignition.html">devel</a></li>
     </ul>
   </div>
 </nav>
@@ -394,6 +426,11 @@ dynamics algorithms.
 Refer to <a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.rbd.idyntree.html#gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP" title="gym_ignition.rbd.idyntree.inverse_kinematics_nlp.InverseKinematicsNLP"><code class="xref py py-class docutils literal notranslate"><span class="pre">InverseKinematicsNLP</span></code></a> and
 <a class="reference internal" href="../apidoc/gym-ignition/gym_ignition.rbd.idyntree.html#gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations" title="gym_ignition.rbd.idyntree.kindyncomputations.KinDynComputations"><code class="xref py py-class docutils literal notranslate"><span class="pre">KinDynComputations</span></code></a> for more details.</p></li>
 </ul>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you want to learn more about <code class="docutils literal notranslate"><span class="pre">iDynTree</span></code>, the two classes we mainly use are <code class="docutils literal notranslate"><span class="pre">iDynTree::KinDynComputations</span></code> (<a class="reference external" href="https://robotology.github.io/idyntree/master/classiDynTree_1_1KinDynComputations.html">docs</a>) and <code class="docutils literal notranslate"><span class="pre">iDynTree::InverseKinematics</span></code> (<a class="reference external" href="https://robotology.github.io/idyntree/master/classiDynTree_1_1InverseKinematics.html">docs</a>).</p>
+<p>The theory and notation is summarized in <a class="reference external" href="https://pure.tue.nl/ws/portalfiles/portal/139293126/A_Multibody_Dynamics_Notation_Revision_2_.pdf">Multibody dynamics notation</a>.</p>
+</div>
 <p>You can find demo environments created with <code class="docutils literal notranslate"><span class="pre">gym-ignition</span></code> in the
 <a class="reference external" href="https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments">gym_ignition_environments</a> folder.
 These examples show how to structure a new standalone Python package containing the environment with your robots.</p>
@@ -401,11 +438,11 @@ These examples show how to structure a new standalone Python package containing 
 the components you need to implement are the following:</p>
 <ul class="simple">
 <li><p>A model <a class="reference internal" href="../apidoc/gym-ignition-environments/gym_ignition_environments.models.html#gym_ignition_environments.models.cartpole.CartPole" title="gym_ignition_environments.models.cartpole.CartPole"><code class="xref py py-class docutils literal notranslate"><span class="pre">CartPole</span></code></a>
-(<a class="reference external" href="https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/models/cartpole.py">cartpole.py</a>)</p></li>
+(<a class="reference external" href="https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/models/cartpole.py">model/cartpole.py</a>)</p></li>
 <li><p>A task <a class="reference internal" href="../apidoc/gym-ignition-environments/gym_ignition_environments.tasks.html#gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing" title="gym_ignition_environments.tasks.cartpole_discrete_balancing.CartPoleDiscreteBalancing"><code class="xref py py-class docutils literal notranslate"><span class="pre">CartPoleDiscreteBalancing</span></code></a>
 (<a class="reference external" href="https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/tasks/cartpole_discrete_balancing.py">cartpole_discrete_balancing.py</a>)</p></li>
 <li><p>A randomizer <a class="reference internal" href="../apidoc/gym-ignition-environments/gym_ignition_environments.randomizers.html#gym_ignition_environments.randomizers.cartpole.CartpoleEnvRandomizer" title="gym_ignition_environments.randomizers.cartpole.CartpoleEnvRandomizer"><code class="xref py py-class docutils literal notranslate"><span class="pre">CartpoleEnvRandomizer</span></code></a>
-(<a class="reference external" href="https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/randomizers/cartpole.py">cartpole.py</a>)</p></li>
+(<a class="reference external" href="https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/randomizers/cartpole.py">randomizers/cartpole.py</a>)</p></li>
 <li><p>Environment registration as done in <a class="reference external" href="https://github.com/robotology/gym-ignition/blob/master/python/gym_ignition_environments/__init__.py">__init__.py</a></p></li>
 </ul>
 <p>With all these resources in place, you can run a random policy of the environment as shown in

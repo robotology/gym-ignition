@@ -1,6 +1,26 @@
 FAQ
 ===
 
+.. _faq_citation:
+
+How to give credit?
+-------------------
+
+If you use **ScenarIO** or **gym-ignition** for your research,
+please cite the following reference:
+
+.. code-block:: bibtex
+   :caption: BibTeX entry
+
+   @INPROCEEDINGS{ferigo2020gymignition,
+     title={Gym-Ignition: Reproducible Robotic Simulations for Reinforcement Learning},
+     author={D. {Ferigo} and S. {Traversaro} and G. {Metta} and D. {Pucci}},
+     booktitle={2020 IEEE/SICE International Symposium on System Integration (SII)},
+     year={2020},
+     pages={885-890},
+     doi={10.1109/SII46433.2020.9025951}
+   }
+
 Interaction with Tensorflow
 ---------------------------
 
@@ -24,7 +44,7 @@ On GNU/Linux distributions that ship an old OpenGL version, the GUI could fail t
 error like *Unable to create the rendering window*.
 The reason is that Ignition Gazebo has `ogre-next <https://github.com/OGRECave/ogre-next>`_
 (also known as ogre2) as default rendering engine, and it requires OpenGL greater than 3.3.
-You can find more details `here <https://github.com/ignitionrobotics/blob/master/docs/dome/install_ubuntu_src.md#unable-to-create-the-rendering-window>`_.
+You can find more details `here <https://github.com/ignitionrobotics/docs/blob/master/fortress/troubleshooting.md#unable-to-create-the-rendering-window>`_.
 
 The workaround we recommend is modifying the file ``~/.ignition/gazebo/gui.config`` as follows:
 
@@ -59,13 +79,13 @@ extracting it from the simulator with :cpp:func:`~scenario::gazebo::GazeboSimula
    <?xml version="1.0" ?>
    <sdf version="1.7">
        <world name="default">
-           <physics default="true" type="dart">
+           <physics default="true" type="ignored">
            </physics>
            <light type="directional" name="sun">
                <cast_shadows>true</cast_shadows>
                <pose>0 0 10 0 0 0</pose>
-               <diffuse>1 1 1 1</diffuse>
-               <specular>0.5 0.5 0.5 1</specular>
+               <diffuse>0.8 0.8 0.8 1</diffuse>
+               <specular>0.2 0.2 0.2 1</specular>
                <attenuation>
                    <range>1000</range>
                    <constant>0.9</constant>

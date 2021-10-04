@@ -56,25 +56,57 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="index.html">
+   ScenarIO and gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption" role="heading">
+ <span class="caption-text">
+  What
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="what/what_is_scenario.html">
+   What is ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="what/what_is_gym_ignition.html">
    What is gym-ignition?
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Motivations
+  Why
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="motivations/why_gym_ignition.html">
+  <a class="reference internal" href="why/motivations.html">
+   Intro
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="why/why_scenario.html">
    Why ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="why/why_ignition_gazebo.html">
+   Why Ignition Gazebo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="why/why_gym_ignition.html">
+   Why gym-ignition
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Installation
+  Installation (How)
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -107,7 +139,7 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="getting_started/scenario.html">
-   ScenarI/O
+   ScenarIO
   </a>
  </li>
  <li class="toctree-l1">
@@ -123,7 +155,7 @@
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  ScenarI/O C++ API:
+  ScenarIO C++ API:
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -291,8 +323,8 @@
       <span class="caption-text">Doc Versions</span>
     </p>
     <ul class="nav bd-sidenav">
-      <li class="toctree-l1"><a class="reference internal" href="../devel/index.html">devel</a></li>
       <li class="toctree-l1"><a class="reference internal" href="genindex.html">master</a></li>
+      <li class="toctree-l1"><a class="reference internal" href="../devel/index.html">devel</a></li>
     </ul>
   </div>
 </nav>
@@ -2729,15 +2761,11 @@
         <li><a href="apidoc/scenario/scenario.bindings.html#module-scenario.bindings.gazebo">module</a>
 </li>
       </ul></li>
-      <li><a href="breathe/gazebo.html#_CPPv4N8scenario11controllers23ComputedTorqueFixedBaseE">scenario::controllers::ComputedTorqueFixedBase (C++ class)</a>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4coreE">scenario::core (C++ type)</a>
 </li>
-      <li><a href="breathe/gazebo.html#_CPPv4N8scenario11controllers10ControllerE">scenario::controllers::Controller (C++ class)</a>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core7ContactE">scenario::core::Contact (C++ struct)</a>
 </li>
-      <li><a href="breathe/gazebo.html#_CPPv4N8scenario11controllers17SetBaseReferencesE">scenario::controllers::SetBaseReferences (C++ class)</a>
-</li>
-      <li><a href="breathe/gazebo.html#_CPPv4N8scenario11controllers18SetJointReferencesE">scenario::controllers::SetJointReferences (C++ class)</a>
-</li>
-      <li><a href="breathe/gazebo.html#_CPPv4N8scenario11controllers16UseScenarioModelE">scenario::controllers::UseScenarioModel (C++ class)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario11controllers16UseScenarioModelE">[1]</a>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core12ContactPointE">scenario::core::ContactPoint (C++ struct)</a>
 </li>
       <li><a href="breathe/core.html#_CPPv4N8scenario4core5JointE">scenario::core::Joint (C++ class)</a>
 </li>
@@ -2837,21 +2865,39 @@
 </li>
       <li><a href="breathe/core.html#_CPPv4NK8scenario4core5Joint15viscousFrictionEv">scenario::core::Joint::viscousFriction (C++ function)</a>, <a href="breathe/core.html#_CPPv4NK8scenario4core5Joint15viscousFrictionEv">[1]</a>
 </li>
-      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlModeE">scenario::core::JointControlMode (C++ enum)</a>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlModeE">scenario::core::JointControlMode (C++ enum)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlModeE">[1]</a>
 </li>
-      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode5ForceE">scenario::core::JointControlMode::Force (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode5ForceE">[1]</a>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode5ForceE">scenario::core::JointControlMode::Force (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode5ForceE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode5ForceE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode5ForceE">[3]</a>
 </li>
-      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode4IdleE">scenario::core::JointControlMode::Idle (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode4IdleE">[1]</a>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode4IdleE">scenario::core::JointControlMode::Idle (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode4IdleE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode4IdleE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode4IdleE">[3]</a>
 </li>
-      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode7InvalidE">scenario::core::JointControlMode::Invalid (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode7InvalidE">[1]</a>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode7InvalidE">scenario::core::JointControlMode::Invalid (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode7InvalidE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode7InvalidE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode7InvalidE">[3]</a>
 </li>
-      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8PositionE">scenario::core::JointControlMode::Position (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8PositionE">[1]</a>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8PositionE">scenario::core::JointControlMode::Position (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8PositionE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8PositionE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8PositionE">[3]</a>
 </li>
-      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20PositionInterpolatedE">scenario::core::JointControlMode::PositionInterpolated (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20PositionInterpolatedE">[1]</a>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20PositionInterpolatedE">scenario::core::JointControlMode::PositionInterpolated (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20PositionInterpolatedE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20PositionInterpolatedE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20PositionInterpolatedE">[3]</a>
 </li>
-      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8VelocityE">scenario::core::JointControlMode::Velocity (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8VelocityE">[1]</a>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8VelocityE">scenario::core::JointControlMode::Velocity (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8VelocityE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8VelocityE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode8VelocityE">[3]</a>
 </li>
-      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20VelocityFollowerDartE">scenario::core::JointControlMode::VelocityFollowerDart (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20VelocityFollowerDartE">[1]</a>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20VelocityFollowerDartE">scenario::core::JointControlMode::VelocityFollowerDart (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20VelocityFollowerDartE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20VelocityFollowerDartE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core16JointControlMode20VelocityFollowerDartE">[3]</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core10JointLimitE">scenario::core::JointLimit (C++ struct)</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core8JointPtrE">scenario::core::JointPtr (C++ type)</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core9JointTypeE">scenario::core::JointType (C++ enum)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointTypeE">[1]</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core9JointType4BallE">scenario::core::JointType::Ball (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType4BallE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType4BallE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType4BallE">[3]</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core9JointType5FixedE">scenario::core::JointType::Fixed (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType5FixedE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType5FixedE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType5FixedE">[3]</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core9JointType7InvalidE">scenario::core::JointType::Invalid (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType7InvalidE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType7InvalidE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType7InvalidE">[3]</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core9JointType9PrismaticE">scenario::core::JointType::Prismatic (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType9PrismaticE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType9PrismaticE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType9PrismaticE">[3]</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core9JointType8RevoluteE">scenario::core::JointType::Revolute (C++ enumerator)</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType8RevoluteE">[1]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType8RevoluteE">[2]</a>, <a href="breathe/core.html#_CPPv4N8scenario4core9JointType8RevoluteE">[3]</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core5LimitE">scenario::core::Limit (C++ struct)</a>
 </li>
       <li><a href="breathe/core.html#_CPPv4N8scenario4core4LinkE">scenario::core::Link (C++ class)</a>
 </li>
@@ -2890,6 +2936,8 @@
       <li><a href="breathe/core.html#_CPPv4NK8scenario4core4Link23worldLinearAccelerationEv">scenario::core::Link::worldLinearAcceleration (C++ function)</a>, <a href="breathe/core.html#_CPPv4NK8scenario4core4Link23worldLinearAccelerationEv">[1]</a>
 </li>
       <li><a href="breathe/core.html#_CPPv4NK8scenario4core4Link19worldLinearVelocityEv">scenario::core::Link::worldLinearVelocity (C++ function)</a>, <a href="breathe/core.html#_CPPv4NK8scenario4core4Link19worldLinearVelocityEv">[1]</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core7LinkPtrE">scenario::core::LinkPtr (C++ type)</a>
 </li>
       <li><a href="breathe/core.html#_CPPv4N8scenario4core5ModelE">scenario::core::Model (C++ class)</a>
 </li>
@@ -3005,6 +3053,18 @@
 </li>
       <li><a href="breathe/core.html#_CPPv4NK8scenario4core5Model5validEv">scenario::core::Model::valid (C++ function)</a>, <a href="breathe/core.html#_CPPv4NK8scenario4core5Model5validEv">[1]</a>
 </li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core8ModelPtrE">scenario::core::ModelPtr (C++ type)</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core3PIDE">scenario::core::PID (C++ struct)</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core4PoseE">scenario::core::Pose (C++ struct)</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core5utilsE">scenario::core::utils (C++ type)</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core5utils16getInstallPrefixEv">scenario::core::utils::getInstallPrefix (C++ function)</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core5utils13SignalManagerE">scenario::core::utils::SignalManager (C++ class)</a>
+</li>
       <li><a href="breathe/core.html#_CPPv4N8scenario4core5WorldE">scenario::core::World (C++ class)</a>
 </li>
       <li><a href="breathe/core.html#_CPPv4NK8scenario4core5World8getModelERKNSt6stringE">scenario::core::World::getModel (C++ function)</a>, <a href="breathe/core.html#_CPPv4NK8scenario4core5World8getModelERKNSt6stringE">[1]</a>
@@ -3020,6 +3080,46 @@
       <li><a href="breathe/core.html#_CPPv4NK8scenario4core5World4timeEv">scenario::core::World::time (C++ function)</a>, <a href="breathe/core.html#_CPPv4NK8scenario4core5World4timeEv">[1]</a>
 </li>
       <li><a href="breathe/core.html#_CPPv4NK8scenario4core5World5validEv">scenario::core::World::valid (C++ function)</a>, <a href="breathe/core.html#_CPPv4NK8scenario4core5World5validEv">[1]</a>
+</li>
+      <li><a href="breathe/core.html#_CPPv4N8scenario4core8WorldPtrE">scenario::core::WorldPtr (C++ type)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazeboE">scenario::gazebo (C++ type)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo10exceptionsE">scenario::gazebo::exceptions (C++ type)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo10exceptions17ComponentNotFoundE">scenario::gazebo::exceptions::ComponentNotFound (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo10exceptions11DOFMismatchE">scenario::gazebo::exceptions::DOFMismatch (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo10exceptions10JointErrorE">scenario::gazebo::exceptions::JointError (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo10exceptions13JointNotFoundE">scenario::gazebo::exceptions::JointNotFound (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo10exceptions9LinkErrorE">scenario::gazebo::exceptions::LinkError (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo10exceptions12LinkNotFoundE">scenario::gazebo::exceptions::LinkNotFound (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo10exceptions10ModelErrorE">scenario::gazebo::exceptions::ModelError (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo10exceptions13ModelNotFoundE">scenario::gazebo::exceptions::ModelNotFound (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo10exceptions19NotImplementedErrorE">scenario::gazebo::exceptions::NotImplementedError (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo12GazeboEntityE">scenario::gazebo::GazeboEntity (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo12GazeboEntity18createECMResourcesEv">scenario::gazebo::GazeboEntity::createECMResources (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo12GazeboEntity18createECMResourcesEv">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo12GazeboEntity3ecmEv">scenario::gazebo::GazeboEntity::ecm (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo12GazeboEntity3ecmEv">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo12GazeboEntity6entityEv">scenario::gazebo::GazeboEntity::entity (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo12GazeboEntity6entityEv">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo12GazeboEntity12eventManagerEv">scenario::gazebo::GazeboEntity::eventManager (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo12GazeboEntity12eventManagerEv">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo12GazeboEntity2idEv">scenario::gazebo::GazeboEntity::id (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo12GazeboEntity2idEv">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo12GazeboEntity10initializeEKN8ignition6gazebo6EntityEPN8ignition6gazebo22EntityComponentManagerEPN8ignition6gazebo12EventManagerE">scenario::gazebo::GazeboEntity::initialize (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo12GazeboEntity10initializeEKN8ignition6gazebo6EntityEPN8ignition6gazebo22EntityComponentManagerEPN8ignition6gazebo12EventManagerE">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo12GazeboEntity11validEntityEv">scenario::gazebo::GazeboEntity::validEntity (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo12GazeboEntity11validEntityEv">[1]</a>
 </li>
       <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo15GazeboSimulatorE">scenario::gazebo::GazeboSimulator (C++ class)</a>
 </li>
@@ -3173,8 +3273,6 @@
 </li>
       <li><a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo5Joint14velocityTargetEK6size_t">scenario::gazebo::Joint::velocityTarget (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo5Joint14velocityTargetEK6size_t">[1]</a>
 </li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo5Joint15viscousFrictionEv">scenario::gazebo::Joint::viscousFriction (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo5Joint15viscousFrictionEv">[1]</a>
 </li>
       <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo4LinkE">scenario::gazebo::Link (C++ class)</a>
@@ -3201,6 +3299,8 @@
 </li>
       <li><a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo4Link13contactWrenchEv">scenario::gazebo::Link::contactWrench (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo4Link13contactWrenchEv">[1]</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo4Link18createECMResourcesEv">scenario::gazebo::Link::createECMResources (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo4Link18createECMResourcesEv">[1]</a>
 </li>
       <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo4Link22enableContactDetectionEKb">scenario::gazebo::Link::enableContactDetection (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo4Link22enableContactDetectionEKb">[1]</a>
@@ -3373,9 +3473,131 @@
 </li>
       <li><a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo5Model5validEv">scenario::gazebo::Model::valid (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4NK8scenario6gazebo5Model5validEv">[1]</a>
 </li>
-      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo13PhysicsEngineE">scenario::gazebo::PhysicsEngine (C++ enum)</a>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo13PhysicsEngineE">scenario::gazebo::PhysicsEngine (C++ enum)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo13PhysicsEngineE">[1]</a>
 </li>
-      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo13PhysicsEngine4DartE">scenario::gazebo::PhysicsEngine::Dart (C++ enumerator)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo13PhysicsEngine4DartE">[1]</a>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo13PhysicsEngine4DartE">scenario::gazebo::PhysicsEngine::Dart (C++ enumerator)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo13PhysicsEngine4DartE">[1]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo13PhysicsEngine4DartE">[2]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo13PhysicsEngine4DartE">[3]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utilsE">scenario::gazebo::utils (C++ type)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4I0EN8scenario6gazebo5utils23defaultEqualityOperatorEbRK1TRK1T">scenario::gazebo::utils::defaultEqualityOperator (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils11denormalizeERKNSt6vectorIdEERKNSt6vectorIdEERKNSt6vectorIdEE">scenario::gazebo::utils::denormalize (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils27doubleToSteadyClockDurationEKd">scenario::gazebo::utils::doubleToSteadyClockDuration (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils11findSdfFileERKNSt6stringE">scenario::gazebo::utils::findSdfFile (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils14FixedSizeQueueE">scenario::gazebo::utils::FixedSizeQueue (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils29fromBaseToModelLinearVelocityERKN8ignition4math8Vector3dERKN8ignition4math8Vector3dERKN8ignition4math6Pose3dERKN8ignition4math11QuaterniondE">scenario::gazebo::utils::fromBaseToModelLinearVelocity (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils23fromIgnitionContactMsgsEPN8ignition6gazebo22EntityComponentManagerERKN8ignition4msgs7ContactE">scenario::gazebo::utils::fromIgnitionContactMsgs (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils24fromIgnitionContactsMsgsEPN8ignition6gazebo22EntityComponentManagerERKN8ignition4msgs8ContactsE">scenario::gazebo::utils::fromIgnitionContactsMsgs (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils15fromIgnitionPIDERKN8ignition4math3PIDE">scenario::gazebo::utils::fromIgnitionPID (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils15fromIgnitionPIDERKN8ignition4math3PIDE">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils16fromIgnitionPoseERKN8ignition4math6Pose3dE">scenario::gazebo::utils::fromIgnitionPose (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils22fromIgnitionQuaternionERKN8ignition4math11QuaterniondE">scenario::gazebo::utils::fromIgnitionQuaternion (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils22fromIgnitionQuaternionERKN8ignition4math11QuaterniondE">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils18fromIgnitionVectorERKN8ignition4math8Vector3dE">scenario::gazebo::utils::fromIgnitionVector (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils18fromIgnitionVectorERKN8ignition4math8Vector3dE">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils29fromModelToBaseLinearVelocityERKN8ignition4math8Vector3dERKN8ignition4math8Vector3dERKN8ignition4math6Pose3dERKN8ignition4math11QuaterniondE">scenario::gazebo::utils::fromModelToBaseLinearVelocity (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils7fromSdfEKN3sdf9JointTypeE">scenario::gazebo::utils::fromSdf (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4I00EN8scenario6gazebo5utils12getComponentEDaPN8ignition6gazebo22EntityComponentManagerEKN8ignition6gazebo6EntityE18ComponentDataTypeT">scenario::gazebo::utils::getComponent (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4I0EN8scenario6gazebo5utils16getComponentDataEDTcldtcl14ComponentTypeTE4DataEEPN8ignition6gazebo22EntityComponentManagerEKN8ignition6gazebo6EntityE">scenario::gazebo::utils::getComponentData (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils13getEmptyWorldEv">scenario::gazebo::utils::getEmptyWorld (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4I0EN8scenario6gazebo5utils20getExistingComponentEDaPN8ignition6gazebo22EntityComponentManagerEKN8ignition6gazebo6EntityE">scenario::gazebo::utils::getExistingComponent (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4I0EN8scenario6gazebo5utils24getExistingComponentDataEDTcldtcl14ComponentTypeTE4DataEEPN8ignition6gazebo22EntityComponentManagerEKN8ignition6gazebo6EntityE">scenario::gazebo::utils::getExistingComponentData (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4I0EN8scenario6gazebo5utils33getFirstParentEntityWithComponentEN8ignition6gazebo6EntityEPN8ignition6gazebo22EntityComponentManagerEKN8ignition6gazebo6EntityE">scenario::gazebo::utils::getFirstParentEntityWithComponent (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils20getModelFileFromFuelERKNSt6stringEKb">scenario::gazebo::utils::getModelFileFromFuel (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringE">scenario::gazebo::utils::getModelNameFromSdf (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils14getParentModelERK12GazeboEntity">scenario::gazebo::utils::getParentModel (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils14getParentWorldERK12GazeboEntity">scenario::gazebo::utils::getParentWorld (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils19getPluginSDFElementERKNSt6stringERKNSt6stringE">scenario::gazebo::utils::getPluginSDFElement (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils15getRandomStringEK6size_t">scenario::gazebo::utils::getRandomString (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils18getSdfRootFromFileERKNSt6stringE">scenario::gazebo::utils::getSdfRootFromFile (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils20getSdfRootFromStringERKNSt6stringE">scenario::gazebo::utils::getSdfRootFromString (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils12getSdfStringERKNSt6stringE">scenario::gazebo::utils::getSdfString (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils19getWorldNameFromSdfERKNSt6stringEK6size_t">scenario::gazebo::utils::getWorldNameFromSdf (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils26insertPluginToGazeboEntityERK12GazeboEntityRKNSt6stringERKNSt6stringERKNSt6stringE">scenario::gazebo::utils::insertPluginToGazeboEntity (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils13LinkWrenchCmdE">scenario::gazebo::utils::LinkWrenchCmd (C++ class)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9normalizeERKNSt6vectorIdEERKNSt6vectorIdEERKNSt6vectorIdEE">scenario::gazebo::utils::normalize (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils22parentModelJustCreatedERK12GazeboEntity">scenario::gazebo::utils::parentModelJustCreated (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils14renameSDFModelERN3sdf4RootERKNSt6stringE">scenario::gazebo::utils::renameSDFModel (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils14renameSDFWorldERKN3sdf5WorldERKNSt6stringE">scenario::gazebo::utils::renameSDFWorld (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils21rowMajorToColumnMajorERNSt6vectorIdEEKlKl">scenario::gazebo::utils::rowMajorToColumnMajor (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils21ScenarioVerboseEnvVarE">scenario::gazebo::utils::ScenarioVerboseEnvVar (C++ member)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils14sdfStringValidERKNSt6stringE">scenario::gazebo::utils::sdfStringValid (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4I00EN8scenario6gazebo5utils16setComponentDataEDaPN8ignition6gazebo22EntityComponentManagerEKN8ignition6gazebo6EntityERK18ComponentDataTypeTRKNSt8functionIFbRK18ComponentDataTypeTRK18ComponentDataTypeTEEE">scenario::gazebo::utils::setComponentData (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4I00EN8scenario6gazebo5utils24setExistingComponentDataEDaPN8ignition6gazebo22EntityComponentManagerEKN8ignition6gazebo6EntityERK18ComponentDataTypeTRKNSt8functionIFbRK18ComponentDataTypeTRK18ComponentDataTypeTEEE">scenario::gazebo::utils::setExistingComponentData (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils12setVerbosityEK9Verbosity">scenario::gazebo::utils::setVerbosity (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils27steadyClockDurationToDoubleEKNSt6chrono12steady_clock8durationE">scenario::gazebo::utils::steadyClockDurationToDouble (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils13toIgnitionPIDERKN8scenario4core3PIDE">scenario::gazebo::utils::toIgnitionPID (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils13toIgnitionPIDERKN8scenario4core3PIDE">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils14toIgnitionPoseERKN8scenario4core4PoseE">scenario::gazebo::utils::toIgnitionPose (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils20toIgnitionQuaternionERKNSt5arrayIdXL4EEEE">scenario::gazebo::utils::toIgnitionQuaternion (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils20toIgnitionQuaternionERKNSt5arrayIdXL4EEEE">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils17toIgnitionVector3ERKNSt5arrayIdXL3EEEE">scenario::gazebo::utils::toIgnitionVector3 (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils17toIgnitionVector3ERKNSt5arrayIdXL3EEEE">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils17toIgnitionVector4ERKNSt5arrayIdXL4EEEE">scenario::gazebo::utils::toIgnitionVector4 (C++ function)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils17toIgnitionVector4ERKNSt5arrayIdXL4EEEE">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils5toSdfEKN8scenario4core9JointTypeE">scenario::gazebo::utils::toSdf (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils16updateSDFPhysicsERN3sdf4RootEKdKdKdK6size_t">scenario::gazebo::utils::updateSDFPhysics (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils19URDFFileToSDFStringERKNSt6stringE">scenario::gazebo::utils::URDFFileToSDFString (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils21URDFStringToSDFStringERKNSt6stringE">scenario::gazebo::utils::URDFStringToSDFString (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils22verboseFromEnvironmentEv">scenario::gazebo::utils::verboseFromEnvironment (C++ function)</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9VerbosityE">scenario::gazebo::utils::Verbosity (C++ enum)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9VerbosityE">[1]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity5DebugE">scenario::gazebo::utils::Verbosity::Debug (C++ enumerator)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity5DebugE">[1]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity5DebugE">[2]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity5DebugE">[3]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity5ErrorE">scenario::gazebo::utils::Verbosity::Error (C++ enumerator)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity5ErrorE">[1]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity5ErrorE">[2]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity5ErrorE">[3]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity4InfoE">scenario::gazebo::utils::Verbosity::Info (C++ enumerator)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity4InfoE">[1]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity4InfoE">[2]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity4InfoE">[3]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity11SuppressAllE">scenario::gazebo::utils::Verbosity::SuppressAll (C++ enumerator)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity11SuppressAllE">[1]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity11SuppressAllE">[2]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity11SuppressAllE">[3]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity7WarningE">scenario::gazebo::utils::Verbosity::Warning (C++ enumerator)</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity7WarningE">[1]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity7WarningE">[2]</a>, <a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils9Verbosity7WarningE">[3]</a>
+</li>
+      <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5utils18WrenchWithDurationE">scenario::gazebo::utils::WrenchWithDuration (C++ class)</a>
 </li>
       <li><a href="breathe/gazebo.html#_CPPv4N8scenario6gazebo5WorldE">scenario::gazebo::World (C++ class)</a>
 </li>

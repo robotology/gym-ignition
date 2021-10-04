@@ -5,7 +5,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>What is gym-ignition? &#8212; gym-ignition  documentation</title>
+    <title>ScenarIO and gym-ignition &#8212; gym-ignition  documentation</title>
     
   <link href="_static/css/theme.css" rel="stylesheet" />
   <link href="_static/css/index.c5995385ac14fb8791e8eb36b4908be2.css" rel="stylesheet" />
@@ -35,7 +35,7 @@
     <script src="_static/sphinx-book-theme.12a9622fbb08dcb3a2a40b2c02b83a57.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Why ScenarIO" href="motivations/why_gym_ignition.html" />
+    <link rel="next" title="What is ScenarIO" href="what/what_is_scenario.html" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="docsearch:language" content="en" />
     
@@ -56,25 +56,57 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1 current">
   <a class="reference internal" href="#">
+   ScenarIO and gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption" role="heading">
+ <span class="caption-text">
+  What
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="what/what_is_scenario.html">
+   What is ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="what/what_is_gym_ignition.html">
    What is gym-ignition?
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Motivations
+  Why
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="motivations/why_gym_ignition.html">
+  <a class="reference internal" href="why/motivations.html">
+   Intro
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="why/why_scenario.html">
    Why ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="why/why_ignition_gazebo.html">
+   Why Ignition Gazebo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="why/why_gym_ignition.html">
+   Why gym-ignition
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Installation
+  Installation (How)
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -107,7 +139,7 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="getting_started/scenario.html">
-   ScenarI/O
+   ScenarIO
   </a>
  </li>
  <li class="toctree-l1">
@@ -123,7 +155,7 @@
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  ScenarI/O C++ API:
+  ScenarIO C++ API:
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -291,8 +323,8 @@
       <span class="caption-text">Doc Versions</span>
     </p>
     <ul class="nav bd-sidenav">
-      <li class="toctree-l1"><a class="reference internal" href="../devel/index.html">devel</a></li>
       <li class="toctree-l1"><a class="reference internal" href="index.html">master</a></li>
+      <li class="toctree-l1"><a class="reference internal" href="../devel/index.html">devel</a></li>
     </ul>
   </div>
 </nav>
@@ -371,46 +403,25 @@
         
               <div>
                 
-  <div class="section" id="what-is-gym-ignition">
-<span id="id1"></span><h1>What is gym-ignition?<a class="headerlink" href="#what-is-gym-ignition" title="Permalink to this headline">¶</a></h1>
-<p><strong>gym-ignition is a framework to create reproducible robotics environments for reinforcement learning research.</strong></p>
-<p>The aims of the project are the following:</p>
+  <div class="section" id="scenario-and-gym-ignition">
+<span id="id1"></span><h1>ScenarIO and gym-ignition<a class="headerlink" href="#scenario-and-gym-ignition" title="Permalink to this headline">¶</a></h1>
+<p>This project targets both <em>control</em> and <em>robot learning</em> research domains:</p>
 <ul class="simple">
-<li><p>Provide unified APIs for interfacing with both simulated and real robots.</p></li>
-<li><p>Implement the simulation backend interfacing with the Ignition Gazebo simulator.</p></li>
-<li><p>Enable a seamless switch of all the physics engines supported by Ignition Gazebo.</p></li>
-<li><p>Guarantee the reproducibility and the scalability of the simulations by using the simulator as a library, without
-relying on any network transport.</p></li>
-<li><p>Simplify the development of OpenAI Gym environments for robot learning research.</p></li>
-</ul>
-<p><strong>gym-ignition</strong> targets both <em>control</em> and <em>robot learning</em> research domains:</p>
-<ul class="simple">
-<li><p>Researchers in robotics and control can simulate their robots with familiar tools like Gazebo and URDF,
+<li><p>Researchers in robotics and control can simulate their robots with familiar tools like Gazebo and URDF/SDF,
 without the need to rely on any middleware.</p></li>
 <li><p>Researchers in robot learning can quickly develop new robotic environments that can scale to hundreds of parallel instances.</p></li>
 </ul>
-<p>To know more about why we started developing gym-ignition, why we selected Ignition Gazebo for our simulations,
-and what are our long-term goals, visit the <a class="reference internal" href="motivations/why_gym_ignition.html#motivations"><span class="std std-ref">Motivations</span></a> page.</p>
-<p>We are building an entire ecosystem around gym-ignition, if you’re interested have a look to the other projects:</p>
-<table class="table">
-<colgroup>
-<col style="width: 33%" />
-<col style="width: 33%" />
-<col style="width: 33%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>ScenarI/O and <code class="docutils literal notranslate"><span class="pre">gym_ignition</span></code></p></th>
-<th class="head"><p>Robot Models</p></th>
-<th class="head"><p>Ignition Plugins</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><a class="reference external" href="https://github.com/robotology/gym-ignition">robotology/gym-ignition</a></p></td>
-<td><p><a class="reference external" href="https://github.com/robotology/gym-ignition-models">robotology/gym-ignition-models</a></p></td>
-<td><p><a class="reference external" href="https://github.com/dic-iit/gazebo-scenario-plugins">dic-iit/gazebo-scenario-plugins</a></p></td>
-</tr>
-</tbody>
-</table>
+<p>We provide two related subprojects to each of these categories:</p>
+<ol class="arabic simple">
+<li><p><strong>ScenarIO</strong> provides APIs to interface with the robots.</p></li>
+<li><p><strong>gym-ignition</strong> helps structuring environments compatible with OpenAI Gym,
+while minimizing boilerplate code and providing common rigid-body dynamics utilities.</p></li>
+</ol>
+<p>Check the sections <a class="reference internal" href="what/what_is_scenario.html#what-is-scenario"><span class="std std-ref">What is ScenarIO</span></a> and
+<a class="reference internal" href="what/what_is_gym_ignition.html#what-is-gym-ignition"><span class="std std-ref">What is gym-ignition</span></a> for more details,
+and visit <a class="reference internal" href="why/motivations.html#motivations"><span class="std std-ref">Motivations</span></a> for an extended overview.</p>
+<p>For a quick practical introduction, visit the <a class="reference internal" href="getting_started/scenario.html#getting-started-scenario"><span class="std std-ref">Getting Started</span></a> page.</p>
+<p>If you use this project for your research, please check the FAQ about <a class="reference internal" href="info/faq.html#faq-citation"><span class="std std-ref">how to give credit</span></a>.</p>
 <table class="table">
 <colgroup>
 <col style="width: 33%" />
@@ -436,6 +447,8 @@ and what are our long-term goals, visit the <a class="reference internal" href="
 </div>
 <div class="toctree-wrapper compound">
 </div>
+<div class="toctree-wrapper compound">
+</div>
 </div>
 
 
@@ -449,10 +462,10 @@ and what are our long-term goals, visit the <a class="reference internal" href="
 <div class='prev-next-bottom'>
     
      <div id="next">
-        <a class="right-next" href="motivations/why_gym_ignition.html" title="next page">
+        <a class="right-next" href="what/what_is_scenario.html" title="next page">
             <div class="prevnext-info">
                 <p class="prevnext-label">next</p>
-                <p class="prevnext-title">Why ScenarIO</p>
+                <p class="prevnext-title">What is ScenarIO</p>
             </div>
             <i class="prevnext-label fas fa-angle-right"></i>
         </a>

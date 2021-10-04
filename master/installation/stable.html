@@ -57,25 +57,57 @@
         <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../index.html">
+   ScenarIO and gym-ignition
+  </a>
+ </li>
+</ul>
+<p class="caption" role="heading">
+ <span class="caption-text">
+  What
+ </span>
+</p>
+<ul class="nav bd-sidenav">
+ <li class="toctree-l1">
+  <a class="reference internal" href="../what/what_is_scenario.html">
+   What is ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../what/what_is_gym_ignition.html">
    What is gym-ignition?
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Motivations
+  Why
  </span>
 </p>
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
-  <a class="reference internal" href="../motivations/why_gym_ignition.html">
+  <a class="reference internal" href="../why/motivations.html">
+   Intro
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_scenario.html">
    Why ScenarIO
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_ignition_gazebo.html">
+   Why Ignition Gazebo
+  </a>
+ </li>
+ <li class="toctree-l1">
+  <a class="reference internal" href="../why/why_gym_ignition.html">
+   Why gym-ignition
   </a>
  </li>
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  Installation
+  Installation (How)
  </span>
 </p>
 <ul class="current nav bd-sidenav">
@@ -108,7 +140,7 @@
 <ul class="nav bd-sidenav">
  <li class="toctree-l1">
   <a class="reference internal" href="../getting_started/scenario.html">
-   ScenarI/O
+   ScenarIO
   </a>
  </li>
  <li class="toctree-l1">
@@ -124,7 +156,7 @@
 </ul>
 <p class="caption" role="heading">
  <span class="caption-text">
-  ScenarI/O C++ API:
+  ScenarIO C++ API:
  </span>
 </p>
 <ul class="nav bd-sidenav">
@@ -292,8 +324,8 @@
       <span class="caption-text">Doc Versions</span>
     </p>
     <ul class="nav bd-sidenav">
-      <li class="toctree-l1"><a class="reference internal" href="../../devel/installation/stable.html">devel</a></li>
       <li class="toctree-l1"><a class="reference internal" href="stable.html">master</a></li>
+      <li class="toctree-l1"><a class="reference internal" href="../../devel/installation/stable.html">devel</a></li>
     </ul>
   </div>
 </nav>
@@ -409,10 +441,18 @@ Make sure to execute the next steps in a terminal where the virtual environment 
 </div>
 <div class="section" id="pypi-package">
 <h2>PyPI Package<a class="headerlink" href="#pypi-package" title="Permalink to this headline">¶</a></h2>
-<p>Install the <a class="reference external" href="https://pypi.org/project/gym-ignition/">gym-ignition</a> package from PyPI:</p>
+<p>We provide two different packages for ScenarIO and gym-ignition.</p>
+<p>If you are interested in the ScenarIO package,
+install the <a class="reference external" href="https://pypi.org/project/scenario/">scenario</a> package from PyPI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install scenario
+</pre></div>
+</div>
+<p>Instead, if you are interested in gym-ignition,
+install the <a class="reference external" href="https://pypi.org/project/gym-ignition/">gym-ignition</a> package from PyPI:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip install gym-ignition
 </pre></div>
 </div>
+<p>It will download and install also <code class="docutils literal notranslate"><span class="pre">scenario</span></code> since it depends on it.</p>
 </div>
 </div>
 
