@@ -17,54 +17,65 @@ on:
     - cron:  '0 2 * * 1'
 
 jobs:
-  docker:
-    name: 'diegoferigo/gym-ignition:${{ matrix.tag }}'
+
+  docker-compose:
+    name: Build and Deploy
     runs-on: ubuntu-latest
-    strategy:
-      max-parallel: 1
-      matrix:
-        baseimage: ['ubuntu:bionic']
-        tag:
-          - base
-          - ci-master
-          - ci-devel
-          - pypi-master
-          - pypi-devel
-          #- latest
-          - nightly
 
     steps:
 
-      # Use the branch that triggered the workflow for push and pull_request events
-      - uses: actions/checkout@master
-        if: github.event_name != 'schedule'
+      - name: '🔍️ Inspect Environment'
+        run: |
+          env | grep ^GITHUB
+          echo ""
+          cat ${GITHUB_EVENT_PATH}
+          echo ""
+          env
 
-      # Use devel branch for scheduled builds
-      - uses: actions/checkout@master
+      # Use the branch that triggered the workflow for push and pull_request events
+      - name: "🔀 Checkout repository"
+        if: github.event_name != 'schedule'
+        uses: actions/checkout@v2
+
+      # Use devel branch for scheduled builds.
+      # It assumes that devel has always the most updated .docker folder.
+      - name: "🔀 Checkout repository"
+        uses: actions/checkout@v2
         with:
           ref: 'refs/heads/devel'
         if: github.event_name == 'schedule'
 
-      - name: Build
-        env:
-          TAG: ${{ matrix.tag }}
+      # https://github.com/docker/login-action#github-container-registry
+      - name: "🔑 Registry login"
+        if: |
+          github.repository == 'robotology/gym-ignition' &&
+          github.event_name != 'pull_request' &&
+          (github.event_name == 'schedule' ||
+           github.event_name == 'workflow_dispatch' ||
+           github.ref == 'refs/heads/devel')
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "🏗️ Build images"
+        working-directory: .docker
+        run: docker-compose build
+
+      - name: "🔍 Image digest"
+        run: docker images
+
+      - name: "⬆️ Deploy images"
+        if: |
+          github.repository == 'robotology/gym-ignition' &&
+          github.event_name != 'pull_request' &&
+          (github.event_name == 'schedule' ||
+           github.event_name == 'workflow_dispatch' ||
+           github.ref == 'refs/heads/devel')
         run: |
-          cd .docker
-          docker-compose build ${TAG}
-
-      - name: Login
-        if: |
-          github.repository == 'robotology/gym-ignition' &&
-          github.event_name != 'pull_request' &&
-          (github.event_name == 'schedule' || github.ref == 'refs/heads/devel')
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-        run: echo ${DOCKER_PASSWORD} | docker login --username ${DOCKER_USERNAME} --password-stdin
-
-      - name: Push
-        if: |
-          github.repository == 'robotology/gym-ignition' &&
-          github.event_name != 'pull_request' &&
-          (github.event_name == 'schedule' || github.ref == 'refs/heads/devel')
-        run: docker push diegoferigo/gym-ignition:${{ matrix.tag }}
+          images=($(docker images | grep ghcr.io/robotology/gym-ignition | tr -s " " | cut -d " " -f 1,2 | awk '{print $1 ":" $2}'))
+          for ((i=${#images[@]}-1; i>=0; i--)) ; do
+            echo "==> Processing: ${images[i]}"
+            docker push ${images[i]}
+          done
