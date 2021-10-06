@@ -2,79 +2,82 @@ version: '3.0'
 
 services:
 
+  # ===========
+  # Base images
+  # ===========
+
   base:
     build:
       args:
+        runtime_user: root
         from: ubuntu:focal
       context: .
       dockerfile: base.Dockerfile
-    image: diegoferigo/gym-ignition:base
+    image: ghcr.io/robotology/gym-ignition:base
 
-  # ======
-  # MASTER
-  # ======
-
-  ci-master:
+  codespaces-base:
     build:
       args:
-        from: diegoferigo/gym-ignition:base
-        ignition_codename: dome
+        runtime_user: vscode
+        from: mcr.microsoft.com/vscode/devcontainers/base:focal
+      context: .
+      dockerfile: base.Dockerfile
+    image: ghcr.io/robotology/gym-ignition:codespaces-base
+
+  # ==============
+  # Stable Channel
+  # ==============
+
+  codespaces-stable:
+    depends_on: [ codespaces-base ]
+    build:
+      args:
+        from: ghcr.io/robotology/gym-ignition:codespaces-base
+        runtime_user: vscode
+        ignition_codename: fortress
       context: .
       dockerfile: cicd-master.Dockerfile
-    image: diegoferigo/gym-ignition:ci-master
+    image: ghcr.io/robotology/gym-ignition:codespaces-stable
 
-  pypi-master:
+  stable: &stable
+    depends_on: [ codespaces-stable ]
     build:
       args:
-        from: diegoferigo/gym-ignition:base
-        ignition_codename: dome
+        from: ghcr.io/robotology/gym-ignition:codespaces-stable
+        runtime_user: vscode
+        gym_ignition_branch: master
       context: .
-      dockerfile: cicd-master.Dockerfile
-    image: diegoferigo/gym-ignition:pypi-master
+      dockerfile: Dockerfile
+    image: ghcr.io/robotology/gym-ignition:stable
 
-  # =====
-  # DEVEL
-  # =====
+  latest:
+    <<: *stable
+    image: ghcr.io/robotology/gym-ignition:latest
 
-  ci-devel:
+  # ===============
+  # Nightly Channel
+  # ===============
+
+  codespaces-nightly:
+    depends_on: [ codespaces-base ]
     build:
       args:
-        from: diegoferigo/gym-ignition:base
+        from: ghcr.io/robotology/gym-ignition:codespaces-base
+        runtime_user: vscode
         ignition_codename: fortress
         CMAKE_BUILD_TYPE: Debug
       context: .
       dockerfile: cicd-devel.Dockerfile
-    image: diegoferigo/gym-ignition:ci-devel
-
-  pypi-devel:
-    build:
-      args:
-        from: diegoferigo/gym-ignition:base
-        ignition_codename: fortress
-        CMAKE_BUILD_TYPE: Release
-      context: .
-      dockerfile: cicd-devel.Dockerfile
-    image: diegoferigo/gym-ignition:pypi-devel
-
-  # ====
-  # DEMO
-  # ====
-
-  latest:
-    build:
-      args:
-        from: diegoferigo/gym-ignition:pypi-master
-        branch: master
-      context: .
-      dockerfile: Dockerfile
-    image: diegoferigo/gym-ignition:latest
+    image: ghcr.io/robotology/gym-ignition:codespaces-nightly
 
   nightly:
+    depends_on: [ codespaces-nightly ]
     build:
       args:
-        from: diegoferigo/gym-ignition:ci-devel
-        branch: devel
+        from: ghcr.io/robotology/gym-ignition:codespaces-nightly
+        runtime_user: vscode
+        gym_ignition_branch: devel
         pip_options: --pre
       context: .
       dockerfile: Dockerfile
-    image: diegoferigo/gym-ignition:nightly
+    image: ghcr.io/robotology/gym-ignition:nightly

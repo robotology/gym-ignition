@@ -1,19 +1,16 @@
-ARG from=diegoferigo/gym-ignition:pypi-master
+ARG from=ghcr.io/robotology/gym-ignition:codespaces-stable
 FROM ${from}
+
+ARG runtime_user=root
+USER $runtime_user
 
 # Install the PyPI package in a virtualenv
 ARG pip_options=""
-RUN virtualenv -p $(which python3) ${VIRTUAL_ENV} &&\
-    python -m pip install --upgrade pip &&\
-    pip install ${pip_options} gym-ignition &&\
+RUN pip install ${pip_options} gym-ignition[all] &&\
     rm -r $HOME/.cache/pip
 
-# Clone the repository
+# Clone the repository to have the examples and tests
 WORKDIR /github
-ARG branch="master"
-RUN git clone -b ${branch} https://github.com/robotology/gym-ignition /github
-
-# Reset the entrypoint
-ENTRYPOINT [""]
-
-CMD ["bash"]
+ARG gym_ignition_branch="master"
+RUN sudo chown $runtime_user /github &&\
+    git clone -b $gym_ignition_branch https://github.com/robotology/gym-ignition /github
