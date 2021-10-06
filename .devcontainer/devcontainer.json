@@ -1,19 +1,30 @@
+//
+// https://code.visualstudio.com/docs/remote/devcontainerjson-reference
+//
 {
 	"name": "Ubuntu",
 	"runArgs": ["--init"],
-	"build": {
-		"dockerfile": "Dockerfile",
-		// Update 'VARIANT' to pick an Ubuntu version: hirsute, focal, bionic
-		// Use hirsute or bionic on local arm64/Apple Silicon.
-		"args": { "VARIANT": "focal" }
-	},
+	"image": "ghcr.io/robotology/gym-ignition:codespaces-stable",
 
 	// Set *default* container specific settings.json values on container create.
-	"settings": {},
-
+	"settings": {
+		"terminal.integrated.defaultProfile.linux": "bash_codespaces",
+		"terminal.integrated.profiles.linux": {
+			"bash_codespaces": {
+				"path": "bash",
+				"icon": "terminal-bash",
+				"args": ["-l"]
+			}
+		}
+	},
 
 	// Add the IDs of extensions you want installed when the container is created.
-	"extensions": [],
+	"extensions": [
+		"ms-vscode.cpptools",
+		"ms-vscode.cmake-tools",
+		"ms-python.python",
+		"ms-azuretools.vscode-docker"
+	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
