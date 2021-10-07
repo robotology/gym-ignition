@@ -91,3 +91,6 @@ RUN sudo apt-get update &&\
     pip install idyntree &&\
     rm -rf $HOME/.cache/pip
 ENV CMAKE_PREFIX_PATH=$virtual_env_dir/lib/python3.8/site-packages/idyntree:$CMAKE_PREFIX_PATH
+
+# Add the GitHub Codespaces helpers
+COPY codespaces_helpers.sh /etc/profile.d/99-codespaces_helpers.sh
