@@ -82,6 +82,11 @@ def setup_gazebo_environment() -> None:
 
     os.environ["IGN_GAZEBO_SYSTEM_PLUGIN_PATH"] = ign_gazebo_system_plugin_path
 
+    # Do not load the default server plugins
+    # https://github.com/ignitionrobotics/ign-gazebo/pull/281
+    if "IGN_GAZEBO_SERVER_CONFIG_PATH" not in os.environ:
+        os.environ["IGN_GAZEBO_SERVER_CONFIG_PATH"] = ""
+
 
 def preload_tensorflow_shared_libraries() -> None:
 
