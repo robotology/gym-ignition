@@ -16,7 +16,8 @@ swig_add_library(${scenario_swig_name}
     SOURCES ${scenario_swig_name}.i)
 add_library(ScenarioSwig::Core ALIAS core)
 
-target_link_libraries(${scenario_swig_name} PUBLIC
+target_link_libraries(${scenario_swig_name}
+    PUBLIC
     ScenarioCore::ScenarioABC
     ScenarioCore::CoreUtils
     Python3::Python)

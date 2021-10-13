@@ -14,13 +14,13 @@ swig_add_library(${scenario_swig_name}
     OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/../scenario/bindings
     OUTFILE_DIR ${CMAKE_CURRENT_BINARY_DIR}/..
     SOURCES ${scenario_swig_name}.i)
+add_library(ScenarioSwig::Gazebo ALIAS gazebo)
 
 target_link_libraries(${scenario_swig_name}
     PUBLIC
     ScenarioGazebo::ScenarioGazebo
     ScenarioGazebo::GazeboSimulator
     Python3::Python)
-add_library(ScenarioSwig::Gazebo ALIAS gazebo)
 
 set_property(TARGET ${scenario_swig_name} PROPERTY
     SWIG_USE_TARGET_INCLUDE_DIRECTORIES TRUE)
