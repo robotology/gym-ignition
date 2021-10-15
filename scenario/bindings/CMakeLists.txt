@@ -73,4 +73,5 @@ file(TOUCH ${CMAKE_CURRENT_BINARY_DIR}/scenario/bindings/__init__.py)
 # Move main init.py file to package root of the install tree
 install(
     FILES ${CMAKE_CURRENT_SOURCE_DIR}/__init__.py
-    DESTINATION ${SCENARIO_PACKAGE_INSTALL_DIR})
+    DESTINATION ${SCENARIO_PACKAGE_INSTALL_DIR}
+    COMPONENT python)
