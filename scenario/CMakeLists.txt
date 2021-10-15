@@ -26,30 +26,21 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${SCENARIO_BUILD_TYPES})
 endif()
 
-# This new build mode configures the CMake project to be compatible with the pipeline to
-# create the PyPI linux wheel
-include(AddNewBuildMode)
-add_new_build_mode(NAME "PyPI" TEMPLATE "Release")
+# Enable custom options required to package the CMake project from
+# either setup.py or tools like pypa/pip or pypa/build.
+set(SCENARIO_CALL_FROM_SETUP_PY FALSE
+    CACHE BOOL "Configure the project to be compiled from setuptools")
 
 # Expose shared or static compilation
 set(SCENARIO_BUILD_SHARED_LIBRARY TRUE
     CACHE BOOL "Compile libraries as shared libraries")
+set(BUILD_SHARED_LIBS ${SCENARIO_BUILD_SHARED_LIBRARY})
 
-if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "PyPI")
-    # Apply the user choice
-    set(BUILD_SHARED_LIBS ${SCENARIO_BUILD_SHARED_LIBRARY})
-else()
+if(SCENARIO_CALL_FROM_SETUP_PY)
     # Check that is Linux
     if(NOT (UNIX AND NOT APPLE))
         message(FATAL_ERROR "PyPI packages can be only created for Linux at the moment")
     endif()
-
-    if(SCENARIO_BUILD_SHARED_LIBRARY)
-        message(WARNING "Enabling static compilation, required by the PyPI build mode")
-    endif()
-
-    # Force static compilation
-    set(BUILD_SHARED_LIBS FALSE)
 endif()
 
 # Use -fPIC even if statically compiled
@@ -110,7 +101,7 @@ set(SCENARIO_INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR})
 set(SCENARIO_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
 set(SCENARIO_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+if(NOT SCENARIO_CALL_FROM_SETUP_PY)
     # Add the libraries installed in the Python site-package folder
     set(EXTRA_RPATH_DIRS
         "${Python3_SITELIB}"
@@ -205,7 +196,7 @@ add_subdirectory(src)
 # ========
 
 # Require to find Ignition libraries when packaging for PyPI
-if(CMAKE_BUILD_TYPE STREQUAL "PyPI" AND NOT USE_IGNITION)
+if(SCENARIO_CALL_FROM_SETUP_PY AND NOT USE_IGNITION)
     message(FATAL_ERROR "Found no Ignition distribution for PyPI package")
 endif()
 

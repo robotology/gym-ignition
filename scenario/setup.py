@@ -10,7 +10,11 @@ setuptools.setup(
         CMakeExtension(
             name="ScenarioCMakeProject",
             install_prefix="scenario",
-            cmake_build_type="PyPI",
+            cmake_build_type="Release",
+            cmake_configure_options=[
+                "-DSCENARIO_CALL_FROM_SETUP_PY:BOOL=ON",
+                "-DSCENARIO_BUILD_SHARED_LIBRARY:BOOL=OFF",
+            ],
             cmake_depends_on=["idyntree"],
             disable_editable=True,
         )

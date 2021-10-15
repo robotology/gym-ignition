@@ -46,7 +46,7 @@ set(BINDINGS_INSTALL_PREFIX "${BINDINGS_INSTALL_PREFIX}"
     CACHE STRING "Installation prefix of the bindings")
 
 # Final directory of the "scenario" package
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+if(NOT SCENARIO_CALL_FROM_SETUP_PY)
     set(SCENARIO_PACKAGE_INSTALL_DIR "${BINDINGS_INSTALL_PREFIX}/scenario")
 else()
     # If packaging for PyPI, install ScenarIO in the temp site-package directory
