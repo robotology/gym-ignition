@@ -28,6 +28,7 @@ def supported_versions_specifier_set() -> packaging.specifiers.SpecifierSet:
 
 class InstallMode(Enum):
     User = auto()
+    CondaBuild = auto()
     Developer = auto()
 
 
@@ -36,7 +37,17 @@ def detect_install_mode() -> InstallMode:
     import scenario.bindings.core
 
     install_prefix = scenario.bindings.core.get_install_prefix()
-    return InstallMode.User if install_prefix == "" else InstallMode.Developer
+
+    # In conda, there are null bytes terminating the returned string
+    install_prefix = install_prefix.replace("\x00", "")
+
+    if "$PREFIX" in install_prefix:
+        return InstallMode.CondaBuild
+
+    if install_prefix == "":
+        return InstallMode.User
+    else:
+        return InstallMode.Developer
 
 
 def setup_gazebo_environment() -> None:
@@ -49,11 +60,22 @@ def setup_gazebo_environment() -> None:
     if "IGN_GAZEBO_SYSTEM_PLUGIN_PATH" in os.environ:
         ign_gazebo_system_plugin_path = os.environ.get("IGN_GAZEBO_SYSTEM_PLUGIN_PATH")
 
+    # Exporting this env variable is done by the conda "libscenario" package
+    if detect_install_mode() is InstallMode.CondaBuild:
+        return
+
     # Add the plugins path
-    if detect_install_mode() == InstallMode.Developer:
-        install_prefix = Path(scenario.bindings.core.get_install_prefix())
-    else:
+    if detect_install_mode() is InstallMode.Developer:
+        install_prefix = scenario.bindings.core.get_install_prefix()
+
+        # In conda, there are null bytes terminating the returned string
+        install_prefix = Path(install_prefix.replace("\x00", ""))
+
+    elif detect_install_mode() is InstallMode.User:
         install_prefix = Path(os.path.dirname(__file__))
+
+    else:
+        raise ValueError(detect_install_mode())
 
     plugin_dir = install_prefix / "lib" / "scenario" / "plugins"
     ign_gazebo_system_plugin_path += f":{str(plugin_dir)}"
