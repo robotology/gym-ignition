@@ -150,7 +150,7 @@ def import_gazebo() -> None:
 
     # Check the the module was never loaded by someone else
     if "scenario.bindings._gazebo" in sys.modules:
-        raise ImportError("Failed to load ScenarI/O Gazebo with custom dlopen flags")
+        raise ImportError("Failed to load ScenarIO Gazebo with custom dlopen flags")
 
     # Preload the shared libraries of tensorflow if the package is installed.
     # If tensorflow is imported after scenario.bindings.gazebo, the application segfaults.
@@ -192,18 +192,17 @@ def create_home_dot_folder() -> None:
 # Import the bindings
 # ===================
 
-try:
-    import_gazebo()
+# Find the _gazebo.* shared lib
+if len(list((Path(__file__).parent / "bindings").glob(pattern="_gazebo.*"))) == 1:
+
     check_gazebo_installation()
+    import_gazebo()
     create_home_dot_folder()
     setup_gazebo_environment()
     from .bindings import gazebo
-except ImportError:
-    pass
 
-try:
+# Find the _yarp.* shared lib
+if len(list((Path(__file__).parent / "bindings").glob(pattern="_yarp.*"))) == 1:
     from .bindings.yarp import yarp
-except ImportError:
-    pass
 
 from .bindings import core
