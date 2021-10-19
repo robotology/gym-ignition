@@ -125,25 +125,32 @@ def check_gazebo_installation() -> None:
     except subprocess.CalledProcessError:
         raise RuntimeError(f"Failed to execute command: {' '.join(command)}")  # noqa
 
-    gazebo_version_string = result.stdout.strip()
+    # Strip the command output
+    gazebo_versions_string = result.stdout.strip()
 
     # Get the gazebo version from the command line.
     # Since the releases could be in the "6.0.0~preK" form, we replace '~' with '.' to
     # be compatible with the 'packaging' package.
-    gazebo_version_string_normalized = gazebo_version_string.replace("~", ".")
+    gazebo_version_string_normalized = gazebo_versions_string.replace("~", ".")
+
+    # The output could be multiline, listing all the Ignition Gazebo versions found
+    gazebo_versions = gazebo_version_string_normalized.split(sep=os.linesep)
 
     try:
-        # Parse the gazebo version
-        gazebo_version_parsed = packaging.version.Version(
-            gazebo_version_string_normalized
-        )
+        # Parse the gazebo versions
+        gazebo_versions_parsed = [packaging.version.Version(v) for v in gazebo_versions]
     except:
-        raise RuntimeError(f"Failed to parse the output of: {' '.join(command)}")
+        raise RuntimeError(
+            f"Failed to parse the output of: {' '.join(command)} ({gazebo_versions})"
+        )
 
-    if not gazebo_version_parsed in supported_versions_specifier_set():
-        msg = f"Failed to find Ignition Gazebo {supported_versions_specifier_set()} "
-        msg += f"(found incompatible {gazebo_version_parsed})"
-        raise RuntimeError(msg)
+    for version in gazebo_versions_parsed:
+        if version in supported_versions_specifier_set():
+            return
+
+    msg = f"Failed to find Ignition Gazebo {supported_versions_specifier_set()} "
+    msg += f"(found incompatible version(s): {gazebo_versions_parsed})"
+    raise RuntimeError(msg)
 
 
 def import_gazebo() -> None:
