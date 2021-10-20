@@ -36,13 +36,6 @@ set(SCENARIO_BUILD_SHARED_LIBRARY TRUE
     CACHE BOOL "Compile libraries as shared libraries")
 set(BUILD_SHARED_LIBS ${SCENARIO_BUILD_SHARED_LIBRARY})
 
-if(SCENARIO_CALL_FROM_SETUP_PY)
-    # Check that is Linux
-    if(NOT (UNIX AND NOT APPLE))
-        message(FATAL_ERROR "PyPI packages can be only created for Linux at the moment")
-    endif()
-endif()
-
 # Use -fPIC even if statically compiled
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
