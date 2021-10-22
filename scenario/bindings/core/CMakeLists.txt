@@ -9,7 +9,7 @@ set_source_files_properties(${scenario_swig_name}.i PROPERTIES CPLUSPLUS ON)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../scenario/bindings)
 
 swig_add_library(${scenario_swig_name}
-    TYPE SHARED
+    TYPE MODULE
     LANGUAGE python
     OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/../scenario/bindings
     OUTFILE_DIR ${CMAKE_CURRENT_BINARY_DIR}/..
