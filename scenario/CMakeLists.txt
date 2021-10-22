@@ -102,10 +102,15 @@ set(SCENARIO_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
 
 # Adjust RPATH dependending on the installation type
 if(SCENARIO_ENABLE_BINDINGS AND NOT SCENARIO_CALL_FROM_SETUP_PY)
+    # Convert folder separators to CMake style (could be necessary in Windows)
+    file(TO_CMAKE_PATH "${Python3_SITELIB}" python3_sitelib_cleaned)
+
     # Add the libraries installed in the Python site-package folder
     set(EXTRA_RPATH_DIRS
-        "${Python3_SITELIB}"
-        "${Python3_SITELIB}/scenario/bindings")
+        "${python3_sitelib_cleaned}"
+        "${python3_sitelib_cleaned}/scenario/bindings")
+
+    unset(python3_sitelib_cleaned)
 else()
     # Add the libraries installed in the Python site-package folder
     # (that in this case is CMAKE_INSTALL_PREFIX)
