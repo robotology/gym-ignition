@@ -285,6 +285,9 @@ jobs:
       # Test project
       # ============
 
+      - name: '🔍 Inspect installed versions'
+        run: pip list | grep -E "^scenario|^gym-ignition"
+
       - name: '[🐍|scenario] Python Tests'
         shell: bash -i -e {0}
         run: pytest -m "scenario"
