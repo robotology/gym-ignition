@@ -10,6 +10,7 @@
 #define SCENARIO_CONTROLLERS_REFERENCES_H
 
 #include <array>
+#include <cstddef>
 #include <vector>
 
 namespace scenario::controllers {

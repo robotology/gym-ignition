@@ -26,31 +26,10 @@ if(NOT CMAKE_CONFIGURATION_TYPES)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS ${SCENARIO_BUILD_TYPES})
 endif()
 
-# This new build mode configures the CMake project to be compatible with the pipeline to
-# create the PyPI linux wheel
-include(AddNewBuildMode)
-add_new_build_mode(NAME "PyPI" TEMPLATE "Release")
-
 # Expose shared or static compilation
 set(SCENARIO_BUILD_SHARED_LIBRARY TRUE
     CACHE BOOL "Compile libraries as shared libraries")
-
-if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "PyPI")
-    # Apply the user choice
-    set(BUILD_SHARED_LIBS ${SCENARIO_BUILD_SHARED_LIBRARY})
-else()
-    # Check that is Linux
-    if(NOT (UNIX AND NOT APPLE))
-        message(FATAL_ERROR "PyPI packages can be only created for Linux at the moment")
-    endif()
-
-    if(SCENARIO_BUILD_SHARED_LIBRARY)
-        message(WARNING "Enabling static compilation, required by the PyPI build mode")
-    endif()
-
-    # Force static compilation
-    set(BUILD_SHARED_LIBS FALSE)
-endif()
+set(BUILD_SHARED_LIBS ${SCENARIO_BUILD_SHARED_LIBRARY})
 
 # Use -fPIC even if statically compiled
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
@@ -94,27 +73,44 @@ if(${CMAKE_VERSION} VERSION_GREATER 3.15)
     cmake_policy(SET CMP0094 NEW)
 endif()
 
-# Find virtualenv's before system's interpreters
-set(Python3_FIND_VIRTUALENV "FIRST" CACHE STRING
-    "Configure the detection of virtual environments")
-set(Python3_FIND_VIRTUALENV_TYPES "FIRST" "ONLY" "STANDARD")
-mark_as_advanced(Python3_FIND_VIRTUALENV)
-set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTUALENV_TYPES})
+# Enable custom options required to package the CMake project from
+# either setup.py or tools like pypa/pip or pypa/build.
+set(SCENARIO_CALL_FROM_SETUP_PY FALSE
+    CACHE BOOL "Configure the project to be compiled from setuptools")
 
-# Find Python3
-find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
-message(STATUS "Using Python: ${Python3_EXECUTABLE}")
+find_package(SWIG 4.0 QUIET)
+option(SCENARIO_ENABLE_BINDINGS "Enable SWIG bindings" ${SWIG_FOUND})
 
-# Select the appropriate install prefix used throughout the project.
+# Find Python only if requested or if SWIG was automatically found
+if(SCENARIO_ENABLE_BINDINGS OR SCENARIO_CALL_FROM_SETUP_PY)
+    # Find virtualenv's before system's interpreters
+    set(Python3_FIND_VIRTUALENV "FIRST" CACHE STRING
+        "Configure the detection of virtual environments")
+    set(Python3_FIND_VIRTUALENV_TYPES "FIRST" "ONLY" "STANDARD")
+    mark_as_advanced(Python3_FIND_VIRTUALENV)
+    set_property(CACHE Python3_FIND_VIRTUALENV PROPERTY STRINGS ${Python3_FIND_VIRTUALENV_TYPES})
+
+    # Find Python3
+    find_package(Python3 COMPONENTS Interpreter Development REQUIRED)
+    message(STATUS "Using Python: ${Python3_EXECUTABLE}")
+endif()
+
+# Select the appropriate install prefix used throughout the project
 set(SCENARIO_INSTALL_BINDIR ${CMAKE_INSTALL_BINDIR})
 set(SCENARIO_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
 set(SCENARIO_INSTALL_INCLUDEDIR ${CMAKE_INSTALL_INCLUDEDIR})
 
-if(NOT CMAKE_BUILD_TYPE STREQUAL "PyPI")
+# Adjust RPATH dependending on the installation type
+if(SCENARIO_ENABLE_BINDINGS AND NOT SCENARIO_CALL_FROM_SETUP_PY)
+    # Convert folder separators to CMake style (could be necessary in Windows)
+    file(TO_CMAKE_PATH "${Python3_SITELIB}" python3_sitelib_cleaned)
+
     # Add the libraries installed in the Python site-package folder
     set(EXTRA_RPATH_DIRS
-        "${Python3_SITELIB}"
-        "${Python3_SITELIB}/scenario/bindings")
+        "${python3_sitelib_cleaned}"
+        "${python3_sitelib_cleaned}/scenario/bindings")
+
+    unset(python3_sitelib_cleaned)
 else()
     # Add the libraries installed in the Python site-package folder
     # (that in this case is CMAKE_INSTALL_PREFIX)
@@ -186,7 +182,7 @@ if(SCENARIO_USE_IGNITION AND "${IGNITION_DISTRIBUTION}" STREQUAL "")
     message(FATAL_ERROR "Failed to find a compatible Ignition Gazebo distribution")
 endif()
 
-# Alias the targets
+# Alias the Ignition targets so that we can link against different distributions
 if(SCENARIO_USE_IGNITION)
     include(ImportTargets${IGNITION_DISTRIBUTION})
 endif()
@@ -205,12 +201,9 @@ add_subdirectory(src)
 # ========
 
 # Require to find Ignition libraries when packaging for PyPI
-if(CMAKE_BUILD_TYPE STREQUAL "PyPI" AND NOT USE_IGNITION)
+if(SCENARIO_CALL_FROM_SETUP_PY AND NOT USE_IGNITION)
     message(FATAL_ERROR "Found no Ignition distribution for PyPI package")
 endif()
-
-find_package(SWIG 4.0 QUIET)
-option(SCENARIO_ENABLE_BINDINGS "Enable SWIG bindings" ${SWIG_FOUND})
 
 if(SCENARIO_ENABLE_BINDINGS)
     add_subdirectory(bindings)
