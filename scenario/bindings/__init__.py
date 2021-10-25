@@ -28,6 +28,7 @@ def supported_versions_specifier_set() -> packaging.specifiers.SpecifierSet:
 
 class InstallMode(Enum):
     User = auto()
+    CondaBuild = auto()
     Developer = auto()
 
 
@@ -36,7 +37,17 @@ def detect_install_mode() -> InstallMode:
     import scenario.bindings.core
 
     install_prefix = scenario.bindings.core.get_install_prefix()
-    return InstallMode.User if install_prefix == "" else InstallMode.Developer
+
+    # In conda, there are null bytes terminating the returned string
+    install_prefix = install_prefix.replace("\x00", "")
+
+    if "$PREFIX" in install_prefix:
+        return InstallMode.CondaBuild
+
+    if install_prefix == "":
+        return InstallMode.User
+    else:
+        return InstallMode.Developer
 
 
 def setup_gazebo_environment() -> None:
@@ -49,11 +60,22 @@ def setup_gazebo_environment() -> None:
     if "IGN_GAZEBO_SYSTEM_PLUGIN_PATH" in os.environ:
         ign_gazebo_system_plugin_path = os.environ.get("IGN_GAZEBO_SYSTEM_PLUGIN_PATH")
 
+    # Exporting this env variable is done by the conda "libscenario" package
+    if detect_install_mode() is InstallMode.CondaBuild:
+        return
+
     # Add the plugins path
-    if detect_install_mode() == InstallMode.Developer:
-        install_prefix = Path(scenario.bindings.core.get_install_prefix())
-    else:
+    if detect_install_mode() is InstallMode.Developer:
+        install_prefix = scenario.bindings.core.get_install_prefix()
+
+        # In conda, there are null bytes terminating the returned string
+        install_prefix = Path(install_prefix.replace("\x00", ""))
+
+    elif detect_install_mode() is InstallMode.User:
         install_prefix = Path(os.path.dirname(__file__))
+
+    else:
+        raise ValueError(detect_install_mode())
 
     plugin_dir = install_prefix / "lib" / "scenario" / "plugins"
     ign_gazebo_system_plugin_path += f":{str(plugin_dir)}"
@@ -125,32 +147,39 @@ def check_gazebo_installation() -> None:
     except subprocess.CalledProcessError:
         raise RuntimeError(f"Failed to execute command: {' '.join(command)}")  # noqa
 
-    gazebo_version_string = result.stdout.strip()
+    # Strip the command output
+    gazebo_versions_string = result.stdout.strip()
 
     # Get the gazebo version from the command line.
     # Since the releases could be in the "6.0.0~preK" form, we replace '~' with '.' to
     # be compatible with the 'packaging' package.
-    gazebo_version_string_normalized = gazebo_version_string.replace("~", ".")
+    gazebo_version_string_normalized = gazebo_versions_string.replace("~", ".")
+
+    # The output could be multiline, listing all the Ignition Gazebo versions found
+    gazebo_versions = gazebo_version_string_normalized.split(sep=os.linesep)
 
     try:
-        # Parse the gazebo version
-        gazebo_version_parsed = packaging.version.Version(
-            gazebo_version_string_normalized
-        )
+        # Parse the gazebo versions
+        gazebo_versions_parsed = [packaging.version.Version(v) for v in gazebo_versions]
     except:
-        raise RuntimeError(f"Failed to parse the output of: {' '.join(command)}")
+        raise RuntimeError(
+            f"Failed to parse the output of: {' '.join(command)} ({gazebo_versions})"
+        )
 
-    if not gazebo_version_parsed in supported_versions_specifier_set():
-        msg = f"Failed to find Ignition Gazebo {supported_versions_specifier_set()} "
-        msg += f"(found incompatible {gazebo_version_parsed})"
-        raise RuntimeError(msg)
+    for version in gazebo_versions_parsed:
+        if version in supported_versions_specifier_set():
+            return
+
+    msg = f"Failed to find Ignition Gazebo {supported_versions_specifier_set()} "
+    msg += f"(found incompatible version(s): {gazebo_versions_parsed})"
+    raise RuntimeError(msg)
 
 
 def import_gazebo() -> None:
 
     # Check the the module was never loaded by someone else
     if "scenario.bindings._gazebo" in sys.modules:
-        raise ImportError("Failed to load ScenarI/O Gazebo with custom dlopen flags")
+        raise ImportError("Failed to load ScenarIO Gazebo with custom dlopen flags")
 
     # Preload the shared libraries of tensorflow if the package is installed.
     # If tensorflow is imported after scenario.bindings.gazebo, the application segfaults.
@@ -192,18 +221,17 @@ def create_home_dot_folder() -> None:
 # Import the bindings
 # ===================
 
-try:
-    import_gazebo()
+# Find the _gazebo.* shared lib
+if len(list((Path(__file__).parent / "bindings").glob(pattern="_gazebo.*"))) == 1:
+
     check_gazebo_installation()
+    import_gazebo()
     create_home_dot_folder()
     setup_gazebo_environment()
     from .bindings import gazebo
-except ImportError:
-    pass
 
-try:
+# Find the _yarp.* shared lib
+if len(list((Path(__file__).parent / "bindings").glob(pattern="_yarp.*"))) == 1:
     from .bindings.yarp import yarp
-except ImportError:
-    pass
 
 from .bindings import core

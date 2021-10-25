@@ -9,7 +9,7 @@ set_source_files_properties(${scenario_swig_name}.i PROPERTIES CPLUSPLUS ON)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../scenario/bindings)
 
 swig_add_library(${scenario_swig_name}
-    TYPE SHARED
+    TYPE MODULE
     LANGUAGE python
     OUTPUT_DIR ${CMAKE_CURRENT_BINARY_DIR}/../scenario/bindings
     OUTFILE_DIR ${CMAKE_CURRENT_BINARY_DIR}/..
@@ -41,10 +41,12 @@ get_property(WRAPPER_PY_FILE TARGET ${scenario_swig_name} PROPERTY SWIG_SUPPORT_
 
 install(
     TARGETS ${scenario_swig_name}
+    COMPONENT python
     LIBRARY DESTINATION ${SCENARIO_PACKAGE_INSTALL_DIR}/bindings
     ARCHIVE DESTINATION ${SCENARIO_PACKAGE_INSTALL_DIR}/bindings
     RUNTIME DESTINATION ${SCENARIO_PACKAGE_INSTALL_DIR}/bindings)
 
 install(
     FILES ${WRAPPER_PY_FILE}
-    DESTINATION ${SCENARIO_PACKAGE_INSTALL_DIR}/bindings)
+    DESTINATION ${SCENARIO_PACKAGE_INSTALL_DIR}/bindings
+    COMPONENT python)
