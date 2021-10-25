@@ -1,0 +1,21 @@
+changelog:
+  exclude:
+    labels:
+      - pr::changelog::ignore
+    authors: [ ]
+  categories:
+    - title: Bug fixing and new features
+      labels:
+        - pr::changelog::bugfix
+        - pr::changelog::release
+        - pr::changelog::feature
+    - title: Documentation, CI/CD, tests
+      labels:
+        - pr::changelog::docs
+        - pr::changelog::cicd
+        - pr::changelog::tests
+    - title: Other changes
+      labels:
+        - pr::changelog::other
+    - title: No category
+      labels: [ "*" ]
