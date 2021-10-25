@@ -62,7 +62,7 @@ Visit our [Support Policy](https://robotology.github.io/gym-ignition/master/inst
 to check the distribution currently supported.
 
 Then, install the supported Ignition suite following the 
-[official instructions](https://ignitionrobotics.org/docs/edifice).
+[official instructions](https://ignitionrobotics.org/docs/fortress).
 
 ### Python
 
