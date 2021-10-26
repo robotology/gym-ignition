@@ -26,7 +26,7 @@
 # PhysicsSystem
 # =============
 
-add_library(PhysicsSystem SHARED
+add_library(PhysicsSystem MODULE
     Physics.hh
     EntityFeatureMap.hh
     CanonicalLinkModelTracker.hh
