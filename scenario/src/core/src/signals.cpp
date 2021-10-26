@@ -11,6 +11,7 @@
 
 #include <csignal>
 #include <mutex>
+#include <string>
 #include <unordered_map>
 
 namespace scenario::core::detail {
