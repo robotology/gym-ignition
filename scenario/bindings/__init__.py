@@ -23,7 +23,7 @@ def supported_versions_specifier_set() -> packaging.specifiers.SpecifierSet:
     # 6.Y.Z.preK
     # 6.Y.Z.postK
     #
-    return packaging.specifiers.SpecifierSet("~=6.0.0.dev")
+    return packaging.specifiers.SpecifierSet(">=6.0.0.pre,<7.0.0.dev")
 
 
 class InstallMode(Enum):
