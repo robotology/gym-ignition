@@ -61,6 +61,10 @@ jobs:
       - name: "[🐧🍏📎|all] Mamba list"
         run: mamba list
 
+      - name: "[🍏|macos] Pin BLAS backend"
+        if: contains(matrix.os, 'macos')
+        run: echo 'libblas=*=*netlib' >> $CONDA_PREFIX/conda-meta/pinned
+
       - name: "[🐧🍏📎|all] Dependencies"
         run: |
           mamba install -y cmake compilers ninja pkg-config swig pybind11 pytest
