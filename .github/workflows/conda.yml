@@ -103,6 +103,7 @@ jobs:
               -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX} \
               -DPython3_EXECUTABLE:PATH=${CONDA_PREFIX}/bin/python
 
+      # https://github.com/conda-forge/libignition-gazebo-feedstock/issues/30#issuecomment-951903994
       - name: "[📎|windows] Configure CMake project"
         if: contains(matrix.os, 'windows')
         run: |
@@ -113,7 +114,8 @@ jobs:
               -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
               -DSCENARIO_USE_IGNITION:BOOL=ON \
               -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX} \
-              -DPython3_EXECUTABLE:PATH=${CONDA_PREFIX}/python.exe
+              -DPython3_EXECUTABLE:PATH=${CONDA_PREFIX}/python.exe \
+              -DZLIB_LIBRARY_RELEASE:PATH=${CONDA_PREFIX}/Library/lib/zlib.lib
 
       - name: "[🐧🍏📎|all] Build CMake project"
         run: cmake --build build/ --config ${{ matrix.build_type }}
