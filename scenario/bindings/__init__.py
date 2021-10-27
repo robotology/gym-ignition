@@ -3,6 +3,7 @@
 # GNU Lesser General Public License v2.1 or any later version.
 
 import os
+import platform
 import sys
 from enum import Enum, auto
 from pathlib import Path
@@ -141,11 +142,13 @@ def check_gazebo_installation() -> None:
 
     import subprocess
 
+    base_command = "ign" if platform.system() != "Windows" else "ign.exe"
+
     try:
-        command = ["ign", "gazebo", "--versions"]
+        command = [base_command, "gazebo", "--versions"]
         result = subprocess.run(command, capture_output=True, text=True, check=True)
     except FileNotFoundError:
-        msg = "Failed to find the 'ign' command in your PATH. "
+        msg = f"Failed to find the '{base_command}' command in your PATH. "
         msg += "Make sure that Ignition is installed "
         msg += "and your environment is properly configured."
         raise RuntimeError(msg)
@@ -229,7 +232,7 @@ def create_home_dot_folder() -> None:
 # Find the _gazebo.* shared lib
 if len(list((Path(__file__).parent / "bindings").glob(pattern="_gazebo.*"))) == 1:
 
-    check_gazebo_installation()
+    # check_gazebo_installation()
     import_gazebo()
     create_home_dot_folder()
     setup_gazebo_environment()
