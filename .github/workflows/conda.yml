@@ -172,6 +172,7 @@ jobs:
           python -Xfaulthandler -c "import faulthandler; faulthandler.enable(); import scenario"
           python -Xfaulthandler -c "import faulthandler; faulthandler.enable(); from scenario import gazebo as scenario_gazebo"
           python -Xfaulthandler -c "import faulthandler; faulthandler.enable(); import gym_ignition"
+          mkdir -p /c/Users/runneradmin/.ignition/gazebo/6
 
       - name: "[🐧🍏📎|all] Test"
         run: |
