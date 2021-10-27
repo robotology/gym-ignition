@@ -177,4 +177,4 @@ jobs:
         run: |
           mamba install -y pytest pytest-icdiff
           sed -i.orig "s|def test_angular_acc|def _test_angular_acc|g" tests/test_scenario/test_link_velocities.py
-          pytest
+          pytest -sv tests
