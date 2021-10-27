@@ -214,7 +214,10 @@ def import_gazebo() -> None:
         sys.setdlopenflags(dlopen_flags)
 
     else:
-        import scenario.bindings.gazebo
+        import cmake_build_extension
+
+        with cmake_build_extension.build_extension_env():
+            import scenario.bindings.gazebo
 
 
 def create_home_dot_folder() -> None:
