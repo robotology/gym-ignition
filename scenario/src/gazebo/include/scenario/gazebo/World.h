@@ -50,6 +50,10 @@ namespace scenario::gazebo {
         /// The physics engine included in the Dynamic Animation and Robotics
         /// Toolkit.
         Dart,
+
+        /// The Trivial Physics Engine, a kinematics-only physics engine
+        /// developed by Open Robotics.
+        TPE,
     };
 } // namespace scenario::gazebo
 
