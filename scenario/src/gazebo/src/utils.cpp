@@ -88,19 +88,20 @@ std::string utils::getSdfString(const std::string& fileName)
 {
     // NOTE: We could use std::filesystem for the following, but compilers
     //       support is still rough even with C++17 enabled :/
-    std::string sdfFileAbsPath;
+    std::string sdfFileAbsPath = fileName;
 
-    if (!ignition::common::isFile(fileName)) {
+    std::shared_ptr<sdf::Root> root;
+
+    if (ignition::common::isFile(fileName)) {
         sdfFileAbsPath = findSdfFile(fileName);
+        root = getSdfRootFromFile(fileName);
     }
-
-    if (sdfFileAbsPath.empty()) {
-        return {};
+    else {
+        root = getSdfRootFromString(sdfFileAbsPath);
     }
-
-    auto root = getSdfRootFromString(sdfFileAbsPath);
 
     if (!root) {
+        sError << "Failed to get SDF string" << std::endl;
         return {};
     }
 
@@ -109,24 +110,30 @@ std::string utils::getSdfString(const std::string& fileName)
 
 std::string utils::getModelNameFromSdf(const std::string& fileName)
 {
-    std::string absFileName = findSdfFile(fileName);
+    // NOTE: We could use std::filesystem for the following, but compilers
+    //       support is still rough even with C++17 enabled :/
+    std::string sdfFileAbsPath = fileName;
 
-    if (absFileName.empty()) {
-        sError << "Failed to find file " << fileName << std::endl;
-        return {};
+    std::shared_ptr<sdf::Root> root;
+
+    if (ignition::common::isFile(fileName)) {
+        sdfFileAbsPath = findSdfFile(fileName);
+        root = getSdfRootFromFile(fileName);
     }
-
-    const auto root = utils::getSdfRootFromFile(absFileName);
+    else {
+        root = getSdfRootFromString(sdfFileAbsPath);
+    }
 
     if (!root) {
+        sError << "Failed to get model name from SDF" << std::endl;
         return {};
     }
 
-    if (const auto model = root->Model()) {
+    if (const auto& model = root->Model()) {
         return model->Name();
     }
 
-    sError << "No model found in file " << fileName << std::endl;
+    sError << "No model found in SDF" << std::endl;
     return {};
 }
 
