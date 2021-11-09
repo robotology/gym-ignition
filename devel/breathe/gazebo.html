@@ -6700,17 +6700,17 @@
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringE">
 <span id="_CPPv3N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringE"></span><span id="_CPPv2N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringE"></span><span id="scenario::gazebo::utils::getModelNameFromSdf__ssCR"></span><span class="target" id="build_2lib_8linux-x86__64-3_810_2scenario_2include_2scenario_2gazebo_2utils_8h_1a3aab0082d8f450a227df16f58ec7e6d2"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getModelNameFromSdf</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">fileName</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo5utils19getModelNameFromSdfERKNSt6stringE" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Get the name of a model from a SDF file.</p>
+<dd><p>Get the name of a model from a SDF file or SDF string.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>sdformat supports only one model per SDF file.</p>
+<p>sdformat supports only one model per SDF.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><p><strong>fileName</strong> – An SDF file. It could be either an absolute path to the file or the file name if the parent folder is part of the <code class="docutils literal notranslate"><span class="pre">IGN_GAZEBO_RESOURCE_PATH</span></code> environment variable. </p>
+<dd class="field-odd"><p><strong>fileName</strong> – An SDF file or string. It could be an absolute path to the file, the file name if the parent folder is part of the <code class="docutils literal notranslate"><span class="pre">IGN_GAZEBO_RESOURCE_PATH</span></code> environment variable, or a SDF string. </p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The name of the model if the file was found and is valid, an empty string otherwise. </p>
+<dd class="field-even"><p>The name of the model if the SDF is valid, an empty string otherwise. </p>
 </dd>
 </dl>
 </dd></dl>
@@ -6718,16 +6718,13 @@
 <dl class="cpp function">
 <dt class="sig sig-object cpp" id="_CPPv4N8scenario6gazebo5utils19getWorldNameFromSdfERKNSt6stringEK6size_t">
 <span id="_CPPv3N8scenario6gazebo5utils19getWorldNameFromSdfERKNSt6stringEK6size_t"></span><span id="_CPPv2N8scenario6gazebo5utils19getWorldNameFromSdfERKNSt6stringEK6size_t"></span><span id="scenario::gazebo::utils::getWorldNameFromSdf__ssCR.sC"></span><span class="target" id="build_2lib_8linux-x86__64-3_810_2scenario_2include_2scenario_2gazebo_2utils_8h_1a23cc3273b7a27c6eedc977a9c14fd050"></span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="sig-name descname"><span class="n"><span class="pre">getWorldNameFromSdf</span></span></span><span class="sig-paren">(</span><span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">std</span></span><span class="p"><span class="pre">::</span></span><span class="n"><span class="pre">string</span></span><span class="w"> </span><span class="p"><span class="pre">&amp;</span></span><span class="n sig-param"><span class="pre">fileName</span></span>, <span class="k"><span class="pre">const</span></span><span class="w"> </span><span class="n"><span class="pre">size_t</span></span><span class="w"> </span><span class="n sig-param"><span class="pre">worldIndex</span></span><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="m"><span class="pre">0</span></span><span class="sig-paren">)</span><a class="headerlink" href="#_CPPv4N8scenario6gazebo5utils19getWorldNameFromSdfERKNSt6stringEK6size_t" title="Permalink to this definition">¶</a><br /></dt>
-<dd><p>Get the name of a world from a SDF file.</p>
+<dd><p>Get the name of a world from a SDF file or SDF string.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>fileName</strong> – An SDF file. It could be either an absolute path to the file or the file name if the parent folder is part of the <code class="docutils literal notranslate"><span class="pre">IGN_GAZEBO_RESOURCE_PATH</span></code> environment variable. </p></li>
-<li><p><strong>worldIndex</strong> – The index of the world in the SDF file. By default it finds the first world. </p></li>
-</ul>
+<dd class="field-odd"><p><strong>fileName</strong> – An SDF file or string. It could be an absolute path to the file, the file name if the parent folder is part of the <code class="docutils literal notranslate"><span class="pre">IGN_GAZEBO_RESOURCE_PATH</span></code> environment variable, or a SDF string. </p>
 </dd>
 <dt class="field-even">Returns</dt>
-<dd class="field-even"><p>The name of the world if the file was found and is valid, an empty string otherwise. </p>
+<dd class="field-even"><p>The name of the world if the SDF is valid, an empty string otherwise. </p>
 </dd>
 </dl>
 </dd></dl>

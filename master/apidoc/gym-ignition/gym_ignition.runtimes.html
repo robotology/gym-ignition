@@ -440,7 +440,7 @@ Gazebo simulator.</p>
 <li><p><strong>physics_rate</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The rate of the physics engine.</p></li>
 <li><p><strong>real_time_factor</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code>) – The desired RTF of the simulation.</p></li>
 <li><p><strong>physics_engine</strong> – <em>(optional)</em> The physics engine to use.</p></li>
-<li><p><strong>world</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>]) – <em>(optional)</em> The path to an SDF world file. The world should not contain
+<li><p><strong>world</strong> (<code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code>[<code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code>, <code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code>]) – <em>(optional)</em> The path to an SDF world file. The world should not contain
 any physics plugin.</p></li>
 </ul>
 </dd>
@@ -602,12 +602,6 @@ info (dict): contains auxiliary diagnostic information (helpful for debugging, a
 </dl>
 </dd></dl>
 
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.task">
-<span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <span class="pre">Task</span></em><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.task" title="Permalink to this definition">¶</a></dt>
-<dd><p>Task handled by the runtime.</p>
-</dd></dl>
-
 <dl class="py method">
 <dt class="sig sig-object py" id="gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.timestamp">
 <span class="sig-name descname"><span class="pre">timestamp</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#gym_ignition.runtimes.gazebo_runtime.GazeboRuntime.timestamp" title="Permalink to this definition">¶</a></dt>
@@ -757,12 +751,6 @@ info (dict): contains auxiliary diagnostic information (helpful for debugging, a
 <dd class="field-odd"><p>observation (object)</p>
 </dd>
 </dl>
-</dd></dl>
-
-<dl class="py attribute">
-<dt class="sig sig-object py" id="gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.task">
-<span class="sig-name descname"><span class="pre">task</span></span><em class="property"><span class="pre">:</span> <span class="pre">Task</span></em><a class="headerlink" href="#gym_ignition.runtimes.realtime_runtime.RealTimeRuntime.task" title="Permalink to this definition">¶</a></dt>
-<dd><p>Task handled by the runtime.</p>
 </dd></dl>
 
 <dl class="py method">
