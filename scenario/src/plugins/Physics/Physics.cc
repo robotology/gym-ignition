@@ -2949,19 +2949,29 @@ void PhysicsPrivate::UpdateSim(EntityComponentManager &_ecm,
       });
   IGN_PROFILE_END();
 
+  std::vector<Entity> entitiesAngularVelocityCmd;
   _ecm.Each<components::AngularVelocityCmd>(
-      [&](const Entity &, components::AngularVelocityCmd *_vel) -> bool
+      [&](const Entity &_entity, components::AngularVelocityCmd *) -> bool
       {
-        _vel->Data() = math::Vector3d::Zero;
+        entitiesAngularVelocityCmd.push_back(_entity);
         return true;
       });
+  for (const auto entity : entitiesAngularVelocityCmd)
+  {
+    _ecm.RemoveComponent<components::AngularVelocityCmd>(entity);
+  }
 
+  std::vector<Entity> entitiesLinearVelocityCmd;
   _ecm.Each<components::LinearVelocityCmd>(
-      [&](const Entity &, components::LinearVelocityCmd *_vel) -> bool
+      [&](const Entity &_entity, components::LinearVelocityCmd *) -> bool
       {
-        _vel->Data() = math::Vector3d::Zero;
+        entitiesLinearVelocityCmd.push_back(_entity);
         return true;
       });
+  for (const auto entity : entitiesLinearVelocityCmd)
+  {
+    _ecm.RemoveComponent<components::LinearVelocityCmd>(entity);
+  }
 
   // Update joint positions
   IGN_PROFILE_BEGIN("Joints");
