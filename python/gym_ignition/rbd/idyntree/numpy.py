@@ -129,7 +129,7 @@ class ToNumPy(abc.ABC):
             return position.toNumPy(), rotation.toNumPy()
 
         else:
-            H = np.zeros(shape=[4, 4])
+            H = np.eye(4)
             H[0:3, 3] = position.toNumPy()
             H[0:3, 0:3] = rotation.toNumPy()
 
