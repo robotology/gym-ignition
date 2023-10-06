@@ -41,6 +41,11 @@
 </table>
 </div>
 
+> ⚠️ **Warning** ⚠️
+>
+> This project is no longer actively maintained, and development has stalled.
+> For an in-depth description of the current status and actionable steps to revive development, please consult [robotology/gym-ignition#430]([url](https://github.com/robotology/gym-ignition/issues/430)).
+
 ||||
 |:---:|:---:|:---:|
 | ![][pendulum] | ![][panda] | ![][icub] |
