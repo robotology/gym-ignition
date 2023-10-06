@@ -111,28 +111,27 @@ namespace scenario::gazebo::utils {
     std::string getSdfString(const std::string& fileName);
 
     /**
-     * Get the name of a model from a SDF file.
+     * Get the name of a model from a SDF file or SDF string.
      *
-     * @note sdformat supports only one model per SDF file.
+     * @note sdformat supports only one model per SDF.
      *
-     * @param fileName An SDF file. It could be either an absolute path
-     *        to the file or the file name if the parent folder is part
-     *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
-     * @return The name of the model if the file was found and is valid,
-     *         an empty string otherwise.
+     * @param fileName An SDF file or string. It could be an absolute path to
+     * the file, the file name if the parent folder is part of the
+     * ``IGN_GAZEBO_RESOURCE_PATH`` environment variable, or a SDF string.
+     * @return The name of the model if the SDF is valid, an empty string
+     * otherwise.
      */
     std::string getModelNameFromSdf(const std::string& fileName);
 
     /**
-     * Get the name of a world from a SDF file.
+     * Get the name of a world from a SDF file or SDF string.
      *
-     * @param fileName An SDF file. It could be either an absolute path
-     *        to the file or the file name if the parent folder is part
-     *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
-     * @param worldIndex The index of the world in the SDF file. By
-     *        default it finds the first world.
-     * @return The name of the world if the file was found and is valid,
-     *         an empty string otherwise.
+     * @param fileName An SDF file or string. It could be an absolute path to
+     * the file, the file name if the parent folder is part of the
+     * ``IGN_GAZEBO_RESOURCE_PATH`` environment variable, or a SDF string.
+     * @return The name of the world if the SDF is valid, an empty string
+     * otherwise.
+     *
      */
     std::string getWorldNameFromSdf(const std::string& fileName,
                                     const size_t worldIndex = 0);

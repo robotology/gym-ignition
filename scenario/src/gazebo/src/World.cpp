@@ -257,6 +257,10 @@ bool World::setPhysicsEngine(const PhysicsEngine engine)
                 return "ignition-physics"
                        + std::to_string(IGNITION_PHYSICS_MAJOR_VERSION)
                        + "-dartsim-plugin";
+            case PhysicsEngine::TPE:
+                return "ignition-physics"
+                       + std::to_string(IGNITION_PHYSICS_MAJOR_VERSION)
+                       + "-tpe-plugin";
         }
         return "";
     }();
