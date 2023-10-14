@@ -219,9 +219,9 @@ bool GazeboSimulator::initialize()
     // Setup signals callbacks.
     // It must be done after the creation of the simulator since
     // we override their callbacks.
-    core::utils::SignalManager::Instance().setCallback(SIGINT, cb);
-    core::utils::SignalManager::Instance().setCallback(SIGTERM, cb);
-    core::utils::SignalManager::Instance().setCallback(SIGABRT, cb);
+    //    core::utils::SignalManager::Instance().setCallback(SIGINT, cb);
+    //    core::utils::SignalManager::Instance().setCallback(SIGTERM, cb);
+    //    core::utils::SignalManager::Instance().setCallback(SIGABRT, cb);
 
     return true;
 }

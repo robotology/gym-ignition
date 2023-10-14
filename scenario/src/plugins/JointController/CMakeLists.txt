@@ -26,7 +26,7 @@
 # JointController
 # ===============
 
-add_library(JointController SHARED
+add_library(JointController MODULE
     JointController.h
     JointController.cpp)
 

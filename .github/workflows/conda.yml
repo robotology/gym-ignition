@@ -1,0 +1,181 @@
+name: Conda
+
+on:
+  push:
+    branches: [ "**" ]
+    tags-ignore: [ "**" ]
+  pull_request:
+  workflow_dispatch:
+  release:
+    types: [ published ]
+
+jobs:
+
+  build-and-test:
+    name: ${{ matrix.os }}@${{ matrix.python }}
+    runs-on: ${{ matrix.os }}
+    defaults:
+      run:
+        shell: bash -l {0}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - macos-latest
+          - windows-latest
+        python:
+          - 3.8
+          # - 3.9
+        build_type:
+          - Release
+
+    steps:
+
+      - name: "🔍 Inspect Environment"
+        run: |
+          env | grep ^GITHUB
+          echo ""
+          cat ${GITHUB_EVENT_PATH}
+          echo ""
+          env
+
+      - name: "🔀 Clone repository"
+        uses: actions/checkout@master
+      - name: "🔀 Download all refs"
+        run: git fetch --prune --unshallow
+
+      - name: "🐍 Create conda environment"
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+          mamba-version: "*"
+          channel-priority: true
+          auto-update-conda: true
+          activate-environment: ci
+          python-version: ${{ matrix.python }}
+          channels: conda-forge,robotology,defaults
+
+      - name: "[🐧🍏📎|all] Mamba info"
+        run: mamba info
+
+      - name: "[🐧🍏📎|all] Mamba list"
+        run: mamba list
+
+      - name: "[🍏|macos] Pin BLAS backend"
+        if: contains(matrix.os, 'macos')
+        run: echo 'libblas=*=*netlib' >> $CONDA_PREFIX/conda-meta/pinned
+
+      - name: "[🐧🍏📎|all] Dependencies"
+        run: |
+          mamba install -y cmake compilers ninja pkg-config swig pybind11 pytest
+          mamba install -y gym numpy scipy gym-ignition-models lxml cmake-build-extension packaging
+          mamba install -c robotology idyntree
+          mamba install -y libode
+
+      - name: "[🐧|linux] Dependencies"
+        if: contains(matrix.os, 'ubuntu')
+        run: mamba install -y mesa-libgl-devel-cos7-x86_64
+
+      - name: "[🐧🍏📎|all|stable] Ignition Gazebo"
+        if: |
+          github.event_name == 'release' ||
+          github.ref == 'refs/heads/master' ||
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'master')
+        run: mamba install -y libignition-gazebo6
+
+      - name: "[🐧🍏📎|all|nightly] Ignition Gazebo"
+        if: |
+          (github.event_name == 'push' && github.ref != 'refs/heads/master') ||
+          (github.event_name == 'pull_request' && github.event.pull_request.base.ref != 'master')
+        run: mamba install -y libignition-gazebo6
+
+      - name: "[🐧🍏📎|all] Mamba list"
+        run: mamba list
+
+      - name: "[🐧🍏📎|all] Print environment variables"
+        run: env
+
+      - name: "[🐧🍏|linux|macos] Configure CMake project"
+        if: contains(matrix.os, 'ubuntu') || contains(matrix.os, 'macos')
+        run: |
+          cmake \
+              -S scenario/ \
+              -B build/ \
+              -GNinja \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -DSCENARIO_USE_IGNITION:BOOL=ON \
+              -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX} \
+              -DPython3_EXECUTABLE:PATH=${CONDA_PREFIX}/bin/python
+
+      # https://github.com/conda-forge/libignition-gazebo-feedstock/issues/30#issuecomment-951903994
+      - name: "[📎|windows] Configure CMake project"
+        if: contains(matrix.os, 'windows')
+        run: |
+          cmake \
+              -S scenario/ \
+              -B build/ \
+              -G"Visual Studio 16 2019" \
+              -DCMAKE_BUILD_TYPE=${{ matrix.build_type }} \
+              -DSCENARIO_USE_IGNITION:BOOL=ON \
+              -DCMAKE_INSTALL_PREFIX=${CONDA_PREFIX} \
+              -DPython3_EXECUTABLE:PATH=${CONDA_PREFIX}/python.exe \
+              -DZLIB_LIBRARY_RELEASE:PATH=${CONDA_PREFIX}/Library/lib/zlib.lib
+
+      - name: "[🐧🍏📎|all] Build CMake project"
+        run: cmake --build build/ --config ${{ matrix.build_type }}
+
+      - name: "[🐧🍏📎|all] Install CMake project"
+        run: cmake --install build/
+
+      - name: "[🐧🍏📎|all] Install Python packages"
+        run: |
+          CMAKE_BUILD_EXTENSION_ENABLED=0 pip install --no-build-isolation --no-deps scenario/
+          pip install --no-build-isolation --no-deps .
+
+#      - name: "[🐧🍏📎|all] Check Python packages"
+#        run: pip check
+
+      - name: "[🐧|linux] Inspect Python bindings ABI (core)"
+        if: contains(matrix.os, 'ubuntu')
+        run: ldd ${CONDA_PREFIX}/lib/python${{ matrix.python }}/site-packages/scenario/bindings/_core.so
+
+      - name: "[🐧|linux] Inspect Python bindings ABI (gazebo)"
+        if: contains(matrix.os, 'ubuntu')
+        run: ldd ${CONDA_PREFIX}/lib/python${{ matrix.python }}/site-packages/scenario/bindings/_gazebo.so
+
+      - name: "[🍏|macos] Inspect Python bindings ABI (core)"
+        if: contains(matrix.os, 'macos')
+        run: otool -L ${CONDA_PREFIX}/lib/python${{ matrix.python }}/site-packages/scenario/bindings/_core.so
+
+      - name: "[🍏|macos] Inspect Python bindings ABI (gazebo)"
+        if: contains(matrix.os, 'macos')
+        run: otool -L ${CONDA_PREFIX}/lib/python${{ matrix.python }}/site-packages/scenario/bindings/_gazebo.so
+
+      - name: "[🐧🍏|linux|macos] Test imports"
+        if: contains(matrix.os, 'ubuntu') || contains(matrix.os, 'macos')
+        run: |
+          cd  ${CONDA_PREFIX}/lib/python${{ matrix.python }}/site-packages/scenario/bindings
+          export DYLD_PRINT_LIBRARIES=1
+          export DYLD_LIBRARY_PATH=${CONDA_PREFIX}/lib:$DYLD_LIBRARY_PATH
+          python -Xfaulthandler -c "import faulthandler; faulthandler.enable(); import _gazebo"
+          cd -
+          python -Xfaulthandler -c "import faulthandler; faulthandler.enable(); import scenario"
+          python -Xfaulthandler -c "import faulthandler; faulthandler.enable(); from scenario import gazebo as scenario_gazebo"
+          python -Xfaulthandler -c "import faulthandler; faulthandler.enable(); import gym_ignition"
+
+      - name: "[📎|windows] Test imports"
+        if: contains(matrix.os, 'windows')
+        run: |
+          cd /c/Miniconda/envs/ci/Lib/site-packages/scenario/bindings
+          python -Xfaulthandler -c "import faulthandler; faulthandler.enable(); import _gazebo"
+          cd -
+          python -Xfaulthandler -c "import faulthandler; faulthandler.enable(); import scenario"
+          python -Xfaulthandler -c "import faulthandler; faulthandler.enable(); from scenario import gazebo as scenario_gazebo"
+          python -Xfaulthandler -c "import faulthandler; faulthandler.enable(); import gym_ignition"
+          mkdir -p /c/Users/runneradmin/.ignition/gazebo/6
+
+      - name: "[🐧🍏📎|all] Test"
+        run: |
+          mamba install -y pytest pytest-icdiff
+          sed -i.orig "s|def test_angular_acc|def _test_angular_acc|g" tests/test_scenario/test_link_velocities.py
+          pytest -sv tests

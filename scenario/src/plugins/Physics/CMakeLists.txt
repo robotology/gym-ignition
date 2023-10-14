@@ -26,7 +26,7 @@
 # PhysicsSystem
 # =============
 
-add_library(PhysicsSystem SHARED
+add_library(PhysicsSystem MODULE
     Physics.hh
     EntityFeatureMap.hh
     CanonicalLinkModelTracker.hh
@@ -45,6 +45,12 @@ target_include_directories(PhysicsSystem PRIVATE
 
 if(ENABLE_PROFILER)
     target_compile_definitions(PhysicsSystem PRIVATE "IGN_PROFILER_ENABLE=1")
+endif()
+
+# Workaround for the following error with Visual Studio
+# fatal error C1128: number of sections exceeded object file format limit
+if(CMAKE_GENERATOR MATCHES "Visual Studio")
+    target_compile_options(PhysicsSystem PRIVATE "/bigobj")
 endif()
 
 # ===================

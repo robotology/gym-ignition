@@ -46,7 +46,7 @@ target_include_directories(ControllersFactory PRIVATE
 # ControllerRunner
 # ================
 
-add_library(ControllerRunner SHARED
+add_library(ControllerRunner MODULE
     ControllerRunner.h
     ControllerRunner.cpp)
 

@@ -44,6 +44,10 @@ if(UNIX AND NOT APPLE)
     endif()
 endif()
 
+if(MSVC)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
+endif()
+
 # Control where binaries and libraries are placed in the build folder.
 # This simplifies tests running in Windows.
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_BINDIR}")
