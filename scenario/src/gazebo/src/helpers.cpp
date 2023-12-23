@@ -25,16 +25,16 @@
  */
 
 #include "scenario/gazebo/helpers.h"
-#include "ignition/common/Util.hh"
+#include "gz/common/Util.hh"
 #include "scenario/gazebo/Log.h"
 #include "scenario/gazebo/components/Timestamp.h"
 
 #include <Eigen/Dense>
-#include <ignition/gazebo/components/Component.hh>
-#include <ignition/gazebo/components/Model.hh>
-#include <ignition/gazebo/components/Name.hh>
-#include <ignition/gazebo/components/World.hh>
-#include <ignition/msgs/contact.pb.h>
+#include <gz/sim/components/Component.hh>
+#include <gz/sim/components/Model.hh>
+#include <gz/sim/components/Name.hh>
+#include <gz/sim/components/World.hh>
+#include <gz/msgs/contact.pb.h>
 #include <sdf/Error.hh>
 #include <sdf/Model.hh>
 #include <sdf/Physics.hh>
@@ -90,7 +90,7 @@ utils::getSdfRootFromString(const std::string& sdfString)
 bool utils::verboseFromEnvironment()
 {
     std::string envVarContent;
-    ignition::common::env(ScenarioVerboseEnvVar, envVarContent);
+    gz::common::env(ScenarioVerboseEnvVar, envVarContent);
 
     return envVarContent == "1";
 }
@@ -134,20 +134,20 @@ bool utils::parentModelJustCreated(const GazeboEntity& gazeboEntity)
     const auto& world = utils::getParentWorld(gazeboEntity);
 
     // Get the entity of the parent model
-    const auto parentModelEntity = [&]() -> ignition::gazebo::Entity {
+    const auto parentModelEntity = [&]() -> gz::sim::Entity {
         return gazeboEntity.ecm()->EntityHasComponentType(
                    gazeboEntity.entity(),
-                   ignition::gazebo::components::Model::typeId)
+                   gz::sim::components::Model::typeId)
                    ? gazeboEntity.entity()
                    : utils::getParentModel(gazeboEntity)->entity();
     }();
 
     assert(world);
-    assert(parentModelEntity != ignition::gazebo::kNullEntity);
+    assert(parentModelEntity != gz::sim::kNullEntity);
 
     // Get the time the model was inserted
     const auto& simTimeAtModelCreation = utils::getExistingComponentData<
-        ignition::gazebo::components::Timestamp>(gazeboEntity.ecm(),
+        gz::sim::components::Timestamp>(gazeboEntity.ecm(),
                                                  parentModelEntity);
 
     const double simTimeAtModelCreationInSeconds =
@@ -157,45 +157,45 @@ bool utils::parentModelJustCreated(const GazeboEntity& gazeboEntity)
 }
 
 scenario::core::Pose
-utils::fromIgnitionPose(const ignition::math::Pose3d& ignitionPose)
+utils::fromGzPose(const gz::math::Pose3d& gzPose)
 {
     core::Pose pose;
 
-    pose.position[0] = ignitionPose.Pos().X();
-    pose.position[1] = ignitionPose.Pos().Y();
-    pose.position[2] = ignitionPose.Pos().Z();
+    pose.position[0] = gzPose.Pos().X();
+    pose.position[1] = gzPose.Pos().Y();
+    pose.position[2] = gzPose.Pos().Z();
 
-    pose.orientation[0] = ignitionPose.Rot().W();
-    pose.orientation[1] = ignitionPose.Rot().X();
-    pose.orientation[2] = ignitionPose.Rot().Y();
-    pose.orientation[3] = ignitionPose.Rot().Z();
+    pose.orientation[0] = gzPose.Rot().W();
+    pose.orientation[1] = gzPose.Rot().X();
+    pose.orientation[2] = gzPose.Rot().Y();
+    pose.orientation[3] = gzPose.Rot().Z();
 
     return pose;
 }
 
-ignition::math::Pose3d utils::toIgnitionPose(const scenario::core::Pose& pose)
+gz::math::Pose3d utils::toGzPose(const scenario::core::Pose& pose)
 {
-    ignition::math::Pose3d ignitionPose;
+    gz::math::Pose3d gzPose;
 
-    ignitionPose.Pos() = ignition::math::Vector3d(
+    gzPose.Pos() = gz::math::Vector3d(
         pose.position[0], pose.position[1], pose.position[2]);
 
-    ignitionPose.Rot() = ignition::math::Quaterniond(pose.orientation[0],
+    gzPose.Rot() = gz::math::Quaterniond(pose.orientation[0],
                                                      pose.orientation[1],
                                                      pose.orientation[2],
                                                      pose.orientation[3]);
 
-    return ignitionPose;
+    return gzPose;
 }
 
 scenario::core::Contact
-utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
-                               const ignition::msgs::Contact& contactMsg)
+utils::fromGzContactMsgs(gz::sim::EntityComponentManager* ecm,
+                               const gz::msgs::Contact& contactMsg)
 {
     auto getEntityName =
-        [&](const ignition::gazebo::Entity entity) -> std::string {
+        [&](const gz::sim::Entity entity) -> std::string {
         return utils::getExistingComponentData<
-            ignition::gazebo::components::Name>(ecm, entity);
+            gz::sim::components::Name>(ecm, entity);
     };
 
     // Get the names of the links in contact following:
@@ -233,8 +233,8 @@ utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
     assert(numOfPoints == numOfWrenches);
     assert(numOfPoints == numOfPositions);
 
-    auto fromIgnMsg =
-        [](const ignition::msgs::Vector3d& vec) -> std::array<double, 3> {
+    auto fromGzmsg =
+        [](const gz::msgs::Vector3d& vec) -> std::array<double, 3> {
         return {vec.x(), vec.y(), vec.z()};
     };
 
@@ -243,14 +243,14 @@ utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
         // Create a contact point
         scenario::core::ContactPoint contactPoint;
         contactPoint.depth = contactMsg.depth(pointIdx);
-        contactPoint.normal = fromIgnMsg(contactMsg.normal(pointIdx));
-        contactPoint.position = fromIgnMsg(contactMsg.position(pointIdx));
+        contactPoint.normal = fromGzmsg(contactMsg.normal(pointIdx));
+        contactPoint.position = fromGzmsg(contactMsg.position(pointIdx));
 
         // Get the wrench acting on bodyA
-        const ignition::msgs::JointWrench wrench = contactMsg.wrench(pointIdx);
+        const gz::msgs::JointWrench wrench = contactMsg.wrench(pointIdx);
         const auto& wrench1 = wrench.body_1_wrench();
-        contactPoint.force = fromIgnMsg(wrench1.force());
-        contactPoint.torque = fromIgnMsg(wrench1.torque());
+        contactPoint.force = fromGzmsg(wrench1.force());
+        contactPoint.torque = fromGzmsg(wrench1.torque());
 
         // Store the contact point
         contact.points.push_back(contactPoint);
@@ -260,15 +260,15 @@ utils::fromIgnitionContactMsgs(ignition::gazebo::EntityComponentManager* ecm,
 }
 
 std::vector<scenario::core::Contact>
-utils::fromIgnitionContactsMsgs(ignition::gazebo::EntityComponentManager* ecm,
-                                const ignition::msgs::Contacts& contactsMsg)
+utils::fromGzContactsMsgs(gz::sim::EntityComponentManager* ecm,
+                                const gz::msgs::Contacts& contactsMsg)
 {
     std::vector<core::Contact> contacts;
 
     for (int contactIdx = 0; contactIdx < contactsMsg.contact_size();
          ++contactIdx) {
         contacts.push_back(
-            fromIgnitionContactMsgs(ecm, contactsMsg.contact(contactIdx)));
+            fromGzContactMsgs(ecm, contactsMsg.contact(contactIdx)));
     }
 
     return contacts;
@@ -499,11 +499,11 @@ scenario::core::JointType utils::fromSdf(const sdf::JointType sdfType)
     return type;
 }
 
-ignition::math::Vector3d utils::fromModelToBaseLinearVelocity(
-    const ignition::math::Vector3d& linModelVelocity,
-    const ignition::math::Vector3d& angModelVelocity,
-    const ignition::math::Pose3d& M_H_B,
-    const ignition::math::Quaterniond& W_R_B)
+gz::math::Vector3d utils::fromModelToBaseLinearVelocity(
+    const gz::math::Vector3d& linModelVelocity,
+    const gz::math::Vector3d& angModelVelocity,
+    const gz::math::Pose3d& M_H_B,
+    const gz::math::Quaterniond& W_R_B)
 {
     // Extract the rotation and the position of the model wrt to the base
     auto B_R_M = M_H_B.Rot().Inverse();
@@ -511,25 +511,25 @@ ignition::math::Vector3d utils::fromModelToBaseLinearVelocity(
     auto B_o_M = -B_R_M * M_o_B;
 
     // Compute the base linear velocity
-    const ignition::math::Vector3d linBaseVelocity =
+    const gz::math::Vector3d linBaseVelocity =
         linModelVelocity - angModelVelocity.Cross(W_R_B * B_o_M);
 
     // Return the linear part of the mixed velocity of the base
     return linBaseVelocity;
 }
 
-ignition::math::Vector3d utils::fromBaseToModelLinearVelocity(
-    const ignition::math::Vector3d& linBaseVelocity,
-    const ignition::math::Vector3d& angBaseVelocity,
-    const ignition::math::Pose3d& M_H_B,
-    const ignition::math::Quaterniond& W_R_B)
+gz::math::Vector3d utils::fromBaseToModelLinearVelocity(
+    const gz::math::Vector3d& linBaseVelocity,
+    const gz::math::Vector3d& angBaseVelocity,
+    const gz::math::Pose3d& M_H_B,
+    const gz::math::Quaterniond& W_R_B)
 {
     // Extract the rotation and the position of the model wrt to the base
     auto B_R_M = M_H_B.Rot().Inverse();
     auto M_o_B = M_H_B.Pos();
 
     // Compute the model linear velocity
-    const ignition::math::Vector3d linModelVelocity =
+    const gz::math::Vector3d linModelVelocity =
         linBaseVelocity - angBaseVelocity.Cross(W_R_B * B_R_M * M_o_B);
 
     // Return the linear part of the mixed velocity of the model
@@ -544,10 +544,10 @@ std::shared_ptr<World> utils::getParentWorld(const GazeboEntity& gazeboEntity)
     }
 
     auto worldEntity = getFirstParentEntityWithComponent< //
-        ignition::gazebo::components::World>(gazeboEntity.ecm(),
+        gz::sim::components::World>(gazeboEntity.ecm(),
                                              gazeboEntity.entity());
 
-    if (worldEntity == ignition::gazebo::kNullEntity) {
+    if (worldEntity == gz::sim::kNullEntity) {
         sError << "Failed to find parent world entity" << std::endl;
         return nullptr;
     }
@@ -571,10 +571,10 @@ std::shared_ptr<Model> utils::getParentModel(const GazeboEntity& gazeboEntity)
     }
 
     auto modelEntity = getFirstParentEntityWithComponent< //
-        ignition::gazebo::components::Model>(gazeboEntity.ecm(),
+        gz::sim::components::Model>(gazeboEntity.ecm(),
                                              gazeboEntity.entity());
 
-    if (modelEntity == ignition::gazebo::kNullEntity) {
+    if (modelEntity == gz::sim::kNullEntity) {
         sError << "Failed to find parent model entity" << std::endl;
         return nullptr;
     }

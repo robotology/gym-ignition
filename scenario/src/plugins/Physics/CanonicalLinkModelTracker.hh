@@ -14,21 +14,21 @@
  * limitations under the License.
  *
 */
-#ifndef IGNITION_GAZEBO_SYSTEMS_PHYSICS_CANONICAL_LINK_MODEL_TRACKER_HH_
-#define IGNITION_GAZEBO_SYSTEMS_PHYSICS_CANONICAL_LINK_MODEL_TRACKER_HH_
+#ifndef GZ_SIM_SYSTEMS_PHYSICS_CANONICAL_LINK_MODEL_TRACKER_HH_
+#define GZ_SIM_SYSTEMS_PHYSICS_CANONICAL_LINK_MODEL_TRACKER_HH_
 
 #include <set>
 #include <unordered_map>
 
-#include "ignition/gazebo/Entity.hh"
-#include "ignition/gazebo/EntityComponentManager.hh"
-#include "ignition/gazebo/components/CanonicalLink.hh"
-#include "ignition/gazebo/components/Model.hh"
-#include "ignition/gazebo/config.hh"
+#include "gz/sim/Entity.hh"
+#include "gz/sim/EntityComponentManager.hh"
+#include "gz/sim/components/CanonicalLink.hh"
+#include "gz/sim/components/Model.hh"
+#include "gz/sim/config.hh"
 
-namespace ignition::gazebo
+namespace gz::sim
 {
-inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
+inline namespace GZ_SIM_VERSION_NAMESPACE {
 namespace systems::physics_system
 {
   /// \brief Helper class that keeps track of which models have a particular

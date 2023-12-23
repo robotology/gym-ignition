@@ -133,32 +133,29 @@ add_install_rpath_support(
     DEPENDS ENABLE_RPATH
     USE_LINK_PATH)
 
-# Find a supported Ignition distribution
-if(NOT IGNITION_DISTRIBUTION)
+# Find a supported Gazebo distribution
+if(NOT GAZEBO_DISTRIBUTION)
 
-    include(FindIgnitionDistribution)
-    set(SUPPORTED_IGNITION_DISTRIBUTIONS
-        "Fortress"
-        "Edifice"
-        "Dome"
-        "Citadel")
+    include(FindGazeboDistribution)
+    set(SUPPORTED_GAZEBO_DISTRIBUTIONS
+        "Garden")
 
-    foreach(distribution IN LISTS SUPPORTED_IGNITION_DISTRIBUTIONS)
+    foreach(distribution IN LISTS SUPPORTED_GAZEBO_DISTRIBUTIONS)
 
-        find_ignition_distribution(
+        find_gazebo_distribution(
             CODENAME ${distribution}
             PACKAGES
-            ignition-gazebo
+            gz-sim
             REQUIRED FALSE)
 
         if(${${distribution}_FOUND})
-            message(STATUS "Found Ignition ${distribution}")
+            message(STATUS "Found Gazebo ${distribution}")
 
-            # Select Ignition distribution
-            set(IGNITION_DISTRIBUTION "${distribution}" CACHE
-                STRING "The Ignition distribution found in the system")
-            set_property(CACHE IGNITION_DISTRIBUTION PROPERTY
-                STRINGS ${SUPPORTED_IGNITION_DISTRIBUTIONS})
+            # Select Gazebo distribution
+            set(GAZEBO_DISTRIBUTION "${distribution}" CACHE
+                STRING "The Gazebo distribution found in the system")
+            set_property(CACHE GAZEBO_DISTRIBUTION PROPERTY
+                STRINGS ${SUPPORTED_GAZEBO_DISTRIBUTIONS})
 
             break()
         endif()
@@ -167,24 +164,24 @@ if(NOT IGNITION_DISTRIBUTION)
 
 endif()
 
-if(NOT IGNITION_DISTRIBUTION OR "${IGNITION_DISTRIBUTION}" STREQUAL "")
-    set(USE_IGNITION FALSE)
+if(NOT GAZEBO_DISTRIBUTION OR "${GAZEBO_DISTRIBUTION}" STREQUAL "")
+    set(USE_GAZEBO FALSE)
 else()
-    set(USE_IGNITION TRUE)
+    set(USE_GAZEBO TRUE)
 endif()
 
-option(SCENARIO_USE_IGNITION
-       "Build C++ code depending on Ignition"
-       ${USE_IGNITION})
+option(SCENARIO_USE_GAZEBO
+       "Build C++ code depending on Gazebo"
+       ${USE_GAZEBO})
 
-# Fail if Ignition is enabled but no compatible distribution was found
-if(SCENARIO_USE_IGNITION AND "${IGNITION_DISTRIBUTION}" STREQUAL "")
-    message(FATAL_ERROR "Failed to find a compatible Ignition Gazebo distribution")
+# Fail if Gazebo is enabled but no compatible distribution was found
+if(SCENARIO_USE_GAZEBO AND "${GAZEBO_DISTRIBUTION}" STREQUAL "")
+    message(FATAL_ERROR "Failed to find a compatible Gazebo distribution")
 endif()
 
-# Alias the Ignition targets so that we can link against different distributions
-if(SCENARIO_USE_IGNITION)
-    include(ImportTargets${IGNITION_DISTRIBUTION})
+# Alias the Gazebo targets so that we can link against different distributions
+if(SCENARIO_USE_GAZEBO)
+    include(ImportTargets${GAZEBO_DISTRIBUTION})
 endif()
 
 # Helper for exporting targets
@@ -200,9 +197,9 @@ add_subdirectory(src)
 # BINDINGS
 # ========
 
-# Require to find Ignition libraries when packaging for PyPI
-if(SCENARIO_CALL_FROM_SETUP_PY AND NOT USE_IGNITION)
-    message(FATAL_ERROR "Found no Ignition distribution for PyPI package")
+# Require to find Gazebo libraries when packaging for PyPI
+if(SCENARIO_CALL_FROM_SETUP_PY AND NOT USE_GAZEBO)
+    message(FATAL_ERROR "Found no Gazebo distribution for PyPI package")
 endif()
 
 if(SCENARIO_ENABLE_BINDINGS)

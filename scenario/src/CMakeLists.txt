@@ -7,9 +7,9 @@ add_subdirectory(core)
 set(SCENARIO_COMPONENTS ScenarioCore)
 set(SCENARIO_PRIVATE_DEPENDENCIES "")
 
-if(SCENARIO_USE_IGNITION)
+if(SCENARIO_USE_GAZEBO)
 
-    option(ENABLE_PROFILER "Enable Ignition Profiler" OFF)
+    option(ENABLE_PROFILER "Enable Gazebo Profiler" OFF)
     mark_as_advanced(ENABLE_PROFILER)
 
     add_subdirectory(gazebo)

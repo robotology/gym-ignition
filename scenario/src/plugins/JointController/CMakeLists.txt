@@ -32,7 +32,7 @@ add_library(JointController SHARED
 
 target_link_libraries(JointController
     PUBLIC
-    ${ignition-gazebo.core}
+    ${gz-sim.core}
     PRIVATE
     ScenarioGazebo::ScenarioGazebo
     ScenarioGazebo::ExtraComponents)

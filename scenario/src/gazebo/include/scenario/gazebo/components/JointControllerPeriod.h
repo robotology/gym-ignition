@@ -24,29 +24,29 @@
  * limitations under the License.
  */
 
-#ifndef IGNITION_GAZEBO_COMPONENTS_JOINTCONTROLLERPERIOD_H
-#define IGNITION_GAZEBO_COMPONENTS_JOINTCONTROLLERPERIOD_H
+#ifndef GZ_SIM_COMPONENTS_JOINTCONTROLLERPERIOD_H
+#define GZ_SIM_COMPONENTS_JOINTCONTROLLERPERIOD_H
 
-#include <ignition/gazebo/components/Component.hh>
-#include <ignition/gazebo/components/Factory.hh>
-#include <ignition/gazebo/components/Serialization.hh>
-#include <ignition/gazebo/config.hh>
+#include <gz/sim/components/Component.hh>
+#include <gz/sim/components/Factory.hh>
+#include <gz/sim/components/Serialization.hh>
+#include <gz/sim/config.hh>
 
 #include <chrono>
 
-namespace ignition::gazebo {
+namespace gz::sim {
     // Inline bracket to help doxygen filtering.
-    inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
+    inline namespace GZ_SIM_VERSION_NAMESPACE {
         namespace components {
             /// \brief Joint controller period in seconds.
             using JointControllerPeriod =
                 Component<std::chrono::steady_clock::duration,
                           class JointControllerPeriodTag>;
-            IGN_GAZEBO_REGISTER_COMPONENT(
-                "ign_gazebo_components.JointControllerPeriod",
+            GZ_SIM_REGISTER_COMPONENT(
+                "gz_sim_components.JointControllerPeriod",
                 JointControllerPeriod)
         } // namespace components
-    } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
-} // namespace ignition::gazebo
+    } // namespace GZ_SIM_VERSION_NAMESPACE
+} // namespace gz::sim
 
-#endif // IGNITION_GAZEBO_COMPONENTS_JOINTCONTROLLERPERIOD_H
+#endif // GZ_SIM_COMPONENTS_JOINTCONTROLLERPERIOD_H

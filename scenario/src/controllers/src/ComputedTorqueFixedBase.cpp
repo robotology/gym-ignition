@@ -13,13 +13,13 @@
 #include "scenario/core/utils/Log.h"
 
 #include <Eigen/Dense>
-#include <iDynTree/Core/EigenHelpers.h>
-#include <iDynTree/Core/MatrixDynSize.h>
-#include <iDynTree/Core/VectorDynSize.h>
-#include <iDynTree/Core/VectorFixSize.h>
+#include <iDynTree/EigenHelpers.h>
+#include <iDynTree/MatrixDynSize.h>
+#include <iDynTree/VectorDynSize.h>
+#include <iDynTree/VectorFixSize.h>
 #include <iDynTree/KinDynComputations.h>
-#include <iDynTree/Model/FreeFloatingState.h>
-#include <iDynTree/ModelIO/ModelLoader.h>
+#include <iDynTree/FreeFloatingState.h>
+#include <iDynTree/ModelLoader.h>
 
 #include <cassert>
 #include <unordered_map>

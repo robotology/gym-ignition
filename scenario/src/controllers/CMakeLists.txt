@@ -46,7 +46,7 @@ target_link_libraries(ComputedTorqueFixedBase
     ScenarioCore::ScenarioABC
     iDynTree::idyntree-core
     iDynTree::idyntree-model
-    iDynTree::idyntree-modelio-urdf
+    iDynTree::idyntree-modelio
     iDynTree::idyntree-high-level)
 
 target_include_directories(ComputedTorqueFixedBase PUBLIC

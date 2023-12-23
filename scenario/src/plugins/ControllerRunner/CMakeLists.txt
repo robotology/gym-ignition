@@ -52,7 +52,7 @@ add_library(ControllerRunner SHARED
 
 target_link_libraries(ControllerRunner
     PUBLIC
-    ${ignition-gazebo.core}
+    ${gz-sim.core}
     PRIVATE
     ScenarioGazebo::ScenarioGazebo
     ScenarioGazebo::ExtraComponents

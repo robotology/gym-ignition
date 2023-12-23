@@ -28,7 +28,7 @@ set_property(TARGET ${scenario_swig_name}
     PROPERTY SWIG_COMPILE_OPTIONS -doxygen)
 
 # Add the to_gazebo() helpers
-if(SCENARIO_USE_IGNITION)
+if(SCENARIO_USE_GAZEBO)
     set_property(TARGET ${scenario_swig_name} PROPERTY
         SWIG_COMPILE_DEFINITIONS SCENARIO_HAS_GAZEBO)
     set_property(TARGET ${scenario_swig_name} PROPERTY
