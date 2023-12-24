@@ -46,6 +46,7 @@
 #include <gz/physics/heightmap/HeightmapShape.hh>
 #include <gz/physics/RelativeQuantity.hh>
 #include <gz/physics/RequestEngine.hh>
+#include <gz/physics/InstallationDirectories.hh>
 
 #include <gz/physics/BoxShape.hh>
 #include <gz/physics/CylinderShape.hh>
@@ -672,7 +673,7 @@ void Physics::Configure(const Entity &_entity,
   // * Engines installed with gz-physics
   common::SystemPaths systemPaths;
   systemPaths.SetPluginPathEnv(this->dataPtr->pluginPathEnv);
-  systemPaths.AddPluginPaths({GZ_PHYSICS_ENGINE_INSTALL_DIR});
+  systemPaths.AddPluginPaths(gz::physics::getEngineInstallDir());
 
   auto pathToLib = systemPaths.FindSharedLibrary(pluginLib);
   if (pathToLib.empty())
@@ -1388,8 +1389,8 @@ void PhysicsPrivate::CreateJointEntities(const EntityComponentManager &_ecm)
         joint.SetRawPose(_pose->Data());
         joint.SetThreadPitch(_threadPitch->Data());
 
-        joint.SetParentLinkName(_parentLinkName->Data());
-        joint.SetChildLinkName(_childLinkName->Data());
+        joint.SetParentName(_parentLinkName->Data());
+        joint.SetChildName(_childLinkName->Data());
 
         auto jointAxis = _ecm.Component<components::JointAxis>(_entity);
         auto jointAxis2 = _ecm.Component<components::JointAxis2>(_entity);

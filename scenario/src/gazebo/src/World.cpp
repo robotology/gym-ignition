@@ -271,7 +271,7 @@ bool World::setPhysicsEngine(const PhysicsEngine engine)
         m_ecm, m_entity, pluginLib);
 
     // Vendored Physics system
-    const std::string libName = "PhysicsSystem";
+    const std::string libName = "libPhysicsSystem.so";
     const std::string className = "scenario::plugins::gazebo::Physics";
 
     // Load the Physics system

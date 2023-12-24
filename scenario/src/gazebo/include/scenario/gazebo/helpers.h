@@ -157,9 +157,6 @@ namespace scenario::gazebo::utils {
                           const double realTimeUpdateRate,
                           const size_t worldIndex = 0);
 
-    sdf::ElementPtr getPluginSDFElement(const std::string& libName,
-                                        const std::string& className);
-
     sdf::JointType toSdf(const scenario::core::JointType type);
     scenario::core::JointType fromSdf(const sdf::JointType sdfType);
 

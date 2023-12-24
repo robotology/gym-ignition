@@ -39,10 +39,12 @@
 #include <gz/fuel_tools/Result.hh>
 #include <gz/sim/Events.hh>
 #include <gz/sim/config.hh>
+#include <gz/sim/InstallationDirectories.hh>
 #include <sdf/Element.hh>
 #include <sdf/Model.hh>
 #include <sdf/Root.hh>
 #include <sdf/World.hh>
+#include <sdf/Plugin.hh>
 
 #include <cassert>
 #include <exception>
@@ -64,7 +66,7 @@ std::string utils::findSdfFile(const std::string& fileName)
 
     gz::common::SystemPaths systemPaths;
     systemPaths.SetFilePathEnv("GZ_SIM_RESOURCE_PATH");
-    systemPaths.AddFilePaths(GZ_SIM_WORLD_INSTALL_DIR);
+    systemPaths.AddFilePaths(gz::sim::getWorldInstallDir());
 
     // Find the file
     std::string sdfFilePath = systemPaths.FindFile(fileName);
@@ -390,8 +392,7 @@ bool utils::insertPluginToGazeboEntity(const GazeboEntity& gazeboEntity,
          << gazeboEntity.entity() << "]" << std::endl;
 
     // Create a new <plugin name="" filename=""> element without context
-    sdf::ElementPtr pluginElement =
-        utils::getPluginSDFElement(libName, className);
+    auto pluginElement = sdf::Plugin(libName, className);
 
     // Insert the context into the plugin element
     if (!context.empty()) {
@@ -409,18 +410,17 @@ bool utils::insertPluginToGazeboEntity(const GazeboEntity& gazeboEntity,
 
         // Insert the plugin context elements
         while (contextNextElement) {
-            pluginElement->InsertElement(contextNextElement);
+            pluginElement.InsertContent(contextNextElement);
             contextNextElement = contextNextElement->GetNextElement();
         }
     }
 
-    // The plugin element must be wrapped in another element, otherwise
-    // who receives it does not get the additional context
-    const auto wrapped = sdf::SDF::WrapInRoot(pluginElement);
+    auto pluginElements = std::vector<sdf::Plugin>();
+    pluginElements.push_back(pluginElement);
 
     // Trigger the plugin loading
-    gazeboEntity.eventManager()->Emit<gz::sim::events::LoadPlugins>(
-        gazeboEntity.entity(), wrapped);
+    gazeboEntity.eventManager()->Emit<gz::sim::events::LoadSdfPlugins>(
+        gazeboEntity.entity(), pluginElements);
 
     return true;
 }

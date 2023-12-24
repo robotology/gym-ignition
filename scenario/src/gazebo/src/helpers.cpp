@@ -428,25 +428,6 @@ bool utils::updateSDFPhysics(sdf::Root& sdfRoot,
     return true;
 }
 
-sdf::ElementPtr utils::getPluginSDFElement(const std::string& libName,
-                                           const std::string& className)
-{
-    // Create the plugin SDF element
-    auto pluginElement = std::make_shared<sdf::Element>();
-
-    // Initialize the attributes
-    pluginElement->SetName("plugin");
-    pluginElement->AddAttribute(
-        "name", "string", className, true, "plugin name");
-    pluginElement->AddAttribute(
-        "filename", "string", libName, true, "pluginfilename");
-
-    // Create the plugin description
-    pluginElement->AddElementDescription(pluginElement->Clone());
-
-    return pluginElement;
-}
-
 sdf::JointType utils::toSdf(const scenario::core::JointType type)
 {
     sdf::JointType sdfType;

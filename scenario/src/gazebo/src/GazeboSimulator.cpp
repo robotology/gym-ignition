@@ -339,7 +339,7 @@ bool GazeboSimulator::gui(const int verbosity)
         sDebug << "Starting the SceneBroadcaster plugin" << std::endl;
         auto world = this->getWorld(worldName);
         if (!std::static_pointer_cast<World>(world)->insertWorldPlugin(
-                "gz-sim-scene-broadcaster-system",
+                "libgz-sim-scene-broadcaster-system.so",
                 "gz::sim::systems::SceneBroadcaster")) {
             sError << "Failed to load SceneBroadcaster plugin" << std::endl;
             return false;

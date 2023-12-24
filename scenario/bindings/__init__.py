@@ -13,7 +13,7 @@ import packaging.version
 
 def supported_versions_specifier_set() -> packaging.specifiers.SpecifierSet:
 
-    # If 6 is the Gazebo distribution major version, the following specifier enables
+    # If 7 is the Gazebo distribution major version, the following specifier enables
     # the compatibility with all the following versions:
     #
     # 6.Y.Z.devK
@@ -23,7 +23,7 @@ def supported_versions_specifier_set() -> packaging.specifiers.SpecifierSet:
     # 6.Y.Z.preK
     # 6.Y.Z.postK
     #
-    return packaging.specifiers.SpecifierSet(">=6.0.0.pre,<7.0.0.dev")
+    return packaging.specifiers.SpecifierSet(">=7.0.0.pre,<8.0.0.dev")
 
 
 class InstallMode(Enum):
