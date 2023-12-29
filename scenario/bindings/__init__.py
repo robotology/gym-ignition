@@ -129,7 +129,7 @@ def pre_import_gym() -> None:
     if spec is None:
         return
 
-    import gym
+    import gymnasium as gym
 
 
 def check_gazebo_installation() -> None:

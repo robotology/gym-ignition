@@ -1,40 +1,40 @@
-gym\_ignition\_environments.models
+gym\_gz\_environments.models
 ==================================
 
-.. automodule:: gym_ignition_environments.models
+.. automodule:: gym_gz_environments.models
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-gym\_ignition\_environments.models.cartpole
+gym\_gz\_environments.models.cartpole
 -------------------------------------------
 
-.. automodule:: gym_ignition_environments.models.cartpole
+.. automodule:: gym_gz_environments.models.cartpole
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition\_environments.models.icub
+gym\_gz\_environments.models.icub
 ---------------------------------------
 
-.. automodule:: gym_ignition_environments.models.icub
+.. automodule:: gym_gz_environments.models.icub
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition\_environments.models.panda
+gym\_gz\_environments.models.panda
 ----------------------------------------
 
-.. automodule:: gym_ignition_environments.models.panda
+.. automodule:: gym_gz_environments.models.panda
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition\_environments.models.pendulum
+gym\_gz\_environments.models.pendulum
 -------------------------------------------
 
-.. automodule:: gym_ignition_environments.models.pendulum
+.. automodule:: gym_gz_environments.models.pendulum
    :members:
    :undoc-members:
    :show-inheritance:

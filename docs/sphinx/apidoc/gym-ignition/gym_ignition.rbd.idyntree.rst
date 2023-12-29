@@ -1,40 +1,40 @@
-gym\_ignition.rbd.idyntree
+gym\_gz.rbd.idyntree
 ==========================
 
-.. automodule:: gym_ignition.rbd.idyntree
+.. automodule:: gym_gz.rbd.idyntree
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-gym\_ignition.rbd.idyntree.helpers
+gym\_gz.rbd.idyntree.helpers
 ----------------------------------
 
-.. automodule:: gym_ignition.rbd.idyntree.helpers
+.. automodule:: gym_gz.rbd.idyntree.helpers
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.rbd.idyntree.inverse\_kinematics\_nlp
+gym\_gz.rbd.idyntree.inverse\_kinematics\_nlp
 ---------------------------------------------------
 
-.. automodule:: gym_ignition.rbd.idyntree.inverse_kinematics_nlp
+.. automodule:: gym_gz.rbd.idyntree.inverse_kinematics_nlp
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.rbd.idyntree.kindyncomputations
+gym\_gz.rbd.idyntree.kindyncomputations
 ---------------------------------------------
 
-.. automodule:: gym_ignition.rbd.idyntree.kindyncomputations
+.. automodule:: gym_gz.rbd.idyntree.kindyncomputations
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.rbd.idyntree.numpy
+gym\_gz.rbd.idyntree.numpy
 --------------------------------
 
-.. automodule:: gym_ignition.rbd.idyntree.numpy
+.. automodule:: gym_gz.rbd.idyntree.numpy
    :members:
    :undoc-members:
    :show-inheritance:

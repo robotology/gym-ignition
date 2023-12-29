@@ -2,23 +2,23 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import gym
+import gymnasium as gym
 import numpy as np
 import pytest
-from gym.envs import registry
-from gym.envs.registration import register
-from gym_ignition.robots.sim import gazebo, pybullet
-from gym_ignition.tasks.cartpole_discrete import CartPoleDiscrete
-from gym_ignition.tasks.pendulum_swingup import PendulumSwingUp
-from gym_ignition.utils import logger
+from gymnasium.envs import registry
+from gymnasium.envs.registration import register
+from gym_gz.robots.sim import gazebo, pybullet
+from gym_gz.tasks.cartpole_discrete import CartPoleDiscrete
+from gym_gz.tasks.pendulum_swingup import PendulumSwingUp
+from gym_gz.utils import logger
 
 # Set verbosity
 logger.set_level(gym.logger.DEBUG)
 
-if "Pendulum-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
+if "Pendulum-Gz-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
     register(
-        id="Pendulum-Ignition-PyTest-v0",
-        entry_point="gym_ignition.runtimes.gazebo_runtime:GazeboRuntime",
+        id="Pendulum-Gz-PyTest-v0",
+        entry_point="gym_gz.runtimes.gazebo_runtime:GazeboRuntime",
         max_episode_steps=1000,
         kwargs={
             "task_cls": PendulumSwingUp,
@@ -35,7 +35,7 @@ if "Pendulum-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all()
 if "Pendulum-PyBullet-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
     register(
         id="Pendulum-PyBullet-PyTest-v0",
-        entry_point="gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime",
+        entry_point="gym_gz.runtimes.pybullet_runtime:PyBulletRuntime",
         max_episode_steps=1000,
         kwargs={
             "task_cls": PendulumSwingUp,
@@ -49,12 +49,12 @@ if "Pendulum-PyBullet-PyTest-v0" not in [spec.id for spec in list(registry.all()
         },
     )
 
-if "CartPoleDiscrete-Ignition-PyTest-v0" not in [
+if "CartPoleDiscrete-Gz-PyTest-v0" not in [
     spec.id for spec in list(registry.all())
 ]:
     register(
-        id="CartPoleDiscrete-Ignition-PyTest-v0",
-        entry_point="gym_ignition.runtimes.gazebo_runtime:GazeboRuntime",
+        id="CartPoleDiscrete-Gz-PyTest-v0",
+        entry_point="gym_gz.runtimes.gazebo_runtime:GazeboRuntime",
         max_episode_steps=500,
         kwargs={
             "task_cls": CartPoleDiscrete,
@@ -73,7 +73,7 @@ if "CartPoleDiscrete-PyBullet-PyTest-v0" not in [
 ]:
     register(
         id="CartPoleDiscrete-PyBullet-PyTest-v0",
-        entry_point="gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime",
+        entry_point="gym_gz.runtimes.pybullet_runtime:PyBulletRuntime",
         max_episode_steps=500,
         kwargs={
             "task_cls": CartPoleDiscrete,
@@ -113,8 +113,8 @@ def template_compare_environments(env_name_a: str, env_name_b: str, max_error: f
 
     for epoch in range(10):
         # Reset the environments
-        observation_a = env_a.reset()
-        observation_b = env_b.reset()
+        observation_a, _ = env_a.reset()
+        observation_b, _ = env_b.reset()
 
         assert np.allclose(
             observation_a, observation_b
@@ -157,9 +157,9 @@ def template_compare_environments(env_name_a: str, env_name_b: str, max_error: f
 @pytest.mark.parametrize(
     "env_name_a, env_name_b, max_error",
     [
-        ("Pendulum-Ignition-PyTest-v0", "Pendulum-PyBullet-PyTest-v0", 0.05),
+        ("Pendulum-Gz-PyTest-v0", "Pendulum-PyBullet-PyTest-v0", 0.05),
         (
-            "CartPoleDiscrete-Ignition-PyTest-v0",
+            "CartPoleDiscrete-Gz-PyTest-v0",
             "CartPoleDiscrete-PyBullet-PyTest-v0",
             0.03,
         ),

@@ -8,7 +8,7 @@ pytestmark = pytest.mark.scenario
 
 from typing import Tuple
 
-import gym_ignition_models
+import gym_gz_models
 import numpy as np
 
 from scenario import core
@@ -41,7 +41,7 @@ def test_position_pid(default_world: Tuple[scenario.GazeboSimulator, scenario.Wo
     gazebo, world = default_world
 
     # Insert a panda model
-    panda_urdf = gym_ignition_models.get_model_file("panda")
+    panda_urdf = gym_gz_models.get_model_file("panda")
     assert world.insert_model(panda_urdf)
     assert "panda" in world.model_names()
 

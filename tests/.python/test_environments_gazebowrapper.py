@@ -2,9 +2,9 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import gym
+import gymnasium as gym
 import pytest
-from gym_ignition.utils import logger
+from gym_gz.utils import logger
 
 # Set verbosity
 logger.set_level(gym.logger.DEBUG)
@@ -18,12 +18,12 @@ def template_run_environment(env_name):
     observation = env.observation_space.sample()
     assert observation.size > 0, "The sampled observation is empty"
 
-    observation = env.reset()
+    observation, info = env.reset(options={})
     assert observation.size > 0, "The observation is empty"
 
     for _ in range(10):
         action = env.action_space.sample()
-        state, reward, done, _ = env.step(action)
+        state, reward, terminated, truncated, _ = env.step(action)
         assert state.size > 0, "The environment didn't return a valid state"
 
     env.close()

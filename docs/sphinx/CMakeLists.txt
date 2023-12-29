@@ -22,8 +22,8 @@ set(BINDINGS_MODULES_DIR "${PROJECT_BINARY_DIR}/scenario/bindings")
 # The files in the following folders are replaced:
 #
 # - docs/sphinx/scenario
-# - docs/sphinx/gym_ignition
-# - docs/sphinx/gym_ignition_environments
+# - docs/sphinx/gym_gz
+# - docs/sphinx/gym_gz_environments
 
 if (NOT TARGET ScenarioSwig::Core)
     message(FATAL_ERROR "Target ScenarioSwig::Core not found")
@@ -43,9 +43,9 @@ add_custom_command(
     ${SPHINX_APIDOC_EXECUTABLE} --force
     --no-toc --module-first --maxdepth 4
     -t ${CMAKE_CURRENT_SOURCE_DIR}/_templates
-    -o ${CMAKE_CURRENT_SOURCE_DIR}/apidoc/gym-ignition
-    ${PYTHON_PACKAGES_DIR}/gym_ignition
-    COMMENT "Building <gym-ignition> apidoc")
+    -o ${CMAKE_CURRENT_SOURCE_DIR}/apidoc/gym-gz
+    ${PYTHON_PACKAGES_DIR}/gym_gz
+    COMMENT "Building <gym-gz> apidoc")
 
 add_custom_command(
     TARGET apidoc POST_BUILD
@@ -53,9 +53,9 @@ add_custom_command(
     ${SPHINX_APIDOC_EXECUTABLE} --force
     --no-toc --module-first --maxdepth 4
     -t ${CMAKE_CURRENT_SOURCE_DIR}/_templates
-    -o ${CMAKE_CURRENT_SOURCE_DIR}/apidoc/gym-ignition-environments
-    ${PYTHON_PACKAGES_DIR}/gym_ignition_environments
-    COMMENT "Building <gym-ignition-environments> apidoc")
+    -o ${CMAKE_CURRENT_SOURCE_DIR}/apidoc/gym-gz-environments
+    ${PYTHON_PACKAGES_DIR}/gym_gz_environments
+    COMMENT "Building <gym-gz-environments> apidoc")
 
 add_custom_command(
     TARGET apidoc POST_BUILD

@@ -17,7 +17,7 @@
 # -- Project information -----------------------------------------------------
 from datetime import datetime
 
-project = "gym-ignition"
+project = "gym-gz"
 copyright = f"{datetime.now().year}, Istituto Italiano di Tecnologia"
 author = "Diego Ferigo"
 

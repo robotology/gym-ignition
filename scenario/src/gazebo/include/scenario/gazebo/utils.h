@@ -153,7 +153,7 @@ namespace scenario::gazebo::utils {
      * Get a SDF model file from a Fuel URI.
      *
      * @note A valid URI has the following form:
-     * https://fuel.ignitionrobotics.org/openrobotics/models/model_name
+     * https://fuel.gazebosim.org/openrobotics/models/model_name
      *
      * @param URI A valid Fuel URI.
      * @param useCache Load the model from the local cache.

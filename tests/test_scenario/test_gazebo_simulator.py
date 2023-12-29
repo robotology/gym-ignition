@@ -6,7 +6,7 @@ import pytest
 
 pytestmark = pytest.mark.scenario
 
-import gym_ignition_models
+import gym_gz_models
 
 from scenario import gazebo as scenario
 
@@ -99,7 +99,7 @@ def test_paused_step(gazebo: scenario.GazeboSimulator):
     assert gazebo.initialize()
 
     world = gazebo.get_world().to_gazebo()
-    assert world.insert_model(gym_ignition_models.get_model_file("ground_plane"))
+    assert world.insert_model(gym_gz_models.get_model_file("ground_plane"))
     assert "ground_plane" in world.model_names()
     gazebo.run(paused=True)
 

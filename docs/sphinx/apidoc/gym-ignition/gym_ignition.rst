@@ -1,7 +1,7 @@
-gym\_ignition
+gym\_gz
 =============
 
-.. automodule:: gym_ignition
+.. automodule:: gym_gz
    :members:
    :undoc-members:
    :show-inheritance:
@@ -10,10 +10,10 @@ gym\_ignition
 .. toctree::
    :maxdepth: 4
 
-   gym_ignition.base
-   gym_ignition.context
-   gym_ignition.randomizers
-   gym_ignition.rbd
-   gym_ignition.runtimes
-   gym_ignition.scenario
-   gym_ignition.utils
+   gym_gz.base
+   gym_gz.context
+   gym_gz.randomizers
+   gym_gz.rbd
+   gym_gz.runtimes
+   gym_gz.scenario
+   gym_gz.utils

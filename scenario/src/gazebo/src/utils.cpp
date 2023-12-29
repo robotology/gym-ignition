@@ -195,6 +195,7 @@ std::string utils::getModelFileFromFuel(const std::string& URI,
                                         const bool useCache)
 {
     std::string modelFilePath;
+    sError << "URI" << URI;
     using namespace gz;
 
     if (!useCache) {

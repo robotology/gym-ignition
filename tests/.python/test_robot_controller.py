@@ -2,10 +2,10 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import gym
+import gymnasium as gym
 import numpy as np
-from gym_ignition import gympp_bindings as bindings
-from gym_ignition.utils import logger, resource_finder
+from gym_gz import gympp_bindings as bindings
+from gym_gz.utils import logger, resource_finder
 
 
 def test_joint_controller():
@@ -40,7 +40,7 @@ def test_joint_controller():
 
     # Create the gazebo wrapper
     num_of_iterations = int(physics_rate / agent_rate)
-    desired_rtf = float(np.finfo(np.float32).max)
+    desired_rtf = float(np.finfo(np.float64).max)
     gazebo = bindings.GazeboSimulator(num_of_iterations, desired_rtf, physics_rate)
     assert gazebo, "Failed to get the gazebo wrapper"
 
@@ -51,9 +51,9 @@ def test_joint_controller():
     world_ok = gazebo.setupGazeboWorld("DefaultEmptyWorld.world")
     assert world_ok, "Failed to initialize the gazebo world"
 
-    # Initialize the ignition gazebo wrapper (creates a paused simulation)
+    # Initialize the gz gazebo wrapper (creates a paused simulation)
     gazebo_initialized = gazebo.initialize()
-    assert gazebo_initialized, "Failed to initialize ignition gazebo"
+    assert gazebo_initialized, "Failed to initialize gz gazebo"
 
     # Insert the model
     model_ok = gazebo.insertModel(model_data, plugin_data)

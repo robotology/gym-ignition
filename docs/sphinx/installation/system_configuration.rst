@@ -11,6 +11,6 @@ After you enabled the workspace by sourcing its bash script, you may need to als
 
 .. code-block:: bash
 
-   export IGN_GAZEBO_PHYSICS_ENGINE_PATH=${IGN_GAZEBO_PHYSICS_ENGINE_PATH}:${COLCON_PREFIX_PATH}/lib/ign-physics-3/engine-plugins/
+   export GZ_SIM_PHYSICS_ENGINE_PATH=${GZ_SIM_PHYSICS_ENGINE_PATH}:${COLCON_PREFIX_PATH}/lib/ign-physics-3/engine-plugins/
 
 Make sure to select the folder corresponding to the correct version of ign-physics, otherwise the wrong plugins are found.

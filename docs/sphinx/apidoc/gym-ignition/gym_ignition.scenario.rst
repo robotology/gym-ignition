@@ -1,24 +1,24 @@
-gym\_ignition.scenario
+gym\_gz.scenario
 ======================
 
-.. automodule:: gym_ignition.scenario
+.. automodule:: gym_gz.scenario
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-gym\_ignition.scenario.model\_with\_file
+gym\_gz.scenario.model\_with\_file
 ----------------------------------------
 
-.. automodule:: gym_ignition.scenario.model_with_file
+.. automodule:: gym_gz.scenario.model_with_file
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.scenario.model\_wrapper
+gym\_gz.scenario.model\_wrapper
 -------------------------------------
 
-.. automodule:: gym_ignition.scenario.model_wrapper
+.. automodule:: gym_gz.scenario.model_wrapper
    :members:
    :undoc-members:
    :show-inheritance:

@@ -8,7 +8,7 @@ pytestmark = pytest.mark.scenario
 
 from typing import Tuple
 
-import gym_ignition_models
+import gym_gz_models
 import numpy as np
 
 from scenario import core as scenario_core
@@ -29,7 +29,7 @@ def test_velocity_direct(
     gazebo, world = default_world
 
     # Get the URDF model
-    pendulum_urdf = gym_ignition_models.get_model_file("pendulum")
+    pendulum_urdf = gym_gz_models.get_model_file("pendulum")
 
     # Insert a pendulum model
     assert world.insert_model(pendulum_urdf)

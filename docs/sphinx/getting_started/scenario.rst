@@ -169,4 +169,4 @@ C++
 .. note::
 
     The environment should be properly configured to find the plugins and the models.
-    Use ``IGN_GAZEBO_SYSTEM_PLUGIN_PATH`` for the plugins and ``IGN_GAZEBO_RESOURCE_PATH`` for the models and meshes.
+    Use ``GZ_SIM_SYSTEM_PLUGIN_PATH`` for the plugins and ``GZ_SIM_RESOURCE_PATH`` for the models and meshes.

@@ -1,24 +1,24 @@
-gym\_ignition.context.gazebo
+gym\_gz.context.gazebo
 ============================
 
-.. automodule:: gym_ignition.context.gazebo
+.. automodule:: gym_gz.context.gazebo
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-gym\_ignition.context.gazebo.controllers
+gym\_gz.context.gazebo.controllers
 ----------------------------------------
 
-.. automodule:: gym_ignition.context.gazebo.controllers
+.. automodule:: gym_gz.context.gazebo.controllers
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.context.gazebo.plugin
+gym\_gz.context.gazebo.plugin
 -----------------------------------
 
-.. automodule:: gym_ignition.context.gazebo.plugin
+.. automodule:: gym_gz.context.gazebo.plugin
    :members:
    :undoc-members:
    :show-inheritance:

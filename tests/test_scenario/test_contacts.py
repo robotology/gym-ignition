@@ -8,9 +8,9 @@ pytestmark = pytest.mark.scenario
 
 from typing import Callable
 
-import gym_ignition_models
+import gym_gz_models
 import numpy as np
-from gym_ignition.utils import misc
+from gym_gz.utils import misc
 
 from scenario import core
 from scenario import gazebo as scenario
@@ -77,7 +77,7 @@ def test_cube_contact(gazebo: scenario.GazeboSimulator, get_model_str: Callable)
     assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
     # Insert the ground plane
-    assert world.insert_model(gym_ignition_models.get_model_file("ground_plane"))
+    assert world.insert_model(gym_gz_models.get_model_file("ground_plane"))
     assert len(world.model_names()) == 1
 
     # Insert the cube
@@ -150,7 +150,7 @@ def test_cube_multiple_contacts(
     assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
     # Insert the ground plane
-    assert world.insert_model(gym_ignition_models.get_model_file("ground_plane"))
+    assert world.insert_model(gym_gz_models.get_model_file("ground_plane"))
     assert len(world.model_names()) == 1
 
     # Insert two cubes side to side with a 10cm gap

@@ -8,7 +8,7 @@ pytestmark = pytest.mark.scenario
 
 from typing import Tuple
 
-import gym_ignition_models
+import gym_gz_models
 import numpy as np
 
 from scenario import core
@@ -23,7 +23,7 @@ scenario.set_verbosity(scenario.Verbosity_debug)
 
 
 def get_model(
-    gazebo: scenario.GazeboSimulator, gym_ignition_models_name: str
+    gazebo: scenario.GazeboSimulator, gym_gz_models_name: str
 ) -> scenario.Model:
 
     # Get the world and cast it to a Gazebo world
@@ -31,14 +31,14 @@ def get_model(
 
     assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
-    model_urdf = gym_ignition_models.get_model_file(gym_ignition_models_name)
+    model_urdf = gym_gz_models.get_model_file(gym_gz_models_name)
 
     assert world.insert_model(
-        model_urdf, core.Pose_identity(), gym_ignition_models_name
+        model_urdf, core.Pose_identity(), gym_gz_models_name
     )
 
     # Get the model and cast it to a Gazebo model
-    model = world.get_model(gym_ignition_models_name).to_gazebo()
+    model = world.get_model(gym_gz_models_name).to_gazebo()
     assert model.id() != 0
     assert model.valid()
 
@@ -52,12 +52,12 @@ def test_model_core_api(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
 
-    gym_ignition_model_name = "cartpole"
-    model = get_model(gazebo, gym_ignition_model_name)
+    gym_gz_model_name = "cartpole"
+    model = get_model(gazebo, gym_gz_model_name)
 
     assert model.id() != 0
     assert model.valid()
-    assert model.name() == gym_ignition_model_name
+    assert model.name() == gym_gz_model_name
 
     assert len(model.link_names()) == model.nr_of_links()
     assert len(model.joint_names()) == model.nr_of_joints()
@@ -73,8 +73,8 @@ def test_model_joints(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
 
-    gym_ignition_model_name = "panda"
-    model = get_model(gazebo, gym_ignition_model_name)
+    gym_gz_model_name = "panda"
+    model = get_model(gazebo, gym_gz_model_name)
 
     q = model.joint_positions()
     assert pytest.approx(q) == [0.0] * model.dofs()
@@ -124,9 +124,9 @@ def test_model_base_pose(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
 
-    gym_ignition_model_name = "pendulum"
-    model = get_model(gazebo, gym_ignition_model_name)
-    assert gym_ignition_model_name in gazebo.get_world().model_names()
+    gym_gz_model_name = "pendulum"
+    model = get_model(gazebo, gym_gz_model_name)
+    assert gym_gz_model_name in gazebo.get_world().model_names()
 
     assert model.base_frame() == "support"
     # assert model.set_base_frame("support")  # TODO: Not yet supported
@@ -163,7 +163,7 @@ def test_model_base_velocity(
     # Get the simulator and the world
     gazebo, world = default_world
 
-    model_urdf = gym_ignition_models.get_model_file("pendulum")
+    model_urdf = gym_gz_models.get_model_file("pendulum")
 
     # Insert the first pendulum
     model1_name = "pendulum1"
@@ -233,9 +233,9 @@ def test_model_references(gazebo: scenario.GazeboSimulator):
 
     assert gazebo.initialize()
 
-    gym_ignition_model_name = "cartpole"
-    model = get_model(gazebo, gym_ignition_model_name)
-    assert gym_ignition_model_name in gazebo.get_world().model_names()
+    gym_gz_model_name = "cartpole"
+    model = get_model(gazebo, gym_gz_model_name)
+    assert gym_gz_model_name in gazebo.get_world().model_names()
 
     assert model.set_joint_control_mode(core.JointControlMode_force)
 
@@ -281,7 +281,7 @@ def test_history_of_joint_forces(
     gazebo, world = default_world
 
     # Insert a panda model
-    panda_urdf = gym_ignition_models.get_model_file("panda")
+    panda_urdf = gym_gz_models.get_model_file("panda")
     assert world.insert_model(panda_urdf)
     assert "panda" in world.model_names()
 

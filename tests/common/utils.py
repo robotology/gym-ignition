@@ -5,9 +5,9 @@
 import dataclasses
 from typing import Tuple
 
-import gym_ignition_models
+import gym_gz_models
 import pytest
-from gym_ignition.utils import misc
+from gym_gz.utils import misc
 
 from scenario import gazebo as scenario
 
@@ -77,7 +77,7 @@ def default_world_fixture(request):
     assert gazebo.initialize()
 
     world = gazebo.get_world().to_gazebo()
-    assert world.insert_model(gym_ignition_models.get_model_file("ground_plane"))
+    assert world.insert_model(gym_gz_models.get_model_file("ground_plane"))
     assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
     yield gazebo, world
