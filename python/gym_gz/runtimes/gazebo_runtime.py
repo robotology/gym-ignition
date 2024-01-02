@@ -46,6 +46,7 @@ class GazeboRuntime(runtime.Runtime):
         real_time_factor: float,
         physics_engine=scenario.PhysicsEngine_dart,
         world: str = None,
+        render_mode: Optional[str] = None,
         **kwargs,
     ):
 
@@ -68,6 +69,9 @@ class GazeboRuntime(runtime.Runtime):
         self._world = None
         self._world_sdf = world
         self._world_name = None
+
+        # Store the render mode
+        self.render_mode = render_mode
 
         # Create the Task object
         task = task_cls(agent_rate=agent_rate, **kwargs)
@@ -132,6 +136,10 @@ class GazeboRuntime(runtime.Runtime):
         # Check truncation
         truncated = self.task.is_truncated()
 
+        # Render the environment
+        if self.render_mode == "human":
+            self.render()
+
         # Get info
         info = self.task.get_info()
 
@@ -158,10 +166,15 @@ class GazeboRuntime(runtime.Runtime):
             logger.warn("The observation does not belong to the observation space")
         # Get info
         info = self.task.get_info()
+
+        # Render the environment
+        if self.render_mode == "human":
+            self.render()
+        
         return ResetReturn((Observation(observation), Info(info))) 
 
-    def render(self, mode: str = "human", **kwargs) -> None:
-
+    def render(self, **kwargs) -> None:
+        mode = self.render_mode
         if mode != "human":
             raise ValueError(f"Render mode '{mode}' not supported")
 

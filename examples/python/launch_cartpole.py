@@ -48,6 +48,8 @@ for epoch in range(10):
     observation = env.reset(seed=42, options={})
 
     # Initialize returned values
+    terminated = False
+    truncated = False
     done = False
     totalReward = 0
 
@@ -55,7 +57,10 @@ for epoch in range(10):
 
         # Execute a random action
         action = env.action_space.sample()
-        observation, reward, done, _ = env.step(action)
+        observation, reward, terminated, truncated, _ = env.step(action)
+
+        # Check if the episode is terminated
+        done = terminated or truncated
 
         # Render the environment.
         # It is not required to call this in the loop if physics is not randomized.

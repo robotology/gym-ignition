@@ -10,8 +10,8 @@ from gymnasium.envs.registration import register
 from gym_gz.robots.sim import gazebo, pybullet
 from gym_gz.tasks.pendulum_swingup import PendulumSwingUp
 from gym_gz.utils import logger
-from gym_gz.utils.typing import Observation, Reward, State, 
-from typing import Dict
+from gym_gz.utils.typing import Observation, Reward, State 
+from typing import Dict, Optional
 
 # Set verbosity
 logger.set_level(gym.logger.DEBUG)
@@ -25,7 +25,7 @@ class PendulumEnv(gym.Env):
 
     metadata = {"render.modes": []}
 
-    def __init__(self):
+    def __init__(self, render_mode: Optional[str] = None):
         super().__init__()
 
         # Check the xacro pendulum model
@@ -37,6 +37,7 @@ class PendulumEnv(gym.Env):
 
         self.dt = None
         # self.force = None
+        self.render_mode = render_mode
         self.theta = None
         self.theta_dot = None
 
@@ -73,7 +74,8 @@ class PendulumEnv(gym.Env):
         # Use set_state_from_obs
         pass
 
-    def render(self, mode="human", **kwargs):
+    def render(self, **kwargs):
+        mode = self.render_mode
         raise Exception("This runtime does not support rendering")
 
     def seed(self, seed=None):

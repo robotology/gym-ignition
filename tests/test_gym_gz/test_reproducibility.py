@@ -35,8 +35,8 @@ def test_reproducibility(num_physics_rollouts: int):
 
     assert env1 != env2
 
-    env1.seed(42)
-    env2.seed(42)
+    env1.unwrapped.seed(42)
+    env2.unwrapped.seed(42)
 
     for _ in range(5):
 

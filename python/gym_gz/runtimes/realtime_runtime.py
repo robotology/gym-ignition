@@ -4,7 +4,7 @@
 
 from gym_gz.base import runtime, task
 from gym_gz.utils.typing import Action, Done, Info, Observation, State, Terminated, Truncated, ResetReturn, Dict
-
+from typing import Optional
 
 class RealTimeRuntime(runtime.Runtime):
     """
@@ -15,15 +15,19 @@ class RealTimeRuntime(runtime.Runtime):
         This class is not yet complete.
     """
 
-    def __init__(self, task_cls: type, robot_cls: type, agent_rate: float, **kwargs):
+    def __init__(self, task_cls: type, robot_cls: type, agent_rate: float, render_mode: Optional[str] = None, **kwargs):
 
         # Build the environment
         task_object = task_cls(**kwargs)
 
+        # Check the task
         assert isinstance(
             task_object, task.Task
         ), "'task_cls' object must inherit from Task"
 
+        # Render mode
+        self.render_mode = render_mode
+        
         super().__init__(task=task_object, agent_rate=agent_rate)
 
         raise NotImplementedError
@@ -80,7 +84,8 @@ class RealTimeRuntime(runtime.Runtime):
 
         return ResetReturn((observation, Info({}))) 
 
-    def render(self, mode: str = "human", **kwargs) -> None:
+    def render(self, **kwargs) -> None:
+        mode = self.render_mode
         raise NotImplementedError
 
     def close(self) -> None:
