@@ -212,9 +212,7 @@ def import_gazebo() -> None:
 def create_home_dot_folder() -> None:
 
     # Make sure that the dot folder in the user's home exists
-    Path("~/.gz/gazebo").expanduser().mkdir(
-        mode=0o755, parents=True, exist_ok=True
-    )
+    Path("~/.gz/gazebo").expanduser().mkdir(mode=0o755, parents=True, exist_ok=True)
 
 
 # ===================

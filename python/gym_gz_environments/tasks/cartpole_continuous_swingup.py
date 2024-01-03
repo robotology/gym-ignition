@@ -128,7 +128,7 @@ class CartPoleContinuousSwingup(task.Task, abc.ABC):
         terminated = not self.reset_space.contains(observation)
 
         return terminated
-    
+
     def is_truncated(self) -> bool:
         return False
 

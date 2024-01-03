@@ -2,16 +2,17 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
+from typing import Dict, Optional
+
 import gymnasium as gym
 import numpy as np
 import pytest
-from gymnasium.envs import registry
-from gymnasium.envs.registration import register
 from gym_gz.robots.sim import gazebo, pybullet
 from gym_gz.tasks.pendulum_swingup import PendulumSwingUp
 from gym_gz.utils import logger
-from gym_gz.utils.typing import Observation, Reward, State 
-from typing import Dict, Optional
+from gym_gz.utils.typing import Observation, Reward, State
+from gymnasium.envs import registry
+from gymnasium.envs.registration import register
 
 # Set verbosity
 logger.set_level(gym.logger.DEBUG)
@@ -70,7 +71,7 @@ class PendulumEnv(gym.Env):
 
         return State((Observation(observation), Reward(0.0), False, {}))
 
-    def reset(self, seed: int = None, options: Dict ={}, **kwargs):
+    def reset(self, seed: int = None, options: Dict = {}, **kwargs):
         # Use set_state_from_obs
         pass
 
@@ -133,7 +134,6 @@ def template_pendulum_wrt_ground_truth(env_name: str, max_error_in_deg: float):
     # Render the environment
     # env.render('human')
     # time.sleep(5)
-
 
     for epoch in range(10):
         # Reset the environment

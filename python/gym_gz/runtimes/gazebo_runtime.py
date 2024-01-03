@@ -2,16 +2,25 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-from typing import Optional, Dict
-
-import gymnasium as gym
-import numpy as np
+from typing import Dict, Optional
 
 import gym_gz_models
+import gymnasium as gym
+import numpy as np
 from gym_gz import base
 from gym_gz.base import runtime
 from gym_gz.utils import logger
-from gym_gz.utils.typing import Action, Info, Observation, Reward, SeedList, State, Terminated, Truncated, ResetReturn
+from gym_gz.utils.typing import (
+    Action,
+    Info,
+    Observation,
+    ResetReturn,
+    Reward,
+    SeedList,
+    State,
+    Terminated,
+    Truncated,
+)
 
 from scenario import gazebo as scenario
 
@@ -143,9 +152,17 @@ class GazeboRuntime(runtime.Runtime):
         # Get info
         info = self.task.get_info()
 
-        return State((Observation(observation), Reward(reward), Terminated(terminated), Truncated(truncated), Info(info)))
+        return State(
+            (
+                Observation(observation),
+                Reward(reward),
+                Terminated(terminated),
+                Truncated(truncated),
+                Info(info),
+            )
+        )
 
-    def reset(self, seed: int = None, options : Dict = {}, **kwargs) -> ResetReturn:
+    def reset(self, seed: int = None, options: Dict = {}, **kwargs) -> ResetReturn:
 
         self.seed(seed)
 
@@ -170,8 +187,8 @@ class GazeboRuntime(runtime.Runtime):
         # Render the environment
         if self.render_mode == "human":
             self.render()
-        
-        return ResetReturn((Observation(observation), Info(info))) 
+
+        return ResetReturn((Observation(observation), Info(info)))
 
     def render(self, **kwargs) -> None:
         mode = self.render_mode
@@ -282,9 +299,7 @@ class GazeboRuntime(runtime.Runtime):
         if self._world_sdf == "":
 
             # Insert the ground plane
-            ok_ground = world.insert_model(
-                gym_gz_models.get_model_file("ground_plane")
-            )
+            ok_ground = world.insert_model(gym_gz_models.get_model_file("ground_plane"))
 
             if not ok_ground:
                 raise RuntimeError("Failed to insert the ground plane")

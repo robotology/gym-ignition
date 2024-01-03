@@ -20,8 +20,8 @@ env_id = "CartPoleDiscreteBalancing-Gazebo-v0"
 
 
 def make_env_from_id(env_id: str, **kwargs) -> gym.Env:
-    import gymnasium as gym
     import gym_gz_environments
+    import gymnasium as gym
 
     return gym.make(env_id, **kwargs)
 

@@ -72,7 +72,9 @@ class GazeboEnvRandomizer(gym.Wrapper, TaskRandomizer, abc.ABC):
     # gym.Env methods
     # ===============
 
-    def reset(self, seed: int = None, options : Dict = {}, **kwargs) -> typing.ResetReturn:
+    def reset(
+        self, seed: int = None, options: Dict = {}, **kwargs
+    ) -> typing.ResetReturn:
 
         # Reset the physics
         if self._physics_randomizer.physics_expired() and seed is None:
@@ -94,7 +96,9 @@ class GazeboEnvRandomizer(gym.Wrapper, TaskRandomizer, abc.ABC):
         self._physics_randomizer.increase_rollout_counter()
 
         # Reset the task through the TaskRandomizer
-        self.randomize_task(task=self.env.unwrapped.task, gazebo=self.env.unwrapped.gazebo, **kwargs)
+        self.randomize_task(
+            task=self.env.unwrapped.task, gazebo=self.env.unwrapped.gazebo, **kwargs
+        )
 
         ok_paused_run = self.env.unwrapped.gazebo.run(paused=True)
 

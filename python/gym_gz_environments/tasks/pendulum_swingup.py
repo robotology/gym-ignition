@@ -99,7 +99,7 @@ class PendulumSwingUp(task.Task, abc.ABC):
         terminated = not self.observation_space.contains(observation)
 
         return terminated
-    
+
     def is_truncated(self) -> bool:
         return False
 

@@ -33,9 +33,7 @@ def get_model(
 
     model_urdf = gym_gz_models.get_model_file(gym_gz_models_name)
 
-    assert world.insert_model(
-        model_urdf, core.Pose_identity(), gym_gz_models_name
-    )
+    assert world.insert_model(model_urdf, core.Pose_identity(), gym_gz_models_name)
 
     # Get the model and cast it to a Gazebo model
     model = world.get_model(gym_gz_models_name).to_gazebo()

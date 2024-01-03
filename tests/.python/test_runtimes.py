@@ -5,12 +5,12 @@
 import gymnasium as gym
 import numpy as np
 import pytest
-from gymnasium.envs import registry
-from gymnasium.envs.registration import register
 from gym_gz.robots.sim import gazebo, pybullet
 from gym_gz.tasks.cartpole_discrete import CartPoleDiscrete
 from gym_gz.tasks.pendulum_swingup import PendulumSwingUp
 from gym_gz.utils import logger
+from gymnasium.envs import registry
+from gymnasium.envs.registration import register
 
 # Set verbosity
 logger.set_level(gym.logger.DEBUG)
@@ -49,9 +49,7 @@ if "Pendulum-PyBullet-PyTest-v0" not in [spec.id for spec in list(registry.all()
         },
     )
 
-if "CartPoleDiscrete-Gz-PyTest-v0" not in [
-    spec.id for spec in list(registry.all())
-]:
+if "CartPoleDiscrete-Gz-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
     register(
         id="CartPoleDiscrete-Gz-PyTest-v0",
         entry_point="gym_gz.runtimes.gazebo_runtime:GazeboRuntime",

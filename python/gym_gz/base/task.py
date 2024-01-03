@@ -7,7 +7,6 @@ from typing import Dict, Tuple
 
 import gymnasium as gym
 import numpy as np
-from gymnasium.utils import seeding
 from gym_gz.utils.typing import (
     Action,
     ActionSpace,
@@ -16,6 +15,7 @@ from gym_gz.utils.typing import (
     Reward,
     SeedList,
 )
+from gymnasium.utils import seeding
 
 from scenario import core
 
@@ -208,7 +208,7 @@ class Task(abc.ABC):
         Returns:
             True if the environment terminated, False otherwise.
         """
-    
+
     @abc.abstractmethod
     def is_truncated(self) -> bool:
         """

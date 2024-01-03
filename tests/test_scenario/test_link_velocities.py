@@ -264,7 +264,6 @@ def test_linear_acceleration(
         if (np.absolute(np.array(world_linear_acceleration())) > 100.0).any():
             continue
 
-
         # Test the world acceleration (MIXED)
         assert world_linear_acceleration() == pytest.approx(world_acceleration, abs=0.5)
 

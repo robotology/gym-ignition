@@ -246,9 +246,7 @@ time.sleep(3)
 gazebo.run(paused=True)
 
 # Insert the Panda manipulator
-panda = gym_gz_environments.models.panda.Panda(
-    world=world, position=[-0.1, 0, 1.0]
-)
+panda = gym_gz_environments.models.panda.Panda(world=world, position=[-0.1, 0, 1.0])
 
 # Disable joint velocity limits
 _ = [j.to_gazebo().set_velocity_limit(1_000) for j in panda.joints()]

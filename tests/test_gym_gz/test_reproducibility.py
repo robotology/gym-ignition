@@ -16,8 +16,8 @@ set_level(gym.logger.DEBUG)
 
 def make_env(**kwargs) -> gym.Env:
 
-    import gymnasium as gym
     import gym_gz_environments
+    import gymnasium as gym
 
     return gym.make("CartPoleDiscreteBalancing-Gazebo-v0", **kwargs)
 

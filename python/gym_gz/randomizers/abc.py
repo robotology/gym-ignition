@@ -118,9 +118,7 @@ class ModelRandomizer(abc.ABC):
 
 class ModelDescriptionRandomizer(abc.ABC):
     @abc.abstractmethod
-    def randomize_model_description(
-        self, task: gym_gz.base.task.Task, **kwargs
-    ) -> str:
+    def randomize_model_description(self, task: gym_gz.base.task.Task, **kwargs) -> str:
         """
         Randomize the model description.
 
