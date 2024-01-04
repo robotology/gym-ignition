@@ -24,26 +24,26 @@
  * limitations under the License.
  */
 
-#ifndef IGNITION_GAZEBO_COMPONENTS_BASEWORLDACCELERATIONTARGET_H
-#define IGNITION_GAZEBO_COMPONENTS_BASEWORLDACCELERATIONTARGET_H
+#ifndef GZ_SIM_COMPONENTS_BASEWORLDACCELERATIONTARGET_H
+#define GZ_SIM_COMPONENTS_BASEWORLDACCELERATIONTARGET_H
 
-#include <ignition/gazebo/components/Component.hh>
-#include <ignition/gazebo/components/Factory.hh>
-#include <ignition/gazebo/components/Serialization.hh>
-#include <ignition/gazebo/config.hh>
-#include <ignition/math/Vector3.hh>
+#include <gz/sim/components/Component.hh>
+#include <gz/sim/components/Factory.hh>
+#include <gz/sim/components/Serialization.hh>
+#include <gz/sim/config.hh>
+#include <gz/math/Vector3.hh>
 
-namespace ignition::gazebo {
+namespace gz::sim {
     // Inline bracket to help doxygen filtering.
-    inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
+    inline namespace GZ_SIM_VERSION_NAMESPACE {
         namespace components {
             /// \brief Base world linear acceleration target used by
             ///        floating base controllers.
             using BaseWorldLinearAccelerationTarget =
                 Component<math::Vector3d,
                           class BaseWorldLinearAccelerationTargetTag>;
-            IGN_GAZEBO_REGISTER_COMPONENT(
-                "ign_gazebo_components.BaseWorldLinearAccelerationTarget",
+            GZ_SIM_REGISTER_COMPONENT(
+                "gz_sim_components.BaseWorldLinearAccelerationTarget",
                 BaseWorldLinearAccelerationTarget)
 
             /// \brief Base world angular acceleration target used by
@@ -51,12 +51,12 @@ namespace ignition::gazebo {
             using BaseWorldAngularAccelerationTarget =
                 Component<math::Vector3d,
                           class BaseWorldAngularAccelerationTargetTag>;
-            IGN_GAZEBO_REGISTER_COMPONENT(
-                "ign_gazebo_components."
+            GZ_SIM_REGISTER_COMPONENT(
+                "gz_sim_components."
                 "BaseWorldAngularAccelerationTargetTarget",
                 BaseWorldAngularAccelerationTarget)
         } // namespace components
-    } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
-} // namespace ignition::gazebo
+    } // namespace GZ_SIM_VERSION_NAMESPACE
+} // namespace gz::sim
 
-#endif // IGNITION_GAZEBO_COMPONENTS_BASEWORLDACCELERATIONTARGET_H
+#endif // GZ_SIM_COMPONENTS_BASEWORLDACCELERATIONTARGET_H

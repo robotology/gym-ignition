@@ -29,20 +29,22 @@
 #include "scenario/gazebo/helpers.h"
 
 #include <Eigen/Dense>
-#include <ignition/common/Console.hh>
-#include <ignition/common/Filesystem.hh>
-#include <ignition/common/SystemPaths.hh>
-#include <ignition/common/URI.hh>
-#include <ignition/fuel_tools/ClientConfig.hh>
-#include <ignition/fuel_tools/FuelClient.hh>
-#include <ignition/fuel_tools/Interface.hh>
-#include <ignition/fuel_tools/Result.hh>
-#include <ignition/gazebo/Events.hh>
-#include <ignition/gazebo/config.hh>
+#include <gz/common/Console.hh>
+#include <gz/common/Filesystem.hh>
+#include <gz/common/SystemPaths.hh>
+#include <gz/common/URI.hh>
+#include <gz/fuel_tools/ClientConfig.hh>
+#include <gz/fuel_tools/FuelClient.hh>
+#include <gz/fuel_tools/Interface.hh>
+#include <gz/fuel_tools/Result.hh>
+#include <gz/sim/Events.hh>
+#include <gz/sim/config.hh>
+#include <gz/sim/InstallationDirectories.hh>
 #include <sdf/Element.hh>
 #include <sdf/Model.hh>
 #include <sdf/Root.hh>
 #include <sdf/World.hh>
+#include <sdf/Plugin.hh>
 
 #include <cassert>
 #include <exception>
@@ -52,7 +54,7 @@ using namespace scenario::gazebo;
 
 void utils::setVerbosity(const Verbosity level)
 {
-    ignition::common::Console::SetVerbosity(static_cast<int>(level));
+    gz::common::Console::SetVerbosity(static_cast<int>(level));
 }
 
 std::string utils::findSdfFile(const std::string& fileName)
@@ -62,16 +64,16 @@ std::string utils::findSdfFile(const std::string& fileName)
         return {};
     }
 
-    ignition::common::SystemPaths systemPaths;
-    systemPaths.SetFilePathEnv("IGN_GAZEBO_RESOURCE_PATH");
-    systemPaths.AddFilePaths(IGN_GAZEBO_WORLD_INSTALL_DIR);
+    gz::common::SystemPaths systemPaths;
+    systemPaths.SetFilePathEnv("GZ_SIM_RESOURCE_PATH");
+    systemPaths.AddFilePaths(gz::sim::getWorldInstallDir());
 
     // Find the file
     std::string sdfFilePath = systemPaths.FindFile(fileName);
 
     if (sdfFilePath.empty()) {
         sError << "Failed to find " << fileName << std::endl;
-        sError << "Check that it is part of IGN_GAZEBO_RESOURCE_PATH"
+        sError << "Check that it is part of GZ_SIM_RESOURCE_PATH"
                << std::endl;
         return {};
     }
@@ -90,7 +92,7 @@ std::string utils::getSdfString(const std::string& fileName)
     //       support is still rough even with C++17 enabled :/
     std::string sdfFileAbsPath;
 
-    if (!ignition::common::isFile(fileName)) {
+    if (!gz::common::isFile(fileName)) {
         sdfFileAbsPath = findSdfFile(fileName);
     }
 
@@ -193,7 +195,8 @@ std::string utils::getModelFileFromFuel(const std::string& URI,
                                         const bool useCache)
 {
     std::string modelFilePath;
-    using namespace ignition;
+    sError << "URI" << URI;
+    using namespace gz;
 
     if (!useCache) {
         modelFilePath = fuel_tools::fetchResource(URI);
@@ -390,8 +393,7 @@ bool utils::insertPluginToGazeboEntity(const GazeboEntity& gazeboEntity,
          << gazeboEntity.entity() << "]" << std::endl;
 
     // Create a new <plugin name="" filename=""> element without context
-    sdf::ElementPtr pluginElement =
-        utils::getPluginSDFElement(libName, className);
+    auto pluginElement = sdf::Plugin(libName, className);
 
     // Insert the context into the plugin element
     if (!context.empty()) {
@@ -409,18 +411,17 @@ bool utils::insertPluginToGazeboEntity(const GazeboEntity& gazeboEntity,
 
         // Insert the plugin context elements
         while (contextNextElement) {
-            pluginElement->InsertElement(contextNextElement);
+            pluginElement.InsertContent(contextNextElement);
             contextNextElement = contextNextElement->GetNextElement();
         }
     }
 
-    // The plugin element must be wrapped in another element, otherwise
-    // who receives it does not get the additional context
-    const auto wrapped = sdf::SDF::WrapInRoot(pluginElement);
+    auto pluginElements = std::vector<sdf::Plugin>();
+    pluginElements.push_back(pluginElement);
 
     // Trigger the plugin loading
-    gazeboEntity.eventManager()->Emit<ignition::gazebo::events::LoadPlugins>(
-        gazeboEntity.entity(), wrapped);
+    gazeboEntity.eventManager()->Emit<gz::sim::events::LoadSdfPlugins>(
+        gazeboEntity.entity(), pluginElements);
 
     return true;
 }

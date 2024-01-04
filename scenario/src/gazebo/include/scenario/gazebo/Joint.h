@@ -30,9 +30,9 @@
 #include "scenario/core/Joint.h"
 #include "scenario/gazebo/GazeboEntity.h"
 
-#include <ignition/gazebo/Entity.hh>
-#include <ignition/gazebo/EntityComponentManager.hh>
-#include <ignition/gazebo/EventManager.hh>
+#include <gz/sim/Entity.hh>
+#include <gz/sim/EntityComponentManager.hh>
+#include <gz/sim/EventManager.hh>
 
 #include <memory>
 #include <string>
@@ -57,9 +57,9 @@ public:
 
     uint64_t id() const override;
 
-    bool initialize(const ignition::gazebo::Entity jointEntity,
-                    ignition::gazebo::EntityComponentManager* ecm,
-                    ignition::gazebo::EventManager* eventManager) override;
+    bool initialize(const gz::sim::Entity jointEntity,
+                    gz::sim::EntityComponentManager* ecm,
+                    gz::sim::EventManager* eventManager) override;
 
     bool createECMResources() override;
 
@@ -68,7 +68,7 @@ public:
     // ============
 
     /**
-     * Insert a Ignition Gazebo plugin to the joint.
+     * Insert a Gz Gazebo plugin to the joint.
      *
      * @param libName The library name of the plugin.
      * @param className The class name (or alias) of the plugin.

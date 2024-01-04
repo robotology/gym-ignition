@@ -6,9 +6,9 @@ import pytest
 
 pytestmark = pytest.mark.scenario
 
-# import gym_ignition_models
+# import gym_gz_models
 # import numpy as np
-# from gym_ignition.utils import misc
+# from gym_gz.utils import misc
 
 # from scenario import core as scenario_core
 from scenario import gazebo as scenario_gazebo
@@ -170,7 +170,7 @@ def test_insert_world_multiple_calls(gazebo: scenario_gazebo.GazeboSimulator):
 #
 #     sphere_urdf_string = utils.SphereURDF(restitution=0.8).urdf()
 #     sphere_urdf = misc.string_to_file(sphere_urdf_string)
-#     ground_plane_urdf = gym_ignition_models.get_model_file(robot_name="ground_plane")
+#     ground_plane_urdf = gym_gz_models.get_model_file(robot_name="ground_plane")
 #
 #     # Pose of the sphere
 #     sphere_pose = scenario_core.Pose([0, 0, 0.5], [1, 0, 0, 0])

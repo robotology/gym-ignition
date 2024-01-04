@@ -6,9 +6,9 @@ import pytest
 
 pytestmark = pytest.mark.scenario
 
-import gym_ignition_models
+import gym_gz_models
 import numpy as np
-from gym_ignition.context.gazebo import controllers
+from gym_gz.context.gazebo import controllers
 
 from scenario import core
 from scenario import gazebo as scenario
@@ -35,7 +35,7 @@ def test_computed_torque_fixed_base(gazebo: scenario.GazeboSimulator):
     assert world.set_physics_engine(scenario.PhysicsEngine_dart)
 
     # Get the panda urdf
-    panda_urdf = gym_ignition_models.get_model_file("panda")
+    panda_urdf = gym_gz_models.get_model_file("panda")
 
     # Insert the panda arm
     model_name = "panda"

@@ -8,9 +8,9 @@ pytestmark = pytest.mark.scenario
 
 from typing import Callable, Tuple
 
-import gym_ignition_models
+import gym_gz_models
 import numpy as np
-from gym_ignition.utils.scenario import get_joint_positions_space
+from gym_gz.utils.scenario import get_joint_positions_space
 from scipy.spatial.transform import Rotation
 
 from scenario import core
@@ -49,7 +49,7 @@ def get_random_panda(
     gazebo: scenario.GazeboSimulator, world: scenario.World
 ) -> core.Model:
 
-    panda_urdf = gym_ignition_models.get_model_file("panda")
+    panda_urdf = gym_gz_models.get_model_file("panda")
     assert world.insert_model(panda_urdf)
     assert "panda" in world.model_names()
 
@@ -261,7 +261,7 @@ def test_linear_acceleration(
         # By time to time there are steps where the acceleration becomes extremely high,
         # like 1000 m/s/s when the average is never exceeds 4 m/s/s.
         # We exclude those points. We should understand why this happens.
-        if (np.array(world_linear_acceleration()) > 100.0).any():
+        if (np.absolute(np.array(world_linear_acceleration())) > 100.0).any():
             continue
 
         # Test the world acceleration (MIXED)

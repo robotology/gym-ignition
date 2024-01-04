@@ -14,60 +14,60 @@ alias_imported_target(
 
 alias_imported_target(
     PACKAGE_ORIG ignition-gazebo3
-    PACKAGE_DEST ignition-gazebo
+    PACKAGE_DEST gz-sim
     TARGETS_ORIG ignition-gazebo3 core
-    TARGETS_DEST ignition-gazebo  core
+    TARGETS_DEST gz-sim  core
     NAMESPACE_ORIG ignition-gazebo3
-    NAMESPACE_DEST ignition-gazebo
+    NAMESPACE_DEST gz-sim
     REQUIRED TRUE
     )
 
 alias_imported_target(
     PACKAGE_ORIG ignition-common3
-    PACKAGE_DEST ignition-common
+    PACKAGE_DEST gz-common
     TARGETS_ORIG ignition-common3
-    TARGETS_DEST ignition-common
+    TARGETS_DEST gz-common
     NAMESPACE_ORIG ignition-common3
-    NAMESPACE_DEST ignition-common
+    NAMESPACE_DEST gz-common
     REQUIRED TRUE
     )
 
 alias_imported_target(
     PACKAGE_ORIG ignition-sensors3-all
-    PACKAGE_DEST ignition-sensors-all
+    PACKAGE_DEST gz-sensors-all
     TARGETS_ORIG ignition-sensors3-all
-    TARGETS_DEST ignition-sensors-all
+    TARGETS_DEST gz-sensors-all
     NAMESPACE_ORIG ignition-sensors3
-    NAMESPACE_DEST ignition-sensors
+    NAMESPACE_DEST gz-sensors
     REQUIRED TRUE
     )
 
 alias_imported_target(
     PACKAGE_ORIG ignition-rendering3
-    PACKAGE_DEST ignition-rendering
+    PACKAGE_DEST gz-rendering
     TARGETS_ORIG ignition-rendering3
-    TARGETS_DEST ignition-rendering
+    TARGETS_DEST gz-rendering
     NAMESPACE_ORIG ignition-rendering3
-    NAMESPACE_DEST ignition-rendering
+    NAMESPACE_DEST gz-rendering
     REQUIRED TRUE
     )
 
 alias_imported_target(
     PACKAGE_ORIG ignition-gazebo3-rendering
-    PACKAGE_DEST ignition-gazebo-rendering
+    PACKAGE_DEST gz-sim-rendering
     TARGETS_ORIG ignition-gazebo3-rendering
-    TARGETS_DEST ignition-gazebo-rendering
+    TARGETS_DEST gz-sim-rendering
     NAMESPACE_ORIG ignition-gazebo3
-    NAMESPACE_DEST ignition-gazebo
+    NAMESPACE_DEST gz-sim
     REQUIRED TRUE
     )
 
 alias_imported_target(
     PACKAGE_ORIG ignition-physics2
-    PACKAGE_DEST ignition-physics
+    PACKAGE_DEST gz-physics
     TARGETS_ORIG ignition-physics2
-    TARGETS_DEST ignition-physics
+    TARGETS_DEST gz-physics
     NAMESPACE_ORIG ignition-physics2
-    NAMESPACE_DEST ignition-physics
+    NAMESPACE_DEST gz-physics
     REQUIRED TRUE
     )

@@ -1,7 +1,7 @@
-gym\_ignition.context
+gym\_gz.context
 =====================
 
-.. automodule:: gym_ignition.context
+.. automodule:: gym_gz.context
    :members:
    :undoc-members:
    :show-inheritance:
@@ -10,4 +10,4 @@ gym\_ignition.context
 .. toctree::
    :maxdepth: 4
 
-   gym_ignition.context.gazebo
+   gym_gz.context.gazebo

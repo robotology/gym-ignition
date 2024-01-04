@@ -34,8 +34,8 @@ add_library(PhysicsSystem SHARED
 
 target_link_libraries(PhysicsSystem
     PUBLIC
-    ${ignition-gazebo.core}
-    ${ignition-physics.ignition-physics}
+    ${gz-sim.core}
+    ${gz-physics.gz-physics}
     PRIVATE
     ScenarioGazebo::ScenarioGazebo
     ScenarioGazebo::ExtraComponents)
@@ -44,7 +44,7 @@ target_include_directories(PhysicsSystem PRIVATE
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>)
 
 if(ENABLE_PROFILER)
-    target_compile_definitions(PhysicsSystem PRIVATE "IGN_PROFILER_ENABLE=1")
+    target_compile_definitions(PhysicsSystem PRIVATE "GZ_PROFILER_ENABLE=1")
 endif()
 
 # ===================

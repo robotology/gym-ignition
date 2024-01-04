@@ -1,7 +1,7 @@
-gym\_ignition\_environments
+gym\_gz\_environments
 ===========================
 
-.. automodule:: gym_ignition_environments
+.. automodule:: gym_gz_environments
    :members:
    :undoc-members:
    :show-inheritance:
@@ -10,6 +10,6 @@ gym\_ignition\_environments
 .. toctree::
    :maxdepth: 4
 
-   gym_ignition_environments.models
-   gym_ignition_environments.randomizers
-   gym_ignition_environments.tasks
+   gym_gz_environments.models
+   gym_gz_environments.randomizers
+   gym_gz_environments.tasks

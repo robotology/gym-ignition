@@ -8,8 +8,8 @@ from typing import List, Tuple
 
 import numpy as np
 import pytest
-from gym_ignition.base.robot.robot_joints import JointControlMode
-from gym_ignition.utils import logger
+from gym_gz.base.robot.robot_joints import JointControlMode
+from gym_gz.utils import logger
 
 from . import utils
 

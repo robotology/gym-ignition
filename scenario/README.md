@@ -41,7 +41,7 @@ These interfaces can be implemented to operate on different scenarios,
 including robots operating on either simulated worlds or in real-time.
 
 ScenarIO currently fully implements **Gazebo ScenarIO**, 
-a simulated back-end that interacts with [Ignition Gazebo](https://ignitionrobotics.org).
+a simulated back-end that interacts with [Gz Sim](https://ignitionrobotics.org).
 The result allows stepping the simulator programmatically, ensuring a fully reproducible behaviour.
 It relates closely to other projects like
 [pybullet](https://github.com/bulletphysics/bullet3) and [mujoco-py](https://github.com/openai/mujoco-py).
@@ -51,7 +51,7 @@ A real-time backend that interacts with the [YARP](https://github.com/robotology
 ScenarIO can be used either from C++ ([APIs](https://robotology.github.io/gym-ignition/master/breathe/core.html)) 
 or from Python ([APIs](https://robotology.github.io/gym-ignition/master/apidoc/scenario/scenario.bindings.html)).
 
-If you're interested to know the reasons why we started developing ScenarIO and why we selected Ignition Gazebo 
+If you're interested to know the reasons why we started developing ScenarIO and why we selected Gz Sim 
 for our simulations, visit the _Motivations_ section of the 
 [website][website].
 

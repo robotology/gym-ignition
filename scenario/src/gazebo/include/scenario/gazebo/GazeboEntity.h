@@ -27,9 +27,9 @@
 #ifndef SCENARIO_GAZEBO_GAZEBOENTITY_H
 #define SCENARIO_GAZEBO_GAZEBOENTITY_H
 
-#include <ignition/gazebo/Entity.hh>
-#include <ignition/gazebo/EntityComponentManager.hh>
-#include <ignition/gazebo/EventManager.hh>
+#include <gz/sim/Entity.hh>
+#include <gz/sim/EntityComponentManager.hh>
+#include <gz/sim/EventManager.hh>
 
 #include <cstdint>
 
@@ -62,9 +62,9 @@ public:
      * @param eventManager The pointer to the EventManager.
      * @return True for success, false otherwise.
      */
-    virtual bool initialize(const ignition::gazebo::Entity linkEntity,
-                            ignition::gazebo::EntityComponentManager* ecm,
-                            ignition::gazebo::EventManager* eventManager) = 0;
+    virtual bool initialize(const gz::sim::Entity linkEntity,
+                            gz::sim::EntityComponentManager* ecm,
+                            gz::sim::EventManager* eventManager) = 0;
 
     /**
      * Initialize the object.
@@ -80,14 +80,14 @@ public:
      *
      * @return The entity that corresponds to this object.
      */
-    inline ignition::gazebo::Entity entity() const { return this->m_entity; }
+    inline gz::sim::Entity entity() const { return this->m_entity; }
 
     /**
      * Return the pointer to the event manager.
      *
      * @return The pointer to the event manager.
      */
-    inline ignition::gazebo::EventManager* eventManager() const
+    inline gz::sim::EventManager* eventManager() const
     {
         return this->m_eventManager;
     }
@@ -97,7 +97,7 @@ public:
      *
      * @return The pointer to the Entity Component Manager.
      */
-    inline ignition::gazebo::EntityComponentManager* ecm() const
+    inline gz::sim::EntityComponentManager* ecm() const
     {
         return this->m_ecm;
     }
@@ -110,13 +110,13 @@ public:
     inline bool validEntity() const
     {
         return m_eventManager && m_ecm
-               && m_entity != ignition::gazebo::kNullEntity;
+               && m_entity != gz::sim::kNullEntity;
     }
 
 protected:
-    ignition::gazebo::EventManager* m_eventManager = nullptr;
-    ignition::gazebo::EntityComponentManager* m_ecm = nullptr;
-    ignition::gazebo::Entity m_entity = ignition::gazebo::kNullEntity;
+    gz::sim::EventManager* m_eventManager = nullptr;
+    gz::sim::EntityComponentManager* m_ecm = nullptr;
+    gz::sim::Entity m_entity = gz::sim::kNullEntity;
 };
 
 #endif // SCENARIO_GAZEBO_GAZEBOENTITY_H

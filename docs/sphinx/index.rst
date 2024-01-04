@@ -1,6 +1,6 @@
-.. _scenario_and_gym_ignition:
+.. _scenario_and_gym_gz:
 
-ScenarIO and gym-ignition
+ScenarIO and gym-gz
 =========================
 
 This project targets both *control* and *robot learning* research domains:
@@ -12,11 +12,11 @@ This project targets both *control* and *robot learning* research domains:
 We provide two related subprojects to each of these categories:
 
 1. **ScenarIO** provides APIs to interface with the robots.
-2. **gym-ignition** helps structuring environments compatible with OpenAI Gym,
+2. **gym-gz** helps structuring environments compatible with OpenAI Gym,
    while minimizing boilerplate code and providing common rigid-body dynamics utilities.
 
 Check the sections :ref:`What is ScenarIO <what_is_scenario>` and
-:ref:`What is gym-ignition <what_is_gym_ignition>` for more details,
+:ref:`What is gym-gz <what_is_gym_gz>` for more details,
 and visit :ref:`Motivations <motivations>` for an extended overview.
 
 For a quick practical introduction, visit the :ref:`Getting Started <getting_started_scenario>` page.
@@ -39,7 +39,7 @@ If you use this project for your research, please check the FAQ about :ref:`how 
    :caption: What
 
    what/what_is_scenario
-   what/what_is_gym_ignition
+   what/what_is_gym_gz
 
 .. toctree::
    :hidden:
@@ -48,8 +48,8 @@ If you use this project for your research, please check the FAQ about :ref:`how 
 
    why/motivations
    why/why_scenario
-   why/why_ignition_gazebo
-   why/why_gym_ignition
+   why/why_gz_sim
+   why/why_gym_gz
 
 .. toctree::
    :hidden:
@@ -68,7 +68,7 @@ If you use this project for your research, please check the FAQ about :ref:`how 
 
    getting_started/scenario
    getting_started/manipulation
-   getting_started/gym-ignition
+   getting_started/gym-gz
 
 .. toctree::
    :hidden:
@@ -84,8 +84,8 @@ If you use this project for your research, please check the FAQ about :ref:`how 
    :caption: Python Packages
 
    apidoc/scenario/scenario.bindings
-   apidoc/gym-ignition/gym_ignition
-   apidoc/gym-ignition-environments/gym_ignition_environments
+   apidoc/gym-gz/gym_gz
+   apidoc/gym-gz-environments/gym_gz_environments
 
 .. toctree::
    :hidden:

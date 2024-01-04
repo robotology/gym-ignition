@@ -27,10 +27,10 @@
 #ifndef SCENARIO_PLUGINS_GAZEBO_CONTROLLERRUNNER_H
 #define SCENARIO_PLUGINS_GAZEBO_CONTROLLERRUNNER_H
 
-#include <ignition/gazebo/Entity.hh>
-#include <ignition/gazebo/EntityComponentManager.hh>
-#include <ignition/gazebo/EventManager.hh>
-#include <ignition/gazebo/System.hh>
+#include <gz/sim/Entity.hh>
+#include <gz/sim/EntityComponentManager.hh>
+#include <gz/sim/EventManager.hh>
+#include <gz/sim/System.hh>
 #include <sdf/Element.hh>
 
 #include <memory>
@@ -40,21 +40,21 @@ namespace scenario::plugins::gazebo {
 } // namespace scenario::plugins::gazebo
 
 class scenario::plugins::gazebo::ControllerRunner final
-    : public ignition::gazebo::System
-    , public ignition::gazebo::ISystemConfigure
-    , public ignition::gazebo::ISystemPreUpdate
+    : public gz::sim::System
+    , public gz::sim::ISystemConfigure
+    , public gz::sim::ISystemPreUpdate
 {
 public:
     ControllerRunner();
     ~ControllerRunner() override;
 
-    void Configure(const ignition::gazebo::Entity& entity,
+    void Configure(const gz::sim::Entity& entity,
                    const std::shared_ptr<const sdf::Element>& sdf,
-                   ignition::gazebo::EntityComponentManager& ecm,
-                   ignition::gazebo::EventManager& eventMgr) override;
+                   gz::sim::EntityComponentManager& ecm,
+                   gz::sim::EventManager& eventMgr) override;
 
-    void PreUpdate(const ignition::gazebo::UpdateInfo& info,
-                   ignition::gazebo::EntityComponentManager& ecm) override;
+    void PreUpdate(const gz::sim::UpdateInfo& info,
+                   gz::sim::EntityComponentManager& ecm) override;
 
 private:
     class Impl;

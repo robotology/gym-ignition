@@ -3,12 +3,12 @@ import time
 from functools import partial
 from typing import List
 
-import gym_ignition
-import gym_ignition_environments
+import gym_gz
+import gym_gz_environments
 import numpy as np
-from gym_ignition.context.gazebo import controllers
-from gym_ignition.rbd import conversions
-from gym_ignition.rbd.idyntree import inverse_kinematics_nlp
+from gym_gz.context.gazebo import controllers
+from gym_gz.rbd import conversions
+from gym_gz.rbd.idyntree import inverse_kinematics_nlp
 from scipy.spatial.transform import Rotation as R
 
 from scenario import core as scenario_core
@@ -22,7 +22,7 @@ np.set_printoptions(precision=4, suppress=True)
 
 
 def add_panda_controller(
-    panda: gym_ignition_environments.models.panda.Panda, controller_period: float
+    panda: gym_gz_environments.models.panda.Panda, controller_period: float
 ) -> None:
 
     # Set the controller period
@@ -54,7 +54,7 @@ def add_panda_controller(
 
 
 def get_panda_ik(
-    panda: gym_ignition_environments.models.panda.Panda, optimized_joints: List[str]
+    panda: gym_gz_environments.models.panda.Panda, optimized_joints: List[str]
 ) -> inverse_kinematics_nlp.InverseKinematicsNLP:
 
     # Create IK
@@ -94,7 +94,7 @@ def get_panda_ik(
 def insert_bucket(world: scenario_gazebo.World) -> scenario_gazebo.Model:
 
     # Insert objects from Fuel
-    uri = lambda org, name: f"https://fuel.ignitionrobotics.org/{org}/models/{name}"
+    uri = lambda org, name: f"https://fuel.gazebosim.org/{org}/models/{name}"
 
     # Download the cube SDF file
     bucket_sdf = scenario_gazebo.get_model_file_from_fuel(
@@ -120,7 +120,7 @@ def insert_bucket(world: scenario_gazebo.World) -> scenario_gazebo.Model:
 def insert_table(world: scenario_gazebo.World) -> scenario_gazebo.Model:
 
     # Insert objects from Fuel
-    uri = lambda org, name: f"https://fuel.ignitionrobotics.org/{org}/models/{name}"
+    uri = lambda org, name: f"https://fuel.gazebosim.org/{org}/models/{name}"
 
     # Download the cube SDF file
     bucket_sdf = scenario_gazebo.get_model_file_from_fuel(
@@ -142,7 +142,7 @@ def insert_cube_in_operating_area(
 ) -> scenario_gazebo.Model:
 
     # Insert objects from Fuel
-    uri = lambda org, name: f"https://fuel.ignitionrobotics.org/{org}/models/{name}"
+    uri = lambda org, name: f"https://fuel.gazebosim.org/{org}/models/{name}"
 
     # Download the cube SDF file
     cube_sdf = scenario_gazebo.get_model_file_from_fuel(
@@ -153,7 +153,7 @@ def insert_cube_in_operating_area(
     random_position = np.random.uniform(low=[0.2, -0.3, 1.01], high=[0.4, 0.3, 1.01])
 
     # Get a unique name
-    model_name = gym_ignition.utils.scenario.get_unique_model_name(
+    model_name = gym_gz.utils.scenario.get_unique_model_name(
         world=world, model_name="cube"
     )
 
@@ -215,7 +215,7 @@ class FingersAction(enum.Enum):
 
 
 def move_fingers(
-    panda: gym_ignition_environments.models.panda.Panda, action: FingersAction
+    panda: gym_gz_environments.models.panda.Panda, action: FingersAction
 ) -> None:
 
     # Get the joints of the fingers
@@ -236,7 +236,7 @@ def move_fingers(
 # ====================
 
 # Get the simulator and the world
-gazebo, world = gym_ignition.utils.scenario.init_gazebo_sim(
+gazebo, world = gym_gz.utils.scenario.init_gazebo_sim(
     step_size=0.001, real_time_factor=2.0, steps_per_run=1
 )
 
@@ -246,9 +246,7 @@ time.sleep(3)
 gazebo.run(paused=True)
 
 # Insert the Panda manipulator
-panda = gym_ignition_environments.models.panda.Panda(
-    world=world, position=[-0.1, 0, 1.0]
-)
+panda = gym_gz_environments.models.panda.Panda(world=world, position=[-0.1, 0, 1.0])
 
 # Disable joint velocity limits
 _ = [j.to_gazebo().set_velocity_limit(1_000) for j in panda.joints()]

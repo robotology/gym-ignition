@@ -5,9 +5,9 @@
 import functools
 import time
 
-import gym
-from gym_ignition.utils import logger
-from gym_ignition_environments import randomizers
+import gymnasium as gym
+from gym_gz.utils import logger
+from gym_gz_environments import randomizers
 
 # Set verbosity
 logger.set_level(gym.logger.ERROR)
@@ -20,8 +20,8 @@ env_id = "CartPoleDiscreteBalancing-Gazebo-v0"
 
 
 def make_env_from_id(env_id: str, **kwargs) -> gym.Env:
-    import gym
-    import gym_ignition_environments
+    import gym_gz_environments
+    import gymnasium as gym
 
     return gym.make(env_id, **kwargs)
 
@@ -41,15 +41,15 @@ env = randomizers.cartpole_no_rand.CartpoleEnvNoRandomizations(env=make_env)
 # Enable the rendering
 # env.render('human')
 
-# Initialize the seed
-env.seed(42)
-
 for epoch in range(10):
 
     # Reset the environment
-    observation = env.reset()
+    # Initialize the seed
+    observation = env.reset(seed=42, options={})
 
     # Initialize returned values
+    terminated = False
+    truncated = False
     done = False
     totalReward = 0
 
@@ -57,7 +57,10 @@ for epoch in range(10):
 
         # Execute a random action
         action = env.action_space.sample()
-        observation, reward, done, _ = env.step(action)
+        observation, reward, terminated, truncated, _ = env.step(action)
+
+        # Check if the episode is terminated
+        done = terminated or truncated
 
         # Render the environment.
         # It is not required to call this in the loop if physics is not randomized.

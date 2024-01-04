@@ -1,7 +1,7 @@
-gym\_ignition.randomizers
+gym\_gz.randomizers
 =========================
 
-.. automodule:: gym_ignition.randomizers
+.. automodule:: gym_gz.randomizers
    :members:
    :undoc-members:
    :show-inheritance:
@@ -10,22 +10,22 @@ gym\_ignition.randomizers
 .. toctree::
    :maxdepth: 4
 
-   gym_ignition.randomizers.model
-   gym_ignition.randomizers.physics
+   gym_gz.randomizers.model
+   gym_gz.randomizers.physics
 
 
-gym\_ignition.randomizers.abc
+gym\_gz.randomizers.abc
 -----------------------------
 
-.. automodule:: gym_ignition.randomizers.abc
+.. automodule:: gym_gz.randomizers.abc
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.randomizers.gazebo\_env\_randomizer
+gym\_gz.randomizers.gazebo\_env\_randomizer
 -------------------------------------------------
 
-.. automodule:: gym_ignition.randomizers.gazebo_env_randomizer
+.. automodule:: gym_gz.randomizers.gazebo_env_randomizer
    :members:
    :undoc-members:
    :show-inheritance:

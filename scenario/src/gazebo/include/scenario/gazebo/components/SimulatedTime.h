@@ -24,27 +24,27 @@
  * limitations under the License.
  */
 
-#ifndef IGNITION_GAZEBO_COMPONENTS_SIMULATEDTIME_H
-#define IGNITION_GAZEBO_COMPONENTS_SIMULATEDTIME_H
+#ifndef GZ_SIM_COMPONENTS_SIMULATEDTIME_H
+#define GZ_SIM_COMPONENTS_SIMULATEDTIME_H
 
-#include <ignition/gazebo/components/Component.hh>
-#include <ignition/gazebo/components/Factory.hh>
-#include <ignition/gazebo/config.hh>
+#include <gz/sim/components/Component.hh>
+#include <gz/sim/components/Factory.hh>
+#include <gz/sim/config.hh>
 
 #include <chrono>
 
-namespace ignition::gazebo {
+namespace gz::sim {
     // Inline bracket to help doxygen filtering.
-    inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
+    inline namespace GZ_SIM_VERSION_NAMESPACE {
         namespace components {
             /// \brief A component that holds the world's simulated time in
             ///        seconds.
             using SimulatedTime = Component<std::chrono::steady_clock::duration,
                                             class SimulatedTimeTag>;
-            IGN_GAZEBO_REGISTER_COMPONENT("ign_gazebo_components.SimulatedTime",
+            GZ_SIM_REGISTER_COMPONENT("gz_sim_components.SimulatedTime",
                                           SimulatedTime)
         } // namespace components
-    } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
-} // namespace ignition::gazebo
+    } // namespace GZ_SIM_VERSION_NAMESPACE
+} // namespace gz::sim
 
-#endif // IGNITION_GAZEBO_COMPONENTS_SIMULATEDTIME_H
+#endif // GZ_SIM_COMPONENTS_SIMULATEDTIME_H

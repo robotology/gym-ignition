@@ -1,56 +1,56 @@
-gym\_ignition.utils
+gym\_gz.utils
 ===================
 
-.. automodule:: gym_ignition.utils
+.. automodule:: gym_gz.utils
    :members:
    :undoc-members:
    :show-inheritance:
 
 
-gym\_ignition.utils.logger
+gym\_gz.utils.logger
 --------------------------
 
-.. automodule:: gym_ignition.utils.logger
+.. automodule:: gym_gz.utils.logger
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.utils.math
+gym\_gz.utils.math
 ------------------------
 
-.. automodule:: gym_ignition.utils.math
+.. automodule:: gym_gz.utils.math
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.utils.misc
+gym\_gz.utils.misc
 ------------------------
 
-.. automodule:: gym_ignition.utils.misc
+.. automodule:: gym_gz.utils.misc
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.utils.resource\_finder
+gym\_gz.utils.resource\_finder
 ------------------------------------
 
-.. automodule:: gym_ignition.utils.resource_finder
+.. automodule:: gym_gz.utils.resource_finder
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.utils.scenario
+gym\_gz.utils.scenario
 ----------------------------
 
-.. automodule:: gym_ignition.utils.scenario
+.. automodule:: gym_gz.utils.scenario
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.utils.typing
+gym\_gz.utils.typing
 --------------------------
 
-.. automodule:: gym_ignition.utils.typing
+.. automodule:: gym_gz.utils.typing
    :members:
    :undoc-members:
    :show-inheritance:

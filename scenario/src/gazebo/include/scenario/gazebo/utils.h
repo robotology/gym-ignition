@@ -78,7 +78,7 @@ namespace scenario::gazebo::utils {
     /**
      * Find a SDF file in the filesystem.
      *
-     * The search path is defined with the ``IGN_GAZEBO_RESOURCE_PATH``
+     * The search path is defined with the ``GZ_SIM_RESOURCE_PATH``
      * environment variable.
      *
      * @param fileName The SDF file name.
@@ -104,7 +104,7 @@ namespace scenario::gazebo::utils {
      *
      * @param fileName An SDF file. It could be either an absolute path
      *        to the file or the file name if the parent folder is part
-     *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
+     *        of the ``GZ_SIM_RESOURCE_PATH`` environment variable.
      * @return The SDF string if the file was found and is valid, an
      *         empty string otherwise.
      */
@@ -117,7 +117,7 @@ namespace scenario::gazebo::utils {
      *
      * @param fileName An SDF file. It could be either an absolute path
      *        to the file or the file name if the parent folder is part
-     *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
+     *        of the ``GZ_SIM_RESOURCE_PATH`` environment variable.
      * @return The name of the model if the file was found and is valid,
      *         an empty string otherwise.
      */
@@ -128,7 +128,7 @@ namespace scenario::gazebo::utils {
      *
      * @param fileName An SDF file. It could be either an absolute path
      *        to the file or the file name if the parent folder is part
-     *        of the ``IGN_GAZEBO_RESOURCE_PATH`` environment variable.
+     *        of the ``GZ_SIM_RESOURCE_PATH`` environment variable.
      * @param worldIndex The index of the world in the SDF file. By
      *        default it finds the first world.
      * @return The name of the world if the file was found and is valid,
@@ -153,7 +153,7 @@ namespace scenario::gazebo::utils {
      * Get a SDF model file from a Fuel URI.
      *
      * @note A valid URI has the following form:
-     * https://fuel.ignitionrobotics.org/openrobotics/models/model_name
+     * https://fuel.gazebosim.org/openrobotics/models/model_name
      *
      * @param URI A valid Fuel URI.
      * @param useCache Load the model from the local cache.

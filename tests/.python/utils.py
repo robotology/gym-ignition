@@ -8,9 +8,9 @@ import tempfile
 import numpy as np
 import pybullet as p
 import pybullet_data
-from gym_ignition import gympp_bindings as bindings
-from gym_ignition.robots import gazebo_robot, sim
-from gym_ignition.utils import resource_finder
+from gym_gz import gympp_bindings as bindings
+from gym_gz.robots import gazebo_robot, sim
+from gym_gz.utils import resource_finder
 from pybullet_utils import bullet_client
 
 
@@ -34,7 +34,7 @@ class Gazebo(Simulator):
         self,
         physics_rate: float,
         iterations: int = int(1),
-        rtf=float(np.finfo(np.float32).max),
+        rtf=float(np.finfo(np.float64).max),
     ):
         self.simulator = bindings.GazeboSimulator(iterations, rtf, physics_rate)
         assert self.simulator

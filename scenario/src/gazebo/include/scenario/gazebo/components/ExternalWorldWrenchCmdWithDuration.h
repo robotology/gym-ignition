@@ -24,25 +24,25 @@
  * limitations under the License.
  */
 
-#ifndef IGNITION_GAZEBO_COMPONENTS_EXTERNALWORLDWRENCHCMDWITHDURATION_H
-#define IGNITION_GAZEBO_COMPONENTS_EXTERNALWORLDWRENCHCMDWITHDURATION_H
+#ifndef GZ_SIM_COMPONENTS_EXTERNALWORLDWRENCHCMDWITHDURATION_H
+#define GZ_SIM_COMPONENTS_EXTERNALWORLDWRENCHCMDWITHDURATION_H
 
 #include "scenario/gazebo/helpers.h"
 
-#include <ignition/gazebo/components/Component.hh>
-#include <ignition/gazebo/components/Factory.hh>
-#include <ignition/gazebo/config.hh>
+#include <gz/sim/components/Component.hh>
+#include <gz/sim/components/Factory.hh>
+#include <gz/sim/config.hh>
 
 #include <chrono>
 
-namespace ignition::gazebo {
+namespace gz::sim {
     // Inline bracket to help doxygen filtering.
-    inline namespace IGNITION_GAZEBO_VERSION_NAMESPACE {
+    inline namespace GZ_SIM_VERSION_NAMESPACE {
         namespace components {
             /// \brief A component type that contains the external wrench to be
             ///        applied for a given duration on an entity expressed in
             ///        the world frame and represented by
-            ///        ignition::msgs::Wrench. Currently this is used for
+            ///        gz::msgs::Wrench. Currently this is used for
             ///        applying wrenches on links. Although the msg::Wrench type
             ///        has a force_offset member, the value is currently
             ///        ignored. Instead, the force is applied at the link
@@ -51,11 +51,11 @@ namespace ignition::gazebo {
             using ExternalWorldWrenchCmdWithDuration =
                 Component<scenario::gazebo::utils::LinkWrenchCmd,
                           class ExternalWorldWrenchCmdWithDurationTag>;
-            IGN_GAZEBO_REGISTER_COMPONENT(
-                "ign_gazebo_components.ExternalWorldWrenchCmdWithDuration",
+            GZ_SIM_REGISTER_COMPONENT(
+                "gz_sim_components.ExternalWorldWrenchCmdWithDuration",
                 ExternalWorldWrenchCmdWithDuration)
         } // namespace components
-    } // namespace IGNITION_GAZEBO_VERSION_NAMESPACE
-} // namespace ignition::gazebo
+    } // namespace GZ_SIM_VERSION_NAMESPACE
+} // namespace gz::sim
 
-#endif // IGNITION_GAZEBO_COMPONENTS_EXTERNALWORLDWRENCHCMDWITHDURATION_H
+#endif // GZ_SIM_COMPONENTS_EXTERNALWORLDWRENCHCMDWITHDURATION_H

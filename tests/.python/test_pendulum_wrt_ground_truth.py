@@ -2,15 +2,17 @@
 # This software may be modified and distributed under the terms of the
 # GNU Lesser General Public License v2.1 or any later version.
 
-import gym
+from typing import Dict, Optional
+
+import gymnasium as gym
 import numpy as np
 import pytest
-from gym.envs import registry
-from gym.envs.registration import register
-from gym_ignition.robots.sim import gazebo, pybullet
-from gym_ignition.tasks.pendulum_swingup import PendulumSwingUp
-from gym_ignition.utils import logger
-from gym_ignition.utils.typing import Observation, Reward, State
+from gym_gz.robots.sim import gazebo, pybullet
+from gym_gz.tasks.pendulum_swingup import PendulumSwingUp
+from gym_gz.utils import logger
+from gym_gz.utils.typing import Observation, Reward, State
+from gymnasium.envs import registry
+from gymnasium.envs.registration import register
 
 # Set verbosity
 logger.set_level(gym.logger.DEBUG)
@@ -24,7 +26,7 @@ class PendulumEnv(gym.Env):
 
     metadata = {"render.modes": []}
 
-    def __init__(self):
+    def __init__(self, render_mode: Optional[str] = None):
         super().__init__()
 
         # Check the xacro pendulum model
@@ -36,6 +38,7 @@ class PendulumEnv(gym.Env):
 
         self.dt = None
         # self.force = None
+        self.render_mode = render_mode
         self.theta = None
         self.theta_dot = None
 
@@ -68,11 +71,12 @@ class PendulumEnv(gym.Env):
 
         return State((Observation(observation), Reward(0.0), False, {}))
 
-    def reset(self):
+    def reset(self, seed: int = None, options: Dict = {}, **kwargs):
         # Use set_state_from_obs
         pass
 
-    def render(self, mode="human", **kwargs):
+    def render(self, **kwargs):
+        mode = self.render_mode
         raise Exception("This runtime does not support rendering")
 
     def seed(self, seed=None):
@@ -84,10 +88,10 @@ def theta_from_obs(observation: np.ndarray) -> float:
     return np.math.atan2(sin_theta, cos_theta)
 
 
-if "Pendulum-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
+if "Pendulum-Gz-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
     register(
-        id="Pendulum-Ignition-PyTest-v0",
-        entry_point="gym_ignition.runtimes.gazebo_runtime:GazeboRuntime",
+        id="Pendulum-Gz-PyTest-v0",
+        entry_point="gym_gz.runtimes.gazebo_runtime:GazeboRuntime",
         max_episode_steps=1000,
         kwargs={
             "task_cls": PendulumSwingUp,
@@ -104,7 +108,7 @@ if "Pendulum-Ignition-PyTest-v0" not in [spec.id for spec in list(registry.all()
 if "Pendulum-PyBullet-PyTest-v0" not in [spec.id for spec in list(registry.all())]:
     register(
         id="Pendulum-PyBullet-PyTest-v0",
-        entry_point="gym_ignition.runtimes.pybullet_runtime:PyBulletRuntime",
+        entry_point="gym_gz.runtimes.pybullet_runtime:PyBulletRuntime",
         max_episode_steps=1000,
         kwargs={
             "task_cls": PendulumSwingUp,
@@ -131,13 +135,11 @@ def template_pendulum_wrt_ground_truth(env_name: str, max_error_in_deg: float):
     # env.render('human')
     # time.sleep(5)
 
-    # Seed the environment
-    env.seed(42)
-
     for epoch in range(10):
         # Reset the environment
         logger.info("Resetting the environment")
-        observation = env.reset()
+        # Seed the environment
+        observation, _ = env.reset(seed=42, options={})
         env_equation.set_state_from_obs(observation)
 
         # Initialize intermediate variables
@@ -181,9 +183,9 @@ def template_pendulum_wrt_ground_truth(env_name: str, max_error_in_deg: float):
 @pytest.mark.parametrize(
     "env_name, max_error_in_deg",
     [
-        ("Pendulum-Ignition-PyTest-v0", 3.0),
+        ("Pendulum-Gz-PyTest-v0", 3.0),
         ("Pendulum-PyBullet-PyTest-v0", 3.0),
     ],
 )
-def test_pendulum_ignition(env_name: str, max_error_in_deg: float):
+def test_pendulum_gz(env_name: str, max_error_in_deg: float):
     template_pendulum_wrt_ground_truth(env_name, max_error_in_deg)

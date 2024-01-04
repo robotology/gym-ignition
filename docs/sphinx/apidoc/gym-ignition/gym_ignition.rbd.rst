@@ -1,7 +1,7 @@
-gym\_ignition.rbd
+gym\_gz.rbd
 =================
 
-.. automodule:: gym_ignition.rbd
+.. automodule:: gym_gz.rbd
    :members:
    :undoc-members:
    :show-inheritance:
@@ -10,21 +10,21 @@ gym\_ignition.rbd
 .. toctree::
    :maxdepth: 4
 
-   gym_ignition.rbd.idyntree
+   gym_gz.rbd.idyntree
 
 
-gym\_ignition.rbd.conversions
+gym\_gz.rbd.conversions
 -----------------------------
 
-.. automodule:: gym_ignition.rbd.conversions
+.. automodule:: gym_gz.rbd.conversions
    :members:
    :undoc-members:
    :show-inheritance:
 
-gym\_ignition.rbd.utils
+gym\_gz.rbd.utils
 -----------------------
 
-.. automodule:: gym_ignition.rbd.utils
+.. automodule:: gym_gz.rbd.utils
    :members:
    :undoc-members:
    :show-inheritance:

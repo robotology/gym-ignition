@@ -57,7 +57,7 @@ endif()
 
 # Add the SWIG folders
 add_subdirectory(core)
-if(SCENARIO_USE_IGNITION)
+if(SCENARIO_USE_GAZEBO)
     add_subdirectory(gazebo)
 endif()
 
